@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.PlayerTradeWindowController">
+   <children>
+      <Text fx:id="playerTradeWindowTitle" layoutX="246.0" layoutY="76.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Player Trade">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Text>
+      <TextField fx:id="giveLumber" layoutX="151.0" layoutY="123.0" prefHeight="25.0" prefWidth="59.0" text="0" />
+      <TextField fx:id="giveBrick" layoutX="241.0" layoutY="123.0" prefHeight="25.0" prefWidth="59.0" text="0" />
+      <TextField fx:id="giveWool" layoutX="331.0" layoutY="123.0" prefHeight="25.0" prefWidth="59.0" text="0" />
+      <TextField fx:id="giveGrain" layoutX="421.0" layoutY="123.0" prefHeight="25.0" prefWidth="59.0" text="0" />
+      <TextField fx:id="giveOre" layoutX="515.0" layoutY="123.0" prefHeight="25.0" prefWidth="59.0" text="0" />
+      <Text fx:id="youGiveText" layoutX="46.0" layoutY="140.0" strokeType="OUTSIDE" strokeWidth="0.0" text="You want to give:" />
+      <TextField fx:id="receiveLumber" layoutX="151.0" layoutY="197.0" prefHeight="25.0" prefWidth="59.0" text="0" />
+      <TextField fx:id="receiveBrick" layoutX="241.0" layoutY="197.0" prefHeight="25.0" prefWidth="59.0" text="0" />
+      <TextField fx:id="receiveWool" layoutX="331.0" layoutY="197.0" prefHeight="25.0" prefWidth="59.0" text="0" />
+      <TextField fx:id="receiveGrain" layoutX="421.0" layoutY="197.0" prefHeight="25.0" prefWidth="59.0" text="0" />
+      <TextField fx:id="receiveOre" layoutX="515.0" layoutY="197.0" prefHeight="25.0" prefWidth="59.0" text="0" />
+      <Text fx:id="youReceiveText" layoutX="27.0" layoutY="214.0" strokeType="OUTSIDE" strokeWidth="0.0" text="You want to receive:" />
+      <Text fx:id="tooltip" layoutX="46.0" layoutY="294.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Other players: If you want to accept the trade, click your button below:" />
+      <Button fx:id="otherPlayer1" layoutX="196.0" layoutY="333.0" mnemonicParsing="false" onMouseClicked="#otherPlayerAccepts" text="Player" />
+      <Button fx:id="otherPlayer2" layoutX="277.0" layoutY="333.0" mnemonicParsing="false" onMouseClicked="#otherPlayerAccepts" text="Player" />
+      <Button fx:id="otherPlayer3" layoutX="357.0" layoutY="333.0" mnemonicParsing="false" onMouseClicked="#otherPlayerAccepts" text="Player" />
+      <Rectangle fx:id="lumberIcon" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="35.0" layoutX="163.0" layoutY="154.0" stroke="BLACK" strokeType="INSIDE" width="35.0" />
+      <Rectangle fx:id="brickIcon" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="35.0" layoutX="253.0" layoutY="154.0" stroke="BLACK" strokeType="INSIDE" width="35.0" />
+      <Rectangle fx:id="woolIcon" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="35.0" layoutX="343.0" layoutY="154.0" stroke="BLACK" strokeType="INSIDE" width="35.0" />
+      <Rectangle fx:id="grainIcon" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="35.0" layoutX="433.0" layoutY="154.0" stroke="BLACK" strokeType="INSIDE" width="35.0" />
+      <Rectangle fx:id="oreIcon" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="35.0" layoutX="527.0" layoutY="154.0" stroke="BLACK" strokeType="INSIDE" width="35.0" />
+   </children>
+</AnchorPane>

@@ -1,0 +1,172 @@
+plugins {
+    id 'java'
+    id "com.github.spotbugs" version "5.0.13"
+    id 'checkstyle'
+    id 'jacoco'
+    id 'info.solidsoft.pitest' version '1.9.0'
+
+    id 'org.openjfx.javafxplugin' version '0.0.13'
+    
+    // id 'application'
+    // id 'java-library'
+
+    // id 'org.javamodularity.moduleplugin' version '1.8.12'
+    // id 'org.beryx.jlink' version '2.25.0'
+}
+
+group 'edu.rose-hulman.csse'
+version '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+// apply plugin: 'java'
+// sourceCompatibility = '17'
+// targetCompatibility = '17'
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.12.0'
+    compileOnly "com.github.spotbugs:spotbugs-annotations:${spotbugs.toolVersion.get()}"
+    testCompileOnly "com.github.spotbugs:spotbugs-annotations:${spotbugs.toolVersion.get()}"
+    testImplementation group: 'org.easymock', name: 'easymock', version: '5.1.0'
+}
+
+spotbugsMain {
+    excludeFilter = file("${rootProject.projectDir}/config/spotbugs/excludeFilter.xml")
+    reports {
+        html {
+            required = true
+            outputLocation = file("$buildDir/reports/spotbugs/main/spotbugs.html")
+            stylesheet = 'fancy-hist.xsl'
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+pitest {
+    junit5PluginVersion = '1.0.0'
+    targetClasses = ['gamedatastructures.*', 'graphs.*', 'controller.*', 'integration.*']  //by default "${project.group}.*"
+    pitestVersion = '1.9.0' //not needed when a default PIT version should be used
+    threads = 4
+    outputFormats = ['XML', 'HTML']
+    timestampedReports = false
+}
+
+checkstyleTest.enabled = false
+
+// Append the rest at the end of your build script
+jacoco {
+    toolVersion = "0.8.8"
+}
+
+jacocoTestReport {
+    dependsOn test
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports after running tests."
+    reports {
+        xml.enabled true
+        csv.enabled false
+        html.enabled true
+    }
+
+    // make it so we don't look at gui code
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: 'gui/**')
+        }))
+    }
+}
+
+test.finalizedBy(jacocoTestReport)
+task codeCoverageInfo (dependsOn: jacocoTestReport) {
+    ext.srcFile = file("${reportsDir}/jacoco/test/jacocoTestReport.xml")
+    doLast {
+        println "Transforming source file."
+
+        def parser = new XmlParser()
+        parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false);
+        parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        parser.setFeature("http://xml.org/sax/features/namespaces", false)
+
+        def reportNode = parser.parse(srcFile)
+        reportNode.children().each {
+            if(it.name() == 'counter') {
+                String type = it.@type
+                float missed = it.@missed as float
+                float covered = it.@covered as float
+                float percentage = covered / (missed + covered) * 100
+                println "Code Coverage[$type]: $percentage%"
+            }
+        }
+    }
+}
+jacocoTestReport.finalizedBy(codeCoverageInfo)
+
+// -------------------------------------------------------------------------------
+//
+// fx stuff
+//
+// --------------------------------------------------------------------------------
+
+
+// application.mainClass = 'gui.Catan'
+// application.mainModule = 'gui'
+
+javafx {
+    version "11" // changed from 20 to 11
+    modules = ['javafx.base', 'javafx.graphics', 'javafx.controls', 'javafx.fxml']
+}
+
+
+// this breaks pitest
+
+// java {
+//     toolchain {
+//         languageVersion = JavaLanguageVersion.of(17)
+//     }
+// }
+
+
+
+// end stuff that breaks pitest
+
+// jlink {
+//     imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
+//     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+//     launcher {
+//         name = 'app'
+//     }
+// }
+
+// jlinkZip {
+//     group = 'distribution'
+// }
+
+// run {
+//     doFirst {
+//         jvmArgs = [
+//                 '--module-path', classpath.asPath,
+//                 '--add-modules', 'javafx.controls', 'javafx.fxml'
+//         ]
+//     }
+// }
+
+compileJava {
+    options.release = 11 // changed from 17 to 11
+    doFirst {
+        options.compilerArgs = [
+                '--module-path', classpath.asPath,
+                '--add-modules', 'javafx.controls'
+        ]
+    }
+}
+
+// tasks.withType(JavaCompile) {
+//     options.release = 17
+// }
