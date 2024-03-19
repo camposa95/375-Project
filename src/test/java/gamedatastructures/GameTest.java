@@ -41,7 +41,7 @@ public class GameTest {
         Game game = new Game(gb,mockVertexGraph,mockedRoadGraph, null);
         
         EasyMock.expect(mockVertexGraph.getVertex(vertexId)).andReturn(mockVertex);
-        EasyMock.expect(mockVertex.isbuildable()).andReturn(true);
+        EasyMock.expect(mockVertex.isBuildable()).andReturn(true);
         EasyMock.expect(mockVertex.getOwner()).andReturn(mockPlayer);
         mockPlayer.placeSettlementSetup();
         mockedRoadGraph.giveLongestRoadCard();
@@ -74,7 +74,7 @@ public class GameTest {
         game.setup = false;
 
         EasyMock.expect(mockVertexGraph.getVertex(vertexId)).andReturn(mockVertex);
-        EasyMock.expect(mockVertex.isbuildable()).andReturn(true);
+        EasyMock.expect(mockVertex.isBuildable()).andReturn(true);
         EasyMock.expect(mockVertex.isAdjacentToFriendlyRoad(mockPlayer)).andReturn(true);
         EasyMock.expect(mockPlayer.purchaseSettlement()).andReturn(false);
         EasyMock.expect(mockVertex.getOwner()).andReturn(null);
@@ -97,7 +97,7 @@ public class GameTest {
 
         Game game = new Game(gb,mockVertexGraph,rg,null);
         EasyMock.expect(mockVertexGraph.getVertex(vertexId)).andReturn(mockVertex);
-        EasyMock.expect(mockVertex.isbuildable()).andReturn(false);
+        EasyMock.expect(mockVertex.isBuildable()).andReturn(false);
         
         EasyMock.expect(mockVertex.getOwner()).andReturn(null);
         
@@ -121,7 +121,7 @@ public class GameTest {
         game.setup = false;
 
         EasyMock.expect(mockVertexGraph.getVertex(vertexId)).andReturn(mockVertex);
-        EasyMock.expect(mockVertex.isbuildable()).andReturn(false);
+        EasyMock.expect(mockVertex.isBuildable()).andReturn(false);
         
         EasyMock.expect(mockVertex.getOwner()).andReturn(null);
 

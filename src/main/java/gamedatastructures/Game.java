@@ -42,7 +42,7 @@ public class Game {
      */
     public void placeSettlement(final int vertex, final Player player) throws InvalidPlacementException, NotEnoughResourcesException {
         Vertex v = vertexes.getVertex(vertex);
-        if (!v.isbuildable()) {
+        if (!v.isBuildable()) {
             throw new InvalidPlacementException();
         }
 
@@ -139,6 +139,7 @@ public class Game {
             if (tile.getTerrain() != Terrain.DESERT && tile.getDieNumber() == die) {
                 for (int i = 0; i < tile.getVertexIDs().length; i++) {
                     Vertex curVertex = vertexes.getVertex(tileVertexes[i]);
+                    // TODO: Handle figuring out how much to hand out of a resource in Building
                     if (curVertex.getOwner() == player) {
                         if (curVertex.getIsCity()) {
                             resources.add(tile.getResource());
@@ -155,6 +156,7 @@ public class Game {
      * @param mockPlayer
      * @param vertexId
      */
+    // TODO: Rename this to reflect being a city upgrade and change inner logic to use Building code
     public void upgradeSettlement(final Player player, final int vertexId) throws InvalidPlacementException, NotEnoughResourcesException {
         Vertex vertex = vertexes.getVertex(vertexId);
         if (!vertex.isUpgradableBy(player)) {
@@ -165,6 +167,9 @@ public class Game {
         }
         vertex.setIsCity(true);
     }
+
+    // TODO: Add method here to add a location add-on to the building on the given vertex
+
     /**
      * Allows the player to buy a devcard if they have enough resources
      * @param player

@@ -2,6 +2,10 @@ package graphs;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.Player;
+import gamedatastructures.Resource;
+import gamedatastructures.buildings.Building;
+import gamedatastructures.buildings.City;
+import gamedatastructures.buildings.Settlement;
 
 /**
  * Represents a location on the ma
@@ -14,7 +18,8 @@ public class Vertex {
     private Port adjacentPort;
     private Player owner;
     private boolean portsInitialized;
-    private boolean isCity;
+    // TODO: Get rid of this and have it be a Building
+    private Building building;
 
     /**
      * Creates a new vertex with the given ID.
@@ -145,13 +150,13 @@ public class Vertex {
      * and the distance rule is observed: there can be no other settlments
      * directly adjacent to this Vertex
      *
-     * Note: this is a simple check that is mean to be used during setup,
-     * later during regular gameplay other checks in conjunciton with this
+     * Note: this is a simple check that is meant to be used during setup,
+     * later during regular gameplay other checks in conjunction with this
      * one will need to be called as well.
      *
      * @return true if this Vertex can be built upon, false otherwise
      */
-    public boolean isbuildable() {
+    public boolean isBuildable() {
         if (this.isOccupied()) {
             return false;
         }
@@ -189,14 +194,19 @@ public class Vertex {
 
     /**
      * Builds a settlment on this vertex by first registering this vertex as being owned
-     * by the given player. Also adds the a trade boost to the player if the vertex was
-     * next to a port
+     * by the given player and updates the building field to hold a new settlement.
+     * Also adds a trade boost to the player if the vertex was next to a port
      */
     public void build(final Player player) {
         setOwner(player);
+        this.building = new Settlement();
         if (hasPort()) {
             player.addTradeBoost(getAdjacentPort().getResourse());
         }
+    }
+
+    public int getYield(Resource resource) {
+        return (building == null) ? 0 : building.getYield(resource);
     }
 
     /**
@@ -232,8 +242,8 @@ public class Vertex {
      *
      * @return true if this Vertex can be built upon by the given player, false otherwise
      */
-    public boolean isbuildableBy(final Player player) {
-        if (!this.isbuildable()) {
+    public boolean isBuildableBy(final Player player) {
+        if (!this.isBuildable()) {
             return false;
         }
 
@@ -263,14 +273,18 @@ public class Vertex {
         return false;
     }
 
+    public boolean isCity() {
+        return building.getClass() == City.class;
+    }
+
     /**
-     * Tells this if this Vertex is is upgradable by the given player.
+     * Tells this if this Vertex is upgradable by the given player.
      * This is true if the player already owns the vertex, and the vertex is not already a city.
      *
      * @return true if the vertex is upgradable by the player, false otherwise
      */
     public boolean isUpgradableBy(final Player player) {
-        if (this.isCity) {
+        if (this.isCity()) {
             return false;
         }
         if (this.getOwner() != player) {
@@ -278,23 +292,6 @@ public class Vertex {
         }
 
         return true;
-    }
-
-    /**
-     * Simple setter to set the isCity flag of this vertex
-     *
-     * @param b, the value to set for the flag
-     */
-    public void setIsCity(final boolean b) {
-        this.isCity = b;
-    }
-
-    /**
-     * Simple getter to tell is this vertex is a city or not
-     * @return
-     */
-    public boolean getIsCity() {
-        return this.isCity;
     }
 
     /**

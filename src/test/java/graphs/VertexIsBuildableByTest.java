@@ -30,7 +30,7 @@ public class VertexIsBuildableByTest {
         EasyMock.replay(mockPlayer); // Note: Nothing should be called by player
 
         boolean expected = true;
-        boolean actual = testVertex.isbuildableBy(mockPlayer);
+        boolean actual = testVertex.isBuildableBy(mockPlayer);
         assertEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);
@@ -64,7 +64,7 @@ public class VertexIsBuildableByTest {
         EasyMock.replay(mockPlayer); // Note: Nothing should be called by player
 
         boolean expected = false;
-        boolean actual = testVertex.isbuildableBy(mockPlayer);
+        boolean actual = testVertex.isBuildableBy(mockPlayer);
         assertEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);
@@ -94,7 +94,7 @@ public class VertexIsBuildableByTest {
         EasyMock.replay(mockPlayer); // Note: Nothing should be called by player
 
         boolean expected = false;
-        boolean actual = testVertex.isbuildableBy(mockPlayer);
+        boolean actual = testVertex.isBuildableBy(mockPlayer);
         assertEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);
@@ -122,7 +122,7 @@ public class VertexIsBuildableByTest {
         EasyMock.replay(mockPlayer); // Note: Nothing should be called by player
 
         boolean expected = false;
-        boolean actual = testVertex.isbuildableBy(mockPlayer);
+        boolean actual = testVertex.isBuildableBy(mockPlayer);
         assertEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);
@@ -145,7 +145,7 @@ public class VertexIsBuildableByTest {
         EasyMock.replay(mockPlayer); // Note: Nothing should be called by player
 
         boolean expected = false;
-        boolean actual = testVertex.isbuildableBy(mockPlayer);
+        boolean actual = testVertex.isBuildableBy(mockPlayer);
         assertEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);
@@ -178,7 +178,7 @@ public class VertexIsBuildableByTest {
         EasyMock.replay(mockPlayer); // Note: Nothing should be called by player
 
         boolean expected = false;
-        boolean actual = testVertex.isbuildableBy(mockPlayer);
+        boolean actual = testVertex.isBuildableBy(mockPlayer);
         assertEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);
@@ -207,7 +207,7 @@ public class VertexIsBuildableByTest {
         EasyMock.replay(mockPlayer); // Note: Nothing should be called by player
 
         boolean expected = false;
-        boolean actual = testVertex.isbuildableBy(mockPlayer);
+        boolean actual = testVertex.isBuildableBy(mockPlayer);
         assertEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);
@@ -234,7 +234,7 @@ public class VertexIsBuildableByTest {
         EasyMock.replay(mockPlayer); // Note: Nothing should be called by player
 
         boolean expected = false;
-        boolean actual = testVertex.isbuildableBy(mockPlayer);
+        boolean actual = testVertex.isBuildableBy(mockPlayer);
         assertEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);
@@ -259,7 +259,7 @@ public class VertexIsBuildableByTest {
         EasyMock.replay(mockPlayer); // Note: Nothing should be called by player
 
         boolean expected = false;
-        boolean actual = testVertex.isbuildableBy(mockPlayer);
+        boolean actual = testVertex.isBuildableBy(mockPlayer);
         assertEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);
@@ -285,7 +285,7 @@ public class VertexIsBuildableByTest {
         EasyMock.replay(mockPlayer); // Note: Nothing should be called by player
 
         boolean expected = true;
-        boolean actual = testVertex.isbuildableBy(mockPlayer);
+        boolean actual = testVertex.isBuildableBy(mockPlayer);
         assertEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);
