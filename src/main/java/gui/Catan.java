@@ -11,9 +11,8 @@ public class Catan extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("start-screen.fxml"));
-        //FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("playertrade_window.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-        stage.setTitle("Welcome to gui.Catan!");
+        stage.setTitle("Welcome to Catan!");
         stage.setScene(scene);
         stage.show();
     }

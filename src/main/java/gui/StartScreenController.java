@@ -62,6 +62,7 @@ public class StartScreenController {
         FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("gameboard.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle(messages.getString("catanTitle"));
+        stage.setFullScreen(true);
         stage.setScene(scene);
         stage.show();
 
