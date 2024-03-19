@@ -132,6 +132,8 @@ public class CatanGUIController {
         robber.setVisible(false);
         setAllRobberSpotsVisibility(false);
         guiState = GUIState.IDLE;
+
+
     }
 
     public void internationalize(ResourceBundle bundle){

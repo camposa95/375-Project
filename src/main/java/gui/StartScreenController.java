@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.util.ResourceBundle;
@@ -62,6 +63,7 @@ public class StartScreenController {
         FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("gameboard.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle(messages.getString("catanTitle"));
+        stage.setFullScreen(true);
         stage.setScene(scene);
         stage.show();
 
