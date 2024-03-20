@@ -1,5 +1,6 @@
 package gui.popups;
 
+import controller.Controller;
 import controller.SuccessCode;
 import gamedatastructures.Resource;
 import gui.CatanGUIController;
@@ -14,6 +15,8 @@ import java.util.ResourceBundle;
 
 public class YearOfPlentyController {
     private CatanGUIController guiController;
+    private Controller domainController;
+
     @FXML
     private RadioButton lumber1, brick1, wool1, grain1, ore1, lumber2, brick2, wool2, grain2, ore2;
     @FXML
@@ -41,11 +44,16 @@ public class YearOfPlentyController {
         ore2.setToggleGroup(resource2);
     }
 
-    public void setData(CatanGUIController controller, ResourceBundle messages){
-        this.guiController=controller;
+    public void setControllers(CatanGUIController guiController, Controller domainController) {
+        this.guiController = guiController;
+        this.domainController = domainController;
+    }
+
+    public void setMessages(ResourceBundle messages){
         this.messages=messages;
         internationalize();
     }
+
 
     private void internationalize(){
         yearOfPlentyTitleText.setText(messages.getString("yearOfPlentyTitleText"));
@@ -70,13 +78,22 @@ public class YearOfPlentyController {
         Resource selected1 = stringToResource(((RadioButton) resource1.getSelectedToggle()).getText());
         Resource selected2 = stringToResource(((RadioButton) resource2.getSelectedToggle()).getText());
 
-        SuccessCode code = this.guiController.submitYearOfPlenty(selected1, selected2);
+        SuccessCode code = this.submitYearOfPlenty(selected1, selected2);
         if(code == SuccessCode.SUCCESS){
             Stage stage = (Stage) lumber1.getScene().getWindow();
             stage.close();
         }else{
             System.out.println("Bank does not have enough resources!");
         }
+    }
+
+    private SuccessCode submitYearOfPlenty(Resource resource1, Resource resource2){
+        //submit year of plenty
+        SuccessCode success = this.domainController.playYearOfPlenty(resource1, resource2);
+        if(success == SuccessCode.SUCCESS){
+            this.guiController.finishedMove();
+        }
+        return success;
     }
 
     private Resource stringToResource(String resource){

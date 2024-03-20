@@ -1,5 +1,6 @@
 package gui.popups;
 
+import controller.Controller;
 import controller.SuccessCode;
 import gamedatastructures.Player;
 import gamedatastructures.Resource;
@@ -31,6 +32,7 @@ public class PlayerTradeWindowController {
     Player currentPlayer;
     Player[] players;
     CatanGUIController guiController;
+    Controller domainController;
     ResourceBundle messages;
 
     @FXML
@@ -53,10 +55,9 @@ public class PlayerTradeWindowController {
         tooltip.setText(messages.getString("playerTradeTooltipDefault"));
     }
 
-    public void setPlayersData(Player currentPlayer, Player[] players, CatanGUIController gui, ResourceBundle messages){
+    public void setPlayersData(Player currentPlayer, Player[] players, ResourceBundle messages){
         this.currentPlayer = currentPlayer;
         this.players = players;
-        this.guiController = gui;
         this.messages = messages;
 
         internationalize();
@@ -77,6 +78,11 @@ public class PlayerTradeWindowController {
         }
         int player1 = currentPlayer.playerNum==1 ? 2 : 1;
         otherPlayer1.setText(messages.getString("playerTradeTooltipAcceptButtonText") + player1);
+    }
+
+    public void setControllers(CatanGUIController guiController, Controller domainController) {
+        this.guiController = guiController;
+        this.domainController = domainController;
     }
 
     private Resource[] getResources(TextField[] fields){
@@ -127,7 +133,7 @@ public class PlayerTradeWindowController {
         }
         Resource[] giving = this.getResources(give);
         Resource[] receiving = this.getResources(receive);
-        SuccessCode success = guiController.executeTrade(other, giving, receiving);
+        SuccessCode success = this.executeTrade(other, giving, receiving);
 
         if(success==SuccessCode.SUCCESS){
             closeModal();
@@ -136,6 +142,15 @@ public class PlayerTradeWindowController {
         }else{
             tooltip.setText(messages.getString("playerTradeTooltipFailedTrade"));
         }
+    }
+
+    private SuccessCode executeTrade(Player otherPlayer, Resource[] giving, Resource[] receiving){
+        //Called from  PlayerTradeController.java
+        SuccessCode code = domainController.tradeWithPlayer(otherPlayer, giving, receiving);
+        if(code==SuccessCode.SUCCESS){
+            guiController.finishedMove();
+        }
+        return code;
     }
 
     private void closeModal(){

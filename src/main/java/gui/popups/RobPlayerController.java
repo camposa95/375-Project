@@ -1,8 +1,9 @@
 package gui.popups;
 
+import controller.Controller;
+import controller.GameState;
 import controller.SuccessCode;
 import gamedatastructures.Player;
-import gamedatastructures.Resource;
 import gui.CatanGUIController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -18,7 +19,8 @@ public class RobPlayerController {
     private Button otherPlayer1, otherPlayer2, otherPlayer3;
     private Player[] players;
     private Player currentPlayer;
-    private CatanGUIController controllerInstance;
+    private CatanGUIController guiController;
+    private Controller domainController;
     private int robberId = 0;
     private Button[] buttons;
     @FXML
@@ -35,13 +37,31 @@ public class RobPlayerController {
         System.out.println(buttonText);
         return Integer.parseInt(buttonText.substring(buttonText.length()-1));
     }
+
     public void robPlayer(MouseEvent event){
         int playerRobbed = this.getSelectedPlayer(event);
-        SuccessCode success = controllerInstance.robPlayer(playerRobbed);
+        SuccessCode success = this.rob(playerRobbed);
         if(success == SuccessCode.SUCCESS){
             Stage stage = (Stage) otherPlayer1.getScene().getWindow();
             stage.close();
         }
+    }
+
+    private SuccessCode rob(int passedPlayer){
+        // Called from RobPlayerController.java
+        if(passedPlayer == -1){
+            //means that there is no one to rob, don't submit anything
+            guiController.finishedMove();
+            domainController.setState(GameState.DEFAULT);
+            return SuccessCode.SUCCESS;
+        }
+        SuccessCode code = domainController.robPlayer(passedPlayer);
+
+        if(code == SuccessCode.SUCCESS){
+            domainController.setState(GameState.DEFAULT);
+            guiController.finishedMove();
+        }
+        return code;
     }
 
     private void internationalize(){
@@ -50,9 +70,10 @@ public class RobPlayerController {
     }
 
     //make sure Players is the list of players on the hex being robbed
-    public void setPlayerData(Player currentPlayer, Player[] playersOnHex, CatanGUIController controllerInstance, ResourceBundle messages){
+    public void setPlayerData(Player currentPlayer, Player[] playersOnHex, CatanGUIController guiController, ResourceBundle messages, Controller domainController) {
         this.currentPlayer = currentPlayer;
-        this.controllerInstance = controllerInstance;
+        this.guiController = guiController;
+        this.domainController = domainController;
         this.players=playersOnHex;
         this.messages=messages;
 
@@ -77,7 +98,7 @@ public class RobPlayerController {
             }
         }
         if(count==total){
-            this.controllerInstance.robPlayer(-1);
+            this.rob(-1);
             Stage stage = (Stage) otherPlayer1.getScene().getWindow();
             stage.close();
         }

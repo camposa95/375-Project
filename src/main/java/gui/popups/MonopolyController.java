@@ -1,5 +1,6 @@
 package gui.popups;
 
+import controller.Controller;
 import controller.SuccessCode;
 import gamedatastructures.Resource;
 import gui.CatanGUIController;
@@ -20,6 +21,7 @@ public class MonopolyController {
     @FXML
     private Text monopolyTitleText;
     private CatanGUIController guiController;
+    private Controller domainController;
     private ResourceBundle messages;
     @FXML
     public void initialize(){
@@ -30,9 +32,13 @@ public class MonopolyController {
         ore.setGraphic(new ImageView(new Image("images/card_ore.png")));
     }
 
-    public void setData(CatanGUIController guiController, ResourceBundle messages){
+    public void setControllers(CatanGUIController guiController, Controller domainController) {
         this.guiController = guiController;
-        this.messages=messages;
+        this.domainController = domainController;
+    }
+
+    public void setMessages(ResourceBundle messages){
+        this.messages = messages;
         internationalize();
     }
 
@@ -45,19 +51,19 @@ public class MonopolyController {
         SuccessCode success;
         switch(source){
             case "lumber":
-                success = guiController.executeMonopoly(Resource.LUMBER);
+                success = this.executeMonopoly(Resource.LUMBER);
                 break;
             case "brick":
-                success = guiController.executeMonopoly(Resource.BRICK);
+                success = this.executeMonopoly(Resource.BRICK);
                 break;
             case "wool":
-                success = guiController.executeMonopoly(Resource.WOOL);
+                success = this.executeMonopoly(Resource.WOOL);
                 break;
             case "grain":
-                success = guiController.executeMonopoly(Resource.GRAIN);
+                success = this.executeMonopoly(Resource.GRAIN);
                 break;
             case "ore":
-                success = guiController.executeMonopoly(Resource.ORE);
+                success = this.executeMonopoly(Resource.ORE);
                 break;
             default:
                 System.out.println("Something went wrong, try again.");
@@ -67,5 +73,14 @@ public class MonopolyController {
             Stage stage = (Stage)lumber.getScene().getWindow();
             stage.close();
         }
+    }
+
+    private SuccessCode executeMonopoly(Resource resource){
+        SuccessCode success = this.domainController.playMonopolyCard(resource);
+        if(success == SuccessCode.SUCCESS){
+            this.guiController.finishedMove();
+        }
+
+        return success;
     }
 }

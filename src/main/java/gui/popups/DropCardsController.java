@@ -1,5 +1,6 @@
 package gui.popups;
 
+import controller.Controller;
 import gamedatastructures.Player;
 import gamedatastructures.Resource;
 import gui.CatanGUIController;
@@ -37,6 +38,7 @@ public class DropCardsController {
     private Player[] players;
     private int numPlayers;
     private CatanGUIController guiController;
+    private Controller domainController;
     private ArrayList<Integer> playersThatNeedToDrop = new ArrayList<>();
 
     @FXML
@@ -65,7 +67,7 @@ public class DropCardsController {
         submit.setText(messages.getString("dropHalfSubmitButton"));
     }
 
-    public void setPlayerData(Player[] playersArg, CatanGUIController gui, ResourceBundle messages){
+    public void setPlayerData(Player[] playersArg, CatanGUIController guiController, ResourceBundle messages, Controller domainController){
         this.messages=messages;
         internationalize();
 
@@ -91,11 +93,13 @@ public class DropCardsController {
         }else{
             playerResources2d[2] = player3;
         }
-        guiController = gui;
+
+        this.guiController = guiController;
+        this.domainController = domainController;
 
         boolean check = doesAnyoneNeedToDrop();
         if(!check){
-            guiController.submitDropResources(null);
+            this.dropResources(null);
             Stage stage = (Stage) lumberIcon.getScene().getWindow();
             stage.close();
         }
@@ -147,9 +151,19 @@ public class DropCardsController {
                 return;
             }
         }
-        guiController.submitDropResources(resources);
+        this.dropResources(resources);
         Stage stage = (Stage) lumberIcon.getScene().getWindow();
         stage.close();
+    }
+
+    private void dropResources(HashMap<Integer, Resource[]> resourcesToDrop){
+        //Called from DropCardsController.java
+        if(resourcesToDrop!=null){ //if null, no dropping occurred
+            this.domainController.dropResources(resourcesToDrop);
+            this.guiController.finishedMove();
+        }
+
+        guiController.setAllRobberSpotsVisibility(true);
     }
 
     //returns true if at least one player needs to drop cards
