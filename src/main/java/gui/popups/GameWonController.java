@@ -1,4 +1,4 @@
-package gui;
+package gui.popups;
 
 import javafx.fxml.FXML;
 import javafx.scene.text.Text;

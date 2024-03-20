@@ -1,8 +1,9 @@
-package gui;
+package gui.popups;
 
 import controller.SuccessCode;
 import gamedatastructures.Player;
 import gamedatastructures.Resource;
+import gui.CatanGUIController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;

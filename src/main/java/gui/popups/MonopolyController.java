@@ -1,7 +1,8 @@
-package gui;
+package gui.popups;
 
 import controller.SuccessCode;
 import gamedatastructures.Resource;
+import gui.CatanGUIController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;

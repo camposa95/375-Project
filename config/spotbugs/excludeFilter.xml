@@ -13,24 +13,24 @@
         <Class name="gui.RunGame"/>
     </Match>
     <Match>
-        <Class name="gui.DropCardsController"/>
+        <Class name="gui.popups.DropCardsController"/>
     </Match>
     <Match>
-        <Class name="gui.PlayerTradeWindowController"/>
+        <Class name="gui.popups.PlayerTradeWindowController"/>
     </Match>
     <Match>
-        <Class name="gui.RobPlayerController"/>
+        <Class name="gui.popups.RobPlayerController"/>
     </Match>
     <Match>
-        <Class name="gui.BankTradeWindowController"/>
+        <Class name="gui.popups.BankTradeWindowController"/>
     </Match>
     <Match>
-        <Class name="gui.YearOfPlentyController"/>
+        <Class name="gui.popups.YearOfPlentyController"/>
     </Match>
     <Match>
-        <Class name="gui.MonopolyController"/>
+        <Class name="gui.popups.MonopolyController"/>
     </Match>
     <Match>
-        <Class name="gui.GameWonController"/>
+        <Class name="gui.popups.GameWonController"/>
     </Match>
 </FindBugsFilter>
