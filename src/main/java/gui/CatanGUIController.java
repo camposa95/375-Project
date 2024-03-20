@@ -5,7 +5,6 @@ import controller.GameState;
 import controller.SuccessCode;
 import gamedatastructures.*;
 import graphs.Port;
-import graphs.RoadGraph;
 import graphs.VertexGraph;
 import gui.popups.*;
 import javafx.fxml.FXML;
@@ -70,15 +69,7 @@ public class CatanGUIController {
     private Circle[] robberSpots;
     private HashMap<Circle, Polygon> settlementsAndCitiesBuilt = new HashMap<>();
 
-
-    static int numPlayers;
-    Player[] players = null;
-    RoadGraph roadGraph = null;
-    VertexGraph vertexGraph = null;
-    GameBoard gameBoard = null;
-    Game game = null;
     Controller controller;
-    DevelopmentCardDeck devCardDeck = null;
     HashMap<Polygon, Integer> settlementToVertexMap = new HashMap<>();
     ResourceBundle messages;
 
@@ -86,15 +77,6 @@ public class CatanGUIController {
         BUSY, IDLE, GAME_WON
     }
     public GUIState guiState;
-
-
-    // Text files that need to be loaded:
-    private static final String ROAD_TO_ROAD_FILE = "src/main/java/graphs/RoadToRoadLayout.txt";
-    private static final String ROAD_TO_VERTEX_FILE = "src/main/java/graphs/RoadToVertexLayout.txt";
-    private static final String VERTEX_TO_VERTEX_FILE = "src/main/java/graphs/VertexToVertexLayout.txt";
-    private static final String VERTEX_TO_PORT_FILE = "src/main/java/graphs/VertexToPortLayout.txt";
-    private static final String VERTEX_TO_ROAD_FILE = "src/main/java/graphs/VertexToRoadLayout.txt";
-    private static final String TILE_LAYOUT = "src/main/java/gamedatastructures/TileLayout.txt";
 
     private void setupGUIEntityLists(){
         hexagonTiles = new Polygon[]{hex0, hex1, hex2, hex3, hex4, hex5, hex6, hex7, hex8, hex9, hex10, hex11, hex12, hex13, hex14, hex15, hex16, hex17, hex18};
@@ -133,8 +115,6 @@ public class CatanGUIController {
         robber.setVisible(false);
         setAllRobberSpotsVisibility(false);
         guiState = GUIState.IDLE;
-
-
     }
 
     public void internationalize(ResourceBundle bundle){
@@ -163,27 +143,6 @@ public class CatanGUIController {
         player2name.setText(messages.getString("player2"));
         player3name.setText(messages.getString("player3"));
         player4name.setText(messages.getString("player4"));
-    }
-
-    public void setData(GameType gameType, int numPlayers){
-        this.numPlayers = numPlayers;
-        this.roadGraph = new RoadGraph();
-        this.vertexGraph = new VertexGraph();
-        this.roadGraph.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_FILE);
-        this.vertexGraph.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_FILE);
-        this.roadGraph.initializeRoadToVertexAdjacency(vertexGraph, ROAD_TO_VERTEX_FILE);
-        this.vertexGraph.initializeVertexToRoadAdjacency(roadGraph, VERTEX_TO_ROAD_FILE);
-        this.vertexGraph.initializeVertexToPortAdjacency(VERTEX_TO_PORT_FILE, gameType);
-
-        this.gameBoard = new GameBoard(gameType, TILE_LAYOUT);
-        this.devCardDeck = new DevelopmentCardDeck();
-        this.game = new Game(gameBoard, vertexGraph, roadGraph, devCardDeck);
-        this.players = new Player[numPlayers];
-        for(int i = 0; i < numPlayers; i++){
-            Player player = new Player(i+1);
-            players[i] = player;
-        }
-        this.controller = new Controller(game, players, gameType);
     }
 
     public Color getPlayerColor(int playerNum){
@@ -230,9 +189,20 @@ public class CatanGUIController {
         oreIcon4.setFill(new ImagePattern(new Image("images/card_ore.png")));
     }
 
-    public void initializeGameBoard(){
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
+
+    public void initializeGameBoard(VertexGraph vertexGraph, Tile[] tiles, int numPlayers) {
         //called in initialization
-        Tile[] tiles = gameBoard.getTiles();
+        initializeTiles(tiles);
+
+        initializePorts(vertexGraph);
+
+        hidePlayerStatsIfNeeded(numPlayers);
+    }
+
+    private void initializeTiles(Tile[] tiles) {
         for(int i = 0; i < tiles.length; i++){
             Tile current = tiles[i];
             setHexBackground(hexagonTiles[i], current.getTerrain());
@@ -243,12 +213,17 @@ public class CatanGUIController {
                 numberBackgrounds[i].setVisible(false);
             }
         }
+    }
+
+    private void initializePorts(VertexGraph vertexGraph) {
         for(int p = 0; p < 9; p++){
             Port cur = vertexGraph.getPort(p);
             setPortTrade(ports[p], cur.getResourse());
         }
+    }
 
-        if(this.numPlayers < 3){
+    private void hidePlayerStatsIfNeeded(int numPlayers) {
+        if(numPlayers < 3){
             player3wood.setVisible(false);
             player3brick.setVisible(false);
             player3wool.setVisible(false);
@@ -262,7 +237,7 @@ public class CatanGUIController {
             grainIcon3.setVisible(false);
             oreIcon3.setVisible(false);
         }
-        if(this.numPlayers < 4){
+        if(numPlayers < 4){
             player4wood.setVisible(false);
             player4brick.setVisible(false);
             player4wool.setVisible(false);
@@ -278,7 +253,7 @@ public class CatanGUIController {
         }
     }
 
-    public void initializeSetupBoard(){
+    public void initializeSetupBoard(int numPlayers){
         setAllVerticesVisibility(false);
         rollButton.setDisable(false);
 
@@ -294,7 +269,7 @@ public class CatanGUIController {
         renderRoad(15, 2);
         renderRoad(58, 2);
 
-        if(this.numPlayers > 2){
+        if(numPlayers > 2){
             //blue
             renderSettlementOnVertex(vertices[44], getPlayerColor(3));
             renderSettlementOnVertex(vertices[40], getPlayerColor(3));
@@ -302,7 +277,7 @@ public class CatanGUIController {
             renderRoad(56, 3);
         }
 
-        if(this.numPlayers > 3){
+        if(numPlayers > 3){
             //red
             renderSettlementOnVertex(vertices[10], getPlayerColor(4));
             renderSettlementOnVertex(vertices[29], getPlayerColor(4));
@@ -313,7 +288,13 @@ public class CatanGUIController {
         this.updateInfoPane();
     }
 
-    public void updateInfoPane(){
+    // ----------------------------------------------------------------
+    //
+    // Handlers
+    //
+    // ----------------------------------------------------------------
+
+    private void updateInfoPane() {
         //Called in various places to update player data in pane
         Player[] tempPlayers = this.controller.getPlayerArr();
         this.playerTurnText.setText(Integer.toString(this.controller.getCurrentPlayer().playerNum));
@@ -365,6 +346,12 @@ public class CatanGUIController {
             player4ore.setText(Integer.toString(tempPlayers[3].hand.getResourceCardAmount(Resource.ORE)));
             player4vp.setText(Integer.toString(tempPlayers[3].victoryPoints));
         }
+    }
+
+    public void finishedMove() {
+        updateInfoPane();
+        this.guiState = CatanGUIController.GUIState.IDLE;
+        this.tooltipText.setText("");
     }
 
     //this method is called to disable everything on the board once a player has won the game
@@ -916,16 +903,14 @@ public class CatanGUIController {
         //Called from  PlayerTradeController.java
         SuccessCode code = this.controller.tradeWithPlayer(otherPlayer, giving, receiving);
         if(code==SuccessCode.SUCCESS){
-            updateInfoPane();
-            this.guiState = GUIState.IDLE;
-            this.tooltipText.setText("");
+            this.finishedMove();
         }
         return code;
     }
 
     public void bankTradeButtonPressed(MouseEvent event) throws IOException {
         //Triggered by Trade with Bank button pressed
-        if(this.controller.getState() == GameState.DEFAULT && this.guiState == GUIState.IDLE){
+        if(this.controller.getState() == GameState.DEFAULT && this.guiState == GUIState.IDLE) {
             FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("banktrade_window.fxml"));
             Stage stage = new Stage();
             Scene scene = new Scene(fxmlLoader.load());
@@ -934,28 +919,19 @@ public class CatanGUIController {
             stage.show();
 
             BankTradeWindowController bankTradeController = fxmlLoader.getController();
-            bankTradeController.setData(this, this.messages);
+            bankTradeController.setControllers(this, this.controller);
+            bankTradeController.setMessages(this.messages);
+
             this.tooltipText.setText(messages.getString("bankTrade"));
             this.guiState = GUIState.BUSY;
         }
-    }
-
-    public SuccessCode executeBankTrade(Resource giving, Resource receiving) {
-        // Called from BankTradeWindowController.java
-        SuccessCode success = this.controller.tradeWithBank(giving, receiving);
-        if (success == SuccessCode.SUCCESS) {
-            updateInfoPane();
-            this.guiState = GUIState.IDLE;
-            this.tooltipText.setText("");
-        }
-        return success;
     }
 
     //-------------------------------------------------------------------
 
     //CITY METHODS
 
-    public void renderCityOnVertex(double x, double y){
+    private void renderCityOnVertex(double x, double y) {
         Color color = getPlayerColor(this.controller.getCurrentPlayer().playerNum);
         //Construct new settlement
         Polygon newCity = new Polygon();
@@ -997,5 +973,4 @@ public class CatanGUIController {
             }
         }
     }
-
 }

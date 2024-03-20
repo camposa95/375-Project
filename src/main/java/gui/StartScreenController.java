@@ -1,5 +1,6 @@
 package gui;
 
+import controller.Controller;
 import gamedatastructures.GameType;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -7,9 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.util.ResourceBundle;
@@ -67,12 +66,20 @@ public class StartScreenController {
         stage.setScene(scene);
         stage.show();
 
+        // set up the game to start
+        int playerCount = Integer.parseInt(numPlayers);
+
+        // instantiate objects
         CatanGUIController guiController = fxmlLoader.getController();
-        guiController.setData(gameType, Integer.parseInt(numPlayers));
-        guiController.initializeGameBoard();
+        Controller domainController = GameLoader.instantiateGameObjects(gameType, playerCount);
+        guiController.setController(domainController);
+
+        // initialize the game-board
+        guiController.initializeGameBoard(GameLoader.getVertexGraph(), GameLoader.getTiles(), playerCount);
         if(gameType==GameType.Beginner){
-            guiController.initializeSetupBoard();
+            guiController.initializeSetupBoard(playerCount);
         }
+
         guiController.internationalize(messages);
     }
 }

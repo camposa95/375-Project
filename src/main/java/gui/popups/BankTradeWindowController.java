@@ -1,5 +1,6 @@
 package gui.popups;
 
+import controller.Controller;
 import controller.SuccessCode;
 import gamedatastructures.Resource;
 import gui.CatanGUIController;
@@ -22,6 +23,7 @@ public class BankTradeWindowController {
     private Text tooltip, bankTradeWindowTitleText, resourceGiveText, resourceReceiveText;
     private ToggleGroup giveGroup, receiveGroup;
     private CatanGUIController guiController;
+    private Controller domainController;
     private ResourceBundle messages;
 
     @FXML
@@ -42,6 +44,34 @@ public class BankTradeWindowController {
 
         giveLumber.setSelected(true);
         receiveLumber.setSelected(true);
+    }
+
+    public void setControllers(CatanGUIController guiController, Controller domainController) {
+        this.guiController = guiController;
+        this.domainController = domainController;
+    }
+
+    public void setMessages(ResourceBundle messages){
+        this.messages=messages;
+
+        bankTradeWindowTitleText.setText(messages.getString("bankTradeWindowTitleText"));
+        tradeButton.setText(messages.getString("bankTradeWindowSubmitTradeButton"));
+        cancelButton.setText(messages.getString("bankTradeWindowCancelTradeButton"));
+        tooltip.setText(messages.getString("bankTradeWindowTooltipSubmitText"));
+        resourceGiveText.setText(messages.getString("bankTradeWindowResourceGiveText"));
+        resourceReceiveText.setText(messages.getString("bankTradeWindowResourceReceiveText"));
+
+        giveLumber.setText(messages.getString("bankTradeWindowLumber"));
+        giveBrick.setText(messages.getString("bankTradeWindowBrick"));
+        giveWool.setText(messages.getString("bankTradeWindowWool"));
+        giveGrain.setText(messages.getString("bankTradeWindowGrain"));
+        giveOre.setText(messages.getString("bankTradeWindowOre"));
+
+        receiveLumber.setText(messages.getString("bankTradeWindowLumber"));
+        receiveBrick.setText(messages.getString("bankTradeWindowBrick"));
+        receiveWool.setText(messages.getString("bankTradeWindowWool"));
+        receiveGrain.setText(messages.getString("bankTradeWindowGrain"));
+        receiveOre.setText(messages.getString("bankTradeWindowOre"));
     }
 
     public Resource stringToResource(String resource){
@@ -67,7 +97,7 @@ public class BankTradeWindowController {
         if(giveSelected.equals(receiveSelected)){
             tooltip.setText(messages.getString("bankTradeWindowTooltipSameGiveReceive"));
         }else{
-            SuccessCode success = guiController.executeBankTrade(giveSelected, receiveSelected);
+            SuccessCode success = this.executeBankTrade(giveSelected, receiveSelected);
             if(success == SuccessCode.SUCCESS){
                 closeModal();
             }else if(success == SuccessCode.INSUFFICIENT_RESOURCES){
@@ -76,29 +106,15 @@ public class BankTradeWindowController {
         }
     }
 
-    public void setData(CatanGUIController gui, ResourceBundle messages){
-        this.messages=messages;
-        this.guiController = gui;
-
-        bankTradeWindowTitleText.setText(messages.getString("bankTradeWindowTitleText"));
-        tradeButton.setText(messages.getString("bankTradeWindowSubmitTradeButton"));
-        cancelButton.setText(messages.getString("bankTradeWindowCancelTradeButton"));
-        tooltip.setText(messages.getString("bankTradeWindowTooltipSubmitText"));
-        resourceGiveText.setText(messages.getString("bankTradeWindowResourceGiveText"));
-        resourceReceiveText.setText(messages.getString("bankTradeWindowResourceReceiveText"));
-
-        giveLumber.setText(messages.getString("bankTradeWindowLumber"));
-        giveBrick.setText(messages.getString("bankTradeWindowBrick"));
-        giveWool.setText(messages.getString("bankTradeWindowWool"));
-        giveGrain.setText(messages.getString("bankTradeWindowGrain"));
-        giveOre.setText(messages.getString("bankTradeWindowOre"));
-
-        receiveLumber.setText(messages.getString("bankTradeWindowLumber"));
-        receiveBrick.setText(messages.getString("bankTradeWindowBrick"));
-        receiveWool.setText(messages.getString("bankTradeWindowWool"));
-        receiveGrain.setText(messages.getString("bankTradeWindowGrain"));
-        receiveOre.setText(messages.getString("bankTradeWindowOre"));
+    private SuccessCode executeBankTrade(Resource giving, Resource receiving) {
+        // Called from BankTradeWindowController.java
+        SuccessCode success = domainController.tradeWithBank(giving, receiving);
+        if (success == SuccessCode.SUCCESS) {
+            this.guiController.finishedMove();
+        }
+        return success;
     }
+
     public void closeModal(){
         //close Bank Trade window
         Stage stage = (Stage) giveLumber.getScene().getWindow();
