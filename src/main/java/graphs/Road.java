@@ -2,13 +2,15 @@ package graphs;
 
 import java.util.Arrays;
 
+import SavingAndLoading.Memento;
+import SavingAndLoading.Restorable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.Player;
 
 /**
  * Represents a road on the map.
  */
-public class Road {
+public class Road implements Restorable {
 
     private static final int MAX_ADJACENT_ROADS = 4;
     private int locationId;
@@ -237,5 +239,34 @@ public class Road {
         }
 
         throw new IllegalStateException("This road only has one adjacent vertex?");
+    }
+
+    // -----------------------------------
+    //
+    // Restorable implementation
+    //
+    // -----------------------------------
+
+    public class RoadMemento implements Memento {
+        private final Player owner; // terminal
+
+        private RoadMemento() {
+            this.owner = Road.this.owner;
+        }
+
+        @Override
+        public void save() {
+
+        }
+    }
+
+    @Override
+    public Memento createMemento() {
+        return new RoadMemento();
+    }
+
+    @Override
+    public void restore(Memento m) {
+
     }
 }

@@ -1,10 +1,13 @@
 package controller;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import SavingAndLoading.Memento;
+import SavingAndLoading.Restorable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.CardNotPlayableException;
 import gamedatastructures.DevCard;
@@ -16,7 +19,7 @@ import gamedatastructures.NotEnoughResourcesException;
 import gamedatastructures.Player;
 import gamedatastructures.Resource;
 
-public class Controller {
+public class Controller implements Restorable {
 
     private Game game;
     private Player currentPlayer;
@@ -913,5 +916,59 @@ public class Controller {
                 }
             }
         }
+    }
+
+    // -----------------------------------
+    //
+    // Restorable implementation
+    //
+    // -----------------------------------
+
+    public class ControllerMemento implements Memento {
+
+        // simple fields
+        private final GamePhase gamePhase;
+        private final GameState gameState;
+        private final int currentPlayerNum;
+        private final int currentDie;
+        private final int lastPlacedVertex;
+        private final boolean devCardsEnabled;
+
+        // sub mementos
+        private final Memento gameMemento;
+        private final Memento[] playerMementos;
+
+        private ControllerMemento() {
+            // simple fields
+            this.gamePhase = Controller.this.gamePhase;
+            this.gameState = Controller.this.gameState;
+            this.currentPlayerNum = Controller.this.currentPlayerNum;
+            this.currentDie = Controller.this.currentDie;
+            this.lastPlacedVertex = Controller.this.lastPlacedVertex;
+            this.devCardsEnabled = Controller.this.devCardsEnabled;
+
+            // sub mementos
+            this.gameMemento = Controller.this.game.createMemento();
+
+            this.playerMementos = new Memento[Controller.this.playerArr.length];
+            for (int i = 0; i < Controller.this.playerArr.length; i++) {
+                this.playerMementos[i] = Controller.this.playerArr[i].createMemento();
+            }
+        }
+
+        @Override
+        public void save() {
+
+        }
+    }
+
+    @Override
+    public Memento createMemento() {
+        return new ControllerMemento();
+    }
+
+    @Override
+    public void restore(Memento m) {
+
     }
 }

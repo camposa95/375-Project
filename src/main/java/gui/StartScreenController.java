@@ -1,5 +1,6 @@
 package gui;
 
+import SavingAndLoading.GameLoader;
 import controller.Controller;
 import gamedatastructures.GameType;
 import javafx.collections.FXCollections;
@@ -70,15 +71,20 @@ public class StartScreenController {
         int playerCount = Integer.parseInt(numPlayers);
 
         // instantiate objects
+        GameLoader loader = GameLoader.getInstance();
+
+
         CatanGUIController guiController = fxmlLoader.getController();
-        Controller domainController = GameLoader.instantiateGameObjects(gameType, playerCount);
+        Controller domainController = loader.instantiateGameObjects(gameType, playerCount);
         guiController.setController(domainController);
 
         // initialize the game-board
-        guiController.initializeGameBoard(GameLoader.getVertexGraph(), GameLoader.getTiles(), playerCount);
+        guiController.initializeGameBoard(loader.getVertexGraph(), loader.getTiles(), playerCount);
         if(gameType==GameType.Beginner){
             guiController.initializeSetupBoard(playerCount);
         }
+
+        guiController.restore();
 
         guiController.internationalize(messages);
     }

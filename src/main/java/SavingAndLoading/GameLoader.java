@@ -1,13 +1,15 @@
-package gui;
+package SavingAndLoading;
 
 import controller.Controller;
 import gamedatastructures.*;
 import graphs.RoadGraph;
 import graphs.VertexGraph;
 
+import java.io.File;
+
 public class GameLoader {
 
-    // Text files that need to be loaded:
+    // Text files that need to be loaded for instantiation;
     private static final String ROAD_TO_ROAD_FILE = "src/main/java/graphs/RoadToRoadLayout.txt";
     private static final String ROAD_TO_VERTEX_FILE = "src/main/java/graphs/RoadToVertexLayout.txt";
     private static final String VERTEX_TO_VERTEX_FILE = "src/main/java/graphs/VertexToVertexLayout.txt";
@@ -15,11 +17,24 @@ public class GameLoader {
     private static final String VERTEX_TO_ROAD_FILE = "src/main/java/graphs/VertexToRoadLayout.txt";
     private static final String TILE_LAYOUT = "src/main/java/gamedatastructures/TileLayout.txt";
 
-    // temp fields to help with loading stuff.
-    private static VertexGraph vertexGraph;
-    private static GameBoard gameBoard;
+    private static GameLoader uniqueInstance = null;
 
-    public static Controller instantiateGameObjects(GameType gameType, int numPlayers) {
+    private VertexGraph vertexGraph;
+    private GameBoard gameBoard;
+    private Controller controller;
+
+    private GameLoader() {
+        // restricts access
+    }
+
+    public static synchronized GameLoader getInstance() {
+        if (uniqueInstance == null) {
+            uniqueInstance = new GameLoader();
+        }
+        return uniqueInstance;
+    }
+
+    public Controller instantiateGameObjects(GameType gameType, int numPlayers) {
         RoadGraph roadGraph = new RoadGraph();
         vertexGraph = new VertexGraph();
         roadGraph.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_FILE);
@@ -38,14 +53,25 @@ public class GameLoader {
             players[i] = player;
         }
 
-       return new Controller(game, players, gameType);
+        controller = new Controller(game, players, gameType);
+
+        return controller;
     }
 
-    public static VertexGraph getVertexGraph() {
+    public void saveGame() {
+        Memento root = this.controller.createMemento();
+        root.save();
+    }
+
+    public void loadGame() {
+
+    }
+
+    public VertexGraph getVertexGraph() {
         return vertexGraph;
     }
 
-    public static Tile[] getTiles() {
+    public Tile[] getTiles() {
         return gameBoard.getTiles();
     }
 }

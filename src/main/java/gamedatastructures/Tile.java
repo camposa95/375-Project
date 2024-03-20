@@ -1,8 +1,11 @@
 package gamedatastructures;
 
+import SavingAndLoading.Memento;
+import SavingAndLoading.Restorable;
+
 import java.util.Arrays;
 
-public class Tile {
+public class Tile implements Restorable {
     private static final int NUM_VERTEXES = 6;
     private Terrain terrainType;
     private int dieNumber;
@@ -83,5 +86,42 @@ public class Tile {
     //testing purposes only
     void setDie(final int newDie) {
         this.dieNumber = newDie;
+    }
+
+    // -----------------------------------
+    //
+    // Restorable implementation
+    //
+    // -----------------------------------
+
+    public class TileMemento implements Memento {
+        private Terrain terrainType;
+        private int dieNumber;
+        private int tileNumber;
+        private boolean hasRobber;
+        private int[] vertexIDs;
+
+        private TileMemento() {
+            this.terrainType = Tile.this.terrainType;
+            this.dieNumber = Tile.this.dieNumber;
+            this.tileNumber = Tile.this.dieNumber;
+            this.hasRobber = Tile.this.hasRobber;
+            this.vertexIDs = Tile.this.vertexIDs;
+        }
+
+        @Override
+        public void save() {
+
+        }
+    }
+
+    @Override
+    public Memento createMemento() {
+        return new TileMemento();
+    }
+
+    @Override
+    public void restore(Memento m) {
+
     }
 }

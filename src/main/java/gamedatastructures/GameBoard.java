@@ -7,9 +7,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Scanner;
 
+import SavingAndLoading.Memento;
+import SavingAndLoading.Restorable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-public class GameBoard {
+public class GameBoard implements Restorable {
     private static final int NUM_TILES = 19;
     private final Terrain[] terrainOrder = {Terrain.MOUNTAINS, Terrain.PASTURE, Terrain.FORREST, Terrain.FIELDS, Terrain.HILLS, Terrain.PASTURE, Terrain.HILLS, Terrain.FIELDS, Terrain.FORREST,  Terrain.DESERT, Terrain.FORREST, Terrain.MOUNTAINS, Terrain.FORREST, Terrain.MOUNTAINS, Terrain.FIELDS, Terrain.PASTURE, Terrain.HILLS, Terrain.FIELDS, Terrain.PASTURE};
     private final Integer[] dieOrder = {10, 2, 9, 12, 6, 4, 10, 9, 11, 7, 3, 8, 8, 3, 4, 5, 5, 6, 11};
@@ -87,5 +89,48 @@ public class GameBoard {
     @SuppressFBWarnings("EI_EXPOSE_REP2")
     public void setRobberTile(final Tile tile) {
         this.robberTile = tile;
+    }
+
+    // -----------------------------------
+    //
+    // Restorable implementation
+    //
+    // -----------------------------------
+
+    public class GameBoardMemento implements Memento {
+        // simple fields
+        private final Terrain[] terrainOrder;
+        private final Integer[] dieOrder;
+        private final int robberTileNum;
+
+        // sub mementos
+        private final Memento[] tileMementos;
+
+        private GameBoardMemento() {
+            this.terrainOrder = Arrays.copyOf(GameBoard.this.terrainOrder, GameBoard.this.terrainOrder.length);
+            this.dieOrder = Arrays.copyOf(GameBoard.this.dieOrder, GameBoard.this.dieOrder.length);
+            this.robberTileNum = GameBoard.this.robberTile.getTileNumber();
+
+            // sub mementos
+            this.tileMementos = new Memento[GameBoard.this.tiles.length];
+            for (int i = 0; i < GameBoard.this.tiles.length; i++) {
+                this.tileMementos[i] = GameBoard.this.tiles[i].createMemento();
+            }
+        }
+
+        @Override
+        public void save() {
+
+        }
+    }
+
+    @Override
+    public Memento createMemento() {
+        return new GameBoardMemento();
+    }
+
+    @Override
+    public void restore(Memento m) {
+
     }
 }

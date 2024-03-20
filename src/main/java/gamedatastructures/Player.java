@@ -2,9 +2,11 @@ package gamedatastructures;
 
 import java.util.Arrays;
 
+import SavingAndLoading.Memento;
+import SavingAndLoading.Restorable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-public class Player {
+public class Player implements Restorable {
     private static final int MAX_SETTLEMENTS = 5;
     private static final int MAX_ROADS = 15;
     private static final int TOTAL_PORTS = 9;
@@ -14,7 +16,7 @@ public class Player {
     private static final int MAX_CITIES = 4;
 
     @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD") //warning is temporary
-    public int playerNum;
+    public final int playerNum;
     public Hand hand;
     public int victoryPoints;
     public boolean hasPlayedDevCard;
@@ -420,5 +422,61 @@ public class Player {
     public void removeLargestArmyCard() {
         this.victoryPoints -= 2;
         this.hasLargestArmy = false;
+    }
+
+    // -----------------------------------
+    //
+    // Restorable implementation
+    //
+    // -----------------------------------
+
+    public class PlayerMemento implements Memento {
+
+        // simple fields
+        private final int victoryPoints;
+        private final boolean hasPlayedDevCard;
+        private final int numKnightsPlayed;
+        private final int numSettlements;
+        private final int numRoads;
+        private final int numCities;
+        private final Resource[] tradeBoosts;
+        private final int numTradeBoosts;
+        private final boolean hasLongestRoadCard;
+        private final boolean hasLargestArmy;
+
+        // sub mementos
+        private final Memento handMemento;
+
+        private PlayerMemento() {
+            // simple fields
+            this.victoryPoints = Player.this.victoryPoints;
+            this.hasPlayedDevCard = Player.this.hasPlayedDevCard;
+            this.numKnightsPlayed = Player.this.numKnightsPlayed;
+            this.numSettlements = Player.this.numSettlements;
+            this.numRoads = Player.this.numRoads;
+            this.numCities = Player.this.numCities;
+            this.tradeBoosts = Arrays.copyOf(Player.this.tradeBoosts, Player.this.tradeBoosts.length);
+            this.numTradeBoosts = Player.this.numTradeBoosts;
+            this.hasLongestRoadCard = Player.this.hasLongestRoadCard;
+            this.hasLargestArmy = Player.this.hasLargestArmy;
+
+            // sub mementos
+            this.handMemento = Player.this.hand.createMemento();
+        }
+
+        @Override
+        public void save() {
+
+        }
+    }
+
+    @Override
+    public Memento createMemento() {
+        return new PlayerMemento();
+    }
+
+    @Override
+    public void restore(Memento m) {
+
     }
 }

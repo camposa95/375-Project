@@ -1,10 +1,13 @@
 package gamedatastructures;
 
+import SavingAndLoading.Memento;
+import SavingAndLoading.Restorable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class DevelopmentCardDeck {
+public class DevelopmentCardDeck implements Restorable {
     private DevCard[] defaultDeck = {
         DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT,
         DevCard.VICTORY, DevCard.VICTORY, DevCard.VICTORY, DevCard.VICTORY, DevCard.VICTORY,
@@ -54,5 +57,35 @@ public class DevelopmentCardDeck {
     //emptys out the deck
     void empty() {
         this.deck =  new ArrayList<DevCard>();
+    }
+
+    // -----------------------------------
+    //
+    // Restorable implementation
+    //
+    // -----------------------------------
+
+    public class DevCardDeckMemento implements Memento {
+        private final ArrayList<DevCard> deck;
+
+        private DevCardDeckMemento() {
+            this.deck = new ArrayList<>();
+            this.deck.addAll(DevelopmentCardDeck.this.deck);
+        }
+
+        @Override
+        public void save() {
+
+        }
+    }
+
+    @Override
+    public Memento createMemento() {
+        return new DevCardDeckMemento();
+    }
+
+    @Override
+    public void restore(Memento m) {
+
     }
 }

@@ -1,9 +1,12 @@
 package gamedatastructures;
 
+import SavingAndLoading.Memento;
+import SavingAndLoading.Restorable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Hand {
+public class Hand implements Restorable {
     private HashMap<Resource, Integer> hand = new HashMap<>();
     private static final int MAX_AMOUNT = 19;
     private static final int MAX_KNIGHTS = 14;
@@ -141,5 +144,44 @@ public class Hand {
         }
         Resource[] rArr = resources.toArray(new Resource[resources.size()]);
         return rArr;
+    }
+
+    // -----------------------------------
+    //
+    // Restorable implementation
+    //
+    // -----------------------------------
+
+    public class HandMemento implements Memento {
+
+        private final HashMap<Resource, Integer> hand;
+        private final HashMap<DevCard, Integer> devCards;
+        private final HashMap<DevCard, Integer> devCardsBoughtThisTurn;
+
+        private HandMemento() {
+            this.hand = new HashMap<>();
+            this.hand.putAll(Hand.this.hand);
+
+            this.devCards = new HashMap<>();
+            this.devCards.putAll(Hand.this.devCards);
+
+            this.devCardsBoughtThisTurn = new HashMap<>();
+            this.devCardsBoughtThisTurn.putAll(Hand.this.devCardsBoughtThisTurn);
+        }
+
+        @Override
+        public void save() {
+
+        }
+    }
+
+    @Override
+    public Memento createMemento() {
+        return new HandMemento();
+    }
+
+    @Override
+    public void restore(Memento m) {
+
     }
 }

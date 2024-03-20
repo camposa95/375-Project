@@ -10,13 +10,15 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import SavingAndLoading.Memento;
+import SavingAndLoading.Restorable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.Player;
 
 /**
  * Graph for the Roads on the map
  */
-public class RoadGraph {
+public class RoadGraph implements Restorable {
 
     private static final int NUM_ROADS = 72;
     private static final int MAX_ADJACENT_ROADS = 4;
@@ -346,5 +348,38 @@ public class RoadGraph {
         }
 
         return players;
+    }
+
+    // -----------------------------------
+    //
+    // Restorable implementation
+    //
+    // -----------------------------------
+
+    public class RoadGraphMemento implements Memento {
+
+        private final Memento[] roadMementos;
+
+        private RoadGraphMemento() {
+            this.roadMementos = new Memento[RoadGraph.this.roads.length];
+            for (int i = 0; i < RoadGraph.this.roads.length; i++) {
+                this.roadMementos[i] = RoadGraph.this.roads[i].createMemento();
+            }
+        }
+
+        @Override
+        public void save() {
+
+        }
+    }
+
+    @Override
+    public Memento createMemento() {
+        return new RoadGraphMemento();
+    }
+
+    @Override
+    public void restore(Memento m) {
+
     }
 }

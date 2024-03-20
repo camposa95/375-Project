@@ -69,7 +69,6 @@ public class CatanGUIController {
     private Circle[] robberSpots;
     private HashMap<Circle, Polygon> settlementsAndCitiesBuilt = new HashMap<>();
 
-    Controller controller;
     HashMap<Polygon, Integer> settlementToVertexMap = new HashMap<>();
     ResourceBundle messages;
 
@@ -77,6 +76,8 @@ public class CatanGUIController {
         BUSY, IDLE, GAME_WON
     }
     public GUIState guiState;
+
+    Controller controller; // facade to main game stuff
 
     private void setupGUIEntityLists(){
         hexagonTiles = new Polygon[]{hex0, hex1, hex2, hex3, hex4, hex5, hex6, hex7, hex8, hex9, hex10, hex11, hex12, hex13, hex14, hex15, hex16, hex17, hex18};
@@ -287,6 +288,10 @@ public class CatanGUIController {
             grainIcon4.setVisible(false);
             oreIcon4.setVisible(false);
         }
+    }
+
+    public void restore() {
+
     }
 
     public void initializeSetupBoard(int numPlayers){

@@ -1,12 +1,14 @@
 package graphs;
 
+import SavingAndLoading.Memento;
+import SavingAndLoading.Restorable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.Player;
 
 /**
  * Represents a location on the ma
  */
-public class Vertex {
+public class Vertex implements Restorable {
 
     private final int locationId;
     private Vertex[] adjacentVertexes;
@@ -309,5 +311,36 @@ public class Vertex {
         }
 
         return this.getOwner() != player;
+    }
+
+    // -----------------------------------
+    //
+    // Restorable implementation
+    //
+    // -----------------------------------
+
+    public class VertexMemento implements Memento {
+        private final Player owner; // terminal here
+        private final boolean isCity;
+
+        private VertexMemento() {
+            this.isCity = Vertex.this.isCity;
+            this.owner = Vertex.this.owner;
+        }
+
+        @Override
+        public void save() {
+
+        }
+    }
+
+    @Override
+    public Memento createMemento() {
+        return new VertexMemento();
+    }
+
+    @Override
+    public void restore(Memento m) {
+
     }
 }

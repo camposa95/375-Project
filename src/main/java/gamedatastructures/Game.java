@@ -4,6 +4,9 @@ import java.time.temporal.ValueRange;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
+
+import SavingAndLoading.Memento;
+import SavingAndLoading.Restorable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import graphs.Road;
@@ -11,7 +14,7 @@ import graphs.RoadGraph;
 import graphs.Vertex;
 import graphs.VertexGraph;
 
-public class Game {
+public class Game implements Restorable {
     private final GameBoard gameBoard;
     private final VertexGraph vertexes;
     private final RoadGraph roads;
@@ -317,6 +320,50 @@ public class Game {
         Resource[] resources = {resource1, resource2};
         bank.removeResources(resources);
         player.hand.addResources(resources);
+
+    }
+
+    // -----------------------------------
+    //
+    // Restorable implementation
+    //
+    // -----------------------------------
+
+    public class GameMemento implements Memento {
+
+        // simple fields
+        private final boolean setup;
+
+        // sub mementos
+        private final Memento gameBoardMemento;
+        private final Memento vertexesMemento;
+        private final Memento roadsMemento;
+        private final Memento deckMemento;
+
+        private GameMemento() {
+            // simple fields
+            this.setup = Game.this.setup;
+
+            // sub mementos
+            this.gameBoardMemento = Game.this.gameBoard.createMemento();
+            this.vertexesMemento = Game.this.vertexes.createMemento();
+            this.roadsMemento = Game.this.roads.createMemento();
+            this.deckMemento = Game.this.deck.createMemento();
+        }
+
+        @Override
+        public void save() {
+
+        }
+    }
+
+    @Override
+    public Memento createMemento() {
+        return new GameMemento();
+    }
+
+    @Override
+    public void restore(Memento m) {
 
     }
 }

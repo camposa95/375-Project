@@ -2,10 +2,12 @@ package gamedatastructures;
 
 import java.util.HashMap;
 
+import SavingAndLoading.Memento;
+import SavingAndLoading.Restorable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 //SINGLETON CLASS
-public class Bank {
+public class Bank implements Restorable {
 
     @SuppressFBWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
     private static Bank singleBankInstance = null;
@@ -85,5 +87,36 @@ public class Bank {
             this.removeResource(resources[i], 1);
         }
         return true;
+    }
+
+    // -----------------------------------
+    //
+    // Restorable implementation
+    //
+    // -----------------------------------
+
+    public class BankMemento implements Memento {
+
+        private final HashMap<Resource, Integer> bank;
+
+        private BankMemento() {
+            this.bank = new HashMap<>();
+            this.bank.putAll(Bank.this.bank);
+        }
+
+        @Override
+        public void save() {
+
+        }
+    }
+
+    @Override
+    public Memento createMemento() {
+        return new BankMemento();
+    }
+
+    @Override
+    public void restore(Memento m) {
+
     }
 }

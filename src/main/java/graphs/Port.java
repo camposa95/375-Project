@@ -1,8 +1,10 @@
 package graphs;
 
+import SavingAndLoading.Memento;
+import SavingAndLoading.Restorable;
 import gamedatastructures.Resource;
 
-public class Port {
+public class Port implements Restorable {
 
     private final int locationId;
     private Resource resource;
@@ -31,4 +33,32 @@ public class Port {
         return this.resource;
     }
 
+    // -----------------------------------
+    //
+    // Restorable implementation
+    //
+    // -----------------------------------
+
+    public class PortMemento implements Memento {
+        private final Resource resource;
+
+        private PortMemento() {
+            this.resource = Port.this.resource;
+        }
+
+        @Override
+        public void save() {
+
+        }
+    }
+
+    @Override
+    public Memento createMemento() {
+        return new PortMemento();
+    }
+
+    @Override
+    public void restore(Memento m) {
+
+    }
 }

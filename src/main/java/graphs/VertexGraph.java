@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Scanner;
 
+import SavingAndLoading.Memento;
+import SavingAndLoading.Restorable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.GameType;
 import gamedatastructures.Resource;
@@ -14,7 +16,7 @@ import gamedatastructures.Resource;
 /**
  * Graph of the locations on the map
  */
-public class VertexGraph {
+public class VertexGraph implements Restorable {
 
     private static final int NUM_VERTICES = 54;
     private static final int NUM_PORTS = 9;
@@ -189,5 +191,52 @@ public class VertexGraph {
         }
 
         return resourceOrder;
+    }
+
+    // -----------------------------------
+    //
+    // Restorable implementation
+    //
+    // -----------------------------------
+
+    public class VertexGraphMemento implements Memento {
+
+        // simple fields
+        private final Resource[] portResources;
+
+        // sub mementos
+        private final Memento[] vertexMementos;
+        private final Memento[] portMementos;
+
+        private VertexGraphMemento() {
+            // simple fields
+            this.portResources = Arrays.copyOf(VertexGraph.this.portResources, VertexGraph.this.portResources.length);
+
+            // sub mementos
+            this.vertexMementos = new Memento[VertexGraph.this.vertexes.length];
+            for (int i = 0; i < VertexGraph.this.vertexes.length; i++) {
+                this.vertexMementos[i] = VertexGraph.this.vertexes[i].createMemento();
+            }
+
+            this.portMementos = new Memento[VertexGraph.this.ports.length];
+            for (int i = 0; i < VertexGraph.this.ports.length; i++) {
+                this.portMementos[i] = VertexGraph.this.ports[i].createMemento();
+            }
+        }
+
+        @Override
+        public void save() {
+
+        }
+    }
+
+    @Override
+    public Memento createMemento() {
+        return new VertexGraphMemento();
+    }
+
+    @Override
+    public void restore(Memento m) {
+
     }
 }
