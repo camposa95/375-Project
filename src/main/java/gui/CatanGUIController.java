@@ -1,5 +1,6 @@
 package gui;
 
+import SavingAndLoading.GameLoader;
 import controller.Controller;
 import controller.GameState;
 import controller.SuccessCode;
@@ -334,6 +335,15 @@ public class CatanGUIController {
     // Handlers
     //
     // ----------------------------------------------------------------
+
+    public void saveButtonPressed(MouseEvent event) throws IOException {
+        if (this.controller.getState() == GameState.TURN_START && this.guiState == GUIState.IDLE) {
+            GameLoader.getInstance().saveGame();
+        } else {
+            // TODO: Add a tooltip to say you can only save the game at the start of a turndd
+            System.out.println("can only save at start of turn");
+        }
+    }
 
     public void finishedMove() {
         updateInfoPane();
