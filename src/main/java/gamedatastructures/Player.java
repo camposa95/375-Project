@@ -1,8 +1,10 @@
 package gamedatastructures;
 
+import java.io.File;
 import java.util.Arrays;
 
 import SavingAndLoading.Memento;
+import SavingAndLoading.MementoWriter;
 import SavingAndLoading.Restorable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -386,7 +388,7 @@ public class Player implements Restorable {
 
     /**
      * Simple setter for integration testing purposes
-     * @param numRoads
+     * @param num
      */
     public void setNumRoads(final int num) {
         this.numRoads = num;
@@ -465,9 +467,31 @@ public class Player implements Restorable {
         }
 
         @Override
-        public void save() {
+        public void save(File folder) {
+            // Create a MementoWriter for writing memento data
+            MementoWriter writer = new MementoWriter(folder, "player.txt");
 
+            // Write simple fields to the file
+            writer.writeField("VictoryPoints", Integer.toString(victoryPoints));
+            writer.writeField("HasPlayedDevCard", Boolean.toString(hasPlayedDevCard));
+            writer.writeField("NumKnightsPlayed", Integer.toString(numKnightsPlayed));
+            writer.writeField("NumSettlements", Integer.toString(numSettlements));
+            writer.writeField("NumRoads", Integer.toString(numRoads));
+            writer.writeField("NumCities", Integer.toString(numCities));
+            writer.writeField("NumTradeBoosts", Integer.toString(numTradeBoosts));
+            writer.writeField("HasLongestRoadCard", Boolean.toString(hasLongestRoadCard));
+            writer.writeField("HasLargestArmy", Boolean.toString(hasLargestArmy));
+
+            // Write trade boosts to the file
+            for (int i = 0; i < tradeBoosts.length; i++) {
+                writer.writeField("TradeBoost" + (i + 1), tradeBoosts[i].toString());
+            }
+
+            // Delegate saving of the hand to its own memento
+            File handFolder = writer.getSubFolder("Hand");
+            handMemento.save(handFolder);
         }
+
     }
 
     @Override

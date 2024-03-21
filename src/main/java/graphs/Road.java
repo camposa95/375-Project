@@ -1,8 +1,10 @@
 package graphs;
 
+import java.io.File;
 import java.util.Arrays;
 
 import SavingAndLoading.Memento;
+import SavingAndLoading.MementoWriter;
 import SavingAndLoading.Restorable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.Player;
@@ -255,9 +257,14 @@ public class Road implements Restorable {
         }
 
         @Override
-        public void save() {
+        public void save(File folder) {
+            // Create a MementoWriter for writing memento data
+            MementoWriter writer = new MementoWriter(folder, "road.txt");
 
+            // Write simple fields to the file
+            writer.writeField("Owner", owner != null ? owner.toString() : "None");
         }
+
     }
 
     @Override

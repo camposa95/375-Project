@@ -59,8 +59,24 @@ public class GameLoader {
     }
 
     public void saveGame() {
+        // Define the base folder path
+        String baseFolderPath = "src/main/java/SavingAndLoading/SavedGames/slot1";
+
+        // Create a File object representing the base folder
+        File baseFolder = new File(baseFolderPath);
+
+        // Create a MementoWriter for writing memento data
+        MementoWriter writer = new MementoWriter(baseFolder, "slot1.txt");
+
+        // Save the root memento in the root folder
+        File rootFolder = writer.getSubFolder("Root");
         Memento root = this.controller.createMemento();
-        root.save();
+        root.save(rootFolder);
+
+        // Save the bank memento in the bank folder
+        File bankFolder = writer.getSubFolder("Bank");
+        Memento bank = Bank.getInstance().createMemento();
+        bank.save(bankFolder);
     }
 
     public void loadGame() {

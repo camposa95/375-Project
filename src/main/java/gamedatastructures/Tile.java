@@ -1,8 +1,10 @@
 package gamedatastructures;
 
 import SavingAndLoading.Memento;
+import SavingAndLoading.MementoWriter;
 import SavingAndLoading.Restorable;
 
+import java.io.File;
 import java.util.Arrays;
 
 public class Tile implements Restorable {
@@ -110,8 +112,16 @@ public class Tile implements Restorable {
         }
 
         @Override
-        public void save() {
+        public void save(File folder) {
+            // Create a MementoWriter for writing memento data
+            MementoWriter writer = new MementoWriter(folder, "tile_" + tileNumber + ".txt");
 
+            // Write simple fields to the file
+            writer.writeField("TerrainType", terrainType.toString());
+            writer.writeField("DieNumber", Integer.toString(dieNumber));
+            writer.writeField("TileNumber", Integer.toString(tileNumber));
+            writer.writeField("HasRobber", Boolean.toString(hasRobber));
+            writer.writeField("VertexIDs", Arrays.toString(vertexIDs));
         }
     }
 

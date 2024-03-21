@@ -1,8 +1,11 @@
 package gamedatastructures;
 
+import java.io.File;
 import java.util.HashMap;
+import java.util.Map;
 
 import SavingAndLoading.Memento;
+import SavingAndLoading.MementoWriter;
 import SavingAndLoading.Restorable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -105,9 +108,16 @@ public class Bank implements Restorable {
         }
 
         @Override
-        public void save() {
+        public void save(File folder) {
+            // Create a MementoWriter for writing memento data
+            MementoWriter writer = new MementoWriter(folder, "bank.txt");
 
+            // Write the state of the bank's attributes to the file
+            for (Map.Entry<Resource, Integer> entry : bank.entrySet()) {
+                writer.writeField(entry.getKey().toString(), entry.getValue().toString());
+            }
         }
+
     }
 
     @Override

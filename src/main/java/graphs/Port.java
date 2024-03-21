@@ -1,8 +1,11 @@
 package graphs;
 
 import SavingAndLoading.Memento;
+import SavingAndLoading.MementoWriter;
 import SavingAndLoading.Restorable;
 import gamedatastructures.Resource;
+
+import java.io.File;
 
 public class Port implements Restorable {
 
@@ -47,9 +50,14 @@ public class Port implements Restorable {
         }
 
         @Override
-        public void save() {
+        public void save(File folder) {
+            // Create a MementoWriter for writing memento data
+            MementoWriter writer = new MementoWriter(folder, "port.txt");
 
+            // Write simple fields to the file
+            writer.writeField("Resource", resource.toString());
         }
+
     }
 
     @Override

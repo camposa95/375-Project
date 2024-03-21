@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Scanner;
 
 import SavingAndLoading.Memento;
+import SavingAndLoading.MementoWriter;
 import SavingAndLoading.Restorable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.GameType;
@@ -225,8 +226,25 @@ public class VertexGraph implements Restorable {
         }
 
         @Override
-        public void save() {
+        public void save(File folder) {
+            // Create a MementoWriter for writing memento data
+            MementoWriter writer = new MementoWriter(folder, "vertexgraph.txt");
 
+            // Write simple fields to the file
+            writer.writeField("PortResources", Arrays.toString(portResources));
+
+            // Save sub mementos' state
+            for (int i = 0; i < vertexMementos.length; i++) {
+                // Create a subfolder for each vertex's memento
+                File vertexSubFolder = writer.getSubFolder("Vertex" + (i + 1));
+                vertexMementos[i].save(vertexSubFolder);
+            }
+
+            for (int i = 0; i < portMementos.length; i++) {
+                // Create a subfolder for each port's memento
+                File portSubFolder = writer.getSubFolder("Port" + (i + 1));
+                portMementos[i].save(portSubFolder);
+            }
         }
     }
 

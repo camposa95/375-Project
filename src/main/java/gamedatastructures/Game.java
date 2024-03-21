@@ -1,11 +1,13 @@
 package gamedatastructures;
 
+import java.io.File;
 import java.time.temporal.ValueRange;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
 import SavingAndLoading.Memento;
+import SavingAndLoading.MementoWriter;
 import SavingAndLoading.Restorable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -352,8 +354,25 @@ public class Game implements Restorable {
         }
 
         @Override
-        public void save() {
+        public void save(File folder) {
+            // Create a MementoWriter for writing memento data
+            MementoWriter writer = new MementoWriter(folder, "game.txt");
 
+            // Write simple fields to the file
+            writer.writeField("Setup", Boolean.toString(setup));
+
+            // Save sub mementos' state
+            File gameBoardSubFolder = writer.getSubFolder("GameBoard");
+            gameBoardMemento.save(gameBoardSubFolder);
+
+            File vertexesSubFolder = writer.getSubFolder("Vertexes");
+            vertexesMemento.save(vertexesSubFolder);
+
+            File roadsSubFolder = writer.getSubFolder("Roads");
+            roadsMemento.save(roadsSubFolder);
+
+            File deckSubFolder = writer.getSubFolder("Deck");
+            deckMemento.save(deckSubFolder);
         }
     }
 

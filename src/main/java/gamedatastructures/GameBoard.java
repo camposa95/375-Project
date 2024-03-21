@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Scanner;
 
 import SavingAndLoading.Memento;
+import SavingAndLoading.MementoWriter;
 import SavingAndLoading.Restorable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -119,8 +120,21 @@ public class GameBoard implements Restorable {
         }
 
         @Override
-        public void save() {
+        public void save(File folder) {
+            // Create a MementoWriter for writing memento data
+            MementoWriter writer = new MementoWriter(folder, "gameboard.txt");
 
+            // Write simple fields to the file
+            writer.writeField("TerrainOrder", Arrays.toString(terrainOrder));
+            writer.writeField("DieOrder", Arrays.toString(dieOrder));
+            writer.writeField("RobberTileNum", Integer.toString(robberTileNum));
+
+            // Save sub mementos' state
+            for (int i = 0; i < tileMementos.length; i++) {
+                // Create a subfolder for each tile's memento
+                File tileSubFolder = writer.getSubFolder("Tile" + (i + 1));
+                tileMementos[i].save(tileSubFolder);
+            }
         }
     }
 

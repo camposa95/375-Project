@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import SavingAndLoading.Memento;
+import SavingAndLoading.MementoWriter;
 import SavingAndLoading.Restorable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.Player;
@@ -368,9 +369,18 @@ public class RoadGraph implements Restorable {
         }
 
         @Override
-        public void save() {
+        public void save(File folder) {
+            // Create a MementoWriter for writing memento data
+            MementoWriter writer = new MementoWriter(folder, "roadgraph.txt");
 
+            // Save sub mementos' state
+            for (int i = 0; i < roadMementos.length; i++) {
+                // Create a subfolder for each road's memento
+                File roadSubFolder = writer.getSubFolder("Road" + (i + 1));
+                roadMementos[i].save(roadSubFolder);
+            }
         }
+
     }
 
     @Override

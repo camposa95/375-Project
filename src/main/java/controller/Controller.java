@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import SavingAndLoading.Memento;
+import SavingAndLoading.MementoWriter;
 import SavingAndLoading.Restorable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.CardNotPlayableException;
@@ -957,8 +958,30 @@ public class Controller implements Restorable {
         }
 
         @Override
-        public void save() {
+        public void save(File folder) {
+            // Create a MementoWriter for writing memento data
+            MementoWriter writer = new MementoWriter(folder, "controller.txt");
 
+            // Write simple fields to the file
+            writer.writeField("GamePhase", gamePhase.toString());
+            writer.writeField("GameState", gameState.toString());
+            writer.writeField("CurrentPlayerNum", Integer.toString(currentPlayerNum));
+            writer.writeField("CurrentDie", Integer.toString(currentDie));
+            writer.writeField("LastPlacedVertex", Integer.toString(lastPlacedVertex));
+            writer.writeField("DevCardsEnabled", Boolean.toString(devCardsEnabled));
+
+            // delegate to sub mementos
+
+            // Save game memento's state to the appropriate subfolder
+            File gameSubFolder = writer.getSubFolder("Game");
+            gameMemento.save(gameSubFolder);
+
+            // Save player mementos to separate subfolders
+            for (int i = 0; i < playerMementos.length; i++) {
+                // Create a subfolder for each player's memento
+                File playerSubFolder = writer.getSubFolder("Player" + (i + 1));
+                playerMementos[i].save(playerSubFolder);
+            }
         }
     }
 

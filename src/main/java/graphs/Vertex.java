@@ -1,9 +1,12 @@
 package graphs;
 
 import SavingAndLoading.Memento;
+import SavingAndLoading.MementoWriter;
 import SavingAndLoading.Restorable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.Player;
+
+import java.io.File;
 
 /**
  * Represents a location on the ma
@@ -329,8 +332,13 @@ public class Vertex implements Restorable {
         }
 
         @Override
-        public void save() {
+        public void save(File folder) {
+            // Create a MementoWriter for writing memento data
+            MementoWriter writer = new MementoWriter(folder, "vertex.txt");
 
+            // Write simple fields to the file
+            writer.writeField("Owner", owner != null ? owner.toString() : "None");
+            writer.writeField("IsCity", Boolean.toString(isCity));
         }
     }
 

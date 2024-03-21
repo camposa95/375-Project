@@ -1,8 +1,10 @@
 package gamedatastructures;
 
 import SavingAndLoading.Memento;
+import SavingAndLoading.MementoWriter;
 import SavingAndLoading.Restorable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -74,8 +76,15 @@ public class DevelopmentCardDeck implements Restorable {
         }
 
         @Override
-        public void save() {
+        public void save(File folder) {
+            // Create a MementoWriter for writing memento data
+            MementoWriter writer = new MementoWriter(folder, "devcarddeck.txt");
 
+            // Write each DevCard in the deck to the file with a unique field name
+            for (int i = 0; i < deck.size(); i++) {
+                DevCard card = deck.get(i);
+                writer.writeField("DevCard" + (i + 1), card.toString());
+            }
         }
     }
 

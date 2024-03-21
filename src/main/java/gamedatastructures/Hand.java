@@ -1,10 +1,13 @@
 package gamedatastructures;
 
 import SavingAndLoading.Memento;
+import SavingAndLoading.MementoWriter;
 import SavingAndLoading.Restorable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Hand implements Restorable {
     private HashMap<Resource, Integer> hand = new HashMap<>();
@@ -170,8 +173,21 @@ public class Hand implements Restorable {
         }
 
         @Override
-        public void save() {
+        public void save(File folder) {
+            // Create a MementoWriter for writing memento data
+            MementoWriter writer = new MementoWriter(folder, "hand.txt");
 
+            // Write the state of the hand's attributes to the file
+            writeHashMap(writer, "Hand", hand);
+            writeHashMap(writer, "DevCards", devCards);
+            writeHashMap(writer, "DevCardsBoughtThisTurn", devCardsBoughtThisTurn);
+        }
+
+        // Helper method to write a HashMap to the file
+        private void writeHashMap(MementoWriter writer, String fieldName, HashMap<?, Integer> hashMap) {
+            for (Map.Entry<?, Integer> entry : hashMap.entrySet()) {
+                writer.writeField(fieldName + entry.getKey().toString(), entry.getValue().toString());
+            }
         }
     }
 
