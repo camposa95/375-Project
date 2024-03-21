@@ -432,6 +432,11 @@ public class Player implements Restorable {
     //
     // -----------------------------------
 
+    @Override
+    public String toString() {
+        return "Player " + this.playerNum;
+    }
+
     public class PlayerMemento implements Memento {
 
         // simple fields
@@ -441,10 +446,10 @@ public class Player implements Restorable {
         private final int numSettlements;
         private final int numRoads;
         private final int numCities;
-        private final Resource[] tradeBoosts;
         private final int numTradeBoosts;
         private final boolean hasLongestRoadCard;
         private final boolean hasLargestArmy;
+        private final Resource[] tradeBoosts;
 
         // sub mementos
         private final Memento handMemento;
@@ -457,10 +462,10 @@ public class Player implements Restorable {
             this.numSettlements = Player.this.numSettlements;
             this.numRoads = Player.this.numRoads;
             this.numCities = Player.this.numCities;
-            this.tradeBoosts = Arrays.copyOf(Player.this.tradeBoosts, Player.this.tradeBoosts.length);
             this.numTradeBoosts = Player.this.numTradeBoosts;
             this.hasLongestRoadCard = Player.this.hasLongestRoadCard;
             this.hasLargestArmy = Player.this.hasLargestArmy;
+            this.tradeBoosts = Arrays.copyOf(Player.this.tradeBoosts, Player.this.tradeBoosts.length);
 
             // sub mementos
             this.handMemento = Player.this.hand.createMemento();
@@ -483,9 +488,8 @@ public class Player implements Restorable {
             writer.writeField("HasLargestArmy", Boolean.toString(hasLargestArmy));
 
             // Write trade boosts to the file
-            for (int i = 0; i < tradeBoosts.length; i++) {
-                writer.writeField("TradeBoost" + (i + 1), tradeBoosts[i].toString());
-            }
+            writer.writeField("TradeBoosts", Arrays.toString(tradeBoosts));
+
 
             // Delegate saving of the hand to its own memento
             File handFolder = writer.getSubFolder("Hand");

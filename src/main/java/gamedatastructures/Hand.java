@@ -174,19 +174,20 @@ public class Hand implements Restorable {
 
         @Override
         public void save(File folder) {
-            // Create a MementoWriter for writing memento data
-            MementoWriter writer = new MementoWriter(folder, "hand.txt");
-
-            // Write the state of the hand's attributes to the file
-            writeHashMap(writer, "Hand", hand);
-            writeHashMap(writer, "DevCards", devCards);
-            writeHashMap(writer, "DevCardsBoughtThisTurn", devCardsBoughtThisTurn);
+            // Write the state of the class's attributes to separate files
+            writeHashMap(folder, "Hand", hand);
+            writeHashMap(folder, "DevCards", devCards);
+            writeHashMap(folder, "DevCardsBoughtThisTurn", devCardsBoughtThisTurn);
         }
 
-        // Helper method to write a HashMap to the file
-        private void writeHashMap(MementoWriter writer, String fieldName, HashMap<?, Integer> hashMap) {
+        // Helper method to write a HashMap to a separate file
+        private void writeHashMap(File folder, String fileName, HashMap<?, Integer> hashMap) {
+            // Create a MementoWriter for the current map
+            MementoWriter writer = new MementoWriter(folder, fileName + ".txt");
+
+            // Write each entry of the map to the file
             for (Map.Entry<?, Integer> entry : hashMap.entrySet()) {
-                writer.writeField(fieldName + entry.getKey().toString(), entry.getValue().toString());
+                writer.writeField(entry.getKey().toString(), entry.getValue().toString());
             }
         }
     }

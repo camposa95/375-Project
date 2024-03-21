@@ -69,7 +69,7 @@ public class GameLoader {
         MementoWriter writer = new MementoWriter(baseFolder, "slot1.txt");
 
         // Save the root memento in the root folder
-        File rootFolder = writer.getSubFolder("Root");
+        File rootFolder = writer.getSubFolder("Controller");
         Memento root = this.controller.createMemento();
         root.save(rootFolder);
 

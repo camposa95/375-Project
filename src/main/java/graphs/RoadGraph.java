@@ -376,11 +376,10 @@ public class RoadGraph implements Restorable {
             // Save sub mementos' state
             for (int i = 0; i < roadMementos.length; i++) {
                 // Create a subfolder for each road's memento
-                File roadSubFolder = writer.getSubFolder("Road" + (i + 1));
+                File roadSubFolder = writer.getSubFolder("Road" + i);
                 roadMementos[i].save(roadSubFolder);
             }
         }
-
     }
 
     @Override

@@ -78,13 +78,10 @@ public class DevelopmentCardDeck implements Restorable {
         @Override
         public void save(File folder) {
             // Create a MementoWriter for writing memento data
-            MementoWriter writer = new MementoWriter(folder, "devcarddeck.txt");
+            MementoWriter writer = new MementoWriter(folder, "deck.txt");
 
-            // Write each DevCard in the deck to the file with a unique field name
-            for (int i = 0; i < deck.size(); i++) {
-                DevCard card = deck.get(i);
-                writer.writeField("DevCard" + (i + 1), card.toString());
-            }
+            // Write each DevCard in the deck to the file
+            writer.writeField("DevCards", Arrays.toString(deck.toArray()));
         }
     }
 

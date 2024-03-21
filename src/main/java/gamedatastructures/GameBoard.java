@@ -132,7 +132,7 @@ public class GameBoard implements Restorable {
             // Save sub mementos' state
             for (int i = 0; i < tileMementos.length; i++) {
                 // Create a subfolder for each tile's memento
-                File tileSubFolder = writer.getSubFolder("Tile" + (i + 1));
+                File tileSubFolder = writer.getSubFolder("Tile" + i);
                 tileMementos[i].save(tileSubFolder);
             }
         }

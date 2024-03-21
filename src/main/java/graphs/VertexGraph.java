@@ -236,13 +236,13 @@ public class VertexGraph implements Restorable {
             // Save sub mementos' state
             for (int i = 0; i < vertexMementos.length; i++) {
                 // Create a subfolder for each vertex's memento
-                File vertexSubFolder = writer.getSubFolder("Vertex" + (i + 1));
+                File vertexSubFolder = writer.getSubFolder("Vertex" + i);
                 vertexMementos[i].save(vertexSubFolder);
             }
 
             for (int i = 0; i < portMementos.length; i++) {
                 // Create a subfolder for each port's memento
-                File portSubFolder = writer.getSubFolder("Port" + (i + 1));
+                File portSubFolder = writer.getSubFolder("Port" + i);
                 portMementos[i].save(portSubFolder);
             }
         }

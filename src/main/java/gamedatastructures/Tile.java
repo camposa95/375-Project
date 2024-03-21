@@ -106,7 +106,7 @@ public class Tile implements Restorable {
         private TileMemento() {
             this.terrainType = Tile.this.terrainType;
             this.dieNumber = Tile.this.dieNumber;
-            this.tileNumber = Tile.this.dieNumber;
+            this.tileNumber = Tile.this.tileNumber;
             this.hasRobber = Tile.this.hasRobber;
             this.vertexIDs = Tile.this.vertexIDs;
         }
