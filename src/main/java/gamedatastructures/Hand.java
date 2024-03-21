@@ -180,6 +180,22 @@ public class Hand implements Restorable {
             writeHashMap(folder, "DevCardsBoughtThisTurn", devCardsBoughtThisTurn);
         }
 
+        @Override
+        public void restore() {
+            // Restore the state of the hand
+            Hand.this.hand.clear();
+            Hand.this.hand.putAll(hand);
+
+            // Restore the state of the devCards
+            Hand.this.devCards.clear();
+            Hand.this.devCards.putAll(devCards);
+
+            // Restore the state of the devCardsBoughtThisTurn
+            Hand.this.devCardsBoughtThisTurn.clear();
+            Hand.this.devCardsBoughtThisTurn.putAll(devCardsBoughtThisTurn);
+        }
+
+
         // Helper method to write a HashMap to a separate file
         private void writeHashMap(File folder, String fileName, HashMap<?, Integer> hashMap) {
             // Create a MementoWriter for the current map
@@ -195,10 +211,5 @@ public class Hand implements Restorable {
     @Override
     public Memento createMemento() {
         return new HandMemento();
-    }
-
-    @Override
-    public void restore(Memento m) {
-
     }
 }

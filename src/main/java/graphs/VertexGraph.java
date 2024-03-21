@@ -246,15 +246,25 @@ public class VertexGraph implements Restorable {
                 portMementos[i].save(portSubFolder);
             }
         }
+
+        @Override
+        public void restore() {
+            // Restore simple fields
+            System.arraycopy(this.portResources, 0, VertexGraph.this.portResources, 0, this.portResources.length);
+
+            // Restore sub mementos
+            for (Memento vertexMemento : vertexMementos) {
+                vertexMemento.restore();
+            }
+
+            for (Memento portMemento : portMementos) {
+                portMemento.restore();
+            }
+        }
     }
 
     @Override
     public Memento createMemento() {
         return new VertexGraphMemento();
-    }
-
-    @Override
-    public void restore(Memento m) {
-
     }
 }

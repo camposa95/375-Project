@@ -136,15 +136,24 @@ public class GameBoard implements Restorable {
                 tileMementos[i].save(tileSubFolder);
             }
         }
+
+        @Override
+        public void restore() {
+            // Restore simple fields
+            System.arraycopy(this.terrainOrder, 0, GameBoard.this.terrainOrder, 0, this.terrainOrder.length);
+            System.arraycopy(this.dieOrder, 0, GameBoard.this.dieOrder, 0, this.dieOrder.length);
+
+            GameBoard.this.setRobberTile(GameBoard.this.tiles[this.robberTileNum]);
+
+            // Restore sub mementos
+            for (Memento tileMemento : tileMementos) {
+                tileMemento.restore();
+            }
+        }
     }
 
     @Override
     public Memento createMemento() {
         return new GameBoardMemento();
-    }
-
-    @Override
-    public void restore(Memento m) {
-
     }
 }

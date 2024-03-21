@@ -11,7 +11,7 @@ public class Tile implements Restorable {
     private static final int NUM_VERTEXES = 6;
     private Terrain terrainType;
     private int dieNumber;
-    private int tileNumber;
+    private final int tileNumber;
     private boolean hasRobber;
     private int[] vertexIDs = new int[NUM_VERTEXES];
 
@@ -97,16 +97,14 @@ public class Tile implements Restorable {
     // -----------------------------------
 
     public class TileMemento implements Memento {
-        private Terrain terrainType;
-        private int dieNumber;
-        private int tileNumber;
-        private boolean hasRobber;
-        private int[] vertexIDs;
+        private final Terrain terrainType;
+        private final int dieNumber;
+        private final boolean hasRobber;
+        private final int[] vertexIDs;
 
         private TileMemento() {
             this.terrainType = Tile.this.terrainType;
             this.dieNumber = Tile.this.dieNumber;
-            this.tileNumber = Tile.this.tileNumber;
             this.hasRobber = Tile.this.hasRobber;
             this.vertexIDs = Tile.this.vertexIDs;
         }
@@ -114,24 +112,27 @@ public class Tile implements Restorable {
         @Override
         public void save(File folder) {
             // Create a MementoWriter for writing memento data
-            MementoWriter writer = new MementoWriter(folder, "tile_" + tileNumber + ".txt");
+            MementoWriter writer = new MementoWriter(folder, "tile.txt");
 
             // Write simple fields to the file
             writer.writeField("TerrainType", terrainType.toString());
             writer.writeField("DieNumber", Integer.toString(dieNumber));
-            writer.writeField("TileNumber", Integer.toString(tileNumber));
             writer.writeField("HasRobber", Boolean.toString(hasRobber));
             writer.writeField("VertexIDs", Arrays.toString(vertexIDs));
+        }
+
+        @Override
+        public void restore() {
+            // Restore simple fields
+            Tile.this.terrainType = this.terrainType;
+            Tile.this.dieNumber = this.dieNumber;
+            Tile.this.hasRobber = this.hasRobber;
+            System.arraycopy(this.vertexIDs, 0, Tile.this.vertexIDs, 0, this.vertexIDs.length);
         }
     }
 
     @Override
     public Memento createMemento() {
         return new TileMemento();
-    }
-
-    @Override
-    public void restore(Memento m) {
-
     }
 }

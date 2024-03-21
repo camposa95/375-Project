@@ -374,16 +374,23 @@ public class Game implements Restorable {
             File deckSubFolder = writer.getSubFolder("Deck");
             deckMemento.save(deckSubFolder);
         }
+
+        @Override
+        public void restore() {
+            // Restore simple fields
+            Game.this.setup = this.setup;
+
+            // Restore sub mementos
+            gameBoardMemento.restore();
+            vertexesMemento.restore();
+            roadsMemento.restore();
+            deckMemento.restore();
+        }
     }
 
     @Override
     public Memento createMemento() {
         return new GameMemento();
-    }
-
-    @Override
-    public void restore(Memento m) {
-
     }
 }
 

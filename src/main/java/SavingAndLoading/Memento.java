@@ -3,5 +3,6 @@ package SavingAndLoading;
 import java.io.File;
 
 public interface Memento {
-    void save(File folder);
+    public void save(File folder);
+    public void restore();
 }

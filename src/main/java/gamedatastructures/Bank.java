@@ -118,15 +118,16 @@ public class Bank implements Restorable {
             }
         }
 
+        @Override
+        public void restore() {
+            // Restore the bank state from the memento
+            Bank.this.bank.clear();
+            Bank.this.bank.putAll(this.bank);
+        }
     }
 
     @Override
     public Memento createMemento() {
         return new BankMemento();
-    }
-
-    @Override
-    public void restore(Memento m) {
-
     }
 }

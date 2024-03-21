@@ -15,7 +15,7 @@ import gamedatastructures.Player;
 public class Road implements Restorable {
 
     private static final int MAX_ADJACENT_ROADS = 4;
-    private int locationId;
+    private final int locationId;
     private Road[] adjacentRoads;
     private Vertex[] adjacentVertexes;
     private Player owner;
@@ -265,15 +265,15 @@ public class Road implements Restorable {
             writer.writeField("Owner", owner != null ? owner.toString() : "None");
         }
 
+        @Override
+        public void restore() {
+            // Restore the owner of the road
+            Road.this.owner = this.owner;
+        }
     }
 
     @Override
     public Memento createMemento() {
         return new RoadMemento();
-    }
-
-    @Override
-    public void restore(Memento m) {
-
     }
 }

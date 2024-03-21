@@ -496,15 +496,29 @@ public class Player implements Restorable {
             handMemento.save(handFolder);
         }
 
+        @Override
+        public void restore() {
+            // Restore simple fields
+            Player.this.victoryPoints = this.victoryPoints;
+            Player.this.hasPlayedDevCard = this.hasPlayedDevCard;
+            Player.this.numKnightsPlayed = this.numKnightsPlayed;
+            Player.this.numSettlements = this.numSettlements;
+            Player.this.numRoads = this.numRoads;
+            Player.this.numCities = this.numCities;
+            Player.this.numTradeBoosts = this.numTradeBoosts;
+            Player.this.hasLongestRoadCard = this.hasLongestRoadCard;
+            Player.this.hasLargestArmy = this.hasLargestArmy;
+
+            // Restore trade boosts
+            System.arraycopy(this.tradeBoosts, 0, Player.this.tradeBoosts, 0, this.tradeBoosts.length);
+
+            // Restore hand state using its memento
+            handMemento.restore();
+        }
     }
 
     @Override
     public Memento createMemento() {
         return new PlayerMemento();
-    }
-
-    @Override
-    public void restore(Memento m) {
-
     }
 }

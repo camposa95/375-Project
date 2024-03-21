@@ -16,7 +16,7 @@ public class Port implements Restorable {
      * Creates a new Port with the given location ID.
      *
      * @param id the locationId of the Port on the map
-     * @param portResources
+     * @param resourceType
      */
     public Port(final int id, final Resource resourceType) {
         this.locationId = id;
@@ -58,15 +58,14 @@ public class Port implements Restorable {
             writer.writeField("Resource", resource.toString());
         }
 
+        @Override
+        public void restore() {
+            Port.this.resource = this.resource;
+        }
     }
 
     @Override
     public Memento createMemento() {
         return new PortMemento();
-    }
-
-    @Override
-    public void restore(Memento m) {
-
     }
 }

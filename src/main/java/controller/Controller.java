@@ -983,15 +983,27 @@ public class Controller implements Restorable {
                 playerMementos[i].save(playerSubFolder);
             }
         }
+
+        @Override
+        public void restore() {
+            // simple field restoration
+            Controller.this.gamePhase = this.gamePhase;
+            Controller.this.gameState = this.gameState;
+            Controller.this.currentPlayerNum = this.currentPlayerNum;
+            Controller.this.currentDie = this.currentDie;
+            Controller.this.lastPlacedVertex = this.lastPlacedVertex;
+            Controller.this.devCardsEnabled = this.devCardsEnabled;
+
+            // Delegate restoration to sub mementos
+            this.gameMemento.restore();
+            for (Memento playerMemento: this.playerMementos) {
+                playerMemento.restore();
+            }
+        }
     }
 
     @Override
     public Memento createMemento() {
         return new ControllerMemento();
-    }
-
-    @Override
-    public void restore(Memento m) {
-
     }
 }

@@ -340,15 +340,18 @@ public class Vertex implements Restorable {
             writer.writeField("Owner", owner != null ? owner.toString() : "None");
             writer.writeField("IsCity", Boolean.toString(isCity));
         }
+
+        @Override
+        public void restore() {
+            // Restore simple fields
+            Vertex.this.isCity = this.isCity;
+            Vertex.this.owner = this.owner;
+        }
+
     }
 
     @Override
     public Memento createMemento() {
         return new VertexMemento();
-    }
-
-    @Override
-    public void restore(Memento m) {
-
     }
 }

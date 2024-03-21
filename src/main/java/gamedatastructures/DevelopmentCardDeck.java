@@ -83,15 +83,17 @@ public class DevelopmentCardDeck implements Restorable {
             // Write each DevCard in the deck to the file
             writer.writeField("DevCards", Arrays.toString(deck.toArray()));
         }
+
+        @Override
+        public void restore() {
+            // Deserialize the array of DevCards and replace the deck in DevelopmentCardDeck
+            DevelopmentCardDeck.this.deck.clear();
+            DevelopmentCardDeck.this.deck.addAll(deck);
+        }
     }
 
     @Override
     public Memento createMemento() {
         return new DevCardDeckMemento();
-    }
-
-    @Override
-    public void restore(Memento m) {
-
     }
 }

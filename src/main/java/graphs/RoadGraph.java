@@ -380,15 +380,18 @@ public class RoadGraph implements Restorable {
                 roadMementos[i].save(roadSubFolder);
             }
         }
+
+        @Override
+        public void restore() {
+            // Restore sub mementos
+            for (Memento roadMemento : roadMementos) {
+                roadMemento.restore();
+            }
+        }
     }
 
     @Override
     public Memento createMemento() {
         return new RoadGraphMemento();
-    }
-
-    @Override
-    public void restore(Memento m) {
-
     }
 }
