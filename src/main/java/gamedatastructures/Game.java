@@ -6,10 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import SavingAndLoading.Memento;
-import SavingAndLoading.MementoReader;
-import SavingAndLoading.MementoWriter;
-import SavingAndLoading.Restorable;
+import saving.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import graphs.Road;
@@ -364,7 +361,8 @@ public class Game implements Restorable {
             this.deckMemento = Game.this.deck.createMemento();
         }
 
-        public GameMemento(File folder) {
+        @SuppressFBWarnings("EI_EXPOSE_REP2")
+        public GameMemento(final File folder) {
             // Create a MementoReader for reading memento data
             MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
 
@@ -385,8 +383,7 @@ public class Game implements Restorable {
             this.deckMemento = Game.this.deck.new DevCardDeckMemento(deckSubFolder);
         }
 
-        @Override
-        public void save(File folder) {
+        public void save(final File folder) throws SaveException {
             // Create a MementoWriter for writing memento data
             MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
@@ -407,7 +404,6 @@ public class Game implements Restorable {
             deckMemento.save(deckSubFolder);
         }
 
-        @Override
         public void restore() {
             // Restore simple fields
             Game.this.setup = this.setup;

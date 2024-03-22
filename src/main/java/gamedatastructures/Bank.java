@@ -4,10 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import SavingAndLoading.Memento;
-import SavingAndLoading.MementoReader;
-import SavingAndLoading.MementoWriter;
-import SavingAndLoading.Restorable;
+import saving.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 //SINGLETON CLASS
@@ -111,7 +108,8 @@ public class Bank implements Restorable {
             this.bank.putAll(Bank.this.bank);
         }
 
-        public BankMemento(File folder) {
+        @SuppressFBWarnings("EI_EXPOSE_REP2")
+        public BankMemento(final File folder) {
             this.bank = new HashMap<>();
             MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
 
@@ -121,8 +119,7 @@ public class Bank implements Restorable {
             }
         }
 
-        @Override
-        public void save(File folder) {
+        public void save(final File folder) throws SaveException {
             // Create a MementoWriter for writing memento data
             MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
@@ -132,7 +129,6 @@ public class Bank implements Restorable {
             }
         }
 
-        @Override
         public void restore() {
             // Restore the bank state from the memento
             Bank.this.bank.clear();

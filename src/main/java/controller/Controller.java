@@ -6,10 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import SavingAndLoading.Memento;
-import SavingAndLoading.MementoReader;
-import SavingAndLoading.MementoWriter;
-import SavingAndLoading.Restorable;
+import saving.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.CardNotPlayableException;
 import gamedatastructures.DevCard;
@@ -955,7 +952,6 @@ public class Controller implements Restorable {
         private static final String LAST_PLACED_VERTEX = "LastPlacedVertex";
         private static final String DEV_CARDS_ENABLED = "DevCardsEnabled";
 
-
         private ControllerMemento() {
             // simple fields
             this.gamePhase = Controller.this.gamePhase;
@@ -974,7 +970,8 @@ public class Controller implements Restorable {
             }
         }
 
-        public ControllerMemento(File folder) {
+        @SuppressFBWarnings("EI_EXPOSE_REP2")
+        public ControllerMemento(final File folder) {
             // Create a MementoReader for reading memento data
             MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
 
@@ -997,8 +994,7 @@ public class Controller implements Restorable {
             }
         }
 
-        @Override
-        public void save(File folder) {
+        public void save(final File folder) throws SaveException {
             // Create a MementoWriter for writing memento data
             MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
@@ -1023,7 +1019,6 @@ public class Controller implements Restorable {
             }
         }
 
-        @Override
         public void restore() {
             // simple field restoration
             Controller.this.gamePhase = this.gamePhase;

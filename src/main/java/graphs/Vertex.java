@@ -1,6 +1,6 @@
 package graphs;
 
-import SavingAndLoading.*;
+import saving.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.Player;
 
@@ -336,7 +336,8 @@ public class Vertex implements Restorable {
             this.owner = Vertex.this.owner;
         }
 
-        public VertexMemento(File folder) {
+        @SuppressFBWarnings("EI_EXPOSE_REP2")
+        public VertexMemento(final File folder) {
             // Create a MementoReader for reading memento data
             MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
 
@@ -345,7 +346,7 @@ public class Vertex implements Restorable {
             this.isCity = Boolean.parseBoolean(reader.readField(IS_CITY));
         }
 
-        private Player parseOwner(String ownerString) {
+        private Player parseOwner(final String ownerString) {
             // Check if the ownerString represents "None"
             if (ownerString.equals("None")) {
                 return null;
@@ -357,8 +358,7 @@ public class Vertex implements Restorable {
             }
         }
 
-        @Override
-        public void save(File folder) {
+        public void save(final File folder) throws SaveException {
             // Create a MementoWriter for writing memento data
             MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
@@ -367,7 +367,6 @@ public class Vertex implements Restorable {
             writer.writeField(IS_CITY, Boolean.toString(isCity));
         }
 
-        @Override
         public void restore() {
             // Restore simple fields
             Vertex.this.isCity = this.isCity;

@@ -3,10 +3,7 @@ package gamedatastructures;
 import java.io.File;
 import java.util.Arrays;
 
-import SavingAndLoading.Memento;
-import SavingAndLoading.MementoReader;
-import SavingAndLoading.MementoWriter;
-import SavingAndLoading.Restorable;
+import saving.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class Player implements Restorable {
@@ -471,7 +468,6 @@ public class Player implements Restorable {
         private static final String HAS_LARGEST_ARMY = "HasLargestArmy";
         private static final String TRADE_BOOSTS = "TradeBoosts";
 
-
         private PlayerMemento() {
             // simple fields
             this.victoryPoints = Player.this.victoryPoints;
@@ -489,7 +485,8 @@ public class Player implements Restorable {
             this.handMemento = Player.this.hand.createMemento();
         }
 
-        public PlayerMemento(File folder) {
+        @SuppressFBWarnings("EI_EXPOSE_REP2")
+        public PlayerMemento(final File folder) {
             // Create a MementoReader for reading memento data
             MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
 
@@ -513,24 +510,22 @@ public class Player implements Restorable {
             this.handMemento = Player.this.hand.new HandMemento(handFolder);
         }
 
-        private Resource[] parseTradeBoosts(String tradeBoostsString) {
+        private Resource[] parseTradeBoosts(final String tradeBoostsString) {
             String[] boostTokens = tradeBoostsString.substring(1, tradeBoostsString.length() - 1).split(", ");
 
-            Resource[] tradeBoosts = new Resource[boostTokens.length];
+            Resource[] boosts = new Resource[boostTokens.length];
             for (int i = 0; i < boostTokens.length; i++) {
                 String token = boostTokens[i].trim();
                 if (token.equals("null")) {
-                    tradeBoosts[i] = null;
+                    boosts[i] = null;
                 } else {
-                    tradeBoosts[i] = Resource.valueOf(token);
+                    boosts[i] = Resource.valueOf(token);
                 }
             }
-            return tradeBoosts;
+            return boosts;
         }
 
-
-        @Override
-        public void save(File folder) {
+        public void save(final File folder) throws SaveException {
             // Create a MementoWriter for writing memento data
             MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
@@ -553,8 +548,6 @@ public class Player implements Restorable {
             handMemento.save(handFolder);
         }
 
-
-        @Override
         public void restore() {
             // Restore simple fields
             Player.this.victoryPoints = this.victoryPoints;

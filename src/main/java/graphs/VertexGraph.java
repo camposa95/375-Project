@@ -7,10 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Scanner;
 
-import SavingAndLoading.Memento;
-import SavingAndLoading.MementoReader;
-import SavingAndLoading.MementoWriter;
-import SavingAndLoading.Restorable;
+import saving.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.GameType;
 import gamedatastructures.Resource;
@@ -234,7 +231,8 @@ public class VertexGraph implements Restorable {
             }
         }
 
-        public VertexGraphMemento(File folder) {
+        @SuppressFBWarnings("EI_EXPOSE_REP2")
+        public VertexGraphMemento(final File folder) {
             // Create a MementoReader for reading memento data
             MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
 
@@ -256,7 +254,7 @@ public class VertexGraph implements Restorable {
         }
 
         // Helper method to parse port resources
-        private Resource[] parsePortResources(String portResourcesString) {
+        private Resource[] parsePortResources(final String portResourcesString) {
             String[] resourceNames = portResourcesString.substring(1, portResourcesString.length() - 1).split(", ");
 
             Resource[] resources = new Resource[resourceNames.length];
@@ -267,8 +265,7 @@ public class VertexGraph implements Restorable {
             return resources;
         }
 
-        @Override
-        public void save(File folder) {
+        public void save(final File folder) throws SaveException {
             // Create a MementoWriter for writing memento data
             MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
@@ -289,7 +286,6 @@ public class VertexGraph implements Restorable {
             }
         }
 
-        @Override
         public void restore() {
             // Restore simple fields
             System.arraycopy(this.portResources, 0, VertexGraph.this.portResources, 0, this.portResources.length);

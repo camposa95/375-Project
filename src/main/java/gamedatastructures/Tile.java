@@ -1,9 +1,7 @@
 package gamedatastructures;
 
-import SavingAndLoading.Memento;
-import SavingAndLoading.MementoReader;
-import SavingAndLoading.MementoWriter;
-import SavingAndLoading.Restorable;
+import saving.*;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.io.File;
 import java.util.Arrays;
@@ -112,7 +110,6 @@ public class Tile implements Restorable {
         private static final String HAS_ROBBER = "HasRobber";
         private static final String VERTEX_IDS = "VertexIDs";
 
-
         private TileMemento() {
             this.terrainType = Tile.this.terrainType;
             this.dieNumber = Tile.this.dieNumber;
@@ -120,7 +117,8 @@ public class Tile implements Restorable {
             this.vertexIDs = Tile.this.vertexIDs;
         }
 
-        public TileMemento(File folder) {
+        @SuppressFBWarnings("EI_EXPOSE_REP2")
+        public TileMemento(final File folder) {
             // Create a MementoReader for reading memento data
             MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
 
@@ -131,19 +129,18 @@ public class Tile implements Restorable {
             this.vertexIDs = parseVertexIDs(reader.readField(VERTEX_IDS));
         }
 
-        private int[] parseVertexIDs(String vertexIDsString) {
+        private int[] parseVertexIDs(final String vertexIDsString) {
             String[] vertexIDValues = vertexIDsString.substring(1, vertexIDsString.length() - 1).split(", ");
 
-            int[] vertexIDs = new int[vertexIDValues.length];
+            int[] ids = new int[vertexIDValues.length];
             for (int i = 0; i < vertexIDValues.length; i++) {
-                vertexIDs[i] = Integer.parseInt(vertexIDValues[i].trim());
+                ids[i] = Integer.parseInt(vertexIDValues[i].trim());
             }
 
-            return vertexIDs;
+            return ids;
         }
 
-        @Override
-        public void save(File folder) {
+        public void save(final File folder) throws SaveException {
             // Create a MementoWriter for writing memento data
             MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
@@ -154,7 +151,6 @@ public class Tile implements Restorable {
             writer.writeField(VERTEX_IDS, Arrays.toString(vertexIDs));
         }
 
-        @Override
         public void restore() {
             // Restore simple fields
             Tile.this.terrainType = this.terrainType;

@@ -1,9 +1,7 @@
 package graphs;
 
-import SavingAndLoading.Memento;
-import SavingAndLoading.MementoReader;
-import SavingAndLoading.MementoWriter;
-import SavingAndLoading.Restorable;
+import saving.*;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.Resource;
 
 import java.io.File;
@@ -56,7 +54,8 @@ public class Port implements Restorable {
             this.resource = Port.this.resource;
         }
 
-        public PortMemento(File folder) {
+        @SuppressFBWarnings("EI_EXPOSE_REP2")
+        public PortMemento(final File folder) {
             // Create a MementoReader for reading memento data
             MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
 
@@ -64,9 +63,7 @@ public class Port implements Restorable {
             this.resource = Resource.valueOf(reader.readField(RESOURCE));
         }
 
-
-        @Override
-        public void save(File folder) {
+        public void save(final File folder) throws SaveException {
             // Create a MementoWriter for writing memento data
             MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
@@ -74,7 +71,6 @@ public class Port implements Restorable {
             writer.writeField(RESOURCE, resource.toString());
         }
 
-        @Override
         public void restore() {
             Port.this.resource = this.resource;
         }

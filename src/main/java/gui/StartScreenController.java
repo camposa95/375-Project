@@ -1,6 +1,6 @@
 package gui;
 
-import SavingAndLoading.GameLoader;
+import saving.GameLoader;
 import controller.Controller;
 import gamedatastructures.GameType;
 import javafx.collections.FXCollections;

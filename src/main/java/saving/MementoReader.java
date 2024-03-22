@@ -1,23 +1,23 @@
-package SavingAndLoading;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+package saving;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MementoReader {
     private final File sourceFile;
 
-    public MementoReader(File folder, String fileName) {
+    public MementoReader(final File folder, final String fileName) {
         this.sourceFile = new File(folder, fileName);
         if (!this.sourceFile.exists() || !this.sourceFile.isFile()) {
             throw new IllegalArgumentException("File does not exist: " + sourceFile.getAbsolutePath());
         }
     }
 
-    public String readField(String fieldName) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(sourceFile))) {
+    public String readField(final String fieldName) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(sourceFile), StandardCharsets.UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith(fieldName + ":")) {
@@ -33,9 +33,10 @@ public class MementoReader {
         throw new IllegalArgumentException("Field not found: " + fieldName);
     }
 
+
     public Map<String, String> readAllFields() {
         Map<String, String> fields = new HashMap<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(sourceFile))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(sourceFile), StandardCharsets.UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 // Split each line into key and value based on the first ':'
@@ -52,7 +53,8 @@ public class MementoReader {
         return fields;
     }
 
-    public File getSubFolder(String subFolderName) {
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
+    public File getSubFolder(final String subFolderName) {
         File parentFolder = sourceFile.getParentFile();
         File subFolder = new File(parentFolder, subFolderName);
         if (!subFolder.exists() || !subFolder.isDirectory()) {

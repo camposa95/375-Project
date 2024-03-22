@@ -1,9 +1,7 @@
 package gamedatastructures;
 
-import SavingAndLoading.Memento;
-import SavingAndLoading.MementoReader;
-import SavingAndLoading.MementoWriter;
-import SavingAndLoading.Restorable;
+import saving.*;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -178,7 +176,8 @@ public class Hand implements Restorable {
             this.devCardsBoughtThisTurn.putAll(Hand.this.devCardsBoughtThisTurn);
         }
 
-        public HandMemento(File folder) {
+        @SuppressFBWarnings("EI_EXPOSE_REP2")
+        public HandMemento(final File folder) {
             // Initialize the HashMaps
             this.hand = new HashMap<>();
             this.devCards = new HashMap<>();
@@ -190,7 +189,7 @@ public class Hand implements Restorable {
             readDevCardMap(folder, DEVCARDS_BOUGHT_FILE_NAME, devCardsBoughtThisTurn);
         }
 
-        private void readResourceMap(File folder, String fileName, Map<Resource, Integer> map) {
+        private void readResourceMap(final File folder, final String fileName, final Map<Resource, Integer> map) {
             MementoReader reader = new MementoReader(folder, fileName);
 
             for (Map.Entry<String, String> entry : reader.readAllFields().entrySet()) {
@@ -199,7 +198,7 @@ public class Hand implements Restorable {
             }
         }
 
-        private void readDevCardMap(File folder, String fileName, Map<DevCard, Integer> map) {
+        private void readDevCardMap(final File folder, final String fileName, final Map<DevCard, Integer> map) {
             MementoReader reader = new MementoReader(folder, fileName);
 
             for (Map.Entry<String, String> entry : reader.readAllFields().entrySet()) {
@@ -208,8 +207,7 @@ public class Hand implements Restorable {
             }
         }
 
-        @Override
-        public void save(File folder) {
+        public void save(final File folder) throws SaveException {
             // Write the state of the class's attributes to separate files
             writeHashMap(folder, HAND_FILE_NAME, hand);
             writeHashMap(folder, DEVCARDS_FILE_NAME, devCards);
@@ -217,7 +215,7 @@ public class Hand implements Restorable {
         }
 
         // Helper method to write a HashMap to a separate file
-        private void writeHashMap(File folder, String fileName, HashMap<?, Integer> hashMap) {
+        private void writeHashMap(final File folder, final String fileName, final HashMap<?, Integer> hashMap) throws SaveException {
             // Create a MementoWriter for the current map
             MementoWriter writer = new MementoWriter(folder, fileName);
 
@@ -227,7 +225,6 @@ public class Hand implements Restorable {
             }
         }
 
-        @Override
         public void restore() {
             // Restore the state of the hand
             Hand.this.hand.clear();

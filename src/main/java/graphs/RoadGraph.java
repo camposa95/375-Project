@@ -10,10 +10,7 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import SavingAndLoading.Memento;
-import SavingAndLoading.MementoReader;
-import SavingAndLoading.MementoWriter;
-import SavingAndLoading.Restorable;
+import saving.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.Player;
 
@@ -373,7 +370,8 @@ public class RoadGraph implements Restorable {
             }
         }
 
-        public RoadGraphMemento(File folder) {
+        @SuppressFBWarnings("EI_EXPOSE_REP2")
+        public RoadGraphMemento(final File folder) {
             // Create a MementoReader for reading memento data
             MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
 
@@ -385,9 +383,7 @@ public class RoadGraph implements Restorable {
             }
         }
 
-
-        @Override
-        public void save(File folder) {
+        public void save(final File folder) throws SaveException {
             // Create a MementoWriter for writing memento data
             MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
@@ -399,7 +395,6 @@ public class RoadGraph implements Restorable {
             }
         }
 
-        @Override
         public void restore() {
             // Restore sub mementos
             for (Memento roadMemento : roadMementos) {

@@ -1,6 +1,7 @@
-package SavingAndLoading;
+package saving;
 
 import controller.Controller;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.*;
 import graphs.RoadGraph;
 import graphs.VertexGraph;
@@ -39,7 +40,8 @@ public class GameLoader {
         return uniqueInstance;
     }
 
-    public Controller instantiateGameObjects(GameType gameType, int numPlayers) {
+    @SuppressFBWarnings("EI_EXPOSE_REP")
+    public Controller instantiateGameObjects(final GameType gameType, final int numPlayers) {
         RoadGraph roadGraph = new RoadGraph();
         vertexGraph = new VertexGraph();
         roadGraph.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_FILE);
@@ -53,8 +55,8 @@ public class GameLoader {
         Game game = new Game(gameBoard, vertexGraph, roadGraph, devCardDeck);
 
         this.players = new Player[numPlayers];
-        for(int i = 0; i < numPlayers; i++){
-            Player player = new Player(i+1);
+        for (int i = 0; i < numPlayers; i++) {
+            Player player = new Player(i + 1);
             players[i] = player;
         }
 
@@ -63,22 +65,29 @@ public class GameLoader {
         return controller;
     }
 
-    public void saveGame() {
+    public boolean saveGame() {
         // Create a File object representing the base folder
         File baseFolder = new File(BASE_FOLDER_PATH);
 
         // Create a MementoWriter for writing memento data
-        MementoWriter writer = new MementoWriter(baseFolder, "slot1.txt");
+        MementoWriter writer = null;
+        try {
+            writer = new MementoWriter(baseFolder, "slot1.txt");
 
-        // Save the controllerMemento memento in the Controller folder
-        File controllerFolder = writer.getSubFolder("Controller");
-        Memento controllerMemento = this.controller.createMemento();
-        controllerMemento.save(controllerFolder);
+            // Save the controllerMemento memento in the Controller folder
+            File controllerFolder = writer.getSubFolder("Controller");
+            Memento controllerMemento = this.controller.createMemento();
+            controllerMemento.save(controllerFolder);
 
-        // Save the bank memento in the Bank folder
-        File bankFolder = writer.getSubFolder("Bank");
-        Memento bank = Bank.getInstance().createMemento();
-        bank.save(bankFolder);
+            // Save the bank memento in the Bank folder
+            File bankFolder = writer.getSubFolder("Bank");
+            Memento bank = Bank.getInstance().createMemento();
+            bank.save(bankFolder);
+        } catch (SaveException e) {
+            return false;
+        }
+
+        return true;
     }
 
     public void loadGame() {

@@ -1,9 +1,7 @@
 package gamedatastructures;
 
-import SavingAndLoading.Memento;
-import SavingAndLoading.MementoReader;
-import SavingAndLoading.MementoWriter;
-import SavingAndLoading.Restorable;
+import saving.*;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -82,7 +80,8 @@ public class DevelopmentCardDeck implements Restorable {
             this.deck.addAll(DevelopmentCardDeck.this.deck);
         }
 
-        public DevCardDeckMemento(File folder) {
+        @SuppressFBWarnings("EI_EXPOSE_REP2")
+        public DevCardDeckMemento(final File folder) {
             // Create a MementoReader for reading memento data
             MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
 
@@ -90,7 +89,7 @@ public class DevelopmentCardDeck implements Restorable {
             this.deck = parseDevCards(reader.readField(DEV_CARDS));
         }
 
-        private ArrayList<DevCard> parseDevCards(String devCardsString) {
+        private ArrayList<DevCard> parseDevCards(final String devCardsString) {
             String[] devCardArray = devCardsString.substring(1, devCardsString.length() - 1).split(", ");
 
             ArrayList<DevCard> devCards = new ArrayList<>();
@@ -100,8 +99,7 @@ public class DevelopmentCardDeck implements Restorable {
             return devCards;
         }
 
-        @Override
-        public void save(File folder) {
+        public void save(final File folder) throws SaveException {
             // Create a MementoWriter for writing memento data
             MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
@@ -109,7 +107,6 @@ public class DevelopmentCardDeck implements Restorable {
             writer.writeField(DEV_CARDS, Arrays.toString(deck.toArray()));
         }
 
-        @Override
         public void restore() {
             // Deserialize the array of DevCards and replace the deck in DevelopmentCardDeck
             DevelopmentCardDeck.this.deck.clear();

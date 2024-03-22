@@ -3,7 +3,7 @@ package graphs;
 import java.io.File;
 import java.util.Arrays;
 
-import SavingAndLoading.*;
+import saving.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.Player;
 
@@ -260,7 +260,8 @@ public class Road implements Restorable {
             this.owner = Road.this.owner;
         }
 
-        public RoadMemento(File folder) {
+        @SuppressFBWarnings("EI_EXPOSE_REP2")
+        public RoadMemento(final File folder) {
             // Create a MementoReader for reading memento data
             MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
 
@@ -268,7 +269,7 @@ public class Road implements Restorable {
             this.owner = parseOwner(reader.readField(OWNER));
         }
 
-        private Player parseOwner(String ownerString) {
+        private Player parseOwner(final String ownerString) {
             // Check if the ownerString represents "None"
             if (ownerString.equals("None")) {
                 return null;
@@ -280,8 +281,7 @@ public class Road implements Restorable {
             }
         }
 
-        @Override
-        public void save(File folder) {
+        public void save(final File folder) throws SaveException {
             // Create a MementoWriter for writing memento data
             MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
@@ -289,7 +289,6 @@ public class Road implements Restorable {
             writer.writeField(OWNER, owner != null ? owner.toString() : "None");
         }
 
-        @Override
         public void restore() {
             // Restore the owner of the road
             Road.this.owner = this.owner;

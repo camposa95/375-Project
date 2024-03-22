@@ -7,10 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Scanner;
 
-import SavingAndLoading.Memento;
-import SavingAndLoading.MementoReader;
-import SavingAndLoading.MementoWriter;
-import SavingAndLoading.Restorable;
+import saving.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class GameBoard implements Restorable {
@@ -129,13 +126,14 @@ public class GameBoard implements Restorable {
             }
         }
 
-        public GameBoardMemento(File folder) {
+        @SuppressFBWarnings("EI_EXPOSE_REP2")
+        public GameBoardMemento(final File folder) {
             // Create a MementoReader for reading memento data
             MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
 
             // Read simple fields from the file
-            this.terrainOrder = parseTerrainOrder(reader.readField(TERRAIN_ORDER));
-            this.dieOrder = parseDieOrder(reader.readField(DIE_ORDER));
+            this.terrainOrder = parseTerrainArr(reader.readField(TERRAIN_ORDER));
+            this.dieOrder = parseDieArr(reader.readField(DIE_ORDER));
             this.robberTileNum = Integer.parseInt(reader.readField(ROBBER_TILE_NUM));
 
             // Read sub-mementos from the appropriate subfolders
@@ -146,31 +144,30 @@ public class GameBoard implements Restorable {
             }
         }
 
-        private Terrain[] parseTerrainOrder(String terrainOrderString) {
+        private Terrain[] parseTerrainArr(final String terrainOrderString) {
             String[] terrainValues = terrainOrderString.substring(1, terrainOrderString.length() - 1).split(", ");
 
-            Terrain[] terrainOrder = new Terrain[terrainValues.length];
+            Terrain[] terrains = new Terrain[terrainValues.length];
             for (int i = 0; i < terrainValues.length; i++) {
                 String terrainValue = terrainValues[i].trim().toUpperCase();
-                terrainOrder[i] = Terrain.valueOf(terrainValue);
+                terrains[i] = Terrain.valueOf(terrainValue);
             }
 
-            return terrainOrder;
+            return terrains;
         }
 
-        private Integer[] parseDieOrder(String dieOrderString) {
+        private Integer[] parseDieArr(final String dieOrderString) {
             String[] dieValues = dieOrderString.substring(1, dieOrderString.length() - 1).split(", ");
 
-            Integer[] dieOrder = new Integer[dieValues.length];
+            Integer[] faces = new Integer[dieValues.length];
             for (int i = 0; i < dieValues.length; i++) {
-                dieOrder[i] = Integer.parseInt(dieValues[i].trim());
+                faces[i] = Integer.parseInt(dieValues[i].trim());
             }
 
-            return dieOrder;
+            return faces;
         }
 
-        @Override
-        public void save(File folder) {
+        public void save(final File folder) throws SaveException {
             // Create a MementoWriter for writing memento data
             MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
@@ -187,7 +184,6 @@ public class GameBoard implements Restorable {
             }
         }
 
-        @Override
         public void restore() {
             // Restore simple fields
             System.arraycopy(this.terrainOrder, 0, GameBoard.this.terrainOrder, 0, this.terrainOrder.length);
