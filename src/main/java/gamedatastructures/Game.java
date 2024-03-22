@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import SavingAndLoading.Memento;
+import SavingAndLoading.MementoReader;
 import SavingAndLoading.MementoWriter;
 import SavingAndLoading.Restorable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -342,6 +343,16 @@ public class Game implements Restorable {
         private final Memento roadsMemento;
         private final Memento deckMemento;
 
+        // Storage Constants
+        private static final String TARGET_FILE_NAME = "game.txt";
+        private static final String GAME_BOARD_SUBFOLDER_NAME = "GameBoard";
+        private static final String VERTEXES_SUBFOLDER_NAME = "Vertexes";
+        private static final String ROADS_SUBFOLDER_NAME = "Roads";
+        private static final String DECK_SUBFOLDER_NAME = "Deck";
+
+        // Field Keys
+        private static final String SETUP = "Setup";
+
         private GameMemento() {
             // simple fields
             this.setup = Game.this.setup;
@@ -353,25 +364,46 @@ public class Game implements Restorable {
             this.deckMemento = Game.this.deck.createMemento();
         }
 
+        public GameMemento(File folder) {
+            // Create a MementoReader for reading memento data
+            MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
+
+            // Read simple fields from the file
+            this.setup = Boolean.parseBoolean(reader.readField(SETUP));
+
+            // Read sub-mementos from the appropriate subfolders
+            File gameBoardSubFolder = reader.getSubFolder(GAME_BOARD_SUBFOLDER_NAME);
+            this.gameBoardMemento = Game.this.gameBoard.new GameBoardMemento(gameBoardSubFolder);
+
+            File vertexesSubFolder = reader.getSubFolder(VERTEXES_SUBFOLDER_NAME);
+            this.vertexesMemento = Game.this.vertexes.new VertexGraphMemento(vertexesSubFolder);
+
+            File roadsSubFolder = reader.getSubFolder(ROADS_SUBFOLDER_NAME);
+            this.roadsMemento = Game.this.roads.new RoadGraphMemento(roadsSubFolder);
+
+            File deckSubFolder = reader.getSubFolder(DECK_SUBFOLDER_NAME);
+            this.deckMemento = Game.this.deck.new DevCardDeckMemento(deckSubFolder);
+        }
+
         @Override
         public void save(File folder) {
             // Create a MementoWriter for writing memento data
-            MementoWriter writer = new MementoWriter(folder, "game.txt");
+            MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
             // Write simple fields to the file
-            writer.writeField("Setup", Boolean.toString(setup));
+            writer.writeField(SETUP, Boolean.toString(setup));
 
             // Save sub mementos' state
-            File gameBoardSubFolder = writer.getSubFolder("GameBoard");
+            File gameBoardSubFolder = writer.getSubFolder(GAME_BOARD_SUBFOLDER_NAME);
             gameBoardMemento.save(gameBoardSubFolder);
 
-            File vertexesSubFolder = writer.getSubFolder("Vertexes");
+            File vertexesSubFolder = writer.getSubFolder(VERTEXES_SUBFOLDER_NAME);
             vertexesMemento.save(vertexesSubFolder);
 
-            File roadsSubFolder = writer.getSubFolder("Roads");
+            File roadsSubFolder = writer.getSubFolder(ROADS_SUBFOLDER_NAME);
             roadsMemento.save(roadsSubFolder);
 
-            File deckSubFolder = writer.getSubFolder("Deck");
+            File deckSubFolder = writer.getSubFolder(DECK_SUBFOLDER_NAME);
             deckMemento.save(deckSubFolder);
         }
 

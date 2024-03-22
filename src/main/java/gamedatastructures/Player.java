@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Arrays;
 
 import SavingAndLoading.Memento;
+import SavingAndLoading.MementoReader;
 import SavingAndLoading.MementoWriter;
 import SavingAndLoading.Restorable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -454,6 +455,23 @@ public class Player implements Restorable {
         // sub mementos
         private final Memento handMemento;
 
+        // Storage Constants
+        private static final String TARGET_FILE_NAME = "player.txt";
+        private static final String HAND_SUBFOLDER_NAME = "Hand";
+
+        // Field Keys
+        private static final String VICTORY_POINTS = "VictoryPoints";
+        private static final String HAS_PLAYED_DEV_CARD = "HasPlayedDevCard";
+        private static final String NUM_KNIGHTS_PLAYED = "NumKnightsPlayed";
+        private static final String NUM_SETTLEMENTS = "NumSettlements";
+        private static final String NUM_ROADS = "NumRoads";
+        private static final String NUM_CITIES = "NumCities";
+        private static final String NUM_TRADE_BOOSTS = "NumTradeBoosts";
+        private static final String HAS_LONGEST_ROAD_CARD = "HasLongestRoadCard";
+        private static final String HAS_LARGEST_ARMY = "HasLargestArmy";
+        private static final String TRADE_BOOSTS = "TradeBoosts";
+
+
         private PlayerMemento() {
             // simple fields
             this.victoryPoints = Player.this.victoryPoints;
@@ -471,30 +489,70 @@ public class Player implements Restorable {
             this.handMemento = Player.this.hand.createMemento();
         }
 
+        public PlayerMemento(File folder) {
+            // Create a MementoReader for reading memento data
+            MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
+
+            // Read simple fields from the file
+            this.victoryPoints = Integer.parseInt(reader.readField(VICTORY_POINTS));
+            this.hasPlayedDevCard = Boolean.parseBoolean(reader.readField(HAS_PLAYED_DEV_CARD));
+            this.numKnightsPlayed = Integer.parseInt(reader.readField(NUM_KNIGHTS_PLAYED));
+            this.numSettlements = Integer.parseInt(reader.readField(NUM_SETTLEMENTS));
+            this.numRoads = Integer.parseInt(reader.readField(NUM_ROADS));
+            this.numCities = Integer.parseInt(reader.readField(NUM_CITIES));
+            this.numTradeBoosts = Integer.parseInt(reader.readField(NUM_TRADE_BOOSTS));
+            this.hasLongestRoadCard = Boolean.parseBoolean(reader.readField(HAS_LONGEST_ROAD_CARD));
+            this.hasLargestArmy = Boolean.parseBoolean(reader.readField(HAS_LARGEST_ARMY));
+
+            // Read trade boosts from the file
+            String tradeBoostsString = reader.readField(TRADE_BOOSTS);
+            this.tradeBoosts = parseTradeBoosts(tradeBoostsString);
+
+            // Restore hand state using its memento
+            File handFolder = reader.getSubFolder(HAND_SUBFOLDER_NAME);
+            this.handMemento = Player.this.hand.new HandMemento(handFolder);
+        }
+
+        private Resource[] parseTradeBoosts(String tradeBoostsString) {
+            String[] boostTokens = tradeBoostsString.substring(1, tradeBoostsString.length() - 1).split(", ");
+
+            Resource[] tradeBoosts = new Resource[boostTokens.length];
+            for (int i = 0; i < boostTokens.length; i++) {
+                String token = boostTokens[i].trim();
+                if (token.equals("null")) {
+                    tradeBoosts[i] = null;
+                } else {
+                    tradeBoosts[i] = Resource.valueOf(token);
+                }
+            }
+            return tradeBoosts;
+        }
+
+
         @Override
         public void save(File folder) {
             // Create a MementoWriter for writing memento data
-            MementoWriter writer = new MementoWriter(folder, "player.txt");
+            MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
             // Write simple fields to the file
-            writer.writeField("VictoryPoints", Integer.toString(victoryPoints));
-            writer.writeField("HasPlayedDevCard", Boolean.toString(hasPlayedDevCard));
-            writer.writeField("NumKnightsPlayed", Integer.toString(numKnightsPlayed));
-            writer.writeField("NumSettlements", Integer.toString(numSettlements));
-            writer.writeField("NumRoads", Integer.toString(numRoads));
-            writer.writeField("NumCities", Integer.toString(numCities));
-            writer.writeField("NumTradeBoosts", Integer.toString(numTradeBoosts));
-            writer.writeField("HasLongestRoadCard", Boolean.toString(hasLongestRoadCard));
-            writer.writeField("HasLargestArmy", Boolean.toString(hasLargestArmy));
+            writer.writeField(VICTORY_POINTS, Integer.toString(victoryPoints));
+            writer.writeField(HAS_PLAYED_DEV_CARD, Boolean.toString(hasPlayedDevCard));
+            writer.writeField(NUM_KNIGHTS_PLAYED, Integer.toString(numKnightsPlayed));
+            writer.writeField(NUM_SETTLEMENTS, Integer.toString(numSettlements));
+            writer.writeField(NUM_ROADS, Integer.toString(numRoads));
+            writer.writeField(NUM_CITIES, Integer.toString(numCities));
+            writer.writeField(NUM_TRADE_BOOSTS, Integer.toString(numTradeBoosts));
+            writer.writeField(HAS_LONGEST_ROAD_CARD, Boolean.toString(hasLongestRoadCard));
+            writer.writeField(HAS_LARGEST_ARMY, Boolean.toString(hasLargestArmy));
 
             // Write trade boosts to the file
-            writer.writeField("TradeBoosts", Arrays.toString(tradeBoosts));
-
+            writer.writeField(TRADE_BOOSTS, Arrays.toString(tradeBoosts));
 
             // Delegate saving of the hand to its own memento
-            File handFolder = writer.getSubFolder("Hand");
+            File handFolder = writer.getSubFolder(HAND_SUBFOLDER_NAME);
             handMemento.save(handFolder);
         }
+
 
         @Override
         public void restore() {

@@ -1,6 +1,7 @@
 package graphs;
 
 import SavingAndLoading.Memento;
+import SavingAndLoading.MementoReader;
 import SavingAndLoading.MementoWriter;
 import SavingAndLoading.Restorable;
 import gamedatastructures.Resource;
@@ -45,17 +46,32 @@ public class Port implements Restorable {
     public class PortMemento implements Memento {
         private final Resource resource;
 
+        // Storage Constants
+        private static final String TARGET_FILE_NAME = "port.txt";
+
+        // Field Keys
+        private static final String RESOURCE = "Resource";
+
         private PortMemento() {
             this.resource = Port.this.resource;
         }
 
+        public PortMemento(File folder) {
+            // Create a MementoReader for reading memento data
+            MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
+
+            // Read simple fields from the file
+            this.resource = Resource.valueOf(reader.readField(RESOURCE));
+        }
+
+
         @Override
         public void save(File folder) {
             // Create a MementoWriter for writing memento data
-            MementoWriter writer = new MementoWriter(folder, "port.txt");
+            MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
             // Write simple fields to the file
-            writer.writeField("Resource", resource.toString());
+            writer.writeField(RESOURCE, resource.toString());
         }
 
         @Override

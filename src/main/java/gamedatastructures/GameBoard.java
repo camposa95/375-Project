@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Scanner;
 
 import SavingAndLoading.Memento;
+import SavingAndLoading.MementoReader;
 import SavingAndLoading.MementoWriter;
 import SavingAndLoading.Restorable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -107,6 +108,15 @@ public class GameBoard implements Restorable {
         // sub mementos
         private final Memento[] tileMementos;
 
+        // Storage Constants
+        private static final String TARGET_FILE_NAME = "gameboard.txt";
+        private static final String TILE_SUBFOLDER_PREFIX = "Tile";
+
+        // Field Keys
+        private static final String TERRAIN_ORDER = "TerrainOrder";
+        private static final String DIE_ORDER = "DieOrder";
+        private static final String ROBBER_TILE_NUM = "RobberTileNum";
+
         private GameBoardMemento() {
             this.terrainOrder = Arrays.copyOf(GameBoard.this.terrainOrder, GameBoard.this.terrainOrder.length);
             this.dieOrder = Arrays.copyOf(GameBoard.this.dieOrder, GameBoard.this.dieOrder.length);
@@ -119,20 +129,60 @@ public class GameBoard implements Restorable {
             }
         }
 
+        public GameBoardMemento(File folder) {
+            // Create a MementoReader for reading memento data
+            MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
+
+            // Read simple fields from the file
+            this.terrainOrder = parseTerrainOrder(reader.readField(TERRAIN_ORDER));
+            this.dieOrder = parseDieOrder(reader.readField(DIE_ORDER));
+            this.robberTileNum = Integer.parseInt(reader.readField(ROBBER_TILE_NUM));
+
+            // Read sub-mementos from the appropriate subfolders
+            this.tileMementos = new Memento[GameBoard.this.tiles.length];
+            for (int i = 0; i < this.tileMementos.length; i++) {
+                File tileSubFolder = reader.getSubFolder(TILE_SUBFOLDER_PREFIX + i);
+                this.tileMementos[i] = GameBoard.this.tiles[i].new TileMemento(tileSubFolder);
+            }
+        }
+
+        private Terrain[] parseTerrainOrder(String terrainOrderString) {
+            String[] terrainValues = terrainOrderString.substring(1, terrainOrderString.length() - 1).split(", ");
+
+            Terrain[] terrainOrder = new Terrain[terrainValues.length];
+            for (int i = 0; i < terrainValues.length; i++) {
+                String terrainValue = terrainValues[i].trim().toUpperCase();
+                terrainOrder[i] = Terrain.valueOf(terrainValue);
+            }
+
+            return terrainOrder;
+        }
+
+        private Integer[] parseDieOrder(String dieOrderString) {
+            String[] dieValues = dieOrderString.substring(1, dieOrderString.length() - 1).split(", ");
+
+            Integer[] dieOrder = new Integer[dieValues.length];
+            for (int i = 0; i < dieValues.length; i++) {
+                dieOrder[i] = Integer.parseInt(dieValues[i].trim());
+            }
+
+            return dieOrder;
+        }
+
         @Override
         public void save(File folder) {
             // Create a MementoWriter for writing memento data
-            MementoWriter writer = new MementoWriter(folder, "gameboard.txt");
+            MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
             // Write simple fields to the file
-            writer.writeField("TerrainOrder", Arrays.toString(terrainOrder));
-            writer.writeField("DieOrder", Arrays.toString(dieOrder));
-            writer.writeField("RobberTileNum", Integer.toString(robberTileNum));
+            writer.writeField(TERRAIN_ORDER, Arrays.toString(terrainOrder));
+            writer.writeField(DIE_ORDER, Arrays.toString(dieOrder));
+            writer.writeField(ROBBER_TILE_NUM, Integer.toString(robberTileNum));
 
             // Save sub mementos' state
             for (int i = 0; i < tileMementos.length; i++) {
                 // Create a subfolder for each tile's memento
-                File tileSubFolder = writer.getSubFolder("Tile" + i);
+                File tileSubFolder = writer.getSubFolder(TILE_SUBFOLDER_PREFIX + i);
                 tileMementos[i].save(tileSubFolder);
             }
         }

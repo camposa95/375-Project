@@ -1,6 +1,7 @@
 package gamedatastructures;
 
 import SavingAndLoading.Memento;
+import SavingAndLoading.MementoReader;
 import SavingAndLoading.MementoWriter;
 import SavingAndLoading.Restorable;
 
@@ -102,6 +103,16 @@ public class Tile implements Restorable {
         private final boolean hasRobber;
         private final int[] vertexIDs;
 
+        // Storage Constants
+        private static final String TARGET_FILE_NAME = "tile.txt";
+
+        // Field Keys
+        private static final String TERRAIN_TYPE = "TerrainType";
+        private static final String DIE_NUMBER = "DieNumber";
+        private static final String HAS_ROBBER = "HasRobber";
+        private static final String VERTEX_IDS = "VertexIDs";
+
+
         private TileMemento() {
             this.terrainType = Tile.this.terrainType;
             this.dieNumber = Tile.this.dieNumber;
@@ -109,16 +120,38 @@ public class Tile implements Restorable {
             this.vertexIDs = Tile.this.vertexIDs;
         }
 
+        public TileMemento(File folder) {
+            // Create a MementoReader for reading memento data
+            MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
+
+            // Read simple fields from the file
+            this.terrainType = Terrain.valueOf(reader.readField(TERRAIN_TYPE));
+            this.dieNumber = Integer.parseInt(reader.readField(DIE_NUMBER));
+            this.hasRobber = Boolean.parseBoolean(reader.readField(HAS_ROBBER));
+            this.vertexIDs = parseVertexIDs(reader.readField(VERTEX_IDS));
+        }
+
+        private int[] parseVertexIDs(String vertexIDsString) {
+            String[] vertexIDValues = vertexIDsString.substring(1, vertexIDsString.length() - 1).split(", ");
+
+            int[] vertexIDs = new int[vertexIDValues.length];
+            for (int i = 0; i < vertexIDValues.length; i++) {
+                vertexIDs[i] = Integer.parseInt(vertexIDValues[i].trim());
+            }
+
+            return vertexIDs;
+        }
+
         @Override
         public void save(File folder) {
             // Create a MementoWriter for writing memento data
-            MementoWriter writer = new MementoWriter(folder, "tile.txt");
+            MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
             // Write simple fields to the file
-            writer.writeField("TerrainType", terrainType.toString());
-            writer.writeField("DieNumber", Integer.toString(dieNumber));
-            writer.writeField("HasRobber", Boolean.toString(hasRobber));
-            writer.writeField("VertexIDs", Arrays.toString(vertexIDs));
+            writer.writeField(TERRAIN_TYPE, terrainType.toString());
+            writer.writeField(DIE_NUMBER, Integer.toString(dieNumber));
+            writer.writeField(HAS_ROBBER, Boolean.toString(hasRobber));
+            writer.writeField(VERTEX_IDS, Arrays.toString(vertexIDs));
         }
 
         @Override

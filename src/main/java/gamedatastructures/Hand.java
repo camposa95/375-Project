@@ -1,6 +1,7 @@
 package gamedatastructures;
 
 import SavingAndLoading.Memento;
+import SavingAndLoading.MementoReader;
 import SavingAndLoading.MementoWriter;
 import SavingAndLoading.Restorable;
 
@@ -161,6 +162,11 @@ public class Hand implements Restorable {
         private final HashMap<DevCard, Integer> devCards;
         private final HashMap<DevCard, Integer> devCardsBoughtThisTurn;
 
+        // Storage Constants
+        private static final String HAND_FILE_NAME = "Hand.txt";
+        private static final String DEVCARDS_FILE_NAME = "DevCards.txt";
+        private static final String DEVCARDS_BOUGHT_FILE_NAME = "DevCardsBoughtThisTurn.txt";
+
         private HandMemento() {
             this.hand = new HashMap<>();
             this.hand.putAll(Hand.this.hand);
@@ -172,12 +178,53 @@ public class Hand implements Restorable {
             this.devCardsBoughtThisTurn.putAll(Hand.this.devCardsBoughtThisTurn);
         }
 
+        public HandMemento(File folder) {
+            // Initialize the HashMaps
+            this.hand = new HashMap<>();
+            this.devCards = new HashMap<>();
+            this.devCardsBoughtThisTurn = new HashMap<>();
+
+            // Read data from separate files and populate the HashMaps
+            readResourceMap(folder, HAND_FILE_NAME, hand);
+            readDevCardMap(folder, DEVCARDS_FILE_NAME, devCards);
+            readDevCardMap(folder, DEVCARDS_BOUGHT_FILE_NAME, devCardsBoughtThisTurn);
+        }
+
+        private void readResourceMap(File folder, String fileName, Map<Resource, Integer> map) {
+            MementoReader reader = new MementoReader(folder, fileName);
+
+            for (Map.Entry<String, String> entry : reader.readAllFields().entrySet()) {
+                map.put(Resource.valueOf(entry.getKey()),
+                        Integer.parseInt(entry.getValue()));
+            }
+        }
+
+        private void readDevCardMap(File folder, String fileName, Map<DevCard, Integer> map) {
+            MementoReader reader = new MementoReader(folder, fileName);
+
+            for (Map.Entry<String, String> entry : reader.readAllFields().entrySet()) {
+                map.put(DevCard.valueOf(entry.getKey()),
+                        Integer.parseInt(entry.getValue()));
+            }
+        }
+
         @Override
         public void save(File folder) {
             // Write the state of the class's attributes to separate files
-            writeHashMap(folder, "Hand", hand);
-            writeHashMap(folder, "DevCards", devCards);
-            writeHashMap(folder, "DevCardsBoughtThisTurn", devCardsBoughtThisTurn);
+            writeHashMap(folder, HAND_FILE_NAME, hand);
+            writeHashMap(folder, DEVCARDS_FILE_NAME, devCards);
+            writeHashMap(folder, DEVCARDS_BOUGHT_FILE_NAME, devCardsBoughtThisTurn);
+        }
+
+        // Helper method to write a HashMap to a separate file
+        private void writeHashMap(File folder, String fileName, HashMap<?, Integer> hashMap) {
+            // Create a MementoWriter for the current map
+            MementoWriter writer = new MementoWriter(folder, fileName);
+
+            // Write each entry of the map to the file
+            for (Map.Entry<?, Integer> entry : hashMap.entrySet()) {
+                writer.writeField(entry.getKey().toString(), entry.getValue().toString());
+            }
         }
 
         @Override
@@ -193,18 +240,6 @@ public class Hand implements Restorable {
             // Restore the state of the devCardsBoughtThisTurn
             Hand.this.devCardsBoughtThisTurn.clear();
             Hand.this.devCardsBoughtThisTurn.putAll(devCardsBoughtThisTurn);
-        }
-
-
-        // Helper method to write a HashMap to a separate file
-        private void writeHashMap(File folder, String fileName, HashMap<?, Integer> hashMap) {
-            // Create a MementoWriter for the current map
-            MementoWriter writer = new MementoWriter(folder, fileName + ".txt");
-
-            // Write each entry of the map to the file
-            for (Map.Entry<?, Integer> entry : hashMap.entrySet()) {
-                writer.writeField(entry.getKey().toString(), entry.getValue().toString());
-            }
         }
     }
 

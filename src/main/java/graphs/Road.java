@@ -3,9 +3,7 @@ package graphs;
 import java.io.File;
 import java.util.Arrays;
 
-import SavingAndLoading.Memento;
-import SavingAndLoading.MementoWriter;
-import SavingAndLoading.Restorable;
+import SavingAndLoading.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.Player;
 
@@ -252,17 +250,43 @@ public class Road implements Restorable {
     public class RoadMemento implements Memento {
         private final Player owner; // terminal
 
+        // Storage Constants
+        private static final String TARGET_FILE_NAME = "road.txt";
+
+        // Field keys
+        private static final String OWNER = "Owner";
+
         private RoadMemento() {
             this.owner = Road.this.owner;
+        }
+
+        public RoadMemento(File folder) {
+            // Create a MementoReader for reading memento data
+            MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
+
+            // Read simple fields from the file
+            this.owner = parseOwner(reader.readField(OWNER));
+        }
+
+        private Player parseOwner(String ownerString) {
+            // Check if the ownerString represents "None"
+            if (ownerString.equals("None")) {
+                return null;
+            } else {
+                // Extract player number from the string representation
+                int playerNum = Integer.parseInt(ownerString.substring(ownerString.lastIndexOf(" ") + 1));
+                // Retrieve the player using the GameLoader
+                return GameLoader.getInstance().getPlayerByNum(playerNum);
+            }
         }
 
         @Override
         public void save(File folder) {
             // Create a MementoWriter for writing memento data
-            MementoWriter writer = new MementoWriter(folder, "road.txt");
+            MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
             // Write simple fields to the file
-            writer.writeField("Owner", owner != null ? owner.toString() : "None");
+            writer.writeField(OWNER, owner != null ? owner.toString() : "None");
         }
 
         @Override

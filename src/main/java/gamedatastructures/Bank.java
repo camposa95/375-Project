@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import SavingAndLoading.Memento;
+import SavingAndLoading.MementoReader;
 import SavingAndLoading.MementoWriter;
 import SavingAndLoading.Restorable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -102,15 +103,28 @@ public class Bank implements Restorable {
 
         private final HashMap<Resource, Integer> bank;
 
+        // Storage Constants
+        private static final String TARGET_FILE_NAME = "bank.txt";
+
         private BankMemento() {
             this.bank = new HashMap<>();
             this.bank.putAll(Bank.this.bank);
         }
 
+        public BankMemento(File folder) {
+            this.bank = new HashMap<>();
+            MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
+
+            for (Map.Entry<String, String> entry : reader.readAllFields().entrySet()) {
+                this.bank.put(Resource.valueOf(entry.getKey()),
+                        Integer.parseInt(entry.getValue()));
+            }
+        }
+
         @Override
         public void save(File folder) {
             // Create a MementoWriter for writing memento data
-            MementoWriter writer = new MementoWriter(folder, "bank.txt");
+            MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
             // Write the state of the bank's attributes to the file
             for (Map.Entry<Resource, Integer> entry : bank.entrySet()) {

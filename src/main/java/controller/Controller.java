@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import SavingAndLoading.Memento;
+import SavingAndLoading.MementoReader;
 import SavingAndLoading.MementoWriter;
 import SavingAndLoading.Restorable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -939,6 +940,22 @@ public class Controller implements Restorable {
         private final Memento gameMemento;
         private final Memento[] playerMementos;
 
+
+        // Storage Constants
+        private static final String TARGET_FILE_NAME = "controller.txt";
+        private static final String GAME_SUBFOLDER_NAME = "Game";
+        private static final String PLAYER_SUBFOLDER_PREFIX = "Player";
+
+        // Field Keys
+        // Storage Constants - Field Keys
+        private static final String GAME_PHASE = "GamePhase";
+        private static final String GAME_STATE = "GameState";
+        private static final String CURRENT_PLAYER_NUM = "CurrentPlayerNum";
+        private static final String CURRENT_DIE = "CurrentDie";
+        private static final String LAST_PLACED_VERTEX = "LastPlacedVertex";
+        private static final String DEV_CARDS_ENABLED = "DevCardsEnabled";
+
+
         private ControllerMemento() {
             // simple fields
             this.gamePhase = Controller.this.gamePhase;
@@ -957,29 +974,51 @@ public class Controller implements Restorable {
             }
         }
 
+        public ControllerMemento(File folder) {
+            // Create a MementoReader for reading memento data
+            MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
+
+            // Read simple fields from the file
+            this.gamePhase = GamePhase.valueOf(reader.readField(GAME_PHASE));
+            this.gameState = GameState.valueOf(reader.readField(GAME_STATE));
+            this.currentPlayerNum = Integer.parseInt(reader.readField(CURRENT_PLAYER_NUM));
+            this.currentDie = Integer.parseInt(reader.readField(CURRENT_DIE));
+            this.lastPlacedVertex = Integer.parseInt(reader.readField(LAST_PLACED_VERTEX));
+            this.devCardsEnabled = Boolean.parseBoolean(reader.readField(DEV_CARDS_ENABLED));
+
+            // Read sub-mementos from the appropriate subfolders
+            File gameSubFolder = reader.getSubFolder(GAME_SUBFOLDER_NAME);
+            this.gameMemento = Controller.this.game.new GameMemento(gameSubFolder);
+
+            this.playerMementos = new Memento[Controller.this.playerArr.length];
+            for (int i = 0; i < this.playerMementos.length; i++) {
+                File playerSubFolder = reader.getSubFolder(PLAYER_SUBFOLDER_PREFIX + (i + 1));
+                this.playerMementos[i] = Controller.this.playerArr[i].new PlayerMemento(playerSubFolder);
+            }
+        }
+
         @Override
         public void save(File folder) {
             // Create a MementoWriter for writing memento data
-            MementoWriter writer = new MementoWriter(folder, "controller.txt");
+            MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
             // Write simple fields to the file
-            writer.writeField("GamePhase", gamePhase.toString());
-            writer.writeField("GameState", gameState.toString());
-            writer.writeField("CurrentPlayerNum", Integer.toString(currentPlayerNum));
-            writer.writeField("CurrentDie", Integer.toString(currentDie));
-            writer.writeField("LastPlacedVertex", Integer.toString(lastPlacedVertex));
-            writer.writeField("DevCardsEnabled", Boolean.toString(devCardsEnabled));
+            writer.writeField(GAME_PHASE, gamePhase.toString());
+            writer.writeField(GAME_STATE, gameState.toString());
+            writer.writeField(CURRENT_PLAYER_NUM, Integer.toString(currentPlayerNum));
+            writer.writeField(CURRENT_DIE, Integer.toString(currentDie));
+            writer.writeField(LAST_PLACED_VERTEX, Integer.toString(lastPlacedVertex));
+            writer.writeField(DEV_CARDS_ENABLED, Boolean.toString(devCardsEnabled));
 
             // delegate to sub mementos
-
             // Save game memento's state to the appropriate subfolder
-            File gameSubFolder = writer.getSubFolder("Game");
+            File gameSubFolder = writer.getSubFolder(GAME_SUBFOLDER_NAME);
             gameMemento.save(gameSubFolder);
 
             // Save player mementos to separate subfolders
             for (int i = 0; i < playerMementos.length; i++) {
                 // Create a subfolder for each player's memento
-                File playerSubFolder = writer.getSubFolder("Player" + (i + 1));
+                File playerSubFolder = writer.getSubFolder(PLAYER_SUBFOLDER_PREFIX + (i + 1));
                 playerMementos[i].save(playerSubFolder);
             }
         }

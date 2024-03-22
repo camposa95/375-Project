@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import SavingAndLoading.Memento;
+import SavingAndLoading.MementoReader;
 import SavingAndLoading.MementoWriter;
 import SavingAndLoading.Restorable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -361,6 +362,10 @@ public class RoadGraph implements Restorable {
 
         private final Memento[] roadMementos;
 
+        // Storage Constants
+        private static final String TARGET_FILE_NAME = "roadgraph.txt";
+        private static final String ROAD_SUBFOLDER_PREFIX = "Road";
+
         private RoadGraphMemento() {
             this.roadMementos = new Memento[RoadGraph.this.roads.length];
             for (int i = 0; i < RoadGraph.this.roads.length; i++) {
@@ -368,15 +373,28 @@ public class RoadGraph implements Restorable {
             }
         }
 
+        public RoadGraphMemento(File folder) {
+            // Create a MementoReader for reading memento data
+            MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
+
+            // Read sub-mementos from the appropriate subfolders
+            this.roadMementos = new Memento[RoadGraph.this.roads.length];
+            for (int i = 0; i < this.roadMementos.length; i++) {
+                File roadSubFolder = reader.getSubFolder(ROAD_SUBFOLDER_PREFIX + i);
+                this.roadMementos[i] = RoadGraph.this.roads[i].new RoadMemento(roadSubFolder);
+            }
+        }
+
+
         @Override
         public void save(File folder) {
             // Create a MementoWriter for writing memento data
-            MementoWriter writer = new MementoWriter(folder, "roadgraph.txt");
+            MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
             // Save sub mementos' state
             for (int i = 0; i < roadMementos.length; i++) {
                 // Create a subfolder for each road's memento
-                File roadSubFolder = writer.getSubFolder("Road" + i);
+                File roadSubFolder = writer.getSubFolder(ROAD_SUBFOLDER_PREFIX + i);
                 roadMementos[i].save(roadSubFolder);
             }
         }

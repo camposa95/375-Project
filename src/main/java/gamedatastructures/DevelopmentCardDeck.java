@@ -1,6 +1,7 @@
 package gamedatastructures;
 
 import SavingAndLoading.Memento;
+import SavingAndLoading.MementoReader;
 import SavingAndLoading.MementoWriter;
 import SavingAndLoading.Restorable;
 
@@ -70,18 +71,42 @@ public class DevelopmentCardDeck implements Restorable {
     public class DevCardDeckMemento implements Memento {
         private final ArrayList<DevCard> deck;
 
+        // Storage Constants
+        private static final String TARGET_FILE_NAME = "deck.txt";
+
+        // Field Keys
+        private static final String DEV_CARDS = "DevCards";
+
         private DevCardDeckMemento() {
             this.deck = new ArrayList<>();
             this.deck.addAll(DevelopmentCardDeck.this.deck);
         }
 
+        public DevCardDeckMemento(File folder) {
+            // Create a MementoReader for reading memento data
+            MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
+
+            // Read simple fields from the file
+            this.deck = parseDevCards(reader.readField(DEV_CARDS));
+        }
+
+        private ArrayList<DevCard> parseDevCards(String devCardsString) {
+            String[] devCardArray = devCardsString.substring(1, devCardsString.length() - 1).split(", ");
+
+            ArrayList<DevCard> devCards = new ArrayList<>();
+            for (String devCardStr : devCardArray) {
+                devCards.add(DevCard.valueOf(devCardStr.trim()));
+            }
+            return devCards;
+        }
+
         @Override
         public void save(File folder) {
             // Create a MementoWriter for writing memento data
-            MementoWriter writer = new MementoWriter(folder, "deck.txt");
+            MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
             // Write each DevCard in the deck to the file
-            writer.writeField("DevCards", Arrays.toString(deck.toArray()));
+            writer.writeField(DEV_CARDS, Arrays.toString(deck.toArray()));
         }
 
         @Override
