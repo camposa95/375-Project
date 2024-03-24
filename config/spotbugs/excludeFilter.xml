@@ -7,7 +7,7 @@
         <Class name="gui.CatanGUIController"/>
     </Match>
     <Match>
-        <Class name="gui.StartScreenController"/>
+        <Class name="gui.NewGameController"/>
     </Match>
     <Match>
         <Class name="gui.RunGame"/>

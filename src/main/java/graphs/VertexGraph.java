@@ -17,8 +17,8 @@ import gamedatastructures.Resource;
  */
 public class VertexGraph implements Restorable {
 
-    private static final int NUM_VERTICES = 54;
-    private static final int NUM_PORTS = 9;
+    public static final int NUM_VERTICES = 54;
+    public static final int NUM_PORTS = 9;
     private static final int MAX_ADJACENT_VERTEXES = 3;
     private static final int MAX_ADJACENT_ROADS = 3;
     private final Resource[] portResources = {Resource.ANY, Resource.GRAIN, Resource.WOOL, Resource.ANY, Resource.ORE, Resource.ANY, Resource.ANY, Resource.BRICK, Resource.LUMBER};

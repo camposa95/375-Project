@@ -1,12 +1,11 @@
 package gui;
 
+import graphs.*;
 import saving.GameLoader;
 import controller.Controller;
 import controller.GameState;
 import controller.SuccessCode;
 import gamedatastructures.*;
-import graphs.Port;
-import graphs.VertexGraph;
 import gui.popups.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -40,7 +39,7 @@ public class CatanGUIController {
     @FXML
     private Circle port0, port1, port2, port3, port4, port5, port6, port7, port8;
     @FXML
-    private Button rollButton, buildSettlementButton, buildRoadButton, buildCityButton, buyDevCardButton, playKnightButton, playMonopolyButton, playRoadBuildingButton, playYearOfPlentyButton, endTurnButton, cancelButton, playerTradeButton, bankTradeButton;
+    private Button rollButton, buildSettlementButton, buildRoadButton, buildCityButton, buyDevCardButton, playKnightButton, playMonopolyButton, playRoadBuildingButton, playYearOfPlentyButton, endTurnButton, cancelButton, playerTradeButton, bankTradeButton, saveButton;
     @FXML
     private Text number0, number1, number2, number3, number4, number5, number6, number7, number8, number9, number10, number11, number12, number13, number14, number15, number16, number17, number18;
     @FXML
@@ -120,7 +119,7 @@ public class CatanGUIController {
     }
 
     public void internationalize(ResourceBundle bundle){
-        this.messages=bundle;
+        this.messages = bundle;
 
         turnTitle1.setText(messages.getString("turnTitle1"));
         turnTitle2.setText(messages.getString("turnTitle2"));
@@ -145,6 +144,8 @@ public class CatanGUIController {
         player2name.setText(messages.getString("player2"));
         player3name.setText(messages.getString("player3"));
         player4name.setText(messages.getString("player4"));
+
+        saveButton.setText(messages.getString("saveGameButton"));
     }
 
     public Color getPlayerColor(int playerNum){
@@ -195,16 +196,23 @@ public class CatanGUIController {
         this.controller = controller;
     }
 
-    public void initializeGameBoard(VertexGraph vertexGraph, Tile[] tiles, int numPlayers) {
-        //called in initialization
-        initializeTiles(tiles);
+    public void initializeGameBoard() {
+        // Basic initialization
+        this.initializeTiles();
+        this.initializePorts();
+        this.initializeVertexes();
+        this.initializeRoads();
+        this.hidePlayerStatsIfNeeded();
+        this.updateInfoPane();
 
-        initializePorts(vertexGraph);
-
-        hidePlayerStatsIfNeeded(numPlayers);
+        if (controller.getState() == GameState.TURN_START) {
+            setAllVerticesVisibility(false);
+            rollButton.setDisable(false);
+        }
     }
 
-    private void initializeTiles(Tile[] tiles) {
+    private void initializeTiles() {
+        Tile[] tiles = GameLoader.getInstance().getTiles();
         for(int i = 0; i < tiles.length; i++){
             Tile current = tiles[i];
             setHexBackground(hexagonTiles[i], current.getTerrain());
@@ -217,8 +225,9 @@ public class CatanGUIController {
         }
     }
 
-    private void initializePorts(VertexGraph vertexGraph) {
-        for(int p = 0; p < 9; p++){
+    private void initializePorts() {
+        VertexGraph vertexGraph = GameLoader.getInstance().getVertexGraph();
+        for(int p = 0; p < VertexGraph.NUM_PORTS; p++){
             Port cur = vertexGraph.getPort(p);
             setPortTrade(ports[p], cur.getResourse());
         }
@@ -260,7 +269,28 @@ public class CatanGUIController {
         port.setFill(new ImagePattern(backgroundImage));
     }
 
-    private void hidePlayerStatsIfNeeded(int numPlayers) {
+    private void initializeVertexes() {
+        VertexGraph vertexes = GameLoader.getInstance().getVertexGraph();
+        for (int i = 0; i < VertexGraph.NUM_VERTICES; i++) {
+            Vertex vertex = vertexes.getVertex(i);
+            if (vertex.isOccupied()) {
+                renderSettlementOnVertex(vertices[i], getPlayerColor(vertex.getOwner().getPlayerNum()));
+            }
+        }
+    }
+
+    private void initializeRoads() {
+        RoadGraph roads = GameLoader.getInstance().getRoadGraph();
+        for (int i = 0; i < RoadGraph.NUM_ROADS; i++) {
+            Road road = roads.getRoad(i);
+            if (road.isOccupied()) {
+                renderRoad(i, road.getOwner().getPlayerNum());
+            }
+        }
+    }
+
+    private void hidePlayerStatsIfNeeded() {
+        int numPlayers = GameLoader.getInstance().getNumPlayers();
         if(numPlayers < 3){
             player3wood.setVisible(false);
             player3brick.setVisible(false);
@@ -291,59 +321,28 @@ public class CatanGUIController {
         }
     }
 
-    public void restore() {
-
-    }
-
-    public void initializeSetupBoard(int numPlayers){
-        setAllVerticesVisibility(false);
-        rollButton.setDisable(false);
-
-        //white
-        renderSettlementOnVertex(vertices[35], getPlayerColor(1));
-        renderSettlementOnVertex(vertices[19], getPlayerColor(1));
-        renderRoad(37, 1);
-        renderRoad(25, 1);
-
-        //orange
-        renderSettlementOnVertex(vertices[13], getPlayerColor(2));
-        renderSettlementOnVertex(vertices[42], getPlayerColor(2));
-        renderRoad(15, 2);
-        renderRoad(58, 2);
-
-        if(numPlayers > 2){
-            //blue
-            renderSettlementOnVertex(vertices[44], getPlayerColor(3));
-            renderSettlementOnVertex(vertices[40], getPlayerColor(3));
-            renderRoad(52, 3);
-            renderRoad(56, 3);
-        }
-
-        if(numPlayers > 3){
-            //red
-            renderSettlementOnVertex(vertices[10], getPlayerColor(4));
-            renderSettlementOnVertex(vertices[29], getPlayerColor(4));
-            renderRoad(13, 4);
-            renderRoad(41,4);
-        }
-
-        this.updateInfoPane();
-    }
-
     // ----------------------------------------------------------------
     //
-    // Handlers
+    // Game State Flow Control
     //
     // ----------------------------------------------------------------
 
     public void saveButtonPressed(MouseEvent event) throws IOException {
         if (this.controller.getState() == GameState.TURN_START && this.guiState == GUIState.IDLE) {
             if (!GameLoader.getInstance().saveGame()) {
-                System.out.println("Failed to save game.");
+                this.tooltipText.setText(messages.getString("saveFail"));
+            } else {
+                // switch back to the main screen
+                Stage stage = (Stage) gameboard.getScene().getWindow();
+                stage.close();
+                FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("start_screen.fxml"));
+                Scene scene = new Scene(fxmlLoader.load());
+                stage.setScene(scene);
+                stage.show();
             }
         } else {
-            // TODO: Add a tooltip to say you can only save the game at the start of a turndd
-            System.out.println("can only save at start of turn");
+            // TODO: Add a tooltip to say you can only save the game at the start of a turn
+            this.tooltipText.setText(messages.getString("saveNotAllowed"));
         }
     }
 
@@ -385,8 +384,10 @@ public class CatanGUIController {
     }
 
     //-------------------------------------------------------------------
-
-    //VERTEX METHODS
+    //
+    // Click Handlers
+    //
+    //-------------------------------------------------------------------
 
     @FXML
     public void handleVertexClick(MouseEvent event) throws IOException {
@@ -416,8 +417,6 @@ public class CatanGUIController {
 
     }
 
-    //-------------------------------------------------------------------
-
     //ROBBER METHODS
     public void handleRobberClick(MouseEvent event) throws IOException {
         int robberId = Integer.parseInt(((Circle) event.getSource()).getId().substring("robber".length()));
@@ -441,9 +440,6 @@ public class CatanGUIController {
             this.tooltipText.setText(messages.getString("cannotMoveRobberHere"));
         }
     }
-
-    //-------------------------------------------------------------------
-    //ROAD METHODS
 
     public void handleRoadClick(MouseEvent event) throws IOException {
         int currentPlayer = this.controller.getCurrentPlayer().playerNum;
@@ -494,10 +490,6 @@ public class CatanGUIController {
             this.applyGameWon();
         }
     }
-
-    //-------------------------------------------------------------------
-
-    // RIGHT SIDE BUTTONS
 
     public void buildSettlementButtonPress(MouseEvent event){
         //Triggered by Build Settlement button pressed
@@ -668,10 +660,6 @@ public class CatanGUIController {
         }
     }
 
-    //-------------------------------------------------------------------
-
-    // TRADE METHODS
-
     public void playerTradeButtonPressed(MouseEvent event) throws IOException {
         //Triggered by Player Trade button pressed
         if(this.controller.getState() == GameState.DEFAULT && this.guiState == GUIState.IDLE){
@@ -709,10 +697,6 @@ public class CatanGUIController {
             this.guiState = GUIState.BUSY;
         }
     }
-
-    //-------------------------------------------------------------------
-
-    //CITY METHODS
 
     public void handleSettlementClick(MouseEvent event) {
         if(this.controller.getState()==GameState.UPGRADE_SETTLEMENT){
@@ -807,7 +791,7 @@ public class CatanGUIController {
         gameboardPane.getChildren().add(newCity);
     }
 
-    public void setHexBackground(Polygon location, Terrain resource){
+    private void setHexBackground(Polygon location, Terrain resource){
         //used in initialization
         Image backgroundImage = null;
         switch(resource){
@@ -892,10 +876,10 @@ public class CatanGUIController {
         Player currentPlayer = tempPlayers[this.controller.getCurrentPlayer().playerNum-1];
         if(this.controller.getDevCardsEnabled()){
             HashMap<DevCard, Integer> devCards = currentPlayer.hand.devCards;
-            playKnightButton.setDisable(devCards.get(DevCard.KNIGHT)>0 ? false : true);
-            playMonopolyButton.setDisable(devCards.get(DevCard.MONOPOLY)>0 ? false : true);
-            playYearOfPlentyButton.setDisable(devCards.get(DevCard.PLENTY)>0 ? false : true);
-            playRoadBuildingButton.setDisable(devCards.get(DevCard.ROAD)>0 ? false : true);
+            playKnightButton.setDisable(devCards.get(DevCard.KNIGHT) <= 0);
+            playMonopolyButton.setDisable(devCards.get(DevCard.MONOPOLY) <= 0);
+            playYearOfPlentyButton.setDisable(devCards.get(DevCard.PLENTY) <= 0);
+            playRoadBuildingButton.setDisable(devCards.get(DevCard.ROAD) <= 0);
         }else{
             playKnightButton.setDisable(true);
             playMonopolyButton.setDisable(true);

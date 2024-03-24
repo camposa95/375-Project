@@ -19,7 +19,7 @@ import gamedatastructures.Player;
  */
 public class RoadGraph implements Restorable {
 
-    private static final int NUM_ROADS = 72;
+    public static final int NUM_ROADS = 72;
     private static final int MAX_ADJACENT_ROADS = 4;
     private static final int MAX_ADJACENT_VERTEXES = 2;
     private static final Integer MIN_ROADS_FOR_CARD = 5;

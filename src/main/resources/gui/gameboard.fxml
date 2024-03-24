@@ -760,6 +760,6 @@
             <Font size="15.0" />
          </font>
       </Text>
-      <Button fx:id="saveButton" layoutX="34.0" layoutY="744.0" mnemonicParsing="false" onMouseClicked="#saveButtonPressed" prefHeight="52.0" prefWidth="104.0" text="Save Game" />
+      <Button fx:id="saveButton" layoutX="34.0" layoutY="744.0" mnemonicParsing="false" onMouseClicked="#saveButtonPressed" prefHeight="52.0" prefWidth="104.0" text="Save &amp; Exit" />
    </children>
 </Pane>

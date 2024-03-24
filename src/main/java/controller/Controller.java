@@ -929,6 +929,7 @@ public class Controller implements Restorable {
         private final GamePhase gamePhase;
         private final GameState gameState;
         private final int currentPlayerNum;
+        private final Player currentPlayer;
         private final int currentDie;
         private final int lastPlacedVertex;
         private final boolean devCardsEnabled;
@@ -957,6 +958,7 @@ public class Controller implements Restorable {
             this.gamePhase = Controller.this.gamePhase;
             this.gameState = Controller.this.gameState;
             this.currentPlayerNum = Controller.this.currentPlayerNum;
+            this.currentPlayer = Controller.this.currentPlayer;
             this.currentDie = Controller.this.currentDie;
             this.lastPlacedVertex = Controller.this.lastPlacedVertex;
             this.devCardsEnabled = Controller.this.devCardsEnabled;
@@ -979,6 +981,7 @@ public class Controller implements Restorable {
             this.gamePhase = GamePhase.valueOf(reader.readField(GAME_PHASE));
             this.gameState = GameState.valueOf(reader.readField(GAME_STATE));
             this.currentPlayerNum = Integer.parseInt(reader.readField(CURRENT_PLAYER_NUM));
+            this.currentPlayer = GameLoader.getInstance().getPlayerByNum(this.currentPlayerNum + 1);
             this.currentDie = Integer.parseInt(reader.readField(CURRENT_DIE));
             this.lastPlacedVertex = Integer.parseInt(reader.readField(LAST_PLACED_VERTEX));
             this.devCardsEnabled = Boolean.parseBoolean(reader.readField(DEV_CARDS_ENABLED));
@@ -1027,6 +1030,7 @@ public class Controller implements Restorable {
             Controller.this.currentDie = this.currentDie;
             Controller.this.lastPlacedVertex = this.lastPlacedVertex;
             Controller.this.devCardsEnabled = this.devCardsEnabled;
+            Controller.this.currentPlayer = this.currentPlayer;
 
             // Delegate restoration to sub mementos
             this.gameMemento.restore();

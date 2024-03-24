@@ -7,6 +7,7 @@ import graphs.RoadGraph;
 import graphs.VertexGraph;
 
 import java.io.File;
+import java.util.ResourceBundle;
 
 public class GameLoader {
 
@@ -19,15 +20,25 @@ public class GameLoader {
     private static final String TILE_LAYOUT = "src/main/java/gamedatastructures/TileLayout.txt";
 
 
-    // Basic save slot for now
-    private static final String BASE_FOLDER_PATH = "src/main/java/SavingAndLoading/SavedGames/slot1";
+    // Storage constants
+    private static final String SAVED_GAMES_PATH = "src/main/java/saving/slots";
+    private static final String SLOT_PREFIX = "slot";
+    private static final String EXTENSION = ".txt";
+    private static final String GAME_TYPE = "gameType";
+    private static final String NUM_PLAYERS = "numPlayers";
+    private static final String LANGUAGE = "language";
 
     private static GameLoader uniqueInstance = null;
 
     private VertexGraph vertexGraph;
+    private RoadGraph roadGraph;
     private GameBoard gameBoard;
     private Controller controller;
     private Player[] players;
+    private GameType gameType;
+    private int numPlayers;
+
+    private String language;
 
     private GameLoader() {
         // restricts access
@@ -40,39 +51,55 @@ public class GameLoader {
         return uniqueInstance;
     }
 
-    @SuppressFBWarnings("EI_EXPOSE_REP")
-    public Controller instantiateGameObjects(final GameType gameType, final int numPlayers) {
-        RoadGraph roadGraph = new RoadGraph();
+    private void instantiateGameObjects(final GameType gameMode, final int playerCount) {
+        this.gameType = gameMode;
+        this.numPlayers = playerCount;
+
+        roadGraph = new RoadGraph();
         vertexGraph = new VertexGraph();
         roadGraph.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_FILE);
         vertexGraph.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_FILE);
         roadGraph.initializeRoadToVertexAdjacency(vertexGraph, ROAD_TO_VERTEX_FILE);
         vertexGraph.initializeVertexToRoadAdjacency(roadGraph, VERTEX_TO_ROAD_FILE);
-        vertexGraph.initializeVertexToPortAdjacency(VERTEX_TO_PORT_FILE, gameType);
+        vertexGraph.initializeVertexToPortAdjacency(VERTEX_TO_PORT_FILE, this.gameType);
 
-        gameBoard = new GameBoard(gameType, TILE_LAYOUT);
+        gameBoard = new GameBoard(gameMode, TILE_LAYOUT);
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         Game game = new Game(gameBoard, vertexGraph, roadGraph, devCardDeck);
 
-        this.players = new Player[numPlayers];
-        for (int i = 0; i < numPlayers; i++) {
+        this.players = new Player[this.numPlayers];
+        for (int i = 0; i < this.numPlayers; i++) {
             Player player = new Player(i + 1);
             players[i] = player;
         }
 
-        controller = new Controller(game, players, gameType);
+        this.controller = new Controller(game, players, gameMode);
+    }
 
-        return controller;
+    public ResourceBundle getMessageBundle() {
+        if (this.language.equals("English")) {
+            return ResourceBundle.getBundle("i18n/messages");
+        } else { // Must be spanish
+            return ResourceBundle.getBundle("i18n/messages_es");
+        }
     }
 
     public boolean saveGame() {
         // Create a File object representing the base folder
-        File baseFolder = new File(BASE_FOLDER_PATH);
+        File baseFolder = new File(SAVED_GAMES_PATH + "/" + SLOT_PREFIX + 1);
+        if (!baseFolder.exists()) {
+            if (!baseFolder.mkdirs()) {
+                return false;
+            }
+        }
 
         // Create a MementoWriter for writing memento data
-        MementoWriter writer = null;
         try {
-            writer = new MementoWriter(baseFolder, "slot1.txt");
+            // write the basic game info to the file
+            MementoWriter writer = new MementoWriter(baseFolder, SLOT_PREFIX + EXTENSION);
+            writer.writeField(GAME_TYPE, String.valueOf(this.gameType));
+            writer.writeField(NUM_PLAYERS, String.valueOf(this.numPlayers));
+            writer.writeField(LANGUAGE, this.language);
 
             // Save the controllerMemento memento in the Controller folder
             File controllerFolder = writer.getSubFolder("Controller");
@@ -90,23 +117,53 @@ public class GameLoader {
         return true;
     }
 
-    public void loadGame() {
+    public boolean hasSavedSlot() {
+        File folder = new File(SAVED_GAMES_PATH);
+        File[] files = folder.listFiles();
+
+        // Check if the folder is has files other than the .gitkeep
+        return (files != null && files.length > 1);
+    }
+
+    @SuppressFBWarnings("EI_EXPOSE_REP")
+    public Controller loadGame() {
         // Create a File object representing the base folder
-        File baseFolder = new File(BASE_FOLDER_PATH);
+        File baseFolder = new File(SAVED_GAMES_PATH + "/" + SLOT_PREFIX + 1);
 
-        // Create a MementoReader for reading memento data
-        MementoReader reader = new MementoReader(baseFolder, "slot1.txt");
+        // Create a MementoReader for restoring the basic game info
+        MementoReader reader = new MementoReader(baseFolder, SLOT_PREFIX + EXTENSION);
+        GameType restoredGameType = GameType.valueOf(reader.readField(GAME_TYPE));
+        int restoredNumPlayers = Integer.parseInt(reader.readField(NUM_PLAYERS));
+        this.language = reader.readField(LANGUAGE);
 
-        // Save the controllerMemento memento in the Controller folder
+        // re-instantiate the game objects based on the basic game info
+        this.instantiateGameObjects(restoredGameType, restoredNumPlayers);
+
+        // Now restore all the mementos stating with the controller
         File controllerFolder = reader.getSubFolder("Controller");
         Controller.ControllerMemento controllerMemento = this.controller.new ControllerMemento(controllerFolder);
         controllerMemento.restore();
 
-        // Save the bank memento in the Bank folder
+        // and bank root objects
         File bankFolder = reader.getSubFolder("Bank");
         Bank.BankMemento bankMemento = Bank.getInstance().new BankMemento(bankFolder);
         bankMemento.restore();
+
+        return this.controller;
     }
+
+    @SuppressFBWarnings("EI_EXPOSE_REP")
+    public Controller createNewGame(final GameType gameTypeSelected, final int playerCount, final String languageSelected) {
+        this.language = languageSelected;
+        this.instantiateGameObjects(gameTypeSelected, playerCount);
+        return this.controller;
+    }
+
+    // ---------------------------------------------------------------
+    //
+    // Reference Getters
+    //
+    // ----------------------------------------------------------------
 
     public VertexGraph getVertexGraph() {
         return vertexGraph;
@@ -123,5 +180,13 @@ public class GameLoader {
             }
         }
         throw new IllegalArgumentException("Player" + num + " not found.");
+    }
+
+    public int getNumPlayers() {
+        return this.numPlayers;
+    }
+
+    public RoadGraph getRoadGraph() {
+        return roadGraph;
     }
 }
