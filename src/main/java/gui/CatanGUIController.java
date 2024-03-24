@@ -341,7 +341,6 @@ public class CatanGUIController {
                 stage.show();
             }
         } else {
-            // TODO: Add a tooltip to say you can only save the game at the start of a turn
             this.tooltipText.setText(messages.getString("saveNotAllowed"));
         }
     }
