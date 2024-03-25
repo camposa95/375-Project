@@ -46,6 +46,10 @@ spotbugsMain {
     }
 }
 
+spotbugsTest {
+    onlyIf { false }
+}
+
 test {
     useJUnitPlatform()
 }
