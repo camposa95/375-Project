@@ -1,0 +1,4 @@
+TerrainType: MOUNTAINS
+DieNumber: 10
+HasRobber: false
+VertexIDs: [0, 1, 2, 8, 9, 10]

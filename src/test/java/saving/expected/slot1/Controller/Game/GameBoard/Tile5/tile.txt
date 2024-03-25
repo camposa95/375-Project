@@ -1,0 +1,4 @@
+TerrainType: PASTURE
+DieNumber: 4
+HasRobber: false
+VertexIDs: [11, 12, 13, 21, 22, 23]

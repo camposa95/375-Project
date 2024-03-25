@@ -21,7 +21,7 @@ public class GameLoader {
 
 
     // Storage constants
-    private static final String SAVED_GAMES_PATH = "src/main/java/saving/slots";
+    private String savedGamesPath = "src/main/java/saving/slots";
     private static final String SLOT_PREFIX = "slot";
     private static final String EXTENSION = ".txt";
     private static final String GAME_TYPE = "gameType";
@@ -44,11 +44,20 @@ public class GameLoader {
         // restricts access
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     public static synchronized GameLoader getInstance() {
         if (uniqueInstance == null) {
             uniqueInstance = new GameLoader();
         }
         return uniqueInstance;
+    }
+
+    /**
+     * Only for testing purposes to set where to save and load from
+     */
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
+    public void setSlotsPath(final String slotsPath) {
+        this.savedGamesPath = slotsPath;
     }
 
     private void instantiateGameObjects(final GameType gameMode, final int playerCount) {
@@ -86,7 +95,7 @@ public class GameLoader {
 
     public boolean saveGame() {
         // Create a File object representing the base folder
-        File baseFolder = new File(SAVED_GAMES_PATH + "/" + SLOT_PREFIX + 1);
+        File baseFolder = new File(savedGamesPath + "/" + SLOT_PREFIX + 1);
         if (!baseFolder.exists()) {
             if (!baseFolder.mkdirs()) {
                 return false;
@@ -118,7 +127,7 @@ public class GameLoader {
     }
 
     public boolean hasSavedSlot() {
-        File folder = new File(SAVED_GAMES_PATH);
+        File folder = new File(savedGamesPath);
         File[] files = folder.listFiles();
 
         // Check if the folder is has files other than the .gitkeep
@@ -128,7 +137,7 @@ public class GameLoader {
     @SuppressFBWarnings("EI_EXPOSE_REP")
     public Controller loadGame() {
         // Create a File object representing the base folder
-        File baseFolder = new File(SAVED_GAMES_PATH + "/" + SLOT_PREFIX + 1);
+        File baseFolder = new File(savedGamesPath + "/" + SLOT_PREFIX + 1);
 
         // Create a MementoReader for restoring the basic game info
         MementoReader reader = new MementoReader(baseFolder, SLOT_PREFIX + EXTENSION);
