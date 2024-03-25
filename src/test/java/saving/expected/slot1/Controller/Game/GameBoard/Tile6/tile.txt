@@ -1,0 +1,4 @@
+TerrainType: HILLS
+DieNumber: 10
+HasRobber: false
+VertexIDs: [13, 14, 15, 23, 24, 25]

@@ -1,0 +1,6 @@
+GamePhase: REGULAR_PLAY
+GameState: TURN_START
+CurrentPlayerNum: 0
+CurrentDie: 0
+LastPlacedVertex: 19
+DevCardsEnabled: true

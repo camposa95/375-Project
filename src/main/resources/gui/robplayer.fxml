@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="168.0" prefWidth="416.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.RobPlayerController">
+<AnchorPane prefHeight="168.0" prefWidth="416.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.popups.RobPlayerController">
    <children>
       <Text fx:id="robPlayerTitleText" layoutX="152.0" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select a player to rob" />
       <Button fx:id="otherPlayer1" layoutX="104.0" layoutY="115.0" mnemonicParsing="false" onMouseClicked="#robPlayer" text="Player" />

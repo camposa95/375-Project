@@ -1,17 +1,19 @@
 package graphs;
 
+import java.io.File;
 import java.util.Arrays;
 
+import saving.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.Player;
 
 /**
  * Represents a road on the map.
  */
-public class Road {
+public class Road implements Restorable {
 
     private static final int MAX_ADJACENT_ROADS = 4;
-    private int locationId;
+    private final int locationId;
     private Road[] adjacentRoads;
     private Vertex[] adjacentVertexes;
     private Player owner;
@@ -237,5 +239,64 @@ public class Road {
         }
 
         throw new IllegalStateException("This road only has one adjacent vertex?");
+    }
+
+    // -----------------------------------
+    //
+    // Restorable implementation
+    //
+    // -----------------------------------
+
+    public class RoadMemento implements Memento {
+        private final Player owner; // terminal
+
+        // Storage Constants
+        private static final String TARGET_FILE_NAME = "road.txt";
+
+        // Field keys
+        private static final String OWNER = "Owner";
+
+        private RoadMemento() {
+            this.owner = Road.this.owner;
+        }
+
+        @SuppressFBWarnings("EI_EXPOSE_REP2")
+        public RoadMemento(final File folder) {
+            // Create a MementoReader for reading memento data
+            MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
+
+            // Read simple fields from the file
+            this.owner = parseOwner(reader.readField(OWNER));
+        }
+
+        private Player parseOwner(final String ownerString) {
+            // Check if the ownerString represents "None"
+            if (ownerString.equals("None")) {
+                return null;
+            } else {
+                // Extract player number from the string representation
+                int playerNum = Integer.parseInt(ownerString.substring(ownerString.lastIndexOf(" ") + 1));
+                // Retrieve the player using the GameLoader
+                return GameLoader.getInstance().getPlayerByNum(playerNum);
+            }
+        }
+
+        public void save(final File folder) throws SaveException {
+            // Create a MementoWriter for writing memento data
+            MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
+
+            // Write simple fields to the file
+            writer.writeField(OWNER, owner != null ? owner.toString() : "None");
+        }
+
+        public void restore() {
+            // Restore the owner of the road
+            Road.this.owner = this.owner;
+        }
+    }
+
+    @Override
+    public Memento createMemento() {
+        return new RoadMemento();
     }
 }

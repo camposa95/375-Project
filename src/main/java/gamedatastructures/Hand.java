@@ -1,9 +1,14 @@
 package gamedatastructures;
 
+import saving.*;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
-public class Hand {
+public class Hand implements Restorable {
     private HashMap<Resource, Integer> hand = new HashMap<>();
     private static final int MAX_AMOUNT = 19;
     private static final int MAX_KNIGHTS = 14;
@@ -141,5 +146,102 @@ public class Hand {
         }
         Resource[] rArr = resources.toArray(new Resource[resources.size()]);
         return rArr;
+    }
+
+    // -----------------------------------
+    //
+    // Restorable implementation
+    //
+    // -----------------------------------
+
+    public class HandMemento implements Memento {
+
+        private final HashMap<Resource, Integer> hand;
+        private final HashMap<DevCard, Integer> devCards;
+        private final HashMap<DevCard, Integer> devCardsBoughtThisTurn;
+
+        // Storage Constants
+        private static final String HAND_FILE_NAME = "Hand.txt";
+        private static final String DEVCARDS_FILE_NAME = "DevCards.txt";
+        private static final String DEVCARDS_BOUGHT_FILE_NAME = "DevCardsBoughtThisTurn.txt";
+
+        private HandMemento() {
+            this.hand = new HashMap<>();
+            this.hand.putAll(Hand.this.hand);
+
+            this.devCards = new HashMap<>();
+            this.devCards.putAll(Hand.this.devCards);
+
+            this.devCardsBoughtThisTurn = new HashMap<>();
+            this.devCardsBoughtThisTurn.putAll(Hand.this.devCardsBoughtThisTurn);
+        }
+
+        @SuppressFBWarnings("EI_EXPOSE_REP2")
+        public HandMemento(final File folder) {
+            // Initialize the HashMaps
+            this.hand = new HashMap<>();
+            this.devCards = new HashMap<>();
+            this.devCardsBoughtThisTurn = new HashMap<>();
+
+            // Read data from separate files and populate the HashMaps
+            readResourceMap(folder, HAND_FILE_NAME, hand);
+            readDevCardMap(folder, DEVCARDS_FILE_NAME, devCards);
+            readDevCardMap(folder, DEVCARDS_BOUGHT_FILE_NAME, devCardsBoughtThisTurn);
+        }
+
+        private void readResourceMap(final File folder, final String fileName, final Map<Resource, Integer> map) {
+            MementoReader reader = new MementoReader(folder, fileName);
+
+            for (Map.Entry<String, String> entry : reader.readAllFields().entrySet()) {
+                map.put(Resource.valueOf(entry.getKey()),
+                        Integer.parseInt(entry.getValue()));
+            }
+        }
+
+        private void readDevCardMap(final File folder, final String fileName, final Map<DevCard, Integer> map) {
+            MementoReader reader = new MementoReader(folder, fileName);
+
+            for (Map.Entry<String, String> entry : reader.readAllFields().entrySet()) {
+                map.put(DevCard.valueOf(entry.getKey()),
+                        Integer.parseInt(entry.getValue()));
+            }
+        }
+
+        public void save(final File folder) throws SaveException {
+            // Write the state of the class's attributes to separate files
+            writeHashMap(folder, HAND_FILE_NAME, hand);
+            writeHashMap(folder, DEVCARDS_FILE_NAME, devCards);
+            writeHashMap(folder, DEVCARDS_BOUGHT_FILE_NAME, devCardsBoughtThisTurn);
+        }
+
+        // Helper method to write a HashMap to a separate file
+        private void writeHashMap(final File folder, final String fileName, final HashMap<?, Integer> hashMap) throws SaveException {
+            // Create a MementoWriter for the current map
+            MementoWriter writer = new MementoWriter(folder, fileName);
+
+            // Write each entry of the map to the file
+            for (Map.Entry<?, Integer> entry : hashMap.entrySet()) {
+                writer.writeField(entry.getKey().toString(), entry.getValue().toString());
+            }
+        }
+
+        public void restore() {
+            // Restore the state of the hand
+            Hand.this.hand.clear();
+            Hand.this.hand.putAll(hand);
+
+            // Restore the state of the devCards
+            Hand.this.devCards.clear();
+            Hand.this.devCards.putAll(devCards);
+
+            // Restore the state of the devCardsBoughtThisTurn
+            Hand.this.devCardsBoughtThisTurn.clear();
+            Hand.this.devCardsBoughtThisTurn.putAll(devCardsBoughtThisTurn);
+        }
+    }
+
+    @Override
+    public Memento createMemento() {
+        return new HandMemento();
     }
 }

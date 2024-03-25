@@ -10,15 +10,16 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import saving.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.Player;
 
 /**
  * Graph for the Roads on the map
  */
-public class RoadGraph {
+public class RoadGraph implements Restorable {
 
-    private static final int NUM_ROADS = 72;
+    public static final int NUM_ROADS = 72;
     private static final int MAX_ADJACENT_ROADS = 4;
     private static final int MAX_ADJACENT_VERTEXES = 2;
     private static final Integer MIN_ROADS_FOR_CARD = 5;
@@ -346,5 +347,64 @@ public class RoadGraph {
         }
 
         return players;
+    }
+
+    // -----------------------------------
+    //
+    // Restorable implementation
+    //
+    // -----------------------------------
+
+    public class RoadGraphMemento implements Memento {
+
+        private final Memento[] roadMementos;
+
+        // Storage Constants
+        private static final String TARGET_FILE_NAME = "roadgraph.txt";
+        private static final String ROAD_SUBFOLDER_PREFIX = "Road";
+
+        private RoadGraphMemento() {
+            this.roadMementos = new Memento[RoadGraph.this.roads.length];
+            for (int i = 0; i < RoadGraph.this.roads.length; i++) {
+                this.roadMementos[i] = RoadGraph.this.roads[i].createMemento();
+            }
+        }
+
+        @SuppressFBWarnings("EI_EXPOSE_REP2")
+        public RoadGraphMemento(final File folder) {
+            // Create a MementoReader for reading memento data
+            MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
+
+            // Read sub-mementos from the appropriate subfolders
+            this.roadMementos = new Memento[RoadGraph.this.roads.length];
+            for (int i = 0; i < this.roadMementos.length; i++) {
+                File roadSubFolder = reader.getSubFolder(ROAD_SUBFOLDER_PREFIX + i);
+                this.roadMementos[i] = RoadGraph.this.roads[i].new RoadMemento(roadSubFolder);
+            }
+        }
+
+        public void save(final File folder) throws SaveException {
+            // Create a MementoWriter for writing memento data
+            MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
+
+            // Save sub mementos' state
+            for (int i = 0; i < roadMementos.length; i++) {
+                // Create a subfolder for each road's memento
+                File roadSubFolder = writer.getSubFolder(ROAD_SUBFOLDER_PREFIX + i);
+                roadMementos[i].save(roadSubFolder);
+            }
+        }
+
+        public void restore() {
+            // Restore sub mementos
+            for (Memento roadMemento : roadMementos) {
+                roadMemento.restore();
+            }
+        }
+    }
+
+    @Override
+    public Memento createMemento() {
+        return new RoadGraphMemento();
     }
 }

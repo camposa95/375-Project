@@ -1,10 +1,12 @@
 package controller;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import saving.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.CardNotPlayableException;
 import gamedatastructures.DevCard;
@@ -16,7 +18,7 @@ import gamedatastructures.NotEnoughResourcesException;
 import gamedatastructures.Player;
 import gamedatastructures.Resource;
 
-public class Controller {
+public class Controller implements Restorable {
 
     private Game game;
     private Player currentPlayer;
@@ -913,5 +915,133 @@ public class Controller {
                 }
             }
         }
+    }
+
+    // -----------------------------------
+    //
+    // Restorable implementation
+    //
+    // -----------------------------------
+
+    public class ControllerMemento implements Memento {
+
+        // simple fields
+        private final GamePhase gamePhase;
+        private final GameState gameState;
+        private final int currentPlayerNum;
+        private final Player currentPlayer;
+        private final int currentDie;
+        private final int lastPlacedVertex;
+        private final boolean devCardsEnabled;
+
+        // sub mementos
+        private final Memento gameMemento;
+        private final Memento[] playerMementos;
+
+
+        // Storage Constants
+        private static final String TARGET_FILE_NAME = "controller.txt";
+        private static final String GAME_SUBFOLDER_NAME = "Game";
+        private static final String PLAYER_SUBFOLDER_PREFIX = "Player";
+
+        // Field Keys
+        // Storage Constants - Field Keys
+        private static final String GAME_PHASE = "GamePhase";
+        private static final String GAME_STATE = "GameState";
+        private static final String CURRENT_PLAYER_NUM = "CurrentPlayerNum";
+        private static final String CURRENT_DIE = "CurrentDie";
+        private static final String LAST_PLACED_VERTEX = "LastPlacedVertex";
+        private static final String DEV_CARDS_ENABLED = "DevCardsEnabled";
+
+        private ControllerMemento() {
+            // simple fields
+            this.gamePhase = Controller.this.gamePhase;
+            this.gameState = Controller.this.gameState;
+            this.currentPlayerNum = Controller.this.currentPlayerNum;
+            this.currentPlayer = Controller.this.currentPlayer;
+            this.currentDie = Controller.this.currentDie;
+            this.lastPlacedVertex = Controller.this.lastPlacedVertex;
+            this.devCardsEnabled = Controller.this.devCardsEnabled;
+
+            // sub mementos
+            this.gameMemento = Controller.this.game.createMemento();
+
+            this.playerMementos = new Memento[Controller.this.playerArr.length];
+            for (int i = 0; i < Controller.this.playerArr.length; i++) {
+                this.playerMementos[i] = Controller.this.playerArr[i].createMemento();
+            }
+        }
+
+        @SuppressFBWarnings("EI_EXPOSE_REP2")
+        public ControllerMemento(final File folder) {
+            // Create a MementoReader for reading memento data
+            MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
+
+            // Read simple fields from the file
+            this.gamePhase = GamePhase.valueOf(reader.readField(GAME_PHASE));
+            this.gameState = GameState.valueOf(reader.readField(GAME_STATE));
+            this.currentPlayerNum = Integer.parseInt(reader.readField(CURRENT_PLAYER_NUM));
+            this.currentPlayer = GameLoader.getInstance().getPlayerByNum(this.currentPlayerNum + 1);
+            this.currentDie = Integer.parseInt(reader.readField(CURRENT_DIE));
+            this.lastPlacedVertex = Integer.parseInt(reader.readField(LAST_PLACED_VERTEX));
+            this.devCardsEnabled = Boolean.parseBoolean(reader.readField(DEV_CARDS_ENABLED));
+
+            // Read sub-mementos from the appropriate subfolders
+            File gameSubFolder = reader.getSubFolder(GAME_SUBFOLDER_NAME);
+            this.gameMemento = Controller.this.game.new GameMemento(gameSubFolder);
+
+            this.playerMementos = new Memento[Controller.this.playerArr.length];
+            for (int i = 0; i < this.playerMementos.length; i++) {
+                File playerSubFolder = reader.getSubFolder(PLAYER_SUBFOLDER_PREFIX + (i + 1));
+                this.playerMementos[i] = Controller.this.playerArr[i].new PlayerMemento(playerSubFolder);
+            }
+        }
+
+        public void save(final File folder) throws SaveException {
+            // Create a MementoWriter for writing memento data
+            MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
+
+            // Write simple fields to the file
+            writer.writeField(GAME_PHASE, gamePhase.toString());
+            writer.writeField(GAME_STATE, gameState.toString());
+            writer.writeField(CURRENT_PLAYER_NUM, Integer.toString(currentPlayerNum));
+            writer.writeField(CURRENT_DIE, Integer.toString(currentDie));
+            writer.writeField(LAST_PLACED_VERTEX, Integer.toString(lastPlacedVertex));
+            writer.writeField(DEV_CARDS_ENABLED, Boolean.toString(devCardsEnabled));
+
+            // delegate to sub mementos
+            // Save game memento's state to the appropriate subfolder
+            File gameSubFolder = writer.getSubFolder(GAME_SUBFOLDER_NAME);
+            gameMemento.save(gameSubFolder);
+
+            // Save player mementos to separate subfolders
+            for (int i = 0; i < playerMementos.length; i++) {
+                // Create a subfolder for each player's memento
+                File playerSubFolder = writer.getSubFolder(PLAYER_SUBFOLDER_PREFIX + (i + 1));
+                playerMementos[i].save(playerSubFolder);
+            }
+        }
+
+        public void restore() {
+            // simple field restoration
+            Controller.this.gamePhase = this.gamePhase;
+            Controller.this.gameState = this.gameState;
+            Controller.this.currentPlayerNum = this.currentPlayerNum;
+            Controller.this.currentDie = this.currentDie;
+            Controller.this.lastPlacedVertex = this.lastPlacedVertex;
+            Controller.this.devCardsEnabled = this.devCardsEnabled;
+            Controller.this.currentPlayer = this.currentPlayer;
+
+            // Delegate restoration to sub mementos
+            this.gameMemento.restore();
+            for (Memento playerMemento: this.playerMementos) {
+                playerMemento.restore();
+            }
+        }
+    }
+
+    @Override
+    public Memento createMemento() {
+        return new ControllerMemento();
     }
 }

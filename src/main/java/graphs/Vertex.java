@@ -1,12 +1,15 @@
 package graphs;
 
+import saving.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.Player;
+
+import java.io.File;
 
 /**
  * Represents a location on the ma
  */
-public class Vertex {
+public class Vertex implements Restorable {
 
     private final int locationId;
     private Vertex[] adjacentVertexes;
@@ -309,5 +312,70 @@ public class Vertex {
         }
 
         return this.getOwner() != player;
+    }
+
+    // -----------------------------------
+    //
+    // Restorable implementation
+    //
+    // -----------------------------------
+
+    public class VertexMemento implements Memento {
+        private final Player owner; // terminal here
+        private final boolean isCity;
+
+        // Storage Constants
+        private static final String TARGET_FILE_NAME = "vertex.txt";
+
+        // Field Keys
+        private static final String OWNER = "Owner";
+        private static final String IS_CITY = "IsCity";
+
+        private VertexMemento() {
+            this.isCity = Vertex.this.isCity;
+            this.owner = Vertex.this.owner;
+        }
+
+        @SuppressFBWarnings("EI_EXPOSE_REP2")
+        public VertexMemento(final File folder) {
+            // Create a MementoReader for reading memento data
+            MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
+
+            // Read simple fields from the file
+            this.owner = parseOwner(reader.readField(OWNER));
+            this.isCity = Boolean.parseBoolean(reader.readField(IS_CITY));
+        }
+
+        private Player parseOwner(final String ownerString) {
+            // Check if the ownerString represents "None"
+            if (ownerString.equals("None")) {
+                return null;
+            } else {
+                // Extract player number from the string representation
+                int playerNum = Integer.parseInt(ownerString.substring(ownerString.lastIndexOf(" ") + 1));
+                // Retrieve the player using the GameLoader
+                return GameLoader.getInstance().getPlayerByNum(playerNum);
+            }
+        }
+
+        public void save(final File folder) throws SaveException {
+            // Create a MementoWriter for writing memento data
+            MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
+
+            // Write simple fields to the file
+            writer.writeField(OWNER, owner != null ? owner.toString() : "None");
+            writer.writeField(IS_CITY, Boolean.toString(isCity));
+        }
+
+        public void restore() {
+            // Restore simple fields
+            Vertex.this.isCity = this.isCity;
+            Vertex.this.owner = this.owner;
+        }
+    }
+
+    @Override
+    public Memento createMemento() {
+        return new VertexMemento();
     }
 }

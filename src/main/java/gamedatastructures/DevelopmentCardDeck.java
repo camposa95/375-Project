@@ -1,10 +1,14 @@
 package gamedatastructures;
 
+import saving.*;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class DevelopmentCardDeck {
+public class DevelopmentCardDeck implements Restorable {
     private DevCard[] defaultDeck = {
         DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT,
         DevCard.VICTORY, DevCard.VICTORY, DevCard.VICTORY, DevCard.VICTORY, DevCard.VICTORY,
@@ -54,5 +58,64 @@ public class DevelopmentCardDeck {
     //emptys out the deck
     void empty() {
         this.deck =  new ArrayList<DevCard>();
+    }
+
+    // -----------------------------------
+    //
+    // Restorable implementation
+    //
+    // -----------------------------------
+
+    public class DevCardDeckMemento implements Memento {
+        private final ArrayList<DevCard> deck;
+
+        // Storage Constants
+        private static final String TARGET_FILE_NAME = "deck.txt";
+
+        // Field Keys
+        private static final String DEV_CARDS = "DevCards";
+
+        private DevCardDeckMemento() {
+            this.deck = new ArrayList<>();
+            this.deck.addAll(DevelopmentCardDeck.this.deck);
+        }
+
+        @SuppressFBWarnings("EI_EXPOSE_REP2")
+        public DevCardDeckMemento(final File folder) {
+            // Create a MementoReader for reading memento data
+            MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
+
+            // Read simple fields from the file
+            this.deck = parseDevCards(reader.readField(DEV_CARDS));
+        }
+
+        private ArrayList<DevCard> parseDevCards(final String devCardsString) {
+            String[] devCardArray = devCardsString.substring(1, devCardsString.length() - 1).split(", ");
+
+            ArrayList<DevCard> devCards = new ArrayList<>();
+            for (String devCardStr : devCardArray) {
+                devCards.add(DevCard.valueOf(devCardStr.trim()));
+            }
+            return devCards;
+        }
+
+        public void save(final File folder) throws SaveException {
+            // Create a MementoWriter for writing memento data
+            MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
+
+            // Write each DevCard in the deck to the file
+            writer.writeField(DEV_CARDS, Arrays.toString(deck.toArray()));
+        }
+
+        public void restore() {
+            // Deserialize the array of DevCards and replace the deck in DevelopmentCardDeck
+            DevelopmentCardDeck.this.deck.clear();
+            DevelopmentCardDeck.this.deck.addAll(deck);
+        }
+    }
+
+    @Override
+    public Memento createMemento() {
+        return new DevCardDeckMemento();
     }
 }

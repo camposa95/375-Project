@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Scanner;
 
+import saving.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.GameType;
 import gamedatastructures.Resource;
@@ -14,10 +15,10 @@ import gamedatastructures.Resource;
 /**
  * Graph of the locations on the map
  */
-public class VertexGraph {
+public class VertexGraph implements Restorable {
 
-    private static final int NUM_VERTICES = 54;
-    private static final int NUM_PORTS = 9;
+    public static final int NUM_VERTICES = 54;
+    public static final int NUM_PORTS = 9;
     private static final int MAX_ADJACENT_VERTEXES = 3;
     private static final int MAX_ADJACENT_ROADS = 3;
     private final Resource[] portResources = {Resource.ANY, Resource.GRAIN, Resource.WOOL, Resource.ANY, Resource.ORE, Resource.ANY, Resource.ANY, Resource.BRICK, Resource.LUMBER};
@@ -189,5 +190,119 @@ public class VertexGraph {
         }
 
         return resourceOrder;
+    }
+
+    // -----------------------------------
+    //
+    // Restorable implementation
+    //
+    // -----------------------------------
+
+    public class VertexGraphMemento implements Memento {
+
+        // simple fields
+        private final Resource[] portResources;
+
+        // sub mementos
+        private final Memento[] vertexMementos;
+        private final Memento[] portMementos;
+
+        // Storage Constants
+        private static final String TARGET_FILE_NAME = "vertexgraph.txt";
+        private static final String VERTEX_SUBFOLDER_PREFIX = "Vertex";
+        private static final String PORT_SUBFOLDER_PREFIX = "Port";
+
+        // Field Keys
+        private static final String PORT_RESOURCES = "PortResources";
+
+        private VertexGraphMemento() {
+            // simple fields
+            this.portResources = Arrays.copyOf(VertexGraph.this.portResources, VertexGraph.this.portResources.length);
+
+            // sub mementos
+            this.vertexMementos = new Memento[VertexGraph.this.vertexes.length];
+            for (int i = 0; i < VertexGraph.this.vertexes.length; i++) {
+                this.vertexMementos[i] = VertexGraph.this.vertexes[i].createMemento();
+            }
+
+            this.portMementos = new Memento[VertexGraph.this.ports.length];
+            for (int i = 0; i < VertexGraph.this.ports.length; i++) {
+                this.portMementos[i] = VertexGraph.this.ports[i].createMemento();
+            }
+        }
+
+        @SuppressFBWarnings("EI_EXPOSE_REP2")
+        public VertexGraphMemento(final File folder) {
+            // Create a MementoReader for reading memento data
+            MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
+
+            // Read simple fields from the file
+            this.portResources = parsePortResources(reader.readField(PORT_RESOURCES));
+
+            // Read sub-mementos from the appropriate subfolders
+            this.vertexMementos = new Memento[VertexGraph.this.vertexes.length];
+            for (int i = 0; i < this.vertexMementos.length; i++) {
+                File vertexSubFolder = reader.getSubFolder(VERTEX_SUBFOLDER_PREFIX + i);
+                this.vertexMementos[i] = VertexGraph.this.vertexes[i].new VertexMemento(vertexSubFolder);
+            }
+
+            this.portMementos = new Memento[VertexGraph.this.ports.length];
+            for (int i = 0; i < this.portMementos.length; i++) {
+                File portSubFolder = reader.getSubFolder(PORT_SUBFOLDER_PREFIX + i);
+                this.portMementos[i] = VertexGraph.this.ports[i].new PortMemento(portSubFolder);
+            }
+        }
+
+        // Helper method to parse port resources
+        private Resource[] parsePortResources(final String portResourcesString) {
+            String[] resourceNames = portResourcesString.substring(1, portResourcesString.length() - 1).split(", ");
+
+            Resource[] resources = new Resource[resourceNames.length];
+            for (int i = 0; i < resourceNames.length; i++) {
+                resources[i] = Resource.valueOf(resourceNames[i].trim());
+            }
+
+            return resources;
+        }
+
+        public void save(final File folder) throws SaveException {
+            // Create a MementoWriter for writing memento data
+            MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
+
+            // Write simple fields to the file
+            writer.writeField(PORT_RESOURCES, Arrays.toString(portResources));
+
+            // Save sub mementos' state
+            for (int i = 0; i < vertexMementos.length; i++) {
+                // Create a subfolder for each vertex's memento
+                File vertexSubFolder = writer.getSubFolder(VERTEX_SUBFOLDER_PREFIX + i);
+                vertexMementos[i].save(vertexSubFolder);
+            }
+
+            for (int i = 0; i < portMementos.length; i++) {
+                // Create a subfolder for each port's memento
+                File portSubFolder = writer.getSubFolder(PORT_SUBFOLDER_PREFIX + i);
+                portMementos[i].save(portSubFolder);
+            }
+        }
+
+        public void restore() {
+            // Restore simple fields
+            System.arraycopy(this.portResources, 0, VertexGraph.this.portResources, 0, this.portResources.length);
+
+            // Restore sub mementos
+            for (Memento vertexMemento : vertexMementos) {
+                vertexMemento.restore();
+            }
+
+            for (Memento portMemento : portMementos) {
+                portMemento.restore();
+            }
+        }
+    }
+
+    @Override
+    public Memento createMemento() {
+        return new VertexGraphMemento();
     }
 }
