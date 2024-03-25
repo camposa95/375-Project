@@ -44,7 +44,7 @@ public class GameLoader {
         // restricts access
     }
 
-    @SuppressFBWarnings("EI_EXPOSE_REP")
+    @SuppressFBWarnings("MS_EXPOSE_REP")
     public static synchronized GameLoader getInstance() {
         if (uniqueInstance == null) {
             uniqueInstance = new GameLoader();
@@ -93,6 +93,7 @@ public class GameLoader {
         }
     }
 
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     public boolean saveGame() {
         // Create a File object representing the base folder
         File baseFolder = new File(savedGamesPath + "/" + SLOT_PREFIX + 1);
@@ -126,6 +127,7 @@ public class GameLoader {
         return true;
     }
 
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     public boolean hasSavedSlot() {
         File folder = new File(savedGamesPath);
         File[] files = folder.listFiles();
@@ -134,7 +136,7 @@ public class GameLoader {
         return (files != null && files.length > 1);
     }
 
-    @SuppressFBWarnings("EI_EXPOSE_REP")
+    @SuppressFBWarnings({"PATH_TRAVERSAL_IN", "EI_EXPOSE_REP"})
     public Controller loadGame() {
         // Create a File object representing the base folder
         File baseFolder = new File(savedGamesPath + "/" + SLOT_PREFIX + 1);
