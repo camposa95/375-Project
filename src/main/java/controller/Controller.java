@@ -5,18 +5,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
+import gamedatastructures.*;
 import saving.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import gamedatastructures.CardNotPlayableException;
-import gamedatastructures.DevCard;
-import gamedatastructures.EmptyDevCardDeckException;
-import gamedatastructures.Game;
-import gamedatastructures.GameType;
-import gamedatastructures.InvalidPlacementException;
-import gamedatastructures.NotEnoughResourcesException;
-import gamedatastructures.Player;
-import gamedatastructures.Resource;
 
 public class Controller implements Restorable {
 
@@ -557,6 +550,7 @@ public class Controller implements Restorable {
         this.currentDie = (int) ((Math.random() * DIERANGE) + 2);
         for (Player player: this.playerArr) {
             this.game.distributeResources(player, this.currentDie);
+            player.harvestBooster.notifyOfTurn();
         }
 
     }
@@ -579,7 +573,32 @@ public class Controller implements Restorable {
     }
 
     public void createWeatherEvent() {
-        // TODO: implement this
+        Random random = new Random();
+
+        Resource resource = getRandomResource(random);
+        BoostType boostType = getRandomBoostType(random);
+
+        if (random.nextBoolean()) { // add new random weather event for everyone
+            for (Player p: this.playerArr) {
+                p.harvestBooster.setBoost(resource, boostType);
+            }
+        } else { // only add for the person who rolled
+            this.currentPlayer.harvestBooster.setBoost(resource, boostType);
+        }
+    }
+
+    private Resource getRandomResource(Random random) {
+        Resource[] resourceTypes = {Resource.BRICK, Resource.LUMBER, Resource.ORE, Resource.GRAIN, Resource.WOOL};
+
+        int randomIndex = random.nextInt(resourceTypes.length);
+        return resourceTypes[randomIndex];
+    }
+
+    private BoostType getRandomBoostType(Random random) {
+        BoostType[] boostTypes = {BoostType.DISABLE, BoostType.DOUBLE};
+
+        int randomIndex = random.nextInt(boostTypes.length);
+        return boostTypes[randomIndex];
     }
 
     /**
@@ -927,7 +946,7 @@ public class Controller implements Restorable {
     //
     // -----------------------------------
 
-    public class ControllerMemento implements Memento { // TODO: implement memento features for restoring Harvest boost management
+    public class ControllerMemento implements Memento {
 
         // simple fields
         private final GamePhase gamePhase;
