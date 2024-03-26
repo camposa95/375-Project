@@ -24,7 +24,6 @@ public class Game {
      * @param gb the gameBoard
      * @param vg the vertexGraph
      * @param rg the roadGraph
-     * @param deck the devcard deck
      */
     @SuppressFBWarnings("EI_EXPOSE_REP2")
     public Game(final GameBoard gb, final VertexGraph vg, final RoadGraph rg, final DevelopmentCardDeck dcd) {
@@ -141,10 +140,9 @@ public class Game {
                     Vertex curVertex = vertexes.getVertex(tileVertexes[i]);
                     // TODO: Handle figuring out how much to hand out of a resource in Building
                     if (curVertex.getOwner() == player) {
-                        if (curVertex.getIsCity()) {
+                        for (int numResources = 0; numResources < curVertex.getYield(tile.getResource()); numResources++) {
                             resources.add(tile.getResource());
                         }
-                        resources.add(tile.getResource());
                     }
                 }
             }
@@ -153,7 +151,6 @@ public class Game {
     }
     /**
      * Tries to Upgrade a settlement from a player and a vertexID
-     * @param mockPlayer
      * @param vertexId
      */
     // TODO: Rename this to reflect being a city upgrade and change inner logic to use Building code
@@ -162,10 +159,10 @@ public class Game {
         if (!vertex.isUpgradableBy(player)) {
             throw new InvalidPlacementException();
         }
-        if (!player.upgradeSettlementToCity()) {
+        if (!player.canUpgradeSettlementToCity()) {
             throw new NotEnoughResourcesException();
         }
-        vertex.setIsCity(true);
+        vertex.upgradeToCity(player);
     }
 
     // TODO: Add method here to add a location add-on to the building on the given vertex

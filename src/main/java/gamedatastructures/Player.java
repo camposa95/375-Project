@@ -166,7 +166,7 @@ public class Player {
         return true;
     }
 
-    public boolean upgradeSettlementToCity() {
+    public boolean canUpgradeSettlementToCity() {
         if (numCities == 0) {
             return false;
         }

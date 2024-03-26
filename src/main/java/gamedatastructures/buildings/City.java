@@ -9,9 +9,18 @@ public class City extends Building {
         this.woolResourceBonus = getUpgradedResourceBonus(originalSettlement.woolResourceBonus);
     }
 
+    public City() {
+        this.brickResourceBonus = 2;
+        this.grainResourceBonus = 2;
+        this.lumberResourceBonus = 2;
+        this.oreResourceBonus = 2;
+        this.woolResourceBonus = 2;
+    }
+
     /**
      * Upgrades resource bonus to 2, unless it has been upgraded already,
      * in which case the original bonus doesn't change
+     *
      * @param originalBonus the bonus on the original settlement the city is upgraded from
      * @return the new bonus for the city
      */

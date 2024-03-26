@@ -1,14 +1,13 @@
 package gamedatastructures;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
 import graphs.RoadGraph;
 import graphs.Vertex;
 import graphs.VertexGraph;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UpgradeSettlementTest {
     private static final String LAYOUT_FILE = "src/main/java/gamedatastructures/TileLayout.txt";
@@ -48,7 +47,7 @@ public class UpgradeSettlementTest {
         Game game = new Game(gb,mockVertexGraph,rg,null);
         EasyMock.expect(mockVertexGraph.getVertex(vertexId)).andReturn(mockVertex);
         EasyMock.expect(mockVertex.isUpgradableBy(mockPlayer)).andReturn(true);
-        EasyMock.expect(mockPlayer.upgradeSettlementToCity()).andReturn(false);
+        EasyMock.expect(mockPlayer.canUpgradeSettlementToCity()).andReturn(false);
         
         EasyMock.replay(mockPlayer,mockVertex,mockVertexGraph);
  
@@ -71,18 +70,18 @@ public class UpgradeSettlementTest {
         Game game = new Game(gb,mockVertexGraph,rg,null);
         EasyMock.expect(mockVertexGraph.getVertex(vertexId)).andReturn(mockVertex);
         EasyMock.expect(mockVertex.isUpgradableBy(mockPlayer)).andReturn(true);
-        EasyMock.expect(mockPlayer.upgradeSettlementToCity()).andReturn(true);
+        EasyMock.expect(mockPlayer.canUpgradeSettlementToCity()).andReturn(true);
 
-        mockVertex.setIsCity(true);
+        mockVertex.upgradeToCity(mockPlayer);
         EasyMock.expectLastCall();
         
         EasyMock.replay(mockPlayer,mockVertex,mockVertexGraph);
  
-        
-        try{
+
+        try {
             game.upgradeSettlement(mockPlayer,vertexId);
         } catch (Exception e) {
-            assertFalse(true);
+            fail();
         }
                
         EasyMock.verify(mockPlayer,mockVertex,mockVertexGraph);

@@ -18,7 +18,6 @@ public class Vertex {
     private Port adjacentPort;
     private Player owner;
     private boolean portsInitialized;
-    // TODO: Get rid of this and have it be a Building
     private Building building;
 
     /**
@@ -292,6 +291,17 @@ public class Vertex {
         }
 
         return true;
+    }
+
+    public void upgradeToCity(final Player player) {
+        if (isUpgradableBy(player)) {
+            this.building = new City((Settlement) this.building);
+        }
+    }
+
+    // ONLY FOR TESTING PURPOSES
+    public void setBuildingToCity() {
+        this.building = new City();
     }
 
     /**

@@ -41,7 +41,7 @@ public class VertexIsUpgradeableByTest {
         // make vertex owned by the player
         testVertex.setOwner(mockedPlayer);
         // vertex is a city
-        testVertex.setIsCity(true);
+        testVertex.setBuildingToCity();
 
         EasyMock.replay(mockedPlayer);
         boolean actualresult = testVertex.isUpgradableBy(mockedPlayer);
@@ -86,7 +86,7 @@ public class VertexIsUpgradeableByTest {
         // vertex not owned by the player
         // vertex is a settlment owned by someone else
         testVertex.setOwner(mockedEnemy);
-        testVertex.setIsCity(true);
+        testVertex.setBuildingToCity();
 
         EasyMock.replay(mockedPlayer, mockedEnemy);
         boolean actualresult = testVertex.isUpgradableBy(mockedPlayer);

@@ -553,7 +553,7 @@ public class PlayerTest {
 
         EasyMock.replay(mockedPlayer1Hand);
 
-        boolean success = player.upgradeSettlementToCity();
+        boolean success = player.canUpgradeSettlementToCity();
 
         assertTrue(success);
         assertEquals(3, player.numCities);
@@ -591,7 +591,7 @@ public class PlayerTest {
 
         EasyMock.replay(mockedPlayer1Hand);
 
-        boolean success = player.upgradeSettlementToCity();
+        boolean success = player.canUpgradeSettlementToCity();
 
         assertFalse(success);
         assertEquals(4, player.numCities);
@@ -628,7 +628,7 @@ public class PlayerTest {
 
         EasyMock.replay(mockedPlayer1Hand);
 
-        boolean success = player.upgradeSettlementToCity();
+        boolean success = player.canUpgradeSettlementToCity();
 
         assertFalse(success);
         assertEquals(0, player.numCities);
@@ -661,7 +661,7 @@ public class PlayerTest {
 
         EasyMock.replay(mockedPlayer1Hand);
 
-        boolean success = player.upgradeSettlementToCity();
+        boolean success = player.canUpgradeSettlementToCity();
 
         assertFalse(success);
         assertEquals(0, player.numCities);
