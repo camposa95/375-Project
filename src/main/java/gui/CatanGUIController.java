@@ -541,23 +541,29 @@ public class CatanGUIController {
             int dieNumber = this.controller.getDie();
             this.updateInfoPane();
             this.tooltipText.setText(dieNumber + " " + messages.getString("dieNumberRolled"));
-            if(dieNumber==7){
-                FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("dropcards.fxml"));
-                Stage stage = new Stage();
-                Scene scene = new Scene(fxmlLoader.load());
-                stage.setTitle(messages.getString("sevenRolledTitle"));
-                stage.setScene(scene);
-                stage.show();
-
-                DropCardsController dropCardsController = fxmlLoader.getController();
-                dropCardsController.setPlayerData(this.controller.getPlayerArr(), this, this.messages, this.controller);
-
-                this.tooltipText.setText(messages.getString("sevenRolled"));
-                this.guiState = GUIState.BUSY;
-            }else{
+            if (dieNumber == 7) {
+                this.doRobber();
+            } else if (dieNumber == 12) {
+                this.controller.createWeatherEvent();
+            } else {
                 this.controller.setState(GameState.DEFAULT);
             }
         }
+    }
+
+    private void doRobber() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("dropcards.fxml"));
+        Stage stage = new Stage();
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setTitle(messages.getString("sevenRolledTitle"));
+        stage.setScene(scene);
+        stage.show();
+
+        DropCardsController dropCardsController = fxmlLoader.getController();
+        dropCardsController.setPlayerData(this.controller.getPlayerArr(), this, this.messages, this.controller);
+
+        this.tooltipText.setText(messages.getString("sevenRolled"));
+        this.guiState = GUIState.BUSY;
     }
 
     public void cancelButtonPressed(){

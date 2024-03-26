@@ -351,7 +351,7 @@ public class BankTest {
     }
 
     @Test
-    public void testRemoveResources_1OfEach_emptyBank_returnFalse(){
+    public void testRemoveResources_1OfEach_emptyBank_returnFalse(){ // TODO: fix this test
         Bank bank = Bank.getInstance();
         bank.resetBank();
 

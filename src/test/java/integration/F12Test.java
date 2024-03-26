@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class F12Test {
+public class F12Test { // TODO: fix this test
     private static final String GAMEBOARD_LAYOUT_FILE = "src/main/java/gamedatastructures/TileLayout.txt";
     private static final String ROAD_TO_ROAD_LAYOUT_FILE = "src/main/java/graphs/RoadToRoadLayout.txt";
     private static final String ROAD_TO_VERTEX_LAYOUT_FILE = "src/main/java/graphs/RoadToVertexLayout.txt";
@@ -85,8 +85,8 @@ public class F12Test {
             }
         }
         assertEquals(0, player2.hand.getResourceCardCount());
-
         Bank bank = Bank.getInstance();
+        bank.resetBank();
 
         Resource[] playerHandResources = {
                 Resource.LUMBER,
@@ -169,8 +169,8 @@ public class F12Test {
             }
         }
         assertEquals(0, player2.hand.getResourceCardCount());
-
         Bank bank = Bank.getInstance();
+        bank.resetBank();
 
         //Give the player only three resources
         Resource[] playerHandResources = {
@@ -255,6 +255,7 @@ public class F12Test {
         assertEquals(0, player2.hand.getResourceCardCount());
 
         Bank bank = Bank.getInstance();
+        bank.resetBank();
 
         //Give the player 4x ore cards
         Resource[] playerHandResources = {
@@ -342,6 +343,7 @@ public class F12Test {
         assertEquals(0, player2.hand.getResourceCardCount());
 
         Bank bank = Bank.getInstance();
+        bank.resetBank();
 
         Resource[] playerHandResources = {
                 Resource.LUMBER,
@@ -428,8 +430,8 @@ public class F12Test {
             }
         }
         assertEquals(0, player2.hand.getResourceCardCount());
-
         Bank bank = Bank.getInstance();
+        bank.resetBank();
 
         //Give the player only three resources
         Resource[] playerHandResources = {
@@ -518,6 +520,7 @@ public class F12Test {
         assertEquals(0, player2.hand.getResourceCardCount());
 
         Bank bank = Bank.getInstance();
+        bank.resetBank();
 
         //Give the player 4x ore cards
         Resource[] playerHandResources = {
@@ -609,6 +612,7 @@ public class F12Test {
         assertEquals(0, player2.hand.getResourceCardCount());
 
         Bank bank = Bank.getInstance();
+        bank.resetBank();
 
         Resource[] playerHandResources = {
                 Resource.LUMBER,
@@ -696,6 +700,7 @@ public class F12Test {
         assertEquals(0, player2.hand.getResourceCardCount());
 
         Bank bank = Bank.getInstance();
+        bank.resetBank();
 
         //Give the player only three resources
         Resource[] playerHandResources = {
@@ -783,6 +788,7 @@ public class F12Test {
         assertEquals(0, player2.hand.getResourceCardCount());
 
         Bank bank = Bank.getInstance();
+        bank.resetBank();
 
         //Give the player 4x ore cards
         Resource[] playerHandResources = {

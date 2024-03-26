@@ -14,7 +14,7 @@ public class Bank implements Restorable {
     private static Bank singleBankInstance = null;
 
     private static final int MAX_RESOURCES = 19;
-    private HashMap<Resource, Integer> bank = new HashMap<>();
+    private final HashMap<Resource, Integer> bank = new HashMap<>();
 
     private Bank() {
         bank.put(Resource.LUMBER, MAX_RESOURCES);
@@ -61,7 +61,11 @@ public class Bank implements Restorable {
     //For testing purposes, restock the bank to 19 of each card
     @SuppressFBWarnings("LI_LAZY_INIT_STATIC")
     public void resetBank() {
-        singleBankInstance = new Bank();
+        bank.put(Resource.LUMBER, MAX_RESOURCES);
+        bank.put(Resource.BRICK, MAX_RESOURCES);
+        bank.put(Resource.WOOL, MAX_RESOURCES);
+        bank.put(Resource.GRAIN, MAX_RESOURCES);
+        bank.put(Resource.ORE, MAX_RESOURCES);
     }
 
     public boolean addResources(final Resource[] resources) {

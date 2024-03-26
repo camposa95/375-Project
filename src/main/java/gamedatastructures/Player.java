@@ -18,6 +18,7 @@ public class Player implements Restorable {
     @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD") //warning is temporary
     public final int playerNum;
     public Hand hand;
+    public HarvestBooster harvestBooster;
     public int victoryPoints;
     public boolean hasPlayedDevCard;
     public int numKnightsPlayed;
@@ -41,6 +42,7 @@ public class Player implements Restorable {
         this.numTradeBoosts = 0;
         this.hasPlayedDevCard = false;
         this.numKnightsPlayed = 0;
+        this.harvestBooster = new HarvestBooster();
     }
 
     public boolean purchaseSettlement() {
@@ -435,7 +437,7 @@ public class Player implements Restorable {
         return "Player " + this.playerNum;
     }
 
-    public class PlayerMemento implements Memento {
+    public class PlayerMemento implements Memento { // TODO: Implement the memento features for the HarvestBooster field
 
         // simple fields
         private final int victoryPoints;

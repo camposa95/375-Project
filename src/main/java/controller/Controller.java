@@ -578,6 +578,10 @@ public class Controller implements Restorable {
         return this.currentDie;
     }
 
+    public void createWeatherEvent() {
+        // TODO: implement this
+    }
+
     /**
      * Method that receives a map of playerIds to Resource[], parses the Ids
      * to actual player objects and then passes the info to Game to fulful the
@@ -923,7 +927,7 @@ public class Controller implements Restorable {
     //
     // -----------------------------------
 
-    public class ControllerMemento implements Memento {
+    public class ControllerMemento implements Memento { // TODO: implement memento features for restoring Harvest boost management
 
         // simple fields
         private final GamePhase gamePhase;

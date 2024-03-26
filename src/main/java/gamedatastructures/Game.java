@@ -103,8 +103,14 @@ public class Game implements Restorable {
      * @param condition the vertex or die value
      */
     public void distributeResources(final Player player, final int condition) {
-       player.hand.addResources((setup) ? resourcesFromVertex(player, condition) : resourcesFromDie(player, condition));
+       Resource[] unadjustedHarvest = (setup) ? resourcesFromVertex(player, condition) : resourcesFromDie(player, condition);
+       Resource[] adjustedHarvest = player.harvestBooster.getAdjustedHarvest(unadjustedHarvest);
+
+       if (player.hand.addResources(adjustedHarvest)) {
+           Bank.getInstance().removeResources(adjustedHarvest);
+       }
     }
+
     /**
      * Calculates resources from vertex
      * @param player the player
