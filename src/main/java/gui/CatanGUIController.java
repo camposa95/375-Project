@@ -23,6 +23,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
@@ -543,7 +544,18 @@ public class CatanGUIController {
             if (dieNumber == 7) {
                 this.doRobber();
             } else if (dieNumber == 12) {
-                this.controller.createWeatherEvent(); // TODO: implement the tooltip for this
+                Controller.WeatherEvent weatherEvent = this.controller.createWeatherEvent();
+
+                // Build the weather event message
+                String messagePattern = messages.getString("weatherEvent");
+                Object[] params = {messages.getString(weatherEvent.boostType().toString()),
+                        messages.getString(weatherEvent.resource().toString()),
+                        weatherEvent.forEveryone() ? messages.getString("everyone") : messages.getString("onlyPlayer")};
+                String weatherEventMessage = MessageFormat.format(messagePattern, params);
+
+                // display it to the user
+                this.tooltipText.setText(weatherEventMessage);
+                this.controller.setState(GameState.DEFAULT);
             } else {
                 this.controller.setState(GameState.DEFAULT);
             }

@@ -30,7 +30,7 @@ public class CreateWeatherEventTest {
         resourceResults.put(Resource.WOOL, false);
 
         HashMap<BoostType, Boolean> boostTypeResults = new HashMap<>();
-        boostTypeResults.put(BoostType.DISABLE, false);
+        boostTypeResults.put(BoostType.ZERO, false);
         boostTypeResults.put(BoostType.DOUBLE, false);
 
         HashMap<Boolean, Boolean> forEveryoneResults = new HashMap<>();
@@ -90,7 +90,7 @@ public class CreateWeatherEventTest {
 
         // Make sure we apply the boost to all the players
         for (Player p: players) {
-            p.harvestBooster.setBoost(Resource.BRICK, BoostType.DISABLE);
+            p.harvestBooster.setBoost(Resource.BRICK, BoostType.ZERO);
             EasyMock.expectLastCall().once();
         }
 
@@ -127,7 +127,7 @@ public class CreateWeatherEventTest {
         EasyMock.expect(mockedRandom.nextBoolean()).andReturn(false); // Call to generate the "false" flag to apply weather event to only the player who rolled
 
         // Make sure we apply the boost to only player2
-        player2.harvestBooster.setBoost(Resource.BRICK, BoostType.DISABLE);
+        player2.harvestBooster.setBoost(Resource.BRICK, BoostType.ZERO);
         EasyMock.expectLastCall().once();
 
         // Method call

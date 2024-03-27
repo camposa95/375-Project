@@ -1,5 +1,5 @@
 package gamedatastructures;
 
 public enum BoostType {
-    DISABLE, DOUBLE, NONE
+    ZERO, DOUBLE, NONE
 }

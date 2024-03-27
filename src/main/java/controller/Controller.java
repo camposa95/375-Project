@@ -590,7 +590,7 @@ public class Controller implements Restorable {
     }
 
     private BoostType getRandomBoostType() {
-        BoostType[] boostTypes = {BoostType.DISABLE, BoostType.DOUBLE};
+        BoostType[] boostTypes = {BoostType.ZERO, BoostType.DOUBLE};
 
         int randomIndex = random.nextInt(boostTypes.length);
         return boostTypes[randomIndex];

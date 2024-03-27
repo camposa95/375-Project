@@ -35,7 +35,7 @@ public class HarvestBoosterTest {
     public void testSingleDisableBoost() {
         // Set up the boosts
         HarvestBooster booster = new HarvestBooster();
-        booster.setBoost(Resource.WOOL, BoostType.DISABLE);
+        booster.setBoost(Resource.WOOL, BoostType.ZERO);
 
         // Tests input
         Resource[] unadjustedResources = {Resource.LUMBER, Resource.GRAIN, Resource.WOOL, Resource.ORE, Resource.BRICK};
@@ -83,10 +83,10 @@ public class HarvestBoosterTest {
     public void testVarietyBoost() {
         // Set up the boosts
         HarvestBooster booster = new HarvestBooster();
-        booster.setBoost(Resource.LUMBER, BoostType.DISABLE);
+        booster.setBoost(Resource.LUMBER, BoostType.ZERO);
         booster.setBoost(Resource.GRAIN, BoostType.DOUBLE);
         // none for wool
-        booster.setBoost(Resource.ORE, BoostType.DISABLE);
+        booster.setBoost(Resource.ORE, BoostType.ZERO);
         booster.setBoost(Resource.BRICK, BoostType.DOUBLE);
 
 
@@ -121,7 +121,7 @@ public class HarvestBoosterTest {
         // 1st turn
         // -------------------------------------------------
         // Set up the boosts
-        booster.setBoost(Resource.LUMBER, BoostType.DISABLE);
+        booster.setBoost(Resource.LUMBER, BoostType.ZERO);
         // Expected results
         expectedResourceCounts.put(Resource.LUMBER, 0);
         expectedResourceCounts.put(Resource.GRAIN, 1);
