@@ -138,7 +138,6 @@ public class Game {
             if (tile.getTerrain() != Terrain.DESERT && tile.getDieNumber() == die) {
                 for (int i = 0; i < tile.getVertexIDs().length; i++) {
                     Vertex curVertex = vertexes.getVertex(tileVertexes[i]);
-                    // TODO: Handle figuring out how much to hand out of a resource in Building
                     if (curVertex.getOwner() == player) {
                         for (int numResources = 0; numResources < curVertex.getYield(tile.getResource()); numResources++) {
                             resources.add(tile.getResource());
