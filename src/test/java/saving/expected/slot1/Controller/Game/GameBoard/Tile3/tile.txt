@@ -1,4 +1,4 @@
-TerrainType: FIELDS
-DieNumber: 12
+TerrainType: PASTURE
+DieNumber: 8
 HasRobber: false
 VertexIDs: [7, 8, 9, 7, 18, 19]

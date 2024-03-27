@@ -7,6 +7,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.RecursiveAction;
 
 public class Hand implements Restorable {
     private HashMap<Resource, Integer> hand = new HashMap<>();
@@ -71,17 +72,39 @@ public class Hand implements Restorable {
     }
 
     public boolean addResources(final Resource[] resources) {
-        for (int i = 0; i < resources.length; i++) {
-            if (this.hand.get(resources[i]) + 1 > MAX_AMOUNT) {
-                //remove all resources added previously
-                for (int remove = 0; remove < i; remove++) {
-                    this.removeResource(resources[remove], 1);
-                }
+        // Build resources to add map
+        Map<Resource, Integer> toAdd = buildEmptyResourceMap();
+        for (Resource resource: resources) {
+            toAdd.put(resource, toAdd.get(resource) + 1);
+        }
+
+        // verify that we can add all the resources specified without overflow
+        for (Map.Entry<Resource, Integer> entry: toAdd.entrySet()) {
+            Resource resource = entry.getKey();
+            Integer amount = entry.getValue();
+            if (this.hand.get(resource) + amount > MAX_AMOUNT) {
                 return false;
             }
-            this.hand.put(resources[i], this.hand.get(resources[i]) + 1);
         }
+
+        // Now that we know we can add all the resources, actually do it
+        for (Map.Entry<Resource, Integer> entry: toAdd.entrySet()) {
+            Resource resource = entry.getKey();
+            Integer amount = entry.getValue();
+            this.hand.put(resource, this.hand.get(resource) + amount);
+        }
+
         return true;
+    }
+
+    private Map<Resource, Integer> buildEmptyResourceMap() {
+        Map<Resource, Integer> map = new HashMap<>();
+        map.put(Resource.BRICK, 0);
+        map.put(Resource.LUMBER, 0);
+        map.put(Resource.ORE, 0);
+        map.put(Resource.GRAIN, 0);
+        map.put(Resource.WOOL, 0);
+        return map;
     }
 
     public boolean removeResources(final Resource[] resources) {

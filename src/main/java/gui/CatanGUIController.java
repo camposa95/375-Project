@@ -23,6 +23,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
@@ -537,27 +538,43 @@ public class CatanGUIController {
     public void rollButtonPressed(MouseEvent event) throws IOException {
         //Triggered by Roll Button pressed
         if(this.controller.getState() == GameState.TURN_START && this.guiState == GUIState.IDLE){
-            this.controller.rollDice();
-            int dieNumber = this.controller.getDie();
+            int dieNumber = this.controller.rollDice();
             this.updateInfoPane();
             this.tooltipText.setText(dieNumber + " " + messages.getString("dieNumberRolled"));
-            if(dieNumber==7){
-                FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("dropcards.fxml"));
-                Stage stage = new Stage();
-                Scene scene = new Scene(fxmlLoader.load());
-                stage.setTitle(messages.getString("sevenRolledTitle"));
-                stage.setScene(scene);
-                stage.show();
+            if (dieNumber == 7) {
+                this.doRobber();
+            } else if (dieNumber == 12) {
+                Controller.WeatherEvent weatherEvent = this.controller.createWeatherEvent();
 
-                DropCardsController dropCardsController = fxmlLoader.getController();
-                dropCardsController.setPlayerData(this.controller.getPlayerArr(), this, this.messages, this.controller);
+                // Build the weather event message
+                String messagePattern = messages.getString("weatherEvent");
+                Object[] params = {messages.getString(weatherEvent.boostType().toString()),
+                        messages.getString(weatherEvent.resource().toString()),
+                        weatherEvent.forEveryone() ? messages.getString("everyone") : messages.getString("onlyPlayer")};
+                String weatherEventMessage = MessageFormat.format(messagePattern, params);
 
-                this.tooltipText.setText(messages.getString("sevenRolled"));
-                this.guiState = GUIState.BUSY;
-            }else{
+                // display it to the user
+                this.tooltipText.setText(weatherEventMessage);
+                this.controller.setState(GameState.DEFAULT);
+            } else {
                 this.controller.setState(GameState.DEFAULT);
             }
         }
+    }
+
+    private void doRobber() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("dropcards.fxml"));
+        Stage stage = new Stage();
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setTitle(messages.getString("sevenRolledTitle"));
+        stage.setScene(scene);
+        stage.show();
+
+        DropCardsController dropCardsController = fxmlLoader.getController();
+        dropCardsController.setPlayerData(this.controller.getPlayerArr(), this, this.messages, this.controller);
+
+        this.tooltipText.setText(messages.getString("sevenRolled"));
+        this.guiState = GUIState.BUSY;
     }
 
     public void cancelButtonPressed(){

@@ -1,6 +1,5 @@
 package gui;
 
-import gamedatastructures.Game;
 import saving.GameLoader;
 import controller.Controller;
 import gamedatastructures.GameType;
@@ -17,7 +16,11 @@ import java.util.ResourceBundle;
 
 public class NewGameController {
     @FXML
-    public ChoiceBox playersSelector, gamemodeSelector, languageSelector;
+    public ChoiceBox<Integer> playersSelector;
+    @FXML
+    public ChoiceBox<String> gamemodeSelector;
+    @FXML
+    public ChoiceBox<String> languageSelector;
 
     @FXML
     public Button startGameButton;
@@ -39,12 +42,12 @@ public class NewGameController {
         int playerCount = Integer.parseInt(playersSelector.getValue().toString());
 
         // get the gameType from input
-        String input = gamemodeSelector.getValue().toString();
+        String input = gamemodeSelector.getValue();
         String result = input.substring(0, input.indexOf(' ')); // Extract the substring before the space
         GameType gameType = GameType.valueOf(result);
 
         // get the language from input
-        String language = languageSelector.getValue().toString();
+        String language = languageSelector.getValue();
 
         // set up the game to start, instantiate objects
         GameLoader loader = GameLoader.getInstance();

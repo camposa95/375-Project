@@ -18,6 +18,7 @@ public class Player implements Restorable {
     @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD") //warning is temporary
     public final int playerNum;
     public Hand hand;
+    public final HarvestBooster harvestBooster;
     public int victoryPoints;
     public boolean hasPlayedDevCard;
     public int numKnightsPlayed;
@@ -31,6 +32,10 @@ public class Player implements Restorable {
     private boolean hasLargestArmy;
 
     public Player(final int num) {
+        this(num, new HarvestBooster());
+    }
+
+    public Player(final int num, final HarvestBooster booster) {
         this.playerNum = num;
         this.hand = new Hand();
         this.numSettlements = MAX_SETTLEMENTS;
@@ -41,6 +46,7 @@ public class Player implements Restorable {
         this.numTradeBoosts = 0;
         this.hasPlayedDevCard = false;
         this.numKnightsPlayed = 0;
+        this.harvestBooster = booster;
     }
 
     public boolean purchaseSettlement() {
@@ -451,10 +457,12 @@ public class Player implements Restorable {
 
         // sub mementos
         private final Memento handMemento;
+        private final Memento harvestBoosterMemento;
 
         // Storage Constants
         private static final String TARGET_FILE_NAME = "player.txt";
         private static final String HAND_SUBFOLDER_NAME = "Hand";
+        private static final String HARVEST_BOOSTER_SUBFOLDER_NAME = "HarvestBooster";
 
         // Field Keys
         private static final String VICTORY_POINTS = "VictoryPoints";
@@ -483,6 +491,7 @@ public class Player implements Restorable {
 
             // sub mementos
             this.handMemento = Player.this.hand.createMemento();
+            this.harvestBoosterMemento = Player.this.harvestBooster.createMemento();
         }
 
         @SuppressFBWarnings("EI_EXPOSE_REP2")
@@ -508,6 +517,10 @@ public class Player implements Restorable {
             // Restore hand state using its memento
             File handFolder = reader.getSubFolder(HAND_SUBFOLDER_NAME);
             this.handMemento = Player.this.hand.new HandMemento(handFolder);
+
+            // Restore harvest booster state using its memento
+            File harvestBoosterFolder = reader.getSubFolder(HARVEST_BOOSTER_SUBFOLDER_NAME);
+            this.harvestBoosterMemento = Player.this.harvestBooster.new HarvestBoosterMemento(harvestBoosterFolder);
         }
 
         private Resource[] parseTradeBoosts(final String tradeBoostsString) {
@@ -546,6 +559,10 @@ public class Player implements Restorable {
             // Delegate saving of the hand to its own memento
             File handFolder = writer.getSubFolder(HAND_SUBFOLDER_NAME);
             handMemento.save(handFolder);
+
+            // Delegate saving of the hand to its own memento
+            File harvestBoosterFolder = writer.getSubFolder(HARVEST_BOOSTER_SUBFOLDER_NAME);
+            harvestBoosterMemento.save(harvestBoosterFolder);
         }
 
         public void restore() {
@@ -565,6 +582,9 @@ public class Player implements Restorable {
 
             // Restore hand state using its memento
             handMemento.restore();
+
+            // Restore harvestBooster using its memento
+            harvestBoosterMemento.restore();
         }
     }
 

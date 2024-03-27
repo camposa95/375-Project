@@ -1,4 +1,4 @@
-TerrainType: FORREST
-DieNumber: 9
-HasRobber: false
+TerrainType: DESERT
+DieNumber: 11
+HasRobber: true
 VertexIDs: [4, 5, 6, 12, 13, 14]

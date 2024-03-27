@@ -1,1 +1,1 @@
-Resource: ANY
+Resource: ORE

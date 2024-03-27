@@ -85,8 +85,8 @@ public class F12Test {
             }
         }
         assertEquals(0, player2.hand.getResourceCardCount());
-
         Bank bank = Bank.getInstance();
+        bank.resetBank();
 
         Resource[] playerHandResources = {
                 Resource.LUMBER,
@@ -169,8 +169,8 @@ public class F12Test {
             }
         }
         assertEquals(0, player2.hand.getResourceCardCount());
-
         Bank bank = Bank.getInstance();
+        bank.resetBank();
 
         //Give the player only three resources
         Resource[] playerHandResources = {
@@ -255,6 +255,7 @@ public class F12Test {
         assertEquals(0, player2.hand.getResourceCardCount());
 
         Bank bank = Bank.getInstance();
+        bank.resetBank();
 
         //Give the player 4x ore cards
         Resource[] playerHandResources = {
@@ -342,6 +343,7 @@ public class F12Test {
         assertEquals(0, player2.hand.getResourceCardCount());
 
         Bank bank = Bank.getInstance();
+        bank.resetBank();
 
         Resource[] playerHandResources = {
                 Resource.LUMBER,
@@ -428,8 +430,8 @@ public class F12Test {
             }
         }
         assertEquals(0, player2.hand.getResourceCardCount());
-
         Bank bank = Bank.getInstance();
+        bank.resetBank();
 
         //Give the player only three resources
         Resource[] playerHandResources = {
@@ -518,6 +520,7 @@ public class F12Test {
         assertEquals(0, player2.hand.getResourceCardCount());
 
         Bank bank = Bank.getInstance();
+        bank.resetBank();
 
         //Give the player 4x ore cards
         Resource[] playerHandResources = {
@@ -609,6 +612,7 @@ public class F12Test {
         assertEquals(0, player2.hand.getResourceCardCount());
 
         Bank bank = Bank.getInstance();
+        bank.resetBank();
 
         Resource[] playerHandResources = {
                 Resource.LUMBER,
@@ -696,6 +700,7 @@ public class F12Test {
         assertEquals(0, player2.hand.getResourceCardCount());
 
         Bank bank = Bank.getInstance();
+        bank.resetBank();
 
         //Give the player only three resources
         Resource[] playerHandResources = {
@@ -783,6 +788,7 @@ public class F12Test {
         assertEquals(0, player2.hand.getResourceCardCount());
 
         Bank bank = Bank.getInstance();
+        bank.resetBank();
 
         //Give the player 4x ore cards
         Resource[] playerHandResources = {
