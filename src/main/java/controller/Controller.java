@@ -558,23 +558,28 @@ public class Controller implements Restorable {
         int die = random.nextInt(MIN_DIE, MAX_DIE);
         for (Player player: this.playerArr) {
             this.game.distributeResources(player, die);
-            player.harvestBooster.notifyOfTurn();
         }
 
         return die;
     }
 
-    public void createWeatherEvent() {
+    public WeatherEvent createWeatherEvent() {
         Resource resource = getRandomResource();
         BoostType boostType = getRandomBoostType();
+        boolean forEveryone = random.nextBoolean();
 
-        if (random.nextBoolean()) { // add new random weather event for everyone
+        if (forEveryone) { // add new random weather event for everyone
             for (Player p: this.playerArr) {
                 p.harvestBooster.setBoost(resource, boostType);
             }
         } else { // only add for the person who rolled
             this.currentPlayer.harvestBooster.setBoost(resource, boostType);
         }
+
+        return new WeatherEvent(resource, boostType, forEveryone);
+    }
+
+    public record WeatherEvent(Resource resource, BoostType boostType, boolean forEveryone) {
     }
 
     private Resource getRandomResource() {

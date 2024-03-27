@@ -8,6 +8,7 @@ import java.util.*;
 
 public class HarvestBooster implements Restorable {
     private static final int DURATION = 5;
+    private static final int DONE_TIME = 1;
 
     private final Map<Resource, BoostType> boosts;
     private final Map<Resource, Integer> durations;
@@ -21,11 +22,11 @@ public class HarvestBooster implements Restorable {
         this.boosts.put(Resource.WOOL, BoostType.NONE);
 
         this.durations = new HashMap<Resource, Integer>();
-        this.durations.put(Resource.BRICK, 0);
-        this.durations.put(Resource.LUMBER, 0);
-        this.durations.put(Resource.ORE, 0);
-        this.durations.put(Resource.GRAIN, 0);
-        this.durations.put(Resource.WOOL, 0);
+        this.durations.put(Resource.BRICK, DONE_TIME);
+        this.durations.put(Resource.LUMBER, DONE_TIME);
+        this.durations.put(Resource.ORE, DONE_TIME);
+        this.durations.put(Resource.GRAIN, DONE_TIME);
+        this.durations.put(Resource.WOOL, DONE_TIME);
     }
 
     public Resource[] getAdjustedHarvest(final Resource[] resources) {
@@ -40,7 +41,7 @@ public class HarvestBooster implements Restorable {
                 adjustedHarvest.add(resource);
             } // else don't add it since it disabled
         }
-
+        advanceClock();
         return adjustedHarvest.toArray(new Resource[0]);
     }
 
@@ -49,13 +50,13 @@ public class HarvestBooster implements Restorable {
         this.durations.put(resource, DURATION);
     }
 
-    public void notifyOfTurn() {
+    private void advanceClock() {
         // advance the clock for all of them
         for (Map.Entry<Resource, Integer> boost : this.durations.entrySet()) {
             Resource resource = boost.getKey();
             Integer duration = boost.getValue();
-            this.durations.put(resource, Math.max(0, duration - 1));
-            if (duration == 0) { // if they wore out change remove the boost
+            this.durations.put(resource, Math.max(DONE_TIME, duration - 1));
+            if (duration == DONE_TIME) { // if they wore out change remove the boost
                 this.boosts.put(resource, BoostType.NONE);
             }
         }

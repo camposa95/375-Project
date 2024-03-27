@@ -32,6 +32,10 @@ public class Player implements Restorable {
     private boolean hasLargestArmy;
 
     public Player(final int num) {
+        this(num, new HarvestBooster());
+    }
+
+    public Player(final int num, final HarvestBooster booster) {
         this.playerNum = num;
         this.hand = new Hand();
         this.numSettlements = MAX_SETTLEMENTS;
@@ -42,7 +46,7 @@ public class Player implements Restorable {
         this.numTradeBoosts = 0;
         this.hasPlayedDevCard = false;
         this.numKnightsPlayed = 0;
-        this.harvestBooster = new HarvestBooster();
+        this.harvestBooster = booster;
     }
 
     public boolean purchaseSettlement() {

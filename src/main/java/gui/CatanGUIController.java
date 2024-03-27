@@ -543,7 +543,7 @@ public class CatanGUIController {
             if (dieNumber == 7) {
                 this.doRobber();
             } else if (dieNumber == 12) {
-                this.controller.createWeatherEvent();
+                this.controller.createWeatherEvent(); // TODO: implement the tooltip for this
             } else {
                 this.controller.setState(GameState.DEFAULT);
             }
