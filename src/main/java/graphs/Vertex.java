@@ -3,9 +3,7 @@ package graphs;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gamedatastructures.Player;
 import gamedatastructures.Resource;
-import gamedatastructures.buildings.Building;
-import gamedatastructures.buildings.City;
-import gamedatastructures.buildings.Settlement;
+import gamedatastructures.Building;
 
 /**
  * Represents a location on the ma
@@ -198,7 +196,7 @@ public class Vertex {
      */
     public void build(final Player player) {
         setOwner(player);
-        this.building = new Settlement();
+        this.building = new Building();
         if (hasPort()) {
             player.addTradeBoost(getAdjacentPort().getResourse());
         }
@@ -273,7 +271,7 @@ public class Vertex {
     }
 
     public boolean isCity() {
-        return building.getClass() == City.class;
+        return (building == null) ? false : building.isCity();
     }
 
     /**
@@ -295,13 +293,14 @@ public class Vertex {
 
     public void upgradeToCity(final Player player) {
         if (isUpgradableBy(player)) {
-            this.building = new City((Settlement) this.building);
+            this.building.upgradeToCity();
         }
     }
 
     // ONLY FOR TESTING PURPOSES
-    public void setBuildingToCity() {
-        this.building = new City();
+    protected void setBuildingToCity() {
+        this.building = new Building();
+        this.building.upgradeToCity();
     }
 
     /**

@@ -518,11 +518,12 @@ public class GameTest {
         vertexGraph.initializeVertexToRoadAdjacency(roadgraph, VERTEXROAD_FILE);
         roadgraph.initializeRoadToRoadAdjacency(ROAD_FILE);
         roadgraph.initializeRoadToVertexAdjacency(vertexGraph, ROADVERTEX_FILE);
+        vertexGraph.initializeVertexToPortAdjacency(VERTEXPORT_FILE, GameType.Beginner);
       
         Player player = new Player(1);
 
         Game game = new Game(gb,vertexGraph,roadgraph,null);
-        vertexGraph.getVertex(vertexId).setOwner(player);
+        vertexGraph.getVertex(vertexId).build(player);
 
         Resource[] expected = {Resource.ORE};
         game.distributeResources(player,vertexId);
@@ -560,11 +561,12 @@ public class GameTest {
         Player player = new Player(1);
         GameBoard gameBoard = new GameBoard(GameType.Beginner, LAYOUT_FILE);
         VertexGraph vertexGraph = new VertexGraph();
+        vertexGraph.initializeVertexToPortAdjacency(VERTEXPORT_FILE, GameType.Beginner);
         RoadGraph mockedRoadGraph = EasyMock.createStrictMock(RoadGraph.class);
         Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph,null);
         int die = 10;
 
-        vertexGraph.getVertex(0).setOwner(player);
+        vertexGraph.getVertex(0).build(player);
         Resource[] expected = {Resource.ORE};
         //Check hand before
         int before = player.hand.getResourceCardCount();
@@ -608,16 +610,17 @@ public class GameTest {
         Player player = new Player(1);
         GameBoard gameBoard = new GameBoard(GameType.Beginner, LAYOUT_FILE);
         VertexGraph vertexGraph = new VertexGraph();
+        vertexGraph.initializeVertexToPortAdjacency(VERTEXPORT_FILE, GameType.Beginner);
         RoadGraph mockedRoadGraph = EasyMock.createStrictMock(RoadGraph.class);
         Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph,null);
         int die = 10;
 
-        vertexGraph.getVertex(0).setOwner(player);
-        vertexGraph.getVertex(1).setOwner(player);
-        vertexGraph.getVertex(2).setOwner(player);
-        vertexGraph.getVertex(8).setOwner(player);
-        vertexGraph.getVertex(9).setOwner(player);
-        vertexGraph.getVertex(10).setOwner(player);
+        vertexGraph.getVertex(0).build(player);
+        vertexGraph.getVertex(1).build(player);
+        vertexGraph.getVertex(2).build(player);
+        vertexGraph.getVertex(8).build(player);
+        vertexGraph.getVertex(9).build(player);
+        vertexGraph.getVertex(10).build(player);
       
         Resource[] expected = {Resource.ORE,Resource.ORE,Resource.ORE,Resource.ORE,Resource.ORE,Resource.ORE};
         //Check hand before
@@ -670,14 +673,15 @@ public class GameTest {
         Player player = new Player(1);
         GameBoard gameBoard = new GameBoard(GameType.Beginner, LAYOUT_FILE);
         VertexGraph vertexGraph = new VertexGraph();
+        vertexGraph.initializeVertexToPortAdjacency(VERTEXPORT_FILE, GameType.Beginner);
         RoadGraph mockedRoadGraph = EasyMock.createStrictMock(RoadGraph.class);
         Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph,null);
         int die = 10;
 
-        vertexGraph.getVertex(1).setOwner(player);
-        vertexGraph.getVertex(9).setOwner(player);
-        vertexGraph.getVertex(14).setOwner(player);
-        vertexGraph.getVertex(24).setOwner(player);
+        vertexGraph.getVertex(1).build(player);
+        vertexGraph.getVertex(9).build(player);
+        vertexGraph.getVertex(14).build(player);
+        vertexGraph.getVertex(24).build(player);
     
         Resource[] expected = {Resource.ORE,Resource.ORE,Resource.BRICK,Resource.BRICK};
         //Check hand before

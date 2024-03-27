@@ -270,38 +270,6 @@ public class Player {
         return true;
     }
 
-    /**
-     * Note this is the old method.
-     * Do not use
-     *
-     * @param card
-     * @return
-     */
-    public boolean canPlayDevelopmentCard(final DevCard card) {
-        if (card == null) {
-            throw new IllegalArgumentException("Cannot attempt to play null Development Card");
-        }
-        if (hasPlayedDevCard) {
-            return false;
-        }
-        if (card == DevCard.VICTORY) {
-            return false;
-        }
-
-        boolean canPlay = this.hand.removeDevelopmentCard(card);
-        if (!canPlay) {
-            return false;
-        }
-
-        //can play
-        this.hasPlayedDevCard = true;
-        if (card == DevCard.KNIGHT) {
-            this.numKnightsPlayed++;
-            //later: add check for largest army here?
-        }
-        return true;
-    }
-
     public int getPlayerNum() {
         return playerNum;
     }

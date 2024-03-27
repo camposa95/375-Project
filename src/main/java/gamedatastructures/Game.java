@@ -153,7 +153,6 @@ public class Game {
      * Tries to Upgrade a settlement from a player and a vertexID
      * @param vertexId
      */
-    // TODO: Rename this to reflect being a city upgrade and change inner logic to use Building code
     public void upgradeSettlement(final Player player, final int vertexId) throws InvalidPlacementException, NotEnoughResourcesException {
         Vertex vertex = vertexes.getVertex(vertexId);
         if (!vertex.isUpgradableBy(player)) {
