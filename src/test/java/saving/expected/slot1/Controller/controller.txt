@@ -1,6 +1,5 @@
-GamePhase: REGULAR_PLAY
-GameState: TURN_START
+GamePhase: SETUP
+GameState: FIRST_SETTLEMENT
 CurrentPlayerNum: 0
-CurrentDie: 0
-LastPlacedVertex: 19
+LastPlacedVertex: 0
 DevCardsEnabled: true

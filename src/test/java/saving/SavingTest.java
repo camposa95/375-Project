@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 
+import gamedatastructures.GameType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,6 +32,12 @@ public class SavingTest {
         File expectedDir = new File(EXPECTED_OUTPUT_PATH);
         File actualDir = new File(ACTUAL_OUTPUT_PATH);
         compareDirectories(expectedDir, actualDir);
+
+        // Used to reset the expected output when adding new features
+        // Comment out above and run this first.
+//        loader.createNewGame(GameType.Advanced, 4, "English");
+//        loader.setSlotsPath(EXPECTED_OUTPUT_PATH);
+//        loader.saveGame();
     }
 
     public void compareDirectories(File expectedDir, File actualDir) throws IOException {

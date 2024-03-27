@@ -12,24 +12,22 @@ import saving.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class Controller implements Restorable {
-
-    private Game game;
+    private final Game game;
     private Player currentPlayer;
     private GamePhase gamePhase;
     private GameState gameState;
-    private Player[] playerArr;
+    private final Player[] playerArr;
     private int currentPlayerNum;
-    private int currentDie;
-    static final private double DIERANGE = 10.0;
-    // Used to ensure road is placed next to new settlement in setup phase
-    public int lastPlacedVertex;
+    public int lastPlacedVertex; // Used to ensure road is placed next to new settlement in setup phase
     private boolean devCardsEnabled;
 
-    // Lots of contants to setup the begineer game mode
+    private final Random random;
+
+    // Lots of constants to setup the beginner game mode
     private static final Map<Integer, Integer[]> PLAYER_NUM_TO_STARTER_LOCATIONS;
     // here the array represents the starter locations given to a player when
-    // the beginer game mode is selected. The entries are in the following order:
-    // {1stSettlement, 1stRoad, 2ndSettlment, 2ndRoad}
+    // the beginner game mode is selected. The entries are in the following order:
+    // {1stSettlement, 1stRoad, 2ndSettlement, 2ndRoad}
     private static final Integer[] PLAYER_1_LOCATIONS = {35, 37, 19, 25};
     private static final Integer[] PLAYER_2_LOCATIONS = {13, 15, 42, 58};
     private static final Integer[] PLAYER_3_LOCATIONS = {44, 52, 40, 56};
@@ -44,6 +42,8 @@ public class Controller implements Restorable {
     private static final int PLAYER_4_NUM = 4;
     private static final Integer MIN_KNIGHTS_FOR_LARGEST_ARMY = 3;
     private static final int POINTS_FOR_WIN = 10;
+    private static final int MIN_DIE = 2;
+    private static final int MAX_DIE = 13;
     static {
         Map<Integer, Integer[]> map = new HashMap<>();
 
@@ -59,17 +59,26 @@ public class Controller implements Restorable {
     /**
      * Create a Controller for the game. And sets up the players so player 1
      * goes first by default.
-     *
+     * <p>
      * Note: Does not initialize to a specific state, however the controller
      * states can be set manually to fix a specific game type.
      *
-     * @param gameType
-     *
+     * @param gameType, the type of game to play, Beginner will do the setup phase automatically
      * @param mainGame, the game object that calls various actions
      * @param players,  the player objects in the game
      */
-    @SuppressFBWarnings("EI_EXPOSE_REP2")
+    @SuppressFBWarnings({"EI_EXPOSE_REP2", "PREDICTABLE_RANDOM"})
     public Controller(final Game mainGame, final Player[] players, final GameType gameType) {
+        this(mainGame, players, gameType, new Random());
+    }
+
+    /**
+     * Separate Helper constructor only to be used for testing of mocked
+     * randomness
+     * @param randomGenerator, Random object that can be controlled externally
+     */
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
+    public Controller(final Game mainGame, final Player[] players, final GameType gameType, final Random randomGenerator) {
         this.game = mainGame;
         this.playerArr = players;
         this.currentPlayerNum = 0;
@@ -82,6 +91,8 @@ public class Controller implements Restorable {
         if (gameType == GameType.Beginner) {
             this.doBegineerSetup();
         }
+
+        this.random = randomGenerator;
     }
 
     /**
@@ -114,13 +125,13 @@ public class Controller implements Restorable {
     /**
      * This tries to complete a click on a vertex based on the current
      * state of the game.
-     *
+     * <p>
      * Note: You must set the appropriate phase and states before calling this
      * method.
      * For Setup, the states will automatically update after clicks, during regular
      * play
      * this is mostly manual
-     *
+     * <p>
      * Also Note: This may crash the game is states are set incorrectly, this is on
      * purpose.
      *
@@ -393,7 +404,7 @@ public class Controller implements Restorable {
 
     /**
      * Helper method mainly used to setup the controller for testing purposes
-     *
+     * <p>
      * Warning: This does not correctly change the players array. Or
      * currentPlayerNum.
      * This in only public for testing integration testing, you should not be using
@@ -432,10 +443,9 @@ public class Controller implements Restorable {
     /**
      * Simple helper method that gets the Playe with the
      * Specified Id.
-     *
+     * <p>
      * Warning: Returns null if no player with the specified Id is found
      *
-     * @param id
      * @return Player with id equal to key
      */
     private Player getPlayerById(final int id) {
@@ -514,15 +524,14 @@ public class Controller implements Restorable {
      * in progress. I.e the gameState is DEFAULT. If a player wants to end
      * thier turn they must first cancell whatever action they are currently
      * in. If their action is non cancellable they must complete it.
-     *
+     * <p>
      * Upon ending turn. The controller will set the current player to the next
      * player in line, set the state to TURN_START to help indetermining what
      * actions are and aren't valid, will set the devCardsEnabled flag to false,
      * and finally return SUCCESS.
-     *
+     * <p>
      * Upon failure returns UNDEFINED.
      *
-     * @return
      */
     public SuccessCode endTurn() {
         if (this.gameState == GameState.DEFAULT) {
@@ -545,38 +554,19 @@ public class Controller implements Restorable {
     /**
      * Sets the current die value to a random number between 2-12 (two 6 sided die)
      */
-    @SuppressFBWarnings("PREDICTABLE_RANDOM")
-    public void rollDice() {
-        this.currentDie = (int) ((Math.random() * DIERANGE) + 2);
+    public int rollDice() {
+        int die = random.nextInt(MIN_DIE, MAX_DIE);
         for (Player player: this.playerArr) {
-            this.game.distributeResources(player, this.currentDie);
+            this.game.distributeResources(player, die);
             player.harvestBooster.notifyOfTurn();
         }
 
-    }
-    /**
-     * IMPORTANT: TESTING USE ONLY!
-     * allows for manual testing of rollDice, does distribution with custom die
-     */
-    public void rollDice(final int die) {
-        this.currentDie = die;
-        for (Player player: this.playerArr) {
-            this.game.distributeResources(player, this.currentDie);
-        }
-
-    }
-    /*
-     * Getter for dice
-     */
-    public int getDie() {
-        return this.currentDie;
+        return die;
     }
 
     public void createWeatherEvent() {
-        Random random = new Random();
-
-        Resource resource = getRandomResource(random);
-        BoostType boostType = getRandomBoostType(random);
+        Resource resource = getRandomResource();
+        BoostType boostType = getRandomBoostType();
 
         if (random.nextBoolean()) { // add new random weather event for everyone
             for (Player p: this.playerArr) {
@@ -587,14 +577,14 @@ public class Controller implements Restorable {
         }
     }
 
-    private Resource getRandomResource(Random random) {
+    private Resource getRandomResource() {
         Resource[] resourceTypes = {Resource.BRICK, Resource.LUMBER, Resource.ORE, Resource.GRAIN, Resource.WOOL};
 
         int randomIndex = random.nextInt(resourceTypes.length);
         return resourceTypes[randomIndex];
     }
 
-    private BoostType getRandomBoostType(Random random) {
+    private BoostType getRandomBoostType() {
         BoostType[] boostTypes = {BoostType.DISABLE, BoostType.DOUBLE};
 
         int randomIndex = random.nextInt(boostTypes.length);
@@ -606,11 +596,10 @@ public class Controller implements Restorable {
      * to actual player objects and then passes the info to Game to fulful the
      * request.
      *
-     * @param playerIdToResouceMap
      */
     public void dropResources(final HashMap<Integer, Resource[]> playerIdToResouceMap) {
 
-        HashMap<Player, Resource[]> playerToResouceMap = new HashMap<Player, Resource[]>();
+        HashMap<Player, Resource[]> playerToResouceMap = new HashMap<>();
 
         for (Entry<Integer, Resource[]> entry : playerIdToResouceMap.entrySet()) {
             Player player = this.getPlayerById(entry.getKey());
@@ -953,7 +942,6 @@ public class Controller implements Restorable {
         private final GameState gameState;
         private final int currentPlayerNum;
         private final Player currentPlayer;
-        private final int currentDie;
         private final int lastPlacedVertex;
         private final boolean devCardsEnabled;
 
@@ -972,7 +960,6 @@ public class Controller implements Restorable {
         private static final String GAME_PHASE = "GamePhase";
         private static final String GAME_STATE = "GameState";
         private static final String CURRENT_PLAYER_NUM = "CurrentPlayerNum";
-        private static final String CURRENT_DIE = "CurrentDie";
         private static final String LAST_PLACED_VERTEX = "LastPlacedVertex";
         private static final String DEV_CARDS_ENABLED = "DevCardsEnabled";
 
@@ -982,7 +969,6 @@ public class Controller implements Restorable {
             this.gameState = Controller.this.gameState;
             this.currentPlayerNum = Controller.this.currentPlayerNum;
             this.currentPlayer = Controller.this.currentPlayer;
-            this.currentDie = Controller.this.currentDie;
             this.lastPlacedVertex = Controller.this.lastPlacedVertex;
             this.devCardsEnabled = Controller.this.devCardsEnabled;
 
@@ -1005,7 +991,6 @@ public class Controller implements Restorable {
             this.gameState = GameState.valueOf(reader.readField(GAME_STATE));
             this.currentPlayerNum = Integer.parseInt(reader.readField(CURRENT_PLAYER_NUM));
             this.currentPlayer = GameLoader.getInstance().getPlayerByNum(this.currentPlayerNum + 1);
-            this.currentDie = Integer.parseInt(reader.readField(CURRENT_DIE));
             this.lastPlacedVertex = Integer.parseInt(reader.readField(LAST_PLACED_VERTEX));
             this.devCardsEnabled = Boolean.parseBoolean(reader.readField(DEV_CARDS_ENABLED));
 
@@ -1028,7 +1013,6 @@ public class Controller implements Restorable {
             writer.writeField(GAME_PHASE, gamePhase.toString());
             writer.writeField(GAME_STATE, gameState.toString());
             writer.writeField(CURRENT_PLAYER_NUM, Integer.toString(currentPlayerNum));
-            writer.writeField(CURRENT_DIE, Integer.toString(currentDie));
             writer.writeField(LAST_PLACED_VERTEX, Integer.toString(lastPlacedVertex));
             writer.writeField(DEV_CARDS_ENABLED, Boolean.toString(devCardsEnabled));
 
@@ -1050,7 +1034,6 @@ public class Controller implements Restorable {
             Controller.this.gamePhase = this.gamePhase;
             Controller.this.gameState = this.gameState;
             Controller.this.currentPlayerNum = this.currentPlayerNum;
-            Controller.this.currentDie = this.currentDie;
             Controller.this.lastPlacedVertex = this.lastPlacedVertex;
             Controller.this.devCardsEnabled = this.devCardsEnabled;
             Controller.this.currentPlayer = this.currentPlayer;

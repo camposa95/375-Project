@@ -1,1 +1,1 @@
-Resource: BRICK
+Resource: ANY

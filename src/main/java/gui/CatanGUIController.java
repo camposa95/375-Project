@@ -537,8 +537,7 @@ public class CatanGUIController {
     public void rollButtonPressed(MouseEvent event) throws IOException {
         //Triggered by Roll Button pressed
         if(this.controller.getState() == GameState.TURN_START && this.guiState == GUIState.IDLE){
-            this.controller.rollDice();
-            int dieNumber = this.controller.getDie();
+            int dieNumber = this.controller.rollDice();
             this.updateInfoPane();
             this.tooltipText.setText(dieNumber + " " + messages.getString("dieNumberRolled"));
             if (dieNumber == 7) {

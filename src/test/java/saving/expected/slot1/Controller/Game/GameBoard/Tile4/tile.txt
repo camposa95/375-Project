@@ -1,4 +1,4 @@
-TerrainType: HILLS
-DieNumber: 6
+TerrainType: FORREST
+DieNumber: 4
 HasRobber: false
 VertexIDs: [9, 10, 11, 19, 20, 21]

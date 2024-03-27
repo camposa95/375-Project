@@ -7,6 +7,7 @@ import graphs.RoadGraph;
 import graphs.VertexGraph;
 
 import java.io.File;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 public class GameLoader {

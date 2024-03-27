@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
 import controller.Controller;
@@ -17,7 +18,9 @@ import gamedatastructures.Player;
 import gamedatastructures.Resource;
 import graphs.RoadGraph;
 import graphs.VertexGraph;
- 
+
+import java.util.Random;
+
 /**
  * The purpose of this test class is to test feature 5 (F5):
  *      Ability for the Player to roll the dice, and all players to collect resources
@@ -190,7 +193,10 @@ public class F5Test {
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
-        Controller controller = new Controller(game, players, gameType);
+
+        Random mockedRandom = EasyMock.createStrictMock(Random.class);
+
+        Controller controller = new Controller(game, players, gameType, mockedRandom);
 
     // -------------------------- Start of Test  ---------------------------
         
@@ -203,8 +209,12 @@ public class F5Test {
         player2.hand.removeResources(r2);
         player3.hand.removeResources(r3);
         player4.hand.removeResources(r4);
+
         //Based on beginner locations these are the resources each player should recieve on given die roll
-        controller.rollDice(10);
+        EasyMock.expect(mockedRandom.nextInt(2,13)).andReturn(10);
+        EasyMock.replay(mockedRandom);
+        controller.rollDice();
+        EasyMock.verify(mockedRandom);
 
         Resource[] resources1 = {};
         Resource[] resources2 = {Resource.BRICK};
@@ -216,9 +226,8 @@ public class F5Test {
         assertTrue(player3.hand.removeResources(resources3));
         assertTrue(player4.hand.removeResources(resources4));
         
-        //avoid an spotbug error with controller not called
+        // avoid an spotbug error with controller not called
         controller.endTurn();
-
     }
     @Test
     public void testGetMoreResourcesFromUpgradedSettlements() {
@@ -252,7 +261,8 @@ public class F5Test {
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
-        Controller controller = new Controller(game, players, gameType);
+        Random mockedRandom = EasyMock.createStrictMock(Random.class);
+        Controller controller = new Controller(game, players, gameType, mockedRandom);
 
     // -------------------------- Start of Test  ---------------------------
         
@@ -295,8 +305,10 @@ public class F5Test {
         
         
         //Based on beginner locations these are the resources each player should recieve on given die roll
-       
-        controller.rollDice(10);
+        EasyMock.expect(mockedRandom.nextInt(2,13)).andReturn(10);
+        EasyMock.replay(mockedRandom);
+        controller.rollDice();
+        EasyMock.verify(mockedRandom);
 
         Resource[] resources1 = {};
         Resource[] resources2 = {Resource.BRICK,Resource.BRICK};
@@ -343,7 +355,8 @@ public class F5Test {
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
-        Controller controller = new Controller(game, players, gameType);
+        Random mockedRandom = EasyMock.createStrictMock(Random.class);
+        Controller controller = new Controller(game, players, gameType, mockedRandom);
 
     // -------------------------- Start of Test  ---------------------------
         
@@ -357,8 +370,11 @@ public class F5Test {
         player3.hand.removeResources(r3);
         player4.hand.removeResources(r4);
         //Based on beginner locations these are the resources each player should recieve on given die roll
-        
-        controller.rollDice(7);
+
+        EasyMock.expect(mockedRandom.nextInt(2, 13)).andReturn(7);
+        EasyMock.replay(mockedRandom);
+        controller.rollDice();
+        EasyMock.verify(mockedRandom);
 
         Resource[] resources2 = {Resource.BRICK};
         Resource[] resources4 = {Resource.ORE};

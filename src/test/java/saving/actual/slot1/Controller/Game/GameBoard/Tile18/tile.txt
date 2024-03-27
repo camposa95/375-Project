@@ -1,4 +1,4 @@
-TerrainType: PASTURE
+TerrainType: FORREST
 DieNumber: 11
 HasRobber: false
 VertexIDs: [43, 44, 45, 51, 52, 53]

@@ -1,4 +1,4 @@
-TerrainType: MOUNTAINS
-DieNumber: 3
+TerrainType: PASTURE
+DieNumber: 5
 HasRobber: false
 VertexIDs: [30, 31, 32, 40, 41, 42]

@@ -44,7 +44,7 @@ public class HarvestBooster implements Restorable {
         return adjustedHarvest.toArray(new Resource[0]);
     }
 
-    public void setBoost(Resource resource, BoostType boostType) {
+    public void setBoost(final Resource resource, final BoostType boostType) {
         this.boosts.put(resource, boostType);
         this.durations.put(resource, DURATION);
     }
