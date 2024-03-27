@@ -1,0 +1,5 @@
+GamePhase: SETUP
+GameState: FIRST_SETTLEMENT
+CurrentPlayerNum: 0
+LastPlacedVertex: 0
+DevCardsEnabled: true

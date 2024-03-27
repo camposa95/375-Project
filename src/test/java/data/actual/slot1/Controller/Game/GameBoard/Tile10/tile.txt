@@ -1,0 +1,4 @@
+TerrainType: FIELDS
+DieNumber: 12
+HasRobber: false
+VertexIDs: [22, 23, 24, 33, 34, 35]

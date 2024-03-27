@@ -1,10 +1,18 @@
 package integration;
-import controller.Controller;
-import controller.GameState;
-import controller.SuccessCode;
-import gamedatastructures.*;
-import graphs.RoadGraph;
-import graphs.VertexGraph;
+import data.GameLoader;
+import domain.controller.Controller;
+import domain.controller.GameState;
+import domain.controller.SuccessCode;
+import domain.bank.Bank;
+import domain.bank.Resource;
+import domain.devcarddeck.DevCard;
+import domain.devcarddeck.DevelopmentCardDeck;
+import domain.game.Game;
+import domain.game.GameType;
+import domain.gameboard.GameBoard;
+import domain.player.Player;
+import domain.graphs.RoadGraph;
+import domain.graphs.VertexGraph;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -17,33 +25,22 @@ public class F17Test {
     //Note: on the GUI level, we decided against the "secretly" portion since four players are sharing the same screen
     // and you'd be able to deduce what card they got either way
 
-    private static final String GAMEBOARD_LAYOUT_FILE = "src/main/java/gamedatastructures/TileLayout.txt";
-    private static final String ROAD_TO_ROAD_LAYOUT_FILE = "src/main/java/graphs/RoadToRoadLayout.txt";
-    private static final String ROAD_TO_VERTEX_LAYOUT_FILE = "src/main/java/graphs/RoadToVertexLayout.txt";
-    private static final String VERTEX_TO_VERTEX_LAYOUT_FILE = "src/main/java/graphs/VertexToVertexLayout.txt";
-    private static final String VERTEX_TO_ROAD_LAYOUT_FILE = "src/main/java/graphs/VertexToRoadLayout.txt";
-    private static final String VERTEX_TO_PORT_LAYOUT_FILE = "src/main/java/graphs/VertexToPortLayout.txt";
-
     //Add Victory Point card to hand and show that VP goes up for the player
     @Test
     public void testAddVictoryPointCard_normalPlay(){
         GameType gameType = GameType.Beginner;
-        VertexGraph vertices = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-
-        vertices.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertices.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertices.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertices, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
         Player player1 = new Player(1);
         Player player2 = new Player(2);
         Player[] players = {player1, player2};
 
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertices, roads, devCardDeck);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
         Bank.getInstance().resetBank();
 
         // Assert that the beginner setup does not time out to kill mutant
@@ -118,22 +115,18 @@ public class F17Test {
     @Test
     public void testAddVictoryPointCard_winGameOnPurchase(){
         GameType gameType = GameType.Beginner;
-        VertexGraph vertices = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-
-        vertices.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertices.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertices.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertices, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
         Player player1 = new Player(1);
         Player player2 = new Player(2);
         Player[] players = {player1, player2};
 
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertices, roads, devCardDeck);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
         Bank.getInstance().resetBank();
 
         // Assert that the beginner setup does not time out to kill mutant
@@ -221,22 +214,18 @@ public class F17Test {
     @Test
     public void testAddVictoryPoint_FailsTooManyVPCards(){
         GameType gameType = GameType.Beginner;
-        VertexGraph vertices = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-
-        vertices.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertices.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertices.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertices, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
         Player player1 = new Player(1);
         Player player2 = new Player(2);
         Player[] players = {player1, player2};
 
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertices, roads, devCardDeck);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
         Bank.getInstance().resetBank();
 
         // Assert that the beginner setup does not time out to kill mutant

@@ -1,0 +1,4 @@
+TerrainType: FORREST
+DieNumber: 2
+HasRobber: false
+VertexIDs: [24, 25, 26, 35, 36, 37]
