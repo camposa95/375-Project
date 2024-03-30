@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="635.0" prefWidth="876.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="presentation.popups.DropCardsController">
+   <children>
+      <Text fx:id="dropHalfTitle" layoutX="392.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Drop Half!">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Text>
+      <Text fx:id="tooltip" layoutX="207.0" layoutY="102.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Since a 7 was rolled, each player must drop half of their cards, if they have more than 7." textAlignment="CENTER" />
+      <Text fx:id="player1name" layoutX="120.0" layoutY="196.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Player 1" />
+      <TextField fx:id="player1lumber" layoutX="116.0" layoutY="228.0" prefHeight="25.0" prefWidth="54.0" text="0" />
+      <TextField fx:id="player1brick" layoutX="210.0" layoutY="228.0" prefHeight="25.0" prefWidth="54.0" text="0" />
+      <TextField fx:id="player1wool" layoutX="312.0" layoutY="228.0" prefHeight="25.0" prefWidth="54.0" text="0" />
+      <TextField fx:id="player1grain" layoutX="414.0" layoutY="228.0" prefHeight="25.0" prefWidth="54.0" text="0" />
+      <TextField fx:id="player1ore" layoutX="511.0" layoutY="228.0" prefHeight="25.0" prefWidth="54.0" text="0" />
+      <Rectangle fx:id="lumberIcon" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="35.0" layoutX="126.0" layoutY="128.0" stroke="BLACK" strokeType="INSIDE" width="35.0" />
+      <Rectangle fx:id="brickIcon" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="35.0" layoutX="220.0" layoutY="128.0" stroke="BLACK" strokeType="INSIDE" width="35.0" />
+      <Rectangle fx:id="woolIcon" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="35.0" layoutX="322.0" layoutY="128.0" stroke="BLACK" strokeType="INSIDE" width="35.0" />
+      <Rectangle fx:id="grainIcon" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="35.0" layoutX="424.0" layoutY="128.0" stroke="BLACK" strokeType="INSIDE" width="35.0" />
+      <Rectangle fx:id="oreIcon" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="35.0" layoutX="521.0" layoutY="128.0" stroke="BLACK" strokeType="INSIDE" width="35.0" />
+      <Text fx:id="player2name" layoutX="119.0" layoutY="283.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Player 2" />
+      <TextField fx:id="player2lumber" layoutX="115.0" layoutY="315.0" prefHeight="25.0" prefWidth="54.0" text="0" />
+      <TextField fx:id="player2brick" layoutX="209.0" layoutY="315.0" prefHeight="25.0" prefWidth="54.0" text="0" />
+      <TextField fx:id="player2wool" layoutX="311.0" layoutY="315.0" prefHeight="25.0" prefWidth="54.0" text="0" />
+      <TextField fx:id="player2grain" layoutX="413.0" layoutY="315.0" prefHeight="25.0" prefWidth="54.0" text="0" />
+      <TextField fx:id="player2ore" layoutX="510.0" layoutY="315.0" prefHeight="25.0" prefWidth="54.0" text="0" />
+      <Text fx:id="player3name" layoutX="119.0" layoutY="371.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Player 3" />
+      <TextField fx:id="player3lumber" layoutX="115.0" layoutY="403.0" prefHeight="25.0" prefWidth="54.0" text="0" />
+      <TextField fx:id="player3brick" layoutX="209.0" layoutY="403.0" prefHeight="25.0" prefWidth="54.0" text="0" />
+      <TextField fx:id="player3wool" layoutX="311.0" layoutY="403.0" prefHeight="25.0" prefWidth="54.0" text="0" />
+      <TextField fx:id="player3grain" layoutX="413.0" layoutY="403.0" prefHeight="25.0" prefWidth="54.0" text="0" />
+      <TextField fx:id="player3ore" layoutX="510.0" layoutY="403.0" prefHeight="25.0" prefWidth="54.0" text="0" />
+      <Text fx:id="player4name" layoutX="118.0" layoutY="463.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Player 4" />
+      <TextField fx:id="player4lumber" layoutX="114.0" layoutY="495.0" prefHeight="25.0" prefWidth="54.0" text="0" />
+      <TextField fx:id="player4brick" layoutX="208.0" layoutY="495.0" prefHeight="25.0" prefWidth="54.0" text="0" />
+      <TextField fx:id="player4wool" layoutX="310.0" layoutY="495.0" prefHeight="25.0" prefWidth="54.0" text="0" />
+      <TextField fx:id="player4grain" layoutX="412.0" layoutY="495.0" prefHeight="25.0" prefWidth="54.0" text="0" />
+      <TextField fx:id="player4ore" layoutX="509.0" layoutY="495.0" prefHeight="25.0" prefWidth="54.0" text="0" />
+      <Button fx:id="submit" layoutX="416.0" layoutY="576.0" mnemonicParsing="false" onMouseClicked="#submitDropResource" text="Submit" />
+   </children>
+</AnchorPane>

@@ -1,0 +1,10 @@
+VictoryPoints: 0
+HasPlayedDevCard: false
+NumKnightsPlayed: 0
+NumSettlements: 5
+NumRoads: 15
+NumCities: 4
+NumTradeBoosts: 0
+HasLongestRoadCard: false
+HasLargestArmy: false
+TradeBoosts: [null, null, null, null, null, null, null, null, null]

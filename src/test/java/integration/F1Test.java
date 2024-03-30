@@ -4,33 +4,26 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import data.GameLoader;
 import org.junit.jupiter.api.Test;
 
-import gamedatastructures.GameBoard;
-import gamedatastructures.GameType;
-import gamedatastructures.Terrain;
-import gamedatastructures.Tile;
-import graphs.RoadGraph;
-import graphs.VertexGraph;
+import domain.gameboard.GameBoard;
+import domain.game.GameType;
+import domain.gameboard.Terrain;
+import domain.gameboard.Tile;
+import domain.graphs.RoadGraph;
+import domain.graphs.VertexGraph;
 
 public class F1Test {
-    private static final String LAYOUT_FILE = "src/main/java/gamedatastructures/TileLayout.txt";
-    private static final String VERTEX_TO_VERTEX_LAYOUT_FILE = "src/main/java/graphs/VertexToVertexLayout.txt";
-    private static final String VERTEX_TO_ROAD_LAYOUT_FILE = "src/main/java/graphs/VertexToRoadLayout.txt";
-    private static final String VERTEX_TO_PORT_LAYOUT_FILE = "src/main/java/graphs/VertexToPortLayout.txt";
-    private static final String ROAD_TO_ROAD_LAYOUT_FILE = "src/main/java/graphs/RoadToRoadLayout.txt";
-    private static final String ROAD_TO_VERTEX_LAYOUT_FILE = "src/main/java/graphs/RoadToVertexLayout.txt";
     @Test 
     public void testGenerateBoard() {
-        VertexGraph vertexes = new VertexGraph();
+        GameType gameType = GameType.Beginner;
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-        vertexes.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertexes.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertexes.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, GameType.Beginner);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertexes, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        GameBoard board = new GameBoard(GameType.Beginner,LAYOUT_FILE);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
         
         //Expected Terrain Order For Default
         Terrain[] expectedTerrain = {Terrain.MOUNTAINS,Terrain.PASTURE,Terrain.FORREST,Terrain.FIELDS,Terrain.HILLS,Terrain.PASTURE,Terrain.HILLS,
@@ -44,7 +37,7 @@ public class F1Test {
         int[] vertexWithPorts ={0,1,14,15,7,17,26,37,28,38,47,48,50,51,45,46};
        
         int i = 0;
-        for(Tile tile : board.getTiles()){
+        for(Tile tile : gameBoard.getTiles()){
             //Tiles should be ordered in default
             assertEquals(i,tile.getTileNumber());
             assertEquals(tile.getTerrain(), expectedTerrain[i]);
@@ -58,7 +51,7 @@ public class F1Test {
             i++;
         }
         //Assert that the robber tile is the desert tile
-        assertEquals(board.getTiles()[9],board.getRobberTile());
+        assertEquals(gameBoard.getTiles()[9], gameBoard.getRobberTile());
         assertEquals(19,i);
 
 

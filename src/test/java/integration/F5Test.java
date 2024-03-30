@@ -4,20 +4,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import data.GameLoader;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
-import controller.Controller;
-import controller.GameState;
-import controller.SuccessCode;
-import gamedatastructures.DevelopmentCardDeck;
-import gamedatastructures.Game;
-import gamedatastructures.GameBoard;
-import gamedatastructures.GameType;
-import gamedatastructures.Player;
-import gamedatastructures.Resource;
-import graphs.RoadGraph;
-import graphs.VertexGraph;
+import domain.controller.Controller;
+import domain.controller.GameState;
+import domain.controller.SuccessCode;
+import domain.devcarddeck.DevelopmentCardDeck;
+import domain.game.Game;
+import domain.gameboard.GameBoard;
+import domain.game.GameType;
+import domain.player.Player;
+import domain.bank.Resource;
+import domain.graphs.RoadGraph;
+import domain.graphs.VertexGraph;
 
 import java.util.Random;
 
@@ -27,13 +28,6 @@ import java.util.Random;
  *      from spaces with the number on the dice
  */
 public class F5Test {
-       
-    private static final String GAMEBOARD_LAYOUT_FILE = "src/main/java/gamedatastructures/TileLayout.txt";
-    private static final String ROAD_TO_ROAD_LAYOUT_FILE = "src/main/java/graphs/RoadToRoadLayout.txt";
-    private static final String ROAD_TO_VERTEX_LAYOUT_FILE = "src/main/java/graphs/RoadToVertexLayout.txt";
-    private static final String VERTEX_TO_VERTEX_LAYOUT_FILE = "src/main/java/graphs/VertexToVertexLayout.txt";
-    private static final String VERTEX_TO_ROAD_LAYOUT_FILE = "src/main/java/graphs/VertexToRoadLayout.txt";
-    private static final String VERTEX_TO_PORT_LAYOUT_FILE = "src/main/java/graphs/VertexToPortLayout.txt";
 
     @Test
     public void testGettingResourcesFromSetupBeginner() {
@@ -41,15 +35,9 @@ public class F5Test {
         
         // Testing for beginner
         GameType gameType = GameType.Beginner;
-
-        // graphs
-        VertexGraph vertexes = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-        vertexes.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertexes.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertexes.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertexes, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
         // Players
         Player player1 = new Player(1);
@@ -61,7 +49,8 @@ public class F5Test {
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
         Controller controller = new Controller(game, players, gameType);
 
@@ -85,18 +74,10 @@ public class F5Test {
     @Test
     public void testGettingResourcesFromSetupAdvanced() {
      // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Testing for beginner
         GameType gameType = GameType.Advanced;
-
-        // graphs
-        VertexGraph vertexes = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-        vertexes.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertexes.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertexes.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertexes, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
         // Players
         Player player1 = new Player(1);
@@ -108,8 +89,9 @@ public class F5Test {
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        //must have gameBoard in beginner still so we know where tiles are
-        GameBoard gameBoard = new GameBoard(GameType.Beginner, GAMEBOARD_LAYOUT_FILE);
+        // must have gameBoard in beginner still so we know where tiles are
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
         Controller controller = new Controller(game, players, gameType);
 
@@ -167,15 +149,9 @@ public class F5Test {
         
         // Testing for beginner
         GameType gameType = GameType.Beginner;
-
-        // graphs
-        VertexGraph vertexes = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-        vertexes.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertexes.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertexes.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertexes, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
         // Players
         //white
@@ -191,7 +167,8 @@ public class F5Test {
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
 
         Random mockedRandom = EasyMock.createStrictMock(Random.class);
@@ -235,15 +212,9 @@ public class F5Test {
         
         // Testing for beginner
         GameType gameType = GameType.Beginner;
-
-        // graphs
-        VertexGraph vertexes = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-        vertexes.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertexes.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertexes.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertexes, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
         // Players
         //white
@@ -259,7 +230,8 @@ public class F5Test {
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
         Random mockedRandom = EasyMock.createStrictMock(Random.class);
         Controller controller = new Controller(game, players, gameType, mockedRandom);
@@ -329,15 +301,9 @@ public class F5Test {
         
         // Testing for beginner
         GameType gameType = GameType.Beginner;
-
-        // graphs
-        VertexGraph vertexes = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-        vertexes.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertexes.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertexes.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertexes, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
         // Players
         //white
@@ -353,7 +319,8 @@ public class F5Test {
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
         Random mockedRandom = EasyMock.createStrictMock(Random.class);
         Controller controller = new Controller(game, players, gameType, mockedRandom);

@@ -2,25 +2,27 @@ package integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicReference;
 
+import data.GameLoader;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import controller.Controller;
-import controller.GameState;
-import controller.SuccessCode;
-import gamedatastructures.Bank;
-import gamedatastructures.DevCard;
-import gamedatastructures.DevelopmentCardDeck;
-import gamedatastructures.Game;
-import gamedatastructures.GameBoard;
-import gamedatastructures.GameType;
-import gamedatastructures.Player;
-import gamedatastructures.Resource;
-import graphs.RoadGraph;
-import graphs.VertexGraph;
+import domain.controller.Controller;
+import domain.controller.GameState;
+import domain.controller.SuccessCode;
+import domain.bank.Bank;
+import domain.devcarddeck.DevCard;
+import domain.devcarddeck.DevelopmentCardDeck;
+import domain.game.Game;
+import domain.gameboard.GameBoard;
+import domain.game.GameType;
+import domain.player.Player;
+import domain.bank.Resource;
+import domain.graphs.RoadGraph;
+import domain.graphs.VertexGraph;
 
 
 /**
@@ -28,14 +30,6 @@ import graphs.VertexGraph;
  *      Ability for a Player to play one Development Card from their hand during their turn.
  */
 public class F11Test {
-    
-    private static final String GAMEBOARD_LAYOUT_FILE = "src/main/java/gamedatastructures/TileLayout.txt";
-
-    private static final String ROAD_TO_ROAD_LAYOUT_FILE = "src/main/java/graphs/RoadToRoadLayout.txt";
-    private static final String ROAD_TO_VERTEX_LAYOUT_FILE = "src/main/java/graphs/RoadToVertexLayout.txt";
-    private static final String VERTEX_TO_VERTEX_LAYOUT_FILE = "src/main/java/graphs/VertexToVertexLayout.txt";
-    private static final String VERTEX_TO_ROAD_LAYOUT_FILE = "src/main/java/graphs/VertexToRoadLayout.txt";
-    private static final String VERTEX_TO_PORT_LAYOUT_FILE = "src/main/java/graphs/VertexToPortLayout.txt";
 
     private static final Resource[] RESOURCES_FOR_CARD = {Resource.WOOL, Resource.GRAIN, Resource.ORE};
 
@@ -50,20 +44,14 @@ public class F11Test {
     }
 
     @Test
-    public void testPlayCardCorrectly() {
+    public void testPlayCardCorrectly() throws IOException {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
         // Here we use begineer game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
-
-        // graphs
-        VertexGraph vertexes = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-        vertexes.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertexes.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertexes.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertexes, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
         // Players. Note: 3 players is enough for our purposes here
         Player player1 = new Player(1);
@@ -75,7 +63,8 @@ public class F11Test {
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
         Bank.getInstance().resetBank();
         
@@ -220,15 +209,9 @@ public class F11Test {
         
         // Here we use begineer game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
-
-        // graphs
-        VertexGraph vertexes = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-        vertexes.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertexes.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertexes.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertexes, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
         // Players. Note: 3 players is enough for our purposes here
         Player player1 = new Player(1);
@@ -240,7 +223,8 @@ public class F11Test {
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
         
         // Assert that the begineer setup does not time out to kill mutant
@@ -305,15 +289,9 @@ public class F11Test {
         
         // Here we use begineer game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
-
-        // graphs
-        VertexGraph vertexes = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-        vertexes.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertexes.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertexes.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertexes, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
         // Players. Note: 3 players is enough for our purposes here
         Player player1 = new Player(1);
@@ -325,7 +303,8 @@ public class F11Test {
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
         
         // Assert that the begineer setup does not time out to kill mutant
