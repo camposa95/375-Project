@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import domain.controller.Controller;
-import domain.controller.SuccessCode;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
@@ -91,7 +89,7 @@ public class PlayMonopolyCardTest {
     }
 
     @Test
-    public void testPlayMonopolyCardCardsDisabled() throws CardNotPlayableException {
+    public void testPlayMonopolyCardCardsDisabled() {
         Game mockedGame = EasyMock.createMock(Game.class);
         Player mockedPlayer1 = EasyMock.createMock(Player.class);
         Player mockedPlayer2 = EasyMock.createMock(Player.class);

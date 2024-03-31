@@ -3,8 +3,6 @@ package domain.player;
 import domain.bank.Bank;
 import domain.bank.Resource;
 import domain.devcarddeck.DevCard;
-import domain.player.Hand;
-import domain.player.Player;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,8 +11,8 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseSettlement_emptyHand_returnFalse() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         boolean success = player.purchaseSettlement();
 
         int expectedVictoryPoints = 0;
@@ -25,13 +23,12 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseSettlement_justEnoughResources_returnTrue() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         Hand mockedHand = EasyMock.createMockBuilder(Hand.class).withConstructor().createMock();
 
         // Move resources into mocked hand
-        Bank.getInstance()
-                .removeResources(new Resource[] { Resource.LUMBER, Resource.BRICK, Resource.WOOL, Resource.GRAIN });
+        bank.removeResources(new Resource[] { Resource.LUMBER, Resource.BRICK, Resource.WOOL, Resource.GRAIN });
         mockedHand.addResources(new Resource[] { Resource.LUMBER, Resource.BRICK, Resource.WOOL, Resource.GRAIN });
 
         player.hand = mockedHand;
@@ -51,12 +48,12 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseSettlement_missingOneResource_returnFalse() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         Hand mockedHand = EasyMock.createMockBuilder(Hand.class).withConstructor().createMock();
 
         // Move resources into mocked hand
-        Bank.getInstance().removeResources(new Resource[] { Resource.LUMBER, Resource.BRICK, Resource.WOOL });
+        bank.removeResources(new Resource[] { Resource.LUMBER, Resource.BRICK, Resource.WOOL });
         mockedHand.addResources(new Resource[] { Resource.LUMBER, Resource.BRICK, Resource.WOOL });
         player.hand = mockedHand;
         EasyMock.replay(mockedHand);
@@ -74,12 +71,11 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseSettlement_fullHand_returnTrue() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         Hand mockedHand = EasyMock.createMockBuilder(Hand.class).withConstructor().createMock();
 
         // remove all from bank
-        Bank bank = Bank.getInstance();
         bank.removeResource(Resource.LUMBER, 19);
         bank.removeResource(Resource.BRICK, 19);
         bank.removeResource(Resource.WOOL, 19);
@@ -107,13 +103,12 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseSettlement_notEnoughSettlements_returnFalse() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         Hand mockedHand = EasyMock.createMockBuilder(Hand.class).withConstructor().createMock();
 
         // Move resources into mocked hand
-        Bank.getInstance()
-                .removeResources(new Resource[] { Resource.LUMBER, Resource.BRICK, Resource.WOOL, Resource.GRAIN });
+        bank.removeResources(new Resource[] { Resource.LUMBER, Resource.BRICK, Resource.WOOL, Resource.GRAIN });
         mockedHand.addResources(new Resource[] { Resource.LUMBER, Resource.BRICK, Resource.WOOL, Resource.GRAIN });
 
         player.hand = mockedHand;
@@ -134,8 +129,8 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseRoad_emptyHand_returnFalse() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         boolean success = player.purchaseRoad();
 
         assertFalse(success);
@@ -143,12 +138,12 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseRoad_JustEnoughResources_returnTrue() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         Hand mockedHand = EasyMock.createMockBuilder(Hand.class).withConstructor().createMock();
 
         // Move resources into mocked hand
-        Bank.getInstance().removeResources(new Resource[] { Resource.LUMBER, Resource.BRICK });
+        bank.removeResources(new Resource[] { Resource.LUMBER, Resource.BRICK });
         mockedHand.addResources(new Resource[] { Resource.LUMBER, Resource.BRICK });
 
         player.hand = mockedHand;
@@ -166,12 +161,12 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseRoad_OnlyOneLumber_returnFalse() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         Hand mockedHand = EasyMock.createMockBuilder(Hand.class).withConstructor().createMock();
 
         // Move resources into mocked hand
-        Bank.getInstance().removeResources(new Resource[] { Resource.LUMBER });
+        bank.removeResources(new Resource[] { Resource.LUMBER });
         mockedHand.addResources(new Resource[] { Resource.LUMBER });
         player.hand = mockedHand;
         EasyMock.replay(mockedHand);
@@ -187,12 +182,12 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseRoad_notEnoughRoads_returnFalse() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         Hand mockedHand = EasyMock.createMockBuilder(Hand.class).withConstructor().createMock();
 
         // Move resources into mocked hand
-        Bank.getInstance().removeResources(new Resource[] { Resource.LUMBER, Resource.BRICK });
+        bank.removeResources(new Resource[] { Resource.LUMBER, Resource.BRICK });
         mockedHand.addResources(new Resource[] { Resource.LUMBER, Resource.BRICK });
 
         player.hand = mockedHand;
@@ -409,8 +404,8 @@ public class PlayerTest {
 
     @Test
     public void testTrade_withBank_validTrade_returnTrue() {
-        Player player = new Player(1);
-        Bank bank = Bank.getInstance();
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
 
         Hand mockedPlayer1Hand = EasyMock.createMockBuilder(Hand.class).withConstructor().createMock();
 
@@ -431,8 +426,8 @@ public class PlayerTest {
 
     @Test
     public void testTrade_withBank_withBrickPort_validTrade_returnTrue() {
-        Player player = new Player(1);
-        Bank bank = Bank.getInstance();
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
 
         Hand mockedPlayer1Hand = EasyMock.createMockBuilder(Hand.class).withConstructor().createMock();
 
@@ -454,9 +449,9 @@ public class PlayerTest {
 
     @Test
     public void testTrade_withBank_withBetterPort_validTrade_returnTrue() {
-        Player player = new Player(1);
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
+        bank.reset();
 
         Hand mockedPlayer1Hand = EasyMock.createMockBuilder(Hand.class).withConstructor().createMock();
 
@@ -478,8 +473,8 @@ public class PlayerTest {
 
     @Test
     public void testTrade_withEmptyBank_returnFalse() {
-        Player player = new Player(1);
-        Bank bank = Bank.getInstance();
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
 
         Hand mockedPlayer1Hand = EasyMock.createMockBuilder(Hand.class).withConstructor().createMock();
 
@@ -502,8 +497,8 @@ public class PlayerTest {
 
     @Test
     public void testTrade_withBank_notEnoughCards_returnFalse() {
-        Player player = new Player(1);
-        Bank bank = Bank.getInstance();
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
 
         Hand mockedPlayer1Hand = EasyMock.createMockBuilder(Hand.class).withConstructor().createMock();
 
@@ -524,11 +519,11 @@ public class PlayerTest {
 
     @Test
     public void testUpgradeSettlementToCity_HasCity_CanAfford_returnTrue() {
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         Hand mockedPlayer1Hand = EasyMock.createMockBuilder(Hand.class).withConstructor()
                 .addMockedMethod("removeResources").createMock();
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        bank.reset();
 
         mockedPlayer1Hand.addResources(new Resource[] {
                 Resource.ORE,
@@ -566,11 +561,11 @@ public class PlayerTest {
 
     @Test
     public void testUpgradeSettlementToCity_HasCity_CannotAfford_returnFalse() {
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         Hand mockedPlayer1Hand = EasyMock.createMockBuilder(Hand.class).withConstructor()
                 .addMockedMethod("removeResources").createMock();
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        bank.reset();
 
         mockedPlayer1Hand.addResources(new Resource[] {
                 Resource.ORE,
@@ -604,11 +599,11 @@ public class PlayerTest {
 
     @Test
     public void testUpgradeSettlementToCity_HasNoCities_CanAfford_returnFalse() {
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         Hand mockedPlayer1Hand = EasyMock.createMockBuilder(Hand.class).withConstructor()
                 .addMockedMethod("removeResources").createMock();
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        bank.reset();
 
         mockedPlayer1Hand.addResources(new Resource[] {
                 Resource.ORE,
@@ -641,11 +636,11 @@ public class PlayerTest {
 
     @Test
     public void testUpgradeSettlementToCity_HasNoCities_CannotAfford_returnFalse() {
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         Hand mockedPlayer1Hand = EasyMock.createMockBuilder(Hand.class).withConstructor()
                 .addMockedMethod("removeResources").createMock();
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        bank.reset();
 
         mockedPlayer1Hand.addResources(new Resource[] {
                 Resource.ORE,
@@ -675,7 +670,8 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseDevCard_nullCard_throwIllegalArgumentException() {
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
 
         String expectedMessage = "Cannot purchase null Development Card";
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -687,9 +683,9 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseDevCard_Knight_canAfford_returnTrue() {
-        Player player = new Player(1);
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
+        bank.reset();
         DevCard knight = DevCard.KNIGHT;
         Hand mockedPlayer1Hand = EasyMock.createMockBuilder(Hand.class).withConstructor()
                 .addMockedMethod("removeResources").addMockedMethod("addDevelopmentCard").createMock();
@@ -716,9 +712,9 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseDevCard_Knight_cannotAfford_returnFalse() {
-        Player player = new Player(1);
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
+        bank.reset();
         DevCard knight = DevCard.KNIGHT;
         Hand mockedPlayer1Hand = EasyMock.createMockBuilder(Hand.class).withConstructor()
                 .addMockedMethod("removeResources").addMockedMethod("addDevelopmentCard").createMock();
@@ -738,9 +734,9 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseDevCard_YearOfPlenty_canAfford_returnTrue() {
-        Player player = new Player(1);
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
+        bank.reset();
         DevCard yop = DevCard.PLENTY;
         Hand mockedPlayer1Hand = EasyMock.createMockBuilder(Hand.class).withConstructor()
                 .addMockedMethod("removeResources").addMockedMethod("addDevelopmentCard").createMock();
@@ -767,9 +763,9 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseDevCard_YearOfPlenty_cannotAfford_returnFalse() {
-        Player player = new Player(1);
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
+        bank.reset();
         DevCard yop = DevCard.PLENTY;
         Hand mockedPlayer1Hand = EasyMock.createMockBuilder(Hand.class).withConstructor()
                 .addMockedMethod("removeResources").addMockedMethod("addDevelopmentCard").createMock();
@@ -789,9 +785,9 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseDevCard_RoadBuilding_canAfford_returnTrue() {
-        Player player = new Player(1);
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
+        bank.reset();
         DevCard road = DevCard.ROAD;
         Hand mockedPlayer1Hand = EasyMock.createMockBuilder(Hand.class).withConstructor()
                 .addMockedMethod("removeResources").addMockedMethod("addDevelopmentCard").createMock();
@@ -818,9 +814,9 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseDevCard_RoadBuilding_cannotAfford_returnFalse() {
-        Player player = new Player(1);
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
+        bank.reset();
         DevCard road = DevCard.ROAD;
         Hand mockedPlayer1Hand = EasyMock.createMockBuilder(Hand.class).withConstructor()
                 .addMockedMethod("removeResources").addMockedMethod("addDevelopmentCard").createMock();
@@ -840,9 +836,9 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseDevCard_Monopoly_canAfford_returnTrue() {
-        Player player = new Player(1);
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
+        bank.reset();
         DevCard monopoly = DevCard.MONOPOLY;
         Hand mockedPlayer1Hand = EasyMock.createMockBuilder(Hand.class).withConstructor()
                 .addMockedMethod("removeResources").addMockedMethod("addDevelopmentCard").createMock();
@@ -869,9 +865,9 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseDevCard_Monopoly_cannotAfford_returnFalse() {
-        Player player = new Player(1);
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
+        bank.reset();
         DevCard monopoly = DevCard.MONOPOLY;
         Hand mockedPlayer1Hand = EasyMock.createMockBuilder(Hand.class).withConstructor()
                 .addMockedMethod("removeResources").addMockedMethod("addDevelopmentCard").createMock();
@@ -891,9 +887,9 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseDevCard_VictoryPoint_canAfford_returnTrue() {
-        Player player = new Player(1);
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
+        bank.reset();
         DevCard victoryPoint = DevCard.VICTORY;
         Hand mockedPlayer1Hand = EasyMock.createMockBuilder(Hand.class).withConstructor()
                 .addMockedMethod("removeResources").addMockedMethod("addDevelopmentCard").createMock();
@@ -921,9 +917,9 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseDevCard_VictoryPoint_cannotAfford_returnFalse() {
-        Player player = new Player(1);
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
+        bank.reset();
         DevCard victoryPoint = DevCard.VICTORY;
         Hand mockedPlayer1Hand = EasyMock.createMockBuilder(Hand.class).withConstructor()
                 .addMockedMethod("removeResources").addMockedMethod("addDevelopmentCard").createMock();
@@ -943,9 +939,9 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseDevCard_knight_full_returnFalse() {
-        Player player = new Player(1);
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
+        bank.reset();
         DevCard knight = DevCard.KNIGHT;
         Hand mockedPlayer1Hand = EasyMock.createMockBuilder(Hand.class).withConstructor()
                 .addMockedMethod("removeResources").addMockedMethod("addDevelopmentCard").createMock();
@@ -972,9 +968,9 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseDevCard_yearOfPlenty_full_returnFalse() {
-        Player player = new Player(1);
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
+        bank.reset();
         DevCard yop = DevCard.PLENTY;
         Hand mockedPlayer1Hand = EasyMock.createMockBuilder(Hand.class).withConstructor()
                 .addMockedMethod("removeResources").addMockedMethod("addDevelopmentCard").createMock();
@@ -1001,9 +997,9 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseDevCard_roadBuilding_full_returnFalse() {
-        Player player = new Player(1);
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
+        bank.reset();
         DevCard roadBuilding = DevCard.ROAD;
         Hand mockedPlayer1Hand = EasyMock.createMockBuilder(Hand.class).withConstructor()
                 .addMockedMethod("removeResources").addMockedMethod("addDevelopmentCard").createMock();
@@ -1030,9 +1026,9 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseDevCard_monopoly_full_returnFalse() {
-        Player player = new Player(1);
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
+        bank.reset();
         DevCard monopoly = DevCard.MONOPOLY;
         Hand mockedPlayer1Hand = EasyMock.createMockBuilder(Hand.class).withConstructor()
                 .addMockedMethod("removeResources").addMockedMethod("addDevelopmentCard").createMock();
@@ -1059,9 +1055,9 @@ public class PlayerTest {
 
     @Test
     public void testPurchaseDevCard_victoryPoint_full_returnFalse() {
-        Player player = new Player(1);
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
+        bank.reset();
         DevCard vp = DevCard.VICTORY;
         Hand mockedPlayer1Hand = EasyMock.createMockBuilder(Hand.class).withConstructor()
                 .addMockedMethod("removeResources").addMockedMethod("addDevelopmentCard").createMock();
@@ -1088,8 +1084,8 @@ public class PlayerTest {
 
     @Test
     public void testCanPlayDevelopmentCard_hasPlayedDevCard_returnFalse() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         player.hasPlayedDevCard = true;
         DevCard knight = DevCard.KNIGHT;
         assertFalse(player.canPlayDevelopmentCard(knight));
@@ -1097,8 +1093,8 @@ public class PlayerTest {
 
     @Test
     public void testCanPlayDevelopmentCard_nullCard_throwIllegalArgumentException() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         DevCard nullCard = null;
 
         String expectedMessage = "Cannot attempt to play null Development Card";
@@ -1111,15 +1107,15 @@ public class PlayerTest {
 
     @Test
     public void testCanPlayDevelopmentCard_knight_returnTrue() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         DevCard knight = DevCard.KNIGHT;
 
         // make sure player has purchased a Knight
         player.hand.addResources(new Resource[] {
                 Resource.WOOL, Resource.GRAIN, Resource.ORE
         });
-        Bank.getInstance().removeResources(new Resource[] {
+        bank.removeResources(new Resource[] {
                 Resource.WOOL, Resource.GRAIN, Resource.ORE
         });
         player.purchaseDevCard(knight);
@@ -1133,15 +1129,15 @@ public class PlayerTest {
 
     @Test
     public void testCanPlayDevelopmentCard_yearOfPlenty_returnTrue() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         DevCard yop = DevCard.PLENTY;
 
         // make sure player has purchased a Year of plenty card
         player.hand.addResources(new Resource[] {
                 Resource.WOOL, Resource.GRAIN, Resource.ORE
         });
-        Bank.getInstance().removeResources(new Resource[] {
+        bank.removeResources(new Resource[] {
                 Resource.WOOL, Resource.GRAIN, Resource.ORE
         });
         player.purchaseDevCard(yop);
@@ -1154,15 +1150,15 @@ public class PlayerTest {
 
     @Test
     public void testCanPlayDevelopmentCard_roadBuilding_returnTrue() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         DevCard roadBuilding = DevCard.ROAD;
 
         // make sure player has purchased a road Building card
         player.hand.addResources(new Resource[] {
                 Resource.WOOL, Resource.GRAIN, Resource.ORE
         });
-        Bank.getInstance().removeResources(new Resource[] {
+        bank.removeResources(new Resource[] {
                 Resource.WOOL, Resource.GRAIN, Resource.ORE
         });
         player.purchaseDevCard(roadBuilding);
@@ -1175,15 +1171,15 @@ public class PlayerTest {
 
     @Test
     public void testCanPlayDevelopmentCard_monopoly_returnTrue() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         DevCard monopoly = DevCard.MONOPOLY;
 
         // make sure player has purchased a Monopoly card
         player.hand.addResources(new Resource[] {
                 Resource.WOOL, Resource.GRAIN, Resource.ORE
         });
-        Bank.getInstance().removeResources(new Resource[] {
+        bank.removeResources(new Resource[] {
                 Resource.WOOL, Resource.GRAIN, Resource.ORE
         });
         player.purchaseDevCard(monopoly);
@@ -1196,15 +1192,15 @@ public class PlayerTest {
 
     @Test
     public void testCanPlayDevelopmentCard_victoryPoint_returnFalse() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         DevCard victoryPoint = DevCard.VICTORY;
 
         // make sure player has purchased a victory point card
         player.hand.addResources(new Resource[] {
                 Resource.WOOL, Resource.GRAIN, Resource.ORE
         });
-        Bank.getInstance().removeResources(new Resource[] {
+        bank.removeResources(new Resource[] {
                 Resource.WOOL, Resource.GRAIN, Resource.ORE
         });
         player.purchaseDevCard(victoryPoint);
@@ -1217,8 +1213,8 @@ public class PlayerTest {
 
     @Test
     public void testCanPlayDevelopmentCard_knight_noKnightInHand_returnFalse() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         DevCard knight = DevCard.KNIGHT;
 
         boolean success = player.canPlayDevelopmentCard(knight);
@@ -1227,8 +1223,8 @@ public class PlayerTest {
 
     @Test
     public void testCanPlayDevelopmentCard_yearOfPlenty_noYOPInHand_returnFalse() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         DevCard yop = DevCard.PLENTY;
 
         boolean success = player.canPlayDevelopmentCard(yop);
@@ -1237,8 +1233,8 @@ public class PlayerTest {
 
     @Test
     public void testCanPlayDevelopmentCard_roadBuilding_noRBInHand_returnFalse() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         DevCard road = DevCard.ROAD;
 
         boolean success = player.canPlayDevelopmentCard(road);
@@ -1247,8 +1243,8 @@ public class PlayerTest {
 
     @Test
     public void testCanPlayDevelopmentCard_monopoly_noMonopolyInHand_returnFalse() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         DevCard monopoly = DevCard.MONOPOLY;
 
         boolean success = player.canPlayDevelopmentCard(monopoly);
@@ -1257,15 +1253,15 @@ public class PlayerTest {
 
     @Test
     public void testCanPlayDevelopmentCard_attemptToPlay2_returnFalse() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         DevCard knight = DevCard.KNIGHT;
 
         player.hand.addResources(new Resource[] {
                 Resource.WOOL, Resource.GRAIN, Resource.ORE,
                 Resource.WOOL, Resource.GRAIN, Resource.ORE
         });
-        Bank.getInstance().removeResources(new Resource[] {
+        bank.removeResources(new Resource[] {
                 Resource.WOOL, Resource.GRAIN, Resource.ORE,
                 Resource.WOOL, Resource.GRAIN, Resource.ORE
         });
@@ -1286,8 +1282,8 @@ public class PlayerTest {
 
     @Test
     public void testUseDevCard_nullCard() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         DevCard nullCard = null;
 
         String expectedMessage = "Cannot attempt to play null Development Card";
@@ -1300,21 +1296,21 @@ public class PlayerTest {
 
     @Test
     public void testUseDevCard_exactEnoughNonBought() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         DevCard card = DevCard.PLENTY;
 
         // make sure player has purchased a Year of plenty card
         player.hand.addResources(new Resource[] {
                 Resource.WOOL, Resource.GRAIN, Resource.ORE
         });
-        Bank.getInstance().removeResources(new Resource[] {
+        bank.removeResources(new Resource[] {
                 Resource.WOOL, Resource.GRAIN, Resource.ORE
         });
         player.purchaseDevCard(card);
 
         // make it so it wasn't bought this turn
-        player.addboughtCardsToHand();
+        player.addBoughtCardsToHand();
 
         // attempt to play card
         boolean success = player.useDevCard(card);
@@ -1324,27 +1320,27 @@ public class PlayerTest {
 
     @Test
     public void testUseDevCard_exactEnoughOneBought() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         DevCard card = DevCard.PLENTY;
 
         // make sure player has purchased a card
         player.hand.addResources(new Resource[] {
                 Resource.WOOL, Resource.GRAIN, Resource.ORE
         });
-        Bank.getInstance().removeResources(new Resource[] {
+        bank.removeResources(new Resource[] {
                 Resource.WOOL, Resource.GRAIN, Resource.ORE
         });
         player.purchaseDevCard(card);
         // make it so it wasn't bought this turn
-        player.addboughtCardsToHand();
+        player.addBoughtCardsToHand();
 
 
         // buy another of the same card
         player.hand.addResources(new Resource[] {
                 Resource.WOOL, Resource.GRAIN, Resource.ORE
         });
-        Bank.getInstance().removeResources(new Resource[] {
+        bank.removeResources(new Resource[] {
                 Resource.WOOL, Resource.GRAIN, Resource.ORE
         });
         player.purchaseDevCard(card);
@@ -1358,8 +1354,8 @@ public class PlayerTest {
 
     @Test
     public void testUseDevCard_notEnoughNoneBought() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         DevCard card = DevCard.PLENTY;
 
         // attempt to play card that we don't have
@@ -1370,15 +1366,15 @@ public class PlayerTest {
 
     @Test
     public void testUseDevCard_notEnoughOneBought() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         DevCard card = DevCard.PLENTY;
 
         // make sure player has purchased a card
         player.hand.addResources(new Resource[] {
                 Resource.WOOL, Resource.GRAIN, Resource.ORE
         });
-        Bank.getInstance().removeResources(new Resource[] {
+        bank.removeResources(new Resource[] {
                 Resource.WOOL, Resource.GRAIN, Resource.ORE
         });
         player.purchaseDevCard(card);
@@ -1393,21 +1389,21 @@ public class PlayerTest {
     // false because the card was victory card
     @Test
     public void testUseDevCard_victoryPointCard() {
-        Bank.getInstance().resetBank();
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
         DevCard card = DevCard.VICTORY;
 
         // make sure player has purchased a victory point card
         player.hand.addResources(new Resource[] {
                 Resource.WOOL, Resource.GRAIN, Resource.ORE
         });
-        Bank.getInstance().removeResources(new Resource[] {
+        bank.removeResources(new Resource[] {
                 Resource.WOOL, Resource.GRAIN, Resource.ORE
         });
         player.purchaseDevCard(card);
 
         // make it so it wasn't bought this turn
-        player.addboughtCardsToHand();
+        player.addBoughtCardsToHand();
 
         // attempt to play victory point card. note regardless if we have it or not it should fail
         boolean success = player.useDevCard(card);

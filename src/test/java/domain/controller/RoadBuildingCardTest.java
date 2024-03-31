@@ -3,10 +3,6 @@ package domain.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import domain.controller.Controller;
-import domain.controller.GamePhase;
-import domain.controller.GameState;
-import domain.controller.SuccessCode;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
@@ -275,7 +271,7 @@ public class RoadBuildingCardTest {
     }
 
     @Test
-    public void testPlayRoadBuildingCardsDisabled() throws InvalidPlacementException, NotEnoughResourcesException {
+    public void testPlayRoadBuildingCardsDisabled() {
         Game mockedGame = EasyMock.createMock(Game.class);
         Player mockedPlayer1 = EasyMock.createMock(Player.class);
         Player mockedPlayer2 = EasyMock.createMock(Player.class);

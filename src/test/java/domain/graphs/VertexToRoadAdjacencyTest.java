@@ -5,10 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import data.GameLoader;
 import domain.game.GameType;
-import domain.graphs.Road;
-import domain.graphs.RoadGraph;
-import domain.graphs.Vertex;
-import domain.graphs.VertexGraph;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -552,9 +548,7 @@ public class VertexToRoadAdjacencyTest {
         VertexGraph vertexes = new VertexGraph(GameType.Beginner);
         Vertex testVertex = vertexes.getVertex(0); // get any road
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            testVertex.getAdjacentRoads();
-        });
+        RuntimeException exception = assertThrows(RuntimeException.class, testVertex::getAdjacentRoads);
 
         String expectedMessage = "Vertex-to-Road adjacency uninitialized";
         String actualMessage = exception.getMessage();

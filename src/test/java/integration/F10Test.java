@@ -10,6 +10,7 @@ import domain.devcarddeck.DevelopmentCardDeck;
 import domain.game.Game;
 import domain.game.GameType;
 import domain.gameboard.GameBoard;
+import domain.player.HarvestBooster;
 import domain.player.Player;
 import domain.graphs.RoadGraph;
 import domain.graphs.VertexGraph;
@@ -25,27 +26,28 @@ public class F10Test {
     //F10: Ability for a player to purchase a development card during their turn. Requires a sheep, and wheat, and an ore to purchase
 
     @Test
-    public void testBuyDevelopmentCard_SuccessfulPurchase(){
+    public void testBuyDevelopmentCard_SuccessfulPurchase() {
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player[] players = {player1, player2};
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
+        Player[] players = {player1, player2, player3, player4};
 
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
-        Bank.getInstance().resetBank();
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        bank.reset();
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // Note: at this point the players would have gotten some starter resources during the
@@ -71,7 +73,7 @@ public class F10Test {
         }
         assertEquals(0, player2.hand.getResourceCardCount());
 
-        Bank.getInstance().resetBank();
+        bank.reset();
 
         //Begin Test
 
@@ -87,7 +89,7 @@ public class F10Test {
         //attempt to purchase a few development cards
         SuccessCode success = controller.clickedBuyDevCard();
 
-        //make sure one card is added and the correct amount of resources are added
+        //make sure one card is added and the correct amount of resources is added
         assertEquals(SuccessCode.SUCCESS, success);
         int devCardAmount =  0;
         for(DevCard r: player1.hand.devCards.keySet()){
@@ -129,27 +131,28 @@ public class F10Test {
     }
 
     @Test
-    public void testBuyDevelopmentCard_Fail_notEnoughResources(){
+    public void testBuyDevelopmentCard_Fail_notEnoughResources() {
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player[] players = {player1, player2};
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
+        Player[] players = {player1, player2, player3, player4};
 
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
-        Bank.getInstance().resetBank();
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        bank.reset();
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // Note: at this point the players would have gotten some starter resources during the
@@ -175,7 +178,7 @@ public class F10Test {
         }
         assertEquals(0, player2.hand.getResourceCardCount());
 
-        Bank.getInstance().resetBank();
+        bank.reset();
 
         //Begin Test
 
@@ -191,7 +194,7 @@ public class F10Test {
         //buy one card successfully first
         SuccessCode success = controller.clickedBuyDevCard();
 
-        //make sure one card is added and the correct amount of resources are added
+        //make sure one card is added and the correct amount of resources is added
         assertEquals(SuccessCode.SUCCESS, success);
         int devCardAmount =  0;
         for(DevCard r: player1.hand.devCards.keySet()){
@@ -219,27 +222,28 @@ public class F10Test {
     }
 
     @Test
-    public void testBuyDevelopmentCard_Fail_DevCardDeckIsEmpty(){
+    public void testBuyDevelopmentCard_Fail_DevCardDeckIsEmpty() {
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player[] players = {player1, player2};
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
+        Player[] players = {player1, player2, player3, player4};
 
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
-        Bank.getInstance().resetBank();
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        bank.reset();
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // Note: at this point the players would have gotten some starter resources during the
@@ -265,7 +269,7 @@ public class F10Test {
         }
         assertEquals(0, player2.hand.getResourceCardCount());
 
-        Bank.getInstance().resetBank();
+        bank.reset();
 
         //Begin Test
 

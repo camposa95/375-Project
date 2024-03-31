@@ -1,7 +1,5 @@
 package domain.bank;
 
-import domain.bank.Bank;
-import domain.bank.Resource;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -9,48 +7,39 @@ public class BankTest {
 
     @Test
     public void testRemoveResource_0Lumber_throwIllegalArgumentException() {
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
         String expectedMessage = "Must be a value between 1 and 19";
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            bank.removeResource(Resource.LUMBER, 0);
-        });
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> bank.removeResource(Resource.LUMBER, 0));
         String actualMessage = exception.getMessage();
         assertEquals(expectedMessage, actualMessage);
     }
 
     @Test
     public void testRemoveResource_20Lumber_fullBank_throwIllegalArgumentException() {
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
         String expectedMessage = "Must be a value between 1 and 19";
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            bank.removeResource(Resource.LUMBER, 20);
-        });
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> bank.removeResource(Resource.LUMBER, 20));
         String actualMessage = exception.getMessage();
         assertEquals(expectedMessage, actualMessage);
     }
 
     @Test
     public void testRemoveResource_1Lumber_fullBank_returnTrue() {
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
         boolean success = bank.removeResource(Resource.LUMBER, 1);
         assertTrue(success);
     }
 
     @Test
     public void testRemoveResource_19Lumber_fullBank_returnTrue() {
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
         boolean success = bank.removeResource(Resource.LUMBER, 19);
         assertTrue(success);
     }
 
     @Test
     public void testRemoveResource_2Lumber_1InBank_returnFalse() {
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
         //Leave 1 in bank
         bank.removeResource(Resource.LUMBER, 18);
 
@@ -61,8 +50,7 @@ public class BankTest {
 
     @Test
     public void testRemoveResource_1Lumber_1InBank_returnTrue(){
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
         //Leave 1 in bank
         bank.removeResource(Resource.LUMBER, 18);
 
@@ -73,65 +61,40 @@ public class BankTest {
 
     @Test
     public void testRemoveResource_emptyBank_returnFalse(){
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
         bank.removeResource(Resource.LUMBER, 19);
         boolean success = bank.removeResource(Resource.LUMBER, 1);
         assertFalse(success);
     }
 
-//    @Test
-//    public void testRemoveResource_1Desert_throwIllegalArgumentException(){
-//        Bank bank = Bank.getInstance();
-//        bank.resetBank();
-//        String expectedMessage = "Cannot use Desert";
-//        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-//            bank.removeResource(Resource.LUMBER, 1);
-//        });
-//        String actualMessage = exception.getMessage();
-//        assertEquals(expectedMessage, actualMessage);
-//
-//    }
-
-
-
-
     @Test
     public void testAddResource_0Lumber_throwIllegalArgumentException() {
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
         String expectedMessage = "Must be a value between 1 and 19";
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            bank.addResource(Resource.LUMBER, 0);
-        });
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> bank.addResource(Resource.LUMBER, 0));
         String actualMessage = exception.getMessage();
         assertEquals(expectedMessage, actualMessage);
     }
 
     @Test
     public void testAddResource_20Lumber_emptyBank_throwIllegalArgumentException() {
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
         String expectedMessage = "Must be a value between 1 and 19";
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            bank.addResource(Resource.LUMBER, 20);
-        });
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> bank.addResource(Resource.LUMBER, 20));
         String actualMessage = exception.getMessage();
         assertEquals(expectedMessage, actualMessage);
     }
 
     @Test
     public void testAddResource_1Lumber_fullBank_returnFalse() {
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
         boolean success = bank.addResource(Resource.LUMBER, 1);
         assertFalse(success);
     }
 
     @Test
     public void testAddResource_19Lumber_emptyBank_returnTrue(){
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
         bank.removeResource(Resource.LUMBER, 19);
 
         boolean success = bank.addResource(Resource.LUMBER, 19);
@@ -140,53 +103,24 @@ public class BankTest {
 
     @Test
     public void testAddResource_1Lumber_emptyBank_returnTrue() {
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
         bank.removeResource(Resource.LUMBER, 19);
 
         boolean success = bank.addResource(Resource.LUMBER, 1);
         assertTrue(success);
     }
 
-//    @Test
-//    public void testAddResource_1Desert_throwIllegalArgumentException() {
-//        Bank bank = Bank.getInstance();
-//        bank.resetBank();
-//        String expectedMessage = "Cannot use Desert";
-//        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-//            bank.addResource(Resource.LUMBER, 1);
-//        });
-//        String actualMessage = exception.getMessage();
-//        assertEquals(expectedMessage, actualMessage);
-//    }
-
-
-
-//    @Test
-//    public void testGetResourceAmount_Desert_ReturnIllegalArgumentException() {
-//        Bank bank = Bank.getInstance();
-//        bank.resetBank();
-//        String expectedMessage = "Cannot use Desert";
-//        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-//            bank.getResourceAmount(Terrain.DESERT);
-//        });
-//        String actualMessage = exception.getMessage();
-//        assertEquals(expectedMessage, actualMessage);
-//    }
-
     @Test
     public void testGetResourceAmount_Lumber_FullBank_Return19(){
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
         int expected = 19;
         int actual = bank.getResourceAmount(Resource.LUMBER);
         assertEquals(expected, actual);
     }
 
     @Test
-    public void testGetResourceAmount_Lumber_Emptybank_Return0(){
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+    public void testGetResourceAmount_Lumber_EmptyBank_Return0(){
+        Bank bank = new Bank();
         int expected = 0;
         bank.removeResource(Resource.LUMBER, 19);
         int actual = bank.getResourceAmount(Resource.LUMBER);
@@ -195,8 +129,7 @@ public class BankTest {
 
     @Test
     public void testGetResourceAmount_Lumber_1InBank_Return1(){
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
         int expected = 1;
         bank.removeResource(Resource.LUMBER, 18);
         int actual = bank.getResourceAmount(Resource.LUMBER);
@@ -207,8 +140,7 @@ public class BankTest {
 
     @Test
     public void testAddResources_emptyResources__anyBank_returnTrue(){
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
 
         Resource[] resources = {};
         boolean success = bank.addResources(resources);
@@ -217,8 +149,7 @@ public class BankTest {
 
     @Test
     public void testAddResources_1OfEach_emptyBank_returnTrue(){
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
 
         //empty the bank
         bank.removeResource(Resource.LUMBER, 19);
@@ -251,8 +182,7 @@ public class BankTest {
 
     @Test
     public void testAddResources_1OfEach_fullBank_returnFalse(){
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
 
         int expectedSize = 95;
 
@@ -278,8 +208,7 @@ public class BankTest {
 
     @Test
     public void testAddResources_emptyBank_20Lumber_returnFalse(){
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
 
         //empty the bank
         bank.removeResource(Resource.LUMBER, 19);
@@ -314,8 +243,7 @@ public class BankTest {
 
     @Test
     public void testAddResources_1Lumber1Brick_noLumber19BrickInBank_returnFalse(){
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
 
         //empty the lumber
         bank.removeResource(Resource.LUMBER, 19);
@@ -339,13 +267,9 @@ public class BankTest {
         assertEquals(expectedSize, actualSize);
     }
 
-
-
-
     @Test
     public void testRemoveResources_emptyList_returnTrue(){
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
 
         Resource[] resources = {};
         boolean success = bank.removeResources(resources);
@@ -354,8 +278,7 @@ public class BankTest {
 
     @Test
     public void testRemoveResources_1OfEach_emptyBank_returnFalse() {
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
 
         //empty the bank
         bank.removeResource(Resource.LUMBER, 19);
@@ -385,8 +308,7 @@ public class BankTest {
 
     @Test
     public void testRemoveResources_1OfEach_fullBank_returnTrue(){
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
 
         Resource[] resources = {
                 Resource.LUMBER,
@@ -409,8 +331,7 @@ public class BankTest {
 
     @Test
     public void testRemoveResources_20Lumber_19LumberInBank_returnFalse(){
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
 
         Resource[] resources = {
                 Resource.LUMBER, Resource.LUMBER, Resource.LUMBER,
@@ -435,8 +356,7 @@ public class BankTest {
 
     @Test
     public void testRemoveResources_1Lumber1Brick_1LumberNoBrickInBank_returnFalse(){
-        Bank bank = Bank.getInstance();
-        bank.resetBank();
+        Bank bank = new Bank();
 
         //empty the lumber
         bank.removeResource(Resource.LUMBER, 18);

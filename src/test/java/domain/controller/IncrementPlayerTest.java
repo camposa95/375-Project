@@ -2,7 +2,6 @@ package domain.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import domain.controller.Controller;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 

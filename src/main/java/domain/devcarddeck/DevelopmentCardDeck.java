@@ -9,28 +9,25 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class DevelopmentCardDeck implements Restorable {
-    private DevCard[] defaultDeck = {
+    private static final DevCard[] DEFAULT_DECK = {
         DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT, DevCard.KNIGHT,
         DevCard.VICTORY, DevCard.VICTORY, DevCard.VICTORY, DevCard.VICTORY, DevCard.VICTORY,
         DevCard.ROAD, DevCard.ROAD,
         DevCard.PLENTY, DevCard.PLENTY,
         DevCard.MONOPOLY, DevCard.MONOPOLY};
-    private ArrayList<DevCard> deck = new ArrayList<DevCard>();
+    private final ArrayList<DevCard> deck = new ArrayList<>();
 
     /**
      * Creates a new deck object
      */
     public DevelopmentCardDeck() {
-        Collections.shuffle(Arrays.asList(this.defaultDeck));
-        for (DevCard card : defaultDeck) {
-            this.deck.add(card);
-        }
+        Collections.shuffle(Arrays.asList(DEFAULT_DECK));
+        this.deck.addAll(Arrays.asList(DEFAULT_DECK));
     }
 
     /**
      * Draws a card from the deck
      * @return DevCard
-     * @throws EmptyDevCardDeckException
      */
     public DevCard draw() throws EmptyDevCardDeckException {
         if (this.deck.size() > 0) {
@@ -38,15 +35,15 @@ public class DevelopmentCardDeck implements Restorable {
         }
         throw new EmptyDevCardDeckException();
     }
+
     /**
      * Returns the deck
      * @return ArrayList<DevCard>
      */
     public ArrayList<DevCard> getDeck() {
-        ArrayList<DevCard> clone = new ArrayList<DevCard>();
-        clone.addAll(deck);
-        return clone;
+        return new ArrayList<>(deck);
     }
+
     /**
      * Returns a card to the deck if not used
      */

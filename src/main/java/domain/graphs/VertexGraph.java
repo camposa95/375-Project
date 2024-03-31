@@ -1,11 +1,8 @@
 package domain.graphs;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Scanner;
 
 import data.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -25,8 +22,8 @@ public class VertexGraph implements Restorable {
 
     /**
      * Creates a new vertex graph with the default number of vertices.
-     *
-     * Note: Adjacency must be initialized separatly by calling
+     * <p>
+     * Note: Adjacency must be initialized separately by calling
      * the appropriate initializer methods
      */
     public VertexGraph(final GameType gameType) {
@@ -80,7 +77,7 @@ public class VertexGraph implements Restorable {
 
     /**
      * Returns the order of the ports' resources.
-     *
+     * <p>
      * Mainly used to help determine in testing if the ports were shuffled.
      *
      * @return and array of the resource of the ports in order according to the game diagram
@@ -89,7 +86,7 @@ public class VertexGraph implements Restorable {
 
         Resource[] resourceOrder = new Resource[NUM_PORTS];
         for (int i = 0; i < NUM_PORTS; i++) {
-            resourceOrder[i] = this.ports[i].getResourse();
+            resourceOrder[i] = this.ports[i].getResource();
         }
 
         return resourceOrder;
@@ -142,7 +139,7 @@ public class VertexGraph implements Restorable {
             // Read simple fields from the file
             this.portResources = parsePortResources(reader.readField(PORT_RESOURCES));
 
-            // Read sub-mementos from the appropriate subfolders
+            // Read sub-mementos from the appropriate sub-folders
             this.vertexMementos = new Memento[VertexGraph.this.vertexes.length];
             for (int i = 0; i < this.vertexMementos.length; i++) {
                 File vertexSubFolder = reader.getSubFolder(VERTEX_SUBFOLDER_PREFIX + i);

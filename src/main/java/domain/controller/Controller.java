@@ -1,7 +1,6 @@
 package domain.controller;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,7 +27,7 @@ public class Controller implements Restorable {
 
     private final Random random;
 
-    // Lots of constants to setup the beginner game mode
+    // Lots of constants to set up the beginner game mode
     private static final Map<Integer, Integer[]> PLAYER_NUM_TO_STARTER_LOCATIONS;
     // here the array represents the starter locations given to a player when
     // the beginner game mode is selected. The entries are in the following order:
@@ -50,15 +49,13 @@ public class Controller implements Restorable {
     private static final int MIN_DIE = 2;
     private static final int MAX_DIE = 13;
     static {
-        Map<Integer, Integer[]> map = new HashMap<>();
 
         // Map the locations to the players
-        map.put(PLAYER_1_NUM, PLAYER_1_LOCATIONS);
-        map.put(PLAYER_2_NUM, PLAYER_2_LOCATIONS);
-        map.put(PLAYER_3_NUM, PLAYER_3_LOCATIONS);
-        map.put(PLAYER_4_NUM, PLAYER_4_LOCATIONS);
         // Make the map unmodifiable
-        PLAYER_NUM_TO_STARTER_LOCATIONS = Collections.unmodifiableMap(map);
+        PLAYER_NUM_TO_STARTER_LOCATIONS = Map.of(PLAYER_1_NUM, PLAYER_1_LOCATIONS,
+                                                PLAYER_2_NUM, PLAYER_2_LOCATIONS,
+                                                PLAYER_3_NUM, PLAYER_3_LOCATIONS,
+                                                PLAYER_4_NUM, PLAYER_4_LOCATIONS);
     }
 
     /**
@@ -94,7 +91,7 @@ public class Controller implements Restorable {
         this.devCardsEnabled = true;
 
         if (gameType == GameType.Beginner) {
-            this.doBegineerSetup();
+            this.doBeginnerSetup();
         }
 
         this.random = randomGenerator;
@@ -105,7 +102,7 @@ public class Controller implements Restorable {
      * It does this by essentially running through an entire advanced game
      * setup phase automatically with hardcoded start location ids.
      */
-    private void doBegineerSetup() {
+    private void doBeginnerSetup() {
         while (gamePhase != GamePhase.REGULAR_PLAY) { // stop if the action fails or we finish
             Integer[] locations = PLAYER_NUM_TO_STARTER_LOCATIONS.get(currentPlayer.getPlayerNum());
 
@@ -139,9 +136,6 @@ public class Controller implements Restorable {
      * <p>
      * Also Note: This may crash the game is states are set incorrectly, this is on
      * purpose.
-     *
-     * @param vertexId, the identifier for the vertex on the map
-     * @return An enum representing Sucess or the error that occured
      */
     public SuccessCode clickedVertex(final int vertexId) {
         Player player = this.getCurrentPlayer();
@@ -162,23 +156,18 @@ public class Controller implements Restorable {
 
     private SuccessCode clickedVertexRegularPlay(final int vertexId, final Player player) {
 
-        switch (gameState) {
+        return switch (gameState) {
             // normal cases
-            case BUILD_SETTLEMENT:
-                return this.clickedPlaceSettlement(vertexId, player);
-            case UPGRADE_SETTLEMENT:
-                return this.clickedUpgradeSettlement(vertexId, player);
+            case BUILD_SETTLEMENT -> this.clickedPlaceSettlement(vertexId, player);
+            case UPGRADE_SETTLEMENT -> this.clickedUpgradeSettlement(vertexId, player);
             // bad cases
-            case FIRST_ROAD:
-            case SECOND_ROAD:
-            case FIRST_SETTLEMENT:
-            case SECOND_SETTLEMENT:
-                throw new IllegalStateException("Setup state appeared during regular play");
+            case FIRST_ROAD, SECOND_ROAD, FIRST_SETTLEMENT, SECOND_SETTLEMENT ->
+                    throw new IllegalStateException("Setup state appeared during regular play");
+
 
             // undefined cases
-            default:
-                return SuccessCode.UNDEFINED;
-        }
+            default -> SuccessCode.UNDEFINED;
+        };
     }
 
     private SuccessCode clickedPlaceSettlement(final int vertexId, final Player player) {
@@ -207,11 +196,8 @@ public class Controller implements Restorable {
     }
 
     /**
-     * This tries to complete a click on a vertex based on the current
+     * This tries to complete a click on a vertex, based on the current
      * state of the game, assuming the game is currently in the setup phase.
-     *
-     * @param vertexId, the identifier for the vertex on the map
-     * @return An enum representing Sucess or the error that occured
      */
     private SuccessCode clickedVertexSetup(final int vertexId, final Player player) {
         if (gameState == GameState.FIRST_SETTLEMENT) {
@@ -225,7 +211,7 @@ public class Controller implements Restorable {
             } catch (InvalidPlacementException e) {
                 return SuccessCode.INVALID_PLACEMENT;
             } catch (NotEnoughResourcesException e) {
-                throw new IllegalStateException("Controller and Game states unsyncronized");
+                throw new IllegalStateException("Controller and Game states not synchronized");
             }
         }
 
@@ -240,7 +226,7 @@ public class Controller implements Restorable {
             } catch (InvalidPlacementException e) {
                 return SuccessCode.INVALID_PLACEMENT;
             } catch (NotEnoughResourcesException e) {
-                throw new IllegalStateException("Controller and Game states unsyncronized");
+                throw new IllegalStateException("Controller and Game states not synchronized");
             }
         }
 
@@ -249,16 +235,13 @@ public class Controller implements Restorable {
 
     // -------------------------------------------------------------------------------
     //
-    // Clickd Road Related Methods:
+    // Clicked Road Related Methods:
     //
     // -------------------------------------------------------------------------------
 
     /**
-     * This tries to complete a click on a road based on the current
+     * This tries to complete a click on a road, based on the current
      * state of the game.
-     *
-     * @param roadId, the identifier for the road on the map
-     * @return An enum representing Sucess or the error that occured
      */
     public SuccessCode clickedRoad(final int roadId) {
         Player player = this.getCurrentPlayer();
@@ -278,12 +261,9 @@ public class Controller implements Restorable {
     }
 
     /**
-     * This tries to complete a click on a road based on the current
+     * This tries to complete a click on a road-based on the current
      * state of the game, assuming the game is currently in the regular player
      * phase.
-     *
-     * @param roadId, the identifier for the road on the map
-     * @return An enum representing Sucess or the error that occured
      */
     private SuccessCode clickedRoadRegularPlay(final int roadId, final Player player) {
         if (gameState == GameState.BUILD_ROAD) {
@@ -302,7 +282,7 @@ public class Controller implements Restorable {
     private SuccessCode clickedRoadSecondRoadBuilding(final int roadId, final Player player) {
         Resource[] resourcesForRoad = {Resource.BRICK, Resource.LUMBER};
         try {
-            // here we add resources to the player to give the appearence of free road building
+            // here we add resources to the player to give the appearance of free road building
             // note these are not coming from the bank
             player.hand.addResources(resourcesForRoad);
 
@@ -325,7 +305,7 @@ public class Controller implements Restorable {
     private SuccessCode clickedRoadFirstRoadBuilding(final int roadId, final Player player) {
         Resource[] resourcesForRoad = {Resource.BRICK, Resource.LUMBER};
         try {
-            // here we add resources to the player to give the appearence of free road building
+            // here we add resources to the player to give the appearance of free road building
             // note these are not coming from the bank
             player.hand.addResources(resourcesForRoad);
 
@@ -358,11 +338,8 @@ public class Controller implements Restorable {
     }
 
     /**
-     * This tries to complete a click on a road based on the current
+     * This tries to complete a click on a road, based on the current
      * state of the game, assuming the game is currently in the setup phase.
-     *
-     * @param roadId, the identifier for the road on the map
-     * @return An enum representing Sucess or the error that occured
      */
     private SuccessCode clickedRoadSetup(final int roadId, final Player player) {
         if (gameState == GameState.FIRST_ROAD) {
@@ -377,7 +354,7 @@ public class Controller implements Restorable {
             } catch (InvalidPlacementException e) {
                 return SuccessCode.INVALID_PLACEMENT;
             } catch (NotEnoughResourcesException e) {
-                throw new IllegalStateException("Controller and Game states unsyncronized");
+                throw new IllegalStateException("Controller and Game states not synchronized");
             }
         }
         if (gameState == GameState.SECOND_ROAD) {
@@ -395,7 +372,7 @@ public class Controller implements Restorable {
             } catch (InvalidPlacementException e) {
                 return SuccessCode.INVALID_PLACEMENT;
             } catch (NotEnoughResourcesException e) {
-                throw new IllegalStateException("Controller and Game states unsyncronized");
+                throw new IllegalStateException("Controller and Game states not synchronized");
             }
         }
         return SuccessCode.UNDEFINED;
@@ -408,7 +385,7 @@ public class Controller implements Restorable {
     // -------------------------------------------------------------------------------
 
     /**
-     * Helper method mainly used to setup the controller for testing purposes
+     * Helper method mainly used to set up the controller for testing purposes
      * <p>
      * Warning: This does not correctly change the players array. Or
      * currentPlayerNum.
@@ -437,8 +414,6 @@ public class Controller implements Restorable {
      * Helper method that gets the current player.
      * Mainly used for asserting that the player changed correctly
      * at the end of a turn.
-     *
-     * @return the current player
      */
     @SuppressFBWarnings("EI_EXPOSE_REP")
     public Player getCurrentPlayer() {
@@ -446,17 +421,16 @@ public class Controller implements Restorable {
     }
 
     /**
-     * Simple helper method that gets the Playe with the
-     * Specified Id.
+     * Simple helper method that gets the Player with the specified number.
      * <p>
-     * Warning: Returns null if no player with the specified Id is found
+     * Warning: Returns null if no player with the specified number is found
      *
      * @return Player with id equal to key
      */
-    private Player getPlayerById(final int id) {
+    private Player getPlayerById(final int number) {
 
         for (Player player : this.playerArr) {
-            if (player.getPlayerNum() == id) {
+            if (player.getPlayerNum() == number) {
                 return player;
             }
         }
@@ -465,9 +439,7 @@ public class Controller implements Restorable {
 
     /**
      * Helper method to set the phase of the controller.
-     * Mainly used during testing to setup cases.
-     *
-     * @param phase the game phase to test: Setup or Regular play
+     * Mainly used during testing to set up cases.
      */
     public void setPhase(final GamePhase phase) {
         this.gamePhase = phase;
@@ -476,8 +448,6 @@ public class Controller implements Restorable {
     /**
      * Helper method to get the current phase of the game.
      * Mainly used to assert that phases changed or didn't change correctly.
-     *
-     * @return current game phase according to the controller
      */
     public GamePhase getPhase() {
         return this.gamePhase;
@@ -485,7 +455,7 @@ public class Controller implements Restorable {
 
     /**
      * Helper method to set the state of the controller.
-     * Mainly used during testing to setup cases.
+     * Mainly used during testing to set up cases.
      *
      * @param state the game state to test (whatever action the player is trying to
      *              complete)
@@ -497,8 +467,6 @@ public class Controller implements Restorable {
     /**
      * Helper method to get the current state of the game.
      * Mainly used to assert that states changed or didn't change correctly.
-     *
-     * @return current game state according to the controller
      */
     public GameState getState() {
         return this.gameState;
@@ -512,7 +480,7 @@ public class Controller implements Restorable {
 
     /**
      * Method used to increment the current player field to the next player in
-     * logical order. If the last player just went, and they end thier turn, this
+     * logical order. If the last player just went, and they end their turn, this
      * method should set the current player to the first player again.
      */
     void incrementPlayer() {
@@ -526,21 +494,20 @@ public class Controller implements Restorable {
     /**
      * Ends the current players turn if we are able to do so. We are only
      * able to end the current players turn if no other actions are still
-     * in progress. I.e the gameState is DEFAULT. If a player wants to end
-     * thier turn they must first cancell whatever action they are currently
-     * in. If their action is non cancellable they must complete it.
+     * in progress. I.e. the gameState is DEFAULT. If a player wants to end
+     * their turn they must first cancel whatever action they are currently
+     * in. If their action is non-cancellable they must complete it.
      * <p>
      * Upon ending turn. The controller will set the current player to the next
-     * player in line, set the state to TURN_START to help indetermining what
+     * player in line, set the state to TURN_START to help determine what
      * actions are and aren't valid, will set the devCardsEnabled flag to false,
      * and finally return SUCCESS.
      * <p>
      * Upon failure returns UNDEFINED.
-     *
      */
     public SuccessCode endTurn() {
         if (this.gameState == GameState.DEFAULT) {
-            this.currentPlayer.addboughtCardsToHand();
+            this.currentPlayer.addBoughtCardsToHand();
             this.incrementPlayer();
             this.setState(GameState.TURN_START);
             this.setDevCardsEnabled(true);
@@ -603,34 +570,30 @@ public class Controller implements Restorable {
 
     /**
      * Method that receives a map of playerIds to Resource[], parses the Ids
-     * to actual player objects and then passes the info to Game to fulful the
+     * to actual player objects and then passes the info to Game to fulfil the
      * request.
-     *
      */
-    public void dropResources(final HashMap<Integer, Resource[]> playerIdToResouceMap) {
+    public void dropResources(final HashMap<Integer, Resource[]> playerIdToResourceMap) {
 
-        HashMap<Player, Resource[]> playerToResouceMap = new HashMap<>();
+        HashMap<Player, Resource[]> playerToResourceMap = new HashMap<>();
 
-        for (Entry<Integer, Resource[]> entry : playerIdToResouceMap.entrySet()) {
+        for (Entry<Integer, Resource[]> entry : playerIdToResourceMap.entrySet()) {
             Player player = this.getPlayerById(entry.getKey());
 
             if (player == null) {
                 throw new IllegalArgumentException("Player ID does not exists");
             }
 
-            playerToResouceMap.put(player, entry.getValue());
+            playerToResourceMap.put(player, entry.getValue());
         }
 
-        this.game.dropCards(playerToResouceMap);
+        this.game.dropCards(playerToResourceMap);
     }
 
     /**
      * Helper method that simply passes the request to game and then returns the
      * result.
-     * Request is for getting the players that have settlments on the give tileID
-     *
-     * @param tileId
-     * @return
+     * Request is for getting the players that have settlements on the give tileID
      */
     public Player[] getPlayersOnTile(final int tileId) {
         return game.getPlayersFromTile(tileId);
@@ -655,9 +618,6 @@ public class Controller implements Restorable {
      * and then does som parameter validation. Will crash with illegal argument
      * exception
      * if the given playerId matched the playerId of the player who tried to rob
-     *
-     * @param playerId
-     * @return a code representing the success of the method
      */
     public SuccessCode robPlayer(final int playerId) {
         Player playerToRob = getPlayerById(playerId);
@@ -680,19 +640,14 @@ public class Controller implements Restorable {
     // Trading
     //
     // -------------------------------------------------------------------------------
+
     /**
      * Method that is called from gui to trade between the current player and the
      * tradePartner player.
      * This method does not require a specific state to be set first.
-     *
+     * <p>
      * Note: this will crash the game with an IllegalArgumentException if the
      * tradePartner is the current player.
-     *
-     * @param tradePartner
-     * @param giving
-     * @param receiving
-     * @return
-     * @throws IllegalArgumentException
      */
     public SuccessCode tradeWithPlayer(final Player tradePartner, final Resource[] giving, final Resource[] receiving) {
         if (this.currentPlayer == tradePartner) {
@@ -709,19 +664,16 @@ public class Controller implements Restorable {
 
     /**
      * Method that is called from gui to trade the giving resource type to
-     * the bank for the recieving resource type.
+     * the bank for the receiving resource type.
      * This method does not require a specific state to be set first.
-     *
-     * @param giving
-     * @param recieving
-     * @return
      */
-    public SuccessCode tradeWithBank(final Resource giving, final Resource recieving) {
-        if (this.currentPlayer.tradeWithBank(giving, recieving)) {
+    public SuccessCode tradeWithBank(final Resource giving, final Resource receiving) {
+        if (this.currentPlayer.tradeWithBank(giving, receiving)) {
             return SuccessCode.SUCCESS;
         }
         return SuccessCode.INSUFFICIENT_RESOURCES;
     }
+
     // -------------------------------------------------------------------------------
     //
     // Dev card related stuff
@@ -731,12 +683,9 @@ public class Controller implements Restorable {
     /**
      * Method that is called from gui to buy a dev card for the current player.
      * This method does not require a specific state to be set first.
-     *
+     * <p>
      * Note: this will crash the game with an IllegalStateException if this is
      * called during setup.
-     *
-     * @return A SuccessCode indicating the result of the action. SUCCESS,
-     *         INSUFFICIENT_RESOURCES, or EMPTY_DEV_CARD_DECK
      */
     public SuccessCode clickedBuyDevCard() {
 
@@ -761,8 +710,6 @@ public class Controller implements Restorable {
     /**
      * Simple setter for the flag that tracks whether we can play dev cards
      * currently or not
-     *
-     * @param b
      */
     public void setDevCardsEnabled(final boolean b) {
         this.devCardsEnabled = b;
@@ -771,8 +718,6 @@ public class Controller implements Restorable {
     /**
      * Gets the flag that tells whether we can play dev cards or not at the
      * moment
-     *
-     * @return
      */
     public boolean getDevCardsEnabled() {
         return this.devCardsEnabled;
@@ -783,9 +728,6 @@ public class Controller implements Restorable {
      * players request
      * If the player cannot play the card will return insufficient resources
      * and success if it can and it succeeded
-     *
-     * @param resourceToRob
-     * @return
      */
     public SuccessCode playMonopolyCard(final Resource resourceToRob) {
         if (!devCardsEnabled) {
@@ -806,17 +748,14 @@ public class Controller implements Restorable {
      * Helper method that gets all the players in the game except the given player.
      * Primarily used to get the players to rob during the monopoly card parameter
      * generation
-     *
-     * @param player
-     * @return
      */
     private Player[] getPlayersExcept(final Player player) {
         Player[] newArray = new Player[playerArr.length - 1];
         int index = 0;
 
-        for (int i = 0; i < playerArr.length; i++) {
-            if (!playerArr[i].equals(player)) {
-                newArray[index] = playerArr[i];
+        for (Player value : playerArr) {
+            if (!value.equals(player)) {
+                newArray[index] = value;
                 index++;
             }
         }
@@ -829,10 +768,6 @@ public class Controller implements Restorable {
      * Returns success if playing the card was successful
      * Returns insufficient resources if the player cannot play the card
      * or if the bank ran out of the requested resources
-     *
-     * @param resource1
-     * @param resource2
-     * @return
      */
     public SuccessCode playYearOfPlenty(final Resource resource1, final Resource resource2) {
         if (!devCardsEnabled) {
@@ -854,11 +789,8 @@ public class Controller implements Restorable {
      * Method that plays the knight card.
      * Waning: this method only checks if the player can play it and if so
      * increments the num knights and redistributes the largest army card if
-     * nessessary. This does not do the robber related stuff for knight. Those will
+     * necessary. This does not do the robber related stuff for knight. Those will
      * need to be called separately
-     *
-     *
-     * @return
      */
     public SuccessCode playKnightCard() {
         if (!devCardsEnabled) {
@@ -882,10 +814,8 @@ public class Controller implements Restorable {
 
     /**
      * Method that plays the road building card.
-     * Warning, this simply sets up the controller for the subseques clicks
+     * Warning, this simply sets up the controller for the subsequent clicks
      * and removes the card from the player if they have it
-     *
-     * @return
      */
     public SuccessCode useRoadBuildingCard() {
         if (!devCardsEnabled) {
@@ -907,8 +837,8 @@ public class Controller implements Restorable {
     public void distributeLargestArmyCard() {
         Player playerWithLargestArmy = null;
 
-        // first store everybodies number of knights in a map
-        HashMap<Player, Integer> playerToNumKnightsMap = new HashMap<Player, Integer>();
+        // first store everybody's number of knights in a map
+        HashMap<Player, Integer> playerToNumKnightsMap = new HashMap<>();
         for (Player player: playerArr) {
             playerToNumKnightsMap.put(player, player.getNumKnightsPlayed());
         }
@@ -929,7 +859,7 @@ public class Controller implements Restorable {
             }
         } else { // someone had the largest army already so give it to a new player if they have a larger army
             for (Player player: playerArr) {
-                if (player != playerWithLargestArmy) { // don't compare against self to avoid wierdness
+                if (player != playerWithLargestArmy) { // don't compare against self to avoid weirdness
                     if (playerToNumKnightsMap.get(player) > playerToNumKnightsMap.get(playerWithLargestArmy)) {
                         player.giveLargestArmyCard();
                         playerWithLargestArmy.removeLargestArmyCard();
@@ -1004,7 +934,7 @@ public class Controller implements Restorable {
             this.lastPlacedVertex = Integer.parseInt(reader.readField(LAST_PLACED_VERTEX));
             this.devCardsEnabled = Boolean.parseBoolean(reader.readField(DEV_CARDS_ENABLED));
 
-            // Read sub-mementos from the appropriate subfolders
+            // Read sub-mementos from the appropriate sub-folders
             File gameSubFolder = reader.getSubFolder(GAME_SUBFOLDER_NAME);
             this.gameMemento = Controller.this.game.new GameMemento(gameSubFolder);
 
@@ -1031,7 +961,7 @@ public class Controller implements Restorable {
             File gameSubFolder = writer.getSubFolder(GAME_SUBFOLDER_NAME);
             gameMemento.save(gameSubFolder);
 
-            // Save player mementos to separate subfolders
+            // Save player mementos to separate sub-folders
             for (int i = 0; i < playerMementos.length; i++) {
                 // Create a subfolder for each player's memento
                 File playerSubFolder = writer.getSubFolder(PLAYER_SUBFOLDER_PREFIX + (i + 1));

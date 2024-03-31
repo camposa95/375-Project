@@ -4,10 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import data.GameLoader;
 import domain.game.GameType;
-import domain.graphs.Road;
-import domain.graphs.RoadGraph;
-import domain.graphs.Vertex;
-import domain.graphs.VertexGraph;
 import org.junit.jupiter.api.Test;
 
 public class RoadIsAdjacentToVertexTest {

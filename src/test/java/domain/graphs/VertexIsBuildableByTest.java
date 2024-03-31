@@ -27,7 +27,7 @@ public class VertexIsBuildableByTest {
         EasyMock.replay(mockPlayer); // Note: Nothing should be called by player
 
         boolean expected = true;
-        boolean actual = testVertex.isbuildableBy(mockPlayer);
+        boolean actual = testVertex.isBuildableBy(mockPlayer);
         assertEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);
@@ -47,10 +47,10 @@ public class VertexIsBuildableByTest {
         testVertex.setOwner(mockPlayer);
         
 
-        // make the vertex have neighboring settlments
+        // make the vertex have neighboring settlements
         Vertex neighborVertex = vertexes.getVertex(1); // 1 is adjacent to 0 by the game diagram
         neighborVertex.setOwner(mockPlayer); // this simulates trying to build next to your own settlement
-                                            // which has the same functionality as a opponents settlements
+                                            // which has the same functionality as an opponents settlements
         
         // make it adjacent to a friendly Road
         roads.getRoad(0).setOwner(mockPlayer);
@@ -59,7 +59,7 @@ public class VertexIsBuildableByTest {
         EasyMock.replay(mockPlayer); // Note: Nothing should be called by player
 
         boolean expected = false;
-        boolean actual = testVertex.isbuildableBy(mockPlayer);
+        boolean actual = testVertex.isBuildableBy(mockPlayer);
         assertEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);
@@ -74,11 +74,11 @@ public class VertexIsBuildableByTest {
         // grab any vertex, it doesn't matter which one
         Vertex testVertex = vertexes.getVertex(0);
 
-        // make the vertex have neighboring settlments
+        // make the vertex have neighboring settlements
         Player mockPlayer = EasyMock.createMock(Player.class);
         Vertex neighborVertex = vertexes.getVertex(1); // 1 is adjacent to 0 by the game diagram
         neighborVertex.setOwner(mockPlayer); // this simulates trying to build next to your own settlement
-                                            // which has the same functionality as a opponents settlements
+                                            // which has the same functionality as an opponents settlements
         
         // make it adjacent to a friendly Road
         roads.getRoad(0).setOwner(mockPlayer);
@@ -87,7 +87,7 @@ public class VertexIsBuildableByTest {
         EasyMock.replay(mockPlayer); // Note: Nothing should be called by player
 
         boolean expected = false;
-        boolean actual = testVertex.isbuildableBy(mockPlayer);
+        boolean actual = testVertex.isBuildableBy(mockPlayer);
         assertEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);
@@ -113,7 +113,7 @@ public class VertexIsBuildableByTest {
         EasyMock.replay(mockPlayer); // Note: Nothing should be called by player
 
         boolean expected = false;
-        boolean actual = testVertex.isbuildableBy(mockPlayer);
+        boolean actual = testVertex.isBuildableBy(mockPlayer);
         assertEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);
@@ -134,7 +134,7 @@ public class VertexIsBuildableByTest {
         EasyMock.replay(mockPlayer); // Note: Nothing should be called by player
 
         boolean expected = false;
-        boolean actual = testVertex.isbuildableBy(mockPlayer);
+        boolean actual = testVertex.isBuildableBy(mockPlayer);
         assertEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);
@@ -154,10 +154,10 @@ public class VertexIsBuildableByTest {
         testVertex.setOwner(mockPlayer);
         
 
-        // make the vertex have neighboring settlments
+        // make the vertex have neighboring settlements
         Vertex neighborVertex = vertexes.getVertex(1); // 1 is adjacent to 0 by the game diagram
         neighborVertex.setOwner(mockPlayer); // this simulates trying to build next to your own settlement
-                                            // which has the same functionality as a opponents settlements
+                                            // which has the same functionality as an opponents settlements
         
         // not adjacent to friendly road
 
@@ -165,7 +165,7 @@ public class VertexIsBuildableByTest {
         EasyMock.replay(mockPlayer); // Note: Nothing should be called by player
 
         boolean expected = false;
-        boolean actual = testVertex.isbuildableBy(mockPlayer);
+        boolean actual = testVertex.isBuildableBy(mockPlayer);
         assertEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);
@@ -180,11 +180,11 @@ public class VertexIsBuildableByTest {
         // grab any vertex, it doesn't matter which one
         Vertex testVertex = vertexes.getVertex(0);
 
-        // make the vertex have neighboring settlments
+        // make the vertex have neighboring settlements
         Player mockPlayer = EasyMock.createMock(Player.class);
         Vertex neighborVertex = vertexes.getVertex(1); // 1 is adjacent to 0 by the game diagram
         neighborVertex.setOwner(mockPlayer); // this simulates trying to build next to your own settlement
-                                            // which has the same functionality as a opponents settlements
+                                            // which has the same functionality as an opponents settlements
         
         // not adjacent to friendly road
 
@@ -192,7 +192,7 @@ public class VertexIsBuildableByTest {
         EasyMock.replay(mockPlayer); // Note: Nothing should be called by player
 
         boolean expected = false;
-        boolean actual = testVertex.isbuildableBy(mockPlayer);
+        boolean actual = testVertex.isBuildableBy(mockPlayer);
         assertEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);
@@ -217,7 +217,7 @@ public class VertexIsBuildableByTest {
         EasyMock.replay(mockPlayer); // Note: Nothing should be called by player
 
         boolean expected = false;
-        boolean actual = testVertex.isbuildableBy(mockPlayer);
+        boolean actual = testVertex.isBuildableBy(mockPlayer);
         assertEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);
@@ -232,7 +232,7 @@ public class VertexIsBuildableByTest {
         // grab any vertex, it doesn't matter which one
         Vertex testVertex = vertexes.getVertex(0);
 
-        // make it adjacent to a enemy Road
+        // make it adjacent to an enemy Road
         Player mockPlayer = EasyMock.createMock(Player.class);
         Player mockEnemy = EasyMock.createMock(Player.class);
         roads.getRoad(0).setOwner(mockEnemy);
@@ -240,7 +240,7 @@ public class VertexIsBuildableByTest {
         EasyMock.replay(mockPlayer); // Note: Nothing should be called by player
 
         boolean expected = false;
-        boolean actual = testVertex.isbuildableBy(mockPlayer);
+        boolean actual = testVertex.isBuildableBy(mockPlayer);
         assertEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);
@@ -255,7 +255,7 @@ public class VertexIsBuildableByTest {
         // grab any vertex, it doesn't matter which one
         Vertex testVertex = vertexes.getVertex(0);
 
-        // make it adjacent to a enemy Road and friendly road
+        // make it adjacent to an enemy Road and friendly road
         Player mockPlayer = EasyMock.createMock(Player.class);
         Player mockEnemy = EasyMock.createMock(Player.class);
         roads.getRoad(0).setOwner(mockEnemy);
@@ -264,7 +264,7 @@ public class VertexIsBuildableByTest {
         EasyMock.replay(mockPlayer); // Note: Nothing should be called by player
 
         boolean expected = true;
-        boolean actual = testVertex.isbuildableBy(mockPlayer);
+        boolean actual = testVertex.isBuildableBy(mockPlayer);
         assertEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);

@@ -3,10 +3,6 @@ package domain.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import domain.controller.Controller;
-import domain.controller.GamePhase;
-import domain.controller.GameState;
-import domain.controller.SuccessCode;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
@@ -228,12 +224,10 @@ public class ClickedVertexTest {
 
         // method call
         EasyMock.replay(mockedGame);
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
-            controller.clickedVertex(testVertexId);
-        });
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> controller.clickedVertex(testVertexId));
         EasyMock.verify(mockedGame);
 
-        String expectedMessage = "Controller and Game states unsyncronized";
+        String expectedMessage = "Controller and Game states not synchronized";
         String actualMessage = exception.getMessage();
         assertEquals(expectedMessage, actualMessage);
 
@@ -241,7 +235,7 @@ public class ClickedVertexTest {
         assertEquals(GamePhase.SETUP, phaseBefore);
         assertEquals(GameState.FIRST_SETTLEMENT, stateBefore);
 
-        // note we don't test after states because the illegaStateException should crash
+        // note we don't test after states because the IllegalStateException should crash
         // the program
     }
 
@@ -371,12 +365,10 @@ public class ClickedVertexTest {
 
         // method call
         EasyMock.replay(mockedGame);
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
-            controller.clickedVertex(testVertexId);
-        });
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> controller.clickedVertex(testVertexId));
         EasyMock.verify(mockedGame);
 
-        String expectedMessage = "Controller and Game states unsyncronized";
+        String expectedMessage = "Controller and Game states not synchronized";
         String actualMessage = exception.getMessage();
         assertEquals(expectedMessage, actualMessage);
 
@@ -384,7 +376,7 @@ public class ClickedVertexTest {
         assertEquals(GamePhase.SETUP, phaseBefore);
         assertEquals(GameState.SECOND_SETTLEMENT, stateBefore);
 
-        // note we don't test after states because the illegaStateException should crash
+        // note we don't test after states because the IllegalStateException should crash
         // the program
     }
 }

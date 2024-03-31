@@ -3,8 +3,6 @@ package domain.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import domain.controller.Controller;
-import domain.controller.SuccessCode;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +12,7 @@ import domain.player.Player;
 import domain.bank.Resource;
 
 public class TradePlayerTest {
+
     @Test
     public void testTradePlayer_1Each() {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
@@ -37,6 +36,7 @@ public class TradePlayerTest {
                 
         assertEquals(SuccessCode.SUCCESS, actual);
     }
+
     @Test
     public void testTradePlayer_SamePlayer() {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
@@ -53,10 +53,11 @@ public class TradePlayerTest {
 
         // method call
         EasyMock.replay(mockedPlayer);
-        assertThrows(IllegalArgumentException.class,()->{ controller.tradeWithPlayer(mockedPlayer,giving,receiving);});
+        assertThrows(IllegalArgumentException.class,()-> controller.tradeWithPlayer(mockedPlayer,giving,receiving));
         EasyMock.verify(mockedPlayer);
                 
     }
+
     @Test
     public void testTradePlayer_BothEmpty() {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
@@ -79,6 +80,7 @@ public class TradePlayerTest {
                 
         assertEquals(SuccessCode.INSUFFICIENT_RESOURCES, actual);
     }
+
     @Test
     public void testTradePlayer_NoGiving() {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
@@ -101,8 +103,9 @@ public class TradePlayerTest {
                 
         assertEquals(SuccessCode.INSUFFICIENT_RESOURCES, actual);
     }
+
     @Test
-    public void testTradePlayer_NoRecieving() {
+    public void testTradePlayer_NoReceiving() {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
         Player mockedPlayer = EasyMock.createStrictMock(Player.class);
         Player mockedTradePartner = EasyMock.createStrictMock(Player.class);
@@ -123,6 +126,7 @@ public class TradePlayerTest {
                 
         assertEquals(SuccessCode.INSUFFICIENT_RESOURCES, actual);
     }
+
     @Test
     public void testTradePlayer_ManyGiving_NotEnough() {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
@@ -145,6 +149,7 @@ public class TradePlayerTest {
                 
         assertEquals(SuccessCode.UNDEFINED, actual);
     }
+
     @Test
     public void testTradePlayer_ManyReceiving_NotEnough() {
         Game mockedGame = EasyMock.createStrictMock(Game.class);

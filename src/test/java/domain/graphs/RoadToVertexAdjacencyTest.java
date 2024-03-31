@@ -247,9 +247,7 @@ public class RoadToVertexAdjacencyTest {
         RoadGraph roads = new RoadGraph();
         Road testRoad = roads.getRoad(0); // get any road
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            testRoad.getAdjacentVertexes();
-        });
+        RuntimeException exception = assertThrows(RuntimeException.class, testRoad::getAdjacentVertexes);
 
         String expectedMessage = "Road-to-Vertex adjacency uninitialized";
         String actualMessage = exception.getMessage();

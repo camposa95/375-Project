@@ -7,29 +7,17 @@ import java.util.Map;
 import data.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-//SINGLETON CLASS
 public class Bank implements Restorable {
-
-    @SuppressFBWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
-    private static Bank singleBankInstance = null;
 
     private static final int MAX_RESOURCES = 19;
     private final HashMap<Resource, Integer> bank = new HashMap<>();
 
-    private Bank() {
+    public Bank() {
         bank.put(Resource.LUMBER, MAX_RESOURCES);
         bank.put(Resource.BRICK, MAX_RESOURCES);
         bank.put(Resource.WOOL, MAX_RESOURCES);
         bank.put(Resource.GRAIN, MAX_RESOURCES);
         bank.put(Resource.ORE, MAX_RESOURCES);
-    }
-
-    @SuppressFBWarnings("MS_EXPOSE_REP")
-    public static synchronized Bank getInstance() {
-        if (singleBankInstance == null) {
-            singleBankInstance = new Bank();
-        }
-        return singleBankInstance;
     }
 
     public boolean removeResource(final Resource type, final int amount) {
@@ -58,9 +46,7 @@ public class Bank implements Restorable {
         return bank.get(type);
     }
 
-    //For testing purposes, restock the bank to 19 of each card
-    @SuppressFBWarnings("LI_LAZY_INIT_STATIC")
-    public void resetBank() {
+    public void reset() {
         bank.put(Resource.LUMBER, MAX_RESOURCES);
         bank.put(Resource.BRICK, MAX_RESOURCES);
         bank.put(Resource.WOOL, MAX_RESOURCES);

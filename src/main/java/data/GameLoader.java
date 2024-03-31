@@ -1,9 +1,10 @@
 package data;
 
+import domain.bank.Bank;
 import domain.controller.Controller;
 import domain.graphs.*;
+import domain.player.HarvestBooster;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import domain.bank.Bank;
 import domain.devcarddeck.DevelopmentCardDeck;
 import domain.game.Game;
 import domain.game.GameType;
@@ -80,12 +81,14 @@ public class GameLoader {
         gameBoard = new GameBoard(gameMode);
         initializeGameBoard(gameBoard);
 
+        Bank bank = new Bank();
+
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        Game game = new Game(gameBoard, vertexGraph, roadGraph, devCardDeck);
+        Game game = new Game(gameBoard, vertexGraph, roadGraph, devCardDeck, bank);
 
         this.players = new Player[this.numPlayers];
         for (int i = 0; i < this.numPlayers; i++) {
-            Player player = new Player(i + 1);
+            Player player = new Player(i + 1, new HarvestBooster(), bank);
             players[i] = player;
         }
 
@@ -122,11 +125,6 @@ public class GameLoader {
             File controllerFolder = writer.getSubFolder("Controller");
             Memento controllerMemento = this.controller.createMemento();
             controllerMemento.save(controllerFolder);
-
-            // Save the bank memento in the Bank folder
-            File bankFolder = writer.getSubFolder("Bank");
-            Memento bank = Bank.getInstance().createMemento();
-            bank.save(bankFolder);
         } catch (SaveException e) {
             return false;
         }
@@ -161,11 +159,6 @@ public class GameLoader {
         File controllerFolder = reader.getSubFolder("Controller");
         Controller.ControllerMemento controllerMemento = this.controller.new ControllerMemento(controllerFolder);
         controllerMemento.restore();
-
-        // and bank root objects
-        File bankFolder = reader.getSubFolder("Bank");
-        Bank.BankMemento bankMemento = Bank.getInstance().new BankMemento(bankFolder);
-        bankMemento.restore();
 
         return this.controller;
     }

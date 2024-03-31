@@ -3,6 +3,7 @@ package integration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import data.GameLoader;
+import domain.player.HarvestBooster;
 import org.junit.jupiter.api.Test;
 
 import domain.controller.Controller;
@@ -30,26 +31,25 @@ public class F20Test {
     public void testMonopolyWorks() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players. Note: 3 players is enough for our purposes here
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
-        Bank.getInstance().resetBank();
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        bank.reset();
         Controller controller = new Controller(game, players, gameType);
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
@@ -82,25 +82,24 @@ public class F20Test {
     public void testMonopolyNoCard() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players. Note: 3 players is enough for our purposes here
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         Controller controller = new Controller(game, players, gameType);
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
@@ -119,9 +118,8 @@ public class F20Test {
         // play the card to start us off
         assertEquals(SuccessCode.CANNOT_PLAY_CARD, controller.playMonopolyCard(resource));
 
-        // assert we didnt get the resources
+        // assert we didn't get the resources
         assertEquals(0, player3.hand.getResourceCardAmount(resource));
        
     }
-
 }

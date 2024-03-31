@@ -1,1 +1,1 @@
-Resource: LUMBER
+Resource: WOOL

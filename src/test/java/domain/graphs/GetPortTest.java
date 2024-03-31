@@ -7,8 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.Arrays;
 
 import data.GameLoader;
-import domain.graphs.Port;
-import domain.graphs.VertexGraph;
 import org.junit.jupiter.api.Test;
 
 import domain.game.GameType;
@@ -25,13 +23,12 @@ public class GetPortTest {
         GameLoader.initializeGraphs(roads, vertexes);
         Port port = vertexes.getPort(MIN_LOCATION_ID);
 
-        int expectedId = MIN_LOCATION_ID;
         int actualId = port.getLocationId();
 
         Resource expectedResource = Resource.ANY;
-        Resource actualResource = port.getResourse();
+        Resource actualResource = port.getResource();
 
-        assertEquals(expectedId, actualId);
+        assertEquals(MIN_LOCATION_ID, actualId);
         assertEquals(expectedResource, actualResource);
     }
 
@@ -46,7 +43,7 @@ public class GetPortTest {
         int actualId = port.getLocationId();
 
         Resource expectedResource = Resource.GRAIN;
-        Resource actualResource = port.getResourse();
+        Resource actualResource = port.getResource();
 
         assertEquals(expectedId, actualId);
         assertEquals(expectedResource, actualResource);
@@ -63,7 +60,7 @@ public class GetPortTest {
         int actualId = port.getLocationId();
 
         Resource expectedResource = Resource.WOOL;
-        Resource actualResource = port.getResourse();
+        Resource actualResource = port.getResource();
 
         assertEquals(expectedId, actualId);
         assertEquals(expectedResource, actualResource);
@@ -80,7 +77,7 @@ public class GetPortTest {
         int actualId = port.getLocationId();
 
         Resource expectedResource = Resource.ANY;
-        Resource actualResource = port.getResourse();
+        Resource actualResource = port.getResource();
 
         assertEquals(expectedId, actualId);
         assertEquals(expectedResource, actualResource);
@@ -97,7 +94,7 @@ public class GetPortTest {
         int actualId = port.getLocationId();
 
         Resource expectedResource = Resource.ORE;
-        Resource actualResource = port.getResourse();
+        Resource actualResource = port.getResource();
 
         assertEquals(expectedId, actualId);
         assertEquals(expectedResource, actualResource);
@@ -114,7 +111,7 @@ public class GetPortTest {
         int actualId = port.getLocationId();
 
         Resource expectedResource = Resource.ANY;
-        Resource actualResource = port.getResourse();
+        Resource actualResource = port.getResource();
 
         assertEquals(expectedId, actualId);
         assertEquals(expectedResource, actualResource);
@@ -131,7 +128,7 @@ public class GetPortTest {
         int actualId = port.getLocationId();
 
         Resource expectedResource = Resource.ANY;
-        Resource actualResource = port.getResourse();
+        Resource actualResource = port.getResource();
 
         assertEquals(expectedId, actualId);
         assertEquals(expectedResource, actualResource);
@@ -148,7 +145,7 @@ public class GetPortTest {
         int actualId = port.getLocationId();
 
         Resource expectedResource = Resource.BRICK;
-        Resource actualResource = port.getResourse();
+        Resource actualResource = port.getResource();
 
         assertEquals(expectedId, actualId);
         assertEquals(expectedResource, actualResource);
@@ -165,7 +162,7 @@ public class GetPortTest {
         int actualId = port.getLocationId();
 
         Resource expectedResource = Resource.LUMBER;
-        Resource actualResource = port.getResourse();
+        Resource actualResource = port.getResource();
 
         assertEquals(expectedId, actualId);
         assertEquals(expectedResource, actualResource);
@@ -174,9 +171,7 @@ public class GetPortTest {
     @Test
     public void getPortWithInvalidId9() {
         VertexGraph vertexes =  new VertexGraph(GameType.Beginner);
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            vertexes.getPort(MAX_LOCATION_ID + 1);
-        });
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vertexes.getPort(MAX_LOCATION_ID + 1));
 
         String expectedMessage = "Invalid locationId; Try[0, 8]";
         String actualMessage = exception.getMessage();
@@ -187,9 +182,7 @@ public class GetPortTest {
     @Test
     public void getPortWithInvalidIdNegative1() {
         VertexGraph vertexes =  new VertexGraph(GameType.Beginner);
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            vertexes.getPort(-1);
-        });
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vertexes.getPort(-1));
 
         String expectedMessage = "Invalid locationId; Try[0, 8]";
         String actualMessage = exception.getMessage();
@@ -198,7 +191,7 @@ public class GetPortTest {
     }
 
     @Test
-    public void test_RandomPorts(){
+    public void test_RandomPorts() {
         VertexGraph basicPorts = new VertexGraph(GameType.Beginner);
         RoadGraph roads1 = new RoadGraph();
         GameLoader.initializeGraphs(roads1, basicPorts);

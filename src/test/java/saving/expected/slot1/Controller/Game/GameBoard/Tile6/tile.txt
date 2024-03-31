@@ -1,3 +1,0 @@
-TerrainType: HILLS
-DieNumber: 10
-HasRobber: false

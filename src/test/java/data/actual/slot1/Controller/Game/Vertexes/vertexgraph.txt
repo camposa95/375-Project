@@ -1,1 +1,1 @@
-PortResources: [ANY, GRAIN, LUMBER, ANY, WOOL, ORE, ANY, ANY, BRICK]
+PortResources: [ANY, GRAIN, WOOL, ANY, ORE, ANY, ANY, BRICK, LUMBER]

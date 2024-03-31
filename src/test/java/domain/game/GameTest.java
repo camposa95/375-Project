@@ -1,20 +1,16 @@
 package domain.game;
 
 import data.GameLoader;
+import domain.bank.Bank;
 import domain.bank.Resource;
-import domain.game.Game;
-import domain.game.GameType;
-import domain.game.InvalidPlacementException;
-import domain.game.NotEnoughResourcesException;
 import domain.gameboard.GameBoard;
 import domain.gameboard.Tile;
 import domain.player.Hand;
+import domain.player.HarvestBooster;
 import domain.player.Player;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,11 +23,10 @@ import domain.graphs.VertexGraph;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GameTest {
-    private static final String LAYOUT_FILE = "src/main/java/gamedatastructures/TileLayout.txt";
 
-    // placeSettlement
+    // place settlement
     @Test
-    public void testPlaceSettlement_Valid_Enough(){
+    public void testPlaceSettlement_Valid_Enough() {
         GameBoard gb = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gb);
         
@@ -42,10 +37,10 @@ public class GameTest {
         Vertex mockVertex = EasyMock.createNiceMock(Vertex.class);
         Player mockPlayer = EasyMock.createMock(Player.class);
 
-        Game game = new Game(gb,mockVertexGraph,mockedRoadGraph, null);
+        Game game = new Game(gb,mockVertexGraph,mockedRoadGraph, null, null);
         
         EasyMock.expect(mockVertexGraph.getVertex(vertexId)).andReturn(mockVertex);
-        EasyMock.expect(mockVertex.isbuildable()).andReturn(true);
+        EasyMock.expect(mockVertex.isBuildable()).andReturn(true);
         EasyMock.expect(mockVertex.getOwner()).andReturn(mockPlayer);
         mockPlayer.placeSettlementSetup();
         mockedRoadGraph.giveLongestRoadCard();
@@ -54,18 +49,15 @@ public class GameTest {
         try{
         game.placeSettlement(vertexId,mockPlayer);
         }
-        catch(InvalidPlacementException e){
-            assertFalse(true);
-        }
-        catch(NotEnoughResourcesException e){
-            assertFalse(true);
+        catch(InvalidPlacementException | NotEnoughResourcesException e){
+            fail();
         }
         assertEquals(mockVertex.getOwner(),mockPlayer);
         EasyMock.verify(mockPlayer,mockVertex,mockVertexGraph, mockedRoadGraph);
     }
     
     @Test
-    public void testPlaceSettlement_Valid_NotEnough(){
+    public void testPlaceSettlement_Valid_NotEnough() {
         GameBoard gb = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gb);
         RoadGraph rg = new RoadGraph();
@@ -75,23 +67,24 @@ public class GameTest {
         Vertex mockVertex = EasyMock.createMock(Vertex.class);
         Player mockPlayer = EasyMock.createMock(Player.class);
 
-        Game game = new Game(gb,mockVertexGraph,rg,null);
+        Game game = new Game(gb, mockVertexGraph, rg, null, null);
         game.endSetup();
 
         EasyMock.expect(mockVertexGraph.getVertex(vertexId)).andReturn(mockVertex);
-        EasyMock.expect(mockVertex.isbuildable()).andReturn(true);
+        EasyMock.expect(mockVertex.isBuildable()).andReturn(true);
         EasyMock.expect(mockVertex.isAdjacentToFriendlyRoad(mockPlayer)).andReturn(true);
         EasyMock.expect(mockPlayer.purchaseSettlement()).andReturn(false);
         EasyMock.expect(mockVertex.getOwner()).andReturn(null);
 
         EasyMock.replay(mockPlayer,mockVertex,mockVertexGraph);
 
-        assertThrows(NotEnoughResourcesException.class,()->{game.placeSettlement(vertexId,mockPlayer);});
+        assertThrows(NotEnoughResourcesException.class,()-> game.placeSettlement(vertexId,mockPlayer));
         assertNotEquals(mockVertex.getOwner(),mockPlayer);
         EasyMock.verify(mockPlayer,mockVertex,mockVertexGraph);
     }
+    
     @Test
-    public void testPlaceSettlement_Invalid_Enough(){
+    public void testPlaceSettlement_Invalid_Enough() {
          GameBoard gb = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gb);
         RoadGraph rg = new RoadGraph();
@@ -101,20 +94,21 @@ public class GameTest {
         Vertex mockVertex = EasyMock.createMock(Vertex.class);
         Player mockPlayer = EasyMock.createMock(Player.class);
 
-        Game game = new Game(gb,mockVertexGraph,rg,null);
+        Game game = new Game(gb, mockVertexGraph, rg, null, null);
         EasyMock.expect(mockVertexGraph.getVertex(vertexId)).andReturn(mockVertex);
-        EasyMock.expect(mockVertex.isbuildable()).andReturn(false);
+        EasyMock.expect(mockVertex.isBuildable()).andReturn(false);
 
         EasyMock.expect(mockVertex.getOwner()).andReturn(null);
 
         EasyMock.replay(mockPlayer,mockVertex,mockVertexGraph);
 
-        assertThrows(InvalidPlacementException.class,()->{game.placeSettlement(vertexId,mockPlayer);});
+        assertThrows(InvalidPlacementException.class,()-> game.placeSettlement(vertexId,mockPlayer));
         assertNotEquals(mockVertex.getOwner(),mockPlayer);
         EasyMock.verify(mockPlayer,mockVertex,mockVertexGraph);
     }
+    
     @Test
-    public void testPlaceSettlement_Invalid_NotEnough(){
+    public void testPlaceSettlement_Invalid_NotEnough() {
          GameBoard gb = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gb);
         RoadGraph rg = new RoadGraph();
@@ -124,24 +118,25 @@ public class GameTest {
         Vertex mockVertex = EasyMock.createMock(Vertex.class);
         Player mockPlayer = EasyMock.createMock(Player.class);
 
-        Game game = new Game(gb,mockVertexGraph,rg,null);
+        Game game = new Game(gb, mockVertexGraph, rg, null, null);
         game.endSetup();
 
         EasyMock.expect(mockVertexGraph.getVertex(vertexId)).andReturn(mockVertex);
-        EasyMock.expect(mockVertex.isbuildable()).andReturn(false);
+        EasyMock.expect(mockVertex.isBuildable()).andReturn(false);
 
         EasyMock.expect(mockVertex.getOwner()).andReturn(null);
 
 
         EasyMock.replay(mockPlayer,mockVertex,mockVertexGraph);
 
-        assertThrows(InvalidPlacementException.class,()->{game.placeSettlement(vertexId,mockPlayer);});
+        assertThrows(InvalidPlacementException.class,()-> game.placeSettlement(vertexId,mockPlayer));
         assertNotEquals(mockVertex.getOwner(),mockPlayer);
         EasyMock.verify(mockPlayer,mockVertex,mockVertexGraph);
     }
-// placeRoad
+    
+    // place road
     @Test
-    public void testPlaceRoad_Valid_Adjacent_Enough(){
+    public void testPlaceRoad_Valid_Adjacent_Enough() {
         GameBoard gb = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gb);
         VertexGraph vg = new VertexGraph(GameType.Beginner);
@@ -152,7 +147,7 @@ public class GameTest {
         Road mockRoad = EasyMock.createNiceMock(Road.class);
         Player mockPlayer = EasyMock.createMock(Player.class);
 
-        Game game = new Game(gb,vg,mockRoadGraph,null);
+        Game game = new Game(gb, vg, mockRoadGraph, null, null);
         EasyMock.expect(mockRoadGraph.getRoad(roadId)).andReturn(mockRoad);
         EasyMock.expect(mockRoad.isAdjacentTo(vg.getVertex(vertexId))).andReturn(true);
         EasyMock.expect(mockRoad.isBuildable()).andReturn(true);
@@ -164,17 +159,15 @@ public class GameTest {
         try{
         game.placeRoad(roadId,vertexId,mockPlayer);
         }
-        catch(InvalidPlacementException e){
-            assertFalse(true);
-        }
-        catch(NotEnoughResourcesException e){
-            assertFalse(true);
+        catch(InvalidPlacementException | NotEnoughResourcesException e){
+            fail();
         }
         assertEquals(mockRoad.getOwner(),mockPlayer);
         EasyMock.verify(mockPlayer,mockRoad,mockRoadGraph);
     }
+    
     @Test
-    public void testPlaceRoad_Valid_Adjacent_NotEnough(){
+    public void testPlaceRoad_Valid_Adjacent_NotEnough() {
          GameBoard gb = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gb);
         VertexGraph vg = new VertexGraph(GameType.Beginner);
@@ -185,7 +178,7 @@ public class GameTest {
         Road mockRoad = EasyMock.createMock(Road.class);
         Player mockPlayer = EasyMock.createMock(Player.class);
 
-        Game game = new Game(gb,vg,mockRoadGraph,null);
+        Game game = new Game(gb, vg, mockRoadGraph, null, null);
         game.endSetup();
 
         EasyMock.expect(mockRoadGraph.getRoad(roadId)).andReturn(mockRoad);
@@ -195,12 +188,13 @@ public class GameTest {
 
         EasyMock.replay(mockPlayer,mockRoad,mockRoadGraph);
 
-        assertThrows(NotEnoughResourcesException.class,()->{game.placeRoad(roadId,vertexId,mockPlayer);});
+        assertThrows(NotEnoughResourcesException.class,()-> game.placeRoad(roadId,vertexId,mockPlayer));
         assertNotEquals(mockRoad.getOwner(),mockPlayer);
         EasyMock.verify(mockPlayer,mockRoad,mockRoadGraph);
     }
+    
     @Test
-    public void testPlaceRoad_Valid_NotAdjacent_Enough(){
+    public void testPlaceRoad_Valid_NotAdjacent_Enough() {
          GameBoard gb = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gb);
         VertexGraph vg = new VertexGraph(GameType.Beginner);
@@ -211,7 +205,7 @@ public class GameTest {
         Road mockRoad = EasyMock.createNiceMock(Road.class);
         Player mockPlayer = EasyMock.createNiceMock(Player.class);
 
-        Game game = new Game(gb,vg,mockRoadGraph,null);
+        Game game = new Game(gb, vg, mockRoadGraph, null, null);
         EasyMock.expect(mockRoadGraph.getRoad(roadId)).andReturn(mockRoad);
         EasyMock.expect(mockRoad.isAdjacentTo(vg.getVertex(vertexId))).andReturn(false);
         EasyMock.expect(mockRoad.isBuildable()).andReturn(true);
@@ -219,13 +213,13 @@ public class GameTest {
 
         EasyMock.replay(mockPlayer,mockRoad,mockRoadGraph);
 
-        assertThrows(InvalidPlacementException.class,()->{game.placeRoad(roadId,vertexId,mockPlayer);});
+        assertThrows(InvalidPlacementException.class,()-> game.placeRoad(roadId,vertexId,mockPlayer));
         assertNotEquals(mockRoad.getOwner(),mockPlayer);
         EasyMock.verify(mockPlayer,mockRoad,mockRoadGraph);
     }
 
     @Test
-    public void testPlaceRoad_Invalid_NotAdjacent_Enough(){
+    public void testPlaceRoad_Invalid_NotAdjacent_Enough() {
          GameBoard gb = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gb);
         VertexGraph vg = new VertexGraph(GameType.Beginner);
@@ -236,19 +230,20 @@ public class GameTest {
         Road mockRoad = EasyMock.createMock(Road.class);
         Player mockPlayer = EasyMock.createMock(Player.class);
 
-        Game game = new Game(gb,vg,mockRoadGraph,null);
+        Game game = new Game(gb, vg, mockRoadGraph, null, null);
         EasyMock.expect(mockRoadGraph.getRoad(roadId)).andReturn(mockRoad);
         EasyMock.expect(mockRoad.isBuildable()).andReturn(false);
         EasyMock.expect(mockRoad.getOwner()).andReturn(null);
 
         EasyMock.replay(mockPlayer,mockRoad,mockRoadGraph);
 
-        assertThrows(InvalidPlacementException.class,()->{game.placeRoad(roadId,vertexId,mockPlayer);});
+        assertThrows(InvalidPlacementException.class,()-> game.placeRoad(roadId,vertexId,mockPlayer));
         assertNotEquals(mockRoad.getOwner(),mockPlayer);
         EasyMock.verify(mockPlayer,mockRoad,mockRoadGraph);
     }
+    
     @Test
-    public void testPlaceRoad_Invalid_Adjacent_Enough(){
+    public void testPlaceRoad_Invalid_Adjacent_Enough() {
         GameBoard gb = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gb);
         VertexGraph vg = new VertexGraph(GameType.Beginner);
@@ -259,19 +254,20 @@ public class GameTest {
         Road mockRoad = EasyMock.createMock(Road.class);
         Player mockPlayer = EasyMock.createMock(Player.class);
 
-        Game game = new Game(gb,vg,mockRoadGraph,null);
+        Game game = new Game(gb, vg, mockRoadGraph, null, null);
         EasyMock.expect(mockRoadGraph.getRoad(roadId)).andReturn(mockRoad);
         EasyMock.expect(mockRoad.isBuildable()).andReturn(false);
         EasyMock.expect(mockRoad.getOwner()).andReturn(null);
 
         EasyMock.replay(mockPlayer,mockRoad,mockRoadGraph);
 
-        assertThrows(InvalidPlacementException.class,()->{game.placeRoad(roadId,vertexId,mockPlayer);});
+        assertThrows(InvalidPlacementException.class,()-> game.placeRoad(roadId,vertexId,mockPlayer));
         assertNotEquals(mockRoad.getOwner(),mockPlayer);
         EasyMock.verify(mockPlayer,mockRoad,mockRoadGraph);
     }
+    
     @Test
-    public void testPlaceRoad_Invalid_Adjacent_NotEnough(){
+    public void testPlaceRoad_Invalid_Adjacent_NotEnough() {
         GameBoard gb = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gb);
         VertexGraph vg = new VertexGraph(GameType.Beginner);
@@ -282,7 +278,7 @@ public class GameTest {
         Road mockRoad = EasyMock.createMock(Road.class);
         Player mockPlayer = EasyMock.createMock(Player.class);
 
-        Game game = new Game(gb,vg,mockRoadGraph,null);
+        Game game = new Game(gb, vg, mockRoadGraph, null, null);
         game.endSetup();
 
         EasyMock.expect(mockRoadGraph.getRoad(roadId)).andReturn(mockRoad);
@@ -292,12 +288,13 @@ public class GameTest {
         EasyMock.replay(mockPlayer,mockRoad,mockRoadGraph);
 
 
-        assertThrows(InvalidPlacementException.class,()->{game.placeRoad(roadId,vertexId,mockPlayer);});
+        assertThrows(InvalidPlacementException.class,()-> game.placeRoad(roadId,vertexId,mockPlayer));
         assertNotEquals(mockRoad.getOwner(),mockPlayer);
         EasyMock.verify(mockPlayer,mockRoad,mockRoadGraph);
     }
+    
     @Test
-    public void testPlaceRoad_Invalid_NotAdjacent_NotEnough(){
+    public void testPlaceRoad_Invalid_NotAdjacent_NotEnough() {
         GameBoard gb = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gb);
         VertexGraph vg = new VertexGraph(GameType.Beginner);
@@ -308,7 +305,7 @@ public class GameTest {
         Road mockRoad = EasyMock.createMock(Road.class);
         Player mockPlayer = EasyMock.createMock(Player.class);
 
-        Game game = new Game(gb,vg,mockRoadGraph,null);
+        Game game = new Game(gb, vg, mockRoadGraph, null, null);
         game.endSetup();
 
         EasyMock.expect(mockRoadGraph.getRoad(roadId)).andReturn(mockRoad);
@@ -317,10 +314,11 @@ public class GameTest {
 
         EasyMock.replay(mockPlayer,mockRoad,mockRoadGraph);
 
-        assertThrows(InvalidPlacementException.class,()->{game.placeRoad(roadId,vertexId,mockPlayer);});
+        assertThrows(InvalidPlacementException.class,()-> game.placeRoad(roadId,vertexId,mockPlayer));
         assertNotEquals(mockRoad.getOwner(),mockPlayer);
         EasyMock.verify(mockPlayer,mockRoad,mockRoadGraph);
     }
+    
     @Test
     public void testPlaceRoad_NonSetup_ValidPlacement_NotEnoughResources() {
         GameBoard gb = new GameBoard(GameType.Beginner);
@@ -333,7 +331,7 @@ public class GameTest {
         Road mockRoad = EasyMock.createMock(Road.class);
         Player player = new Player(1);
 
-        Game game = new Game(gb,vg,mockRoadGraph,null);
+        Game game = new Game(gb, vg, mockRoadGraph, null, null);
         game.endSetup();
 
         EasyMock.expect(mockRoadGraph.getRoad(roadId)).andReturn(mockRoad);
@@ -342,14 +340,14 @@ public class GameTest {
 
         EasyMock.replay(mockRoad,mockRoadGraph);
 
-        assertThrows(NotEnoughResourcesException.class,()->{game.placeRoad(roadId,vertexId,player);});
+        assertThrows(NotEnoughResourcesException.class,()-> game.placeRoad(roadId,vertexId,player));
         assertNotEquals(mockRoad.getOwner(),player);
         EasyMock.verify(mockRoad,mockRoadGraph);
     }
 
-    //resourcesFromVertex
+    // resourcesFromVertex
     @Test
-    public void testresourcesFromVertex_NoSettlements_ExpectNoResources(){
+    public void testResourcesFromVertex_NoSettlements_ExpectNoResources() {
         GameBoard gb = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gb);
         VertexGraph vg = new VertexGraph(GameType.Beginner);
@@ -358,17 +356,18 @@ public class GameTest {
 
         Player mockPlayer = EasyMock.createMock(Player.class);
 
-        Game game = new Game(gb,vg,rg,null);
+        Game game = new Game(gb, vg, rg, null, null);
 
         Resource[] expected = new Resource[0];
         Resource[] actual = game.resourcesFromVertex(mockPlayer,vertexId);
         EasyMock.replay(mockPlayer);
 
-        assertTrue(Arrays.equals(expected,actual));
+        assertArrayEquals(expected, actual);
         EasyMock.verify(mockPlayer);
     }
+    
     @Test
-    public void testresourcesFromVertex_HasSettlementOnCorner_Expect1Resource(){
+    public void testResourcesFromVertex_HasSettlementOnCorner_Expect1Resource() {
          GameBoard gb = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gb);
         VertexGraph vg = new VertexGraph(GameType.Beginner);
@@ -378,7 +377,7 @@ public class GameTest {
         Player mockPlayer = EasyMock.createMock(Player.class);
 
 
-        Game game = new Game(gb,vg,rg,null);
+        Game game = new Game(gb, vg, rg, null, null);
         vg.getVertex(vertexId).setOwner(mockPlayer);
 
         Resource[] expected = {Resource.ORE};
@@ -386,12 +385,13 @@ public class GameTest {
         EasyMock.replay(mockPlayer);
 
 
-        assertTrue(Arrays.equals(expected,actual));
+        assertArrayEquals(expected, actual);
         assertNotNull(game.resourcesFromVertex(mockPlayer,vertexId));
         EasyMock.verify(mockPlayer);
     }
+    
     @Test
-    public void testresourcesFromVertex_HasSettlementOnEdge_Expect2Resources(){
+    public void testResourcesFromVertex_HasSettlementOnEdge_Expect2Resources() {
          GameBoard gb = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gb);
         VertexGraph vg = new VertexGraph(GameType.Beginner);
@@ -401,7 +401,7 @@ public class GameTest {
         Player mockPlayer = EasyMock.createMock(Player.class);
 
 
-        Game game = new Game(gb,vg,rg,null);
+        Game game = new Game(gb, vg, rg, null, null);
         vg.getVertex(vertexId).setOwner(mockPlayer);
 
         Resource[] expected = {Resource.ORE, Resource.WOOL};
@@ -409,12 +409,13 @@ public class GameTest {
         EasyMock.replay(mockPlayer);
 
 
-        assertTrue(Arrays.equals(expected,actual));
+        assertArrayEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);
     }
+    
     @Test
-    public void testresourcesFromVertex_HasSettlementOnBoard_Expect3Resources(){
+    public void testResourcesFromVertex_HasSettlementOnBoard_Expect3Resources() {
         GameBoard gb = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gb);
         VertexGraph vg = new VertexGraph(GameType.Beginner);
@@ -424,7 +425,7 @@ public class GameTest {
         Player mockPlayer = EasyMock.createMock(Player.class);
 
 
-        Game game = new Game(gb,vg,rg,null);
+        Game game = new Game(gb, vg, rg, null, null);
         vg.getVertex(vertexId).setOwner(mockPlayer);
 
         Resource[] expected = {Resource.ORE, Resource.WOOL,Resource.BRICK};
@@ -432,12 +433,13 @@ public class GameTest {
         EasyMock.replay(mockPlayer);
 
 
-        assertTrue(Arrays.equals(expected,actual));
+        assertArrayEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);
     }
+    
     @Test
-    public void testPlaceSettlement_Unmocked(){
+    public void testPlaceSettlement_NotMocked() {
         GameBoard gb = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gb);
         int vertexId = 0;
@@ -446,18 +448,16 @@ public class GameTest {
         RoadGraph rg = new RoadGraph();
         GameLoader.initializeGraphs(rg, vertexGraph);
 
-        Player player = new Player(1);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
 
-        Game game = new Game(gb,vertexGraph,rg,null);
+        Game game = new Game(gb, vertexGraph, rg, null, bank);
 
         try{
         game.placeSettlement(vertexId,player);
         }
-        catch(InvalidPlacementException e){
-            assertFalse(true);
-        }
-        catch(NotEnoughResourcesException e){
-            assertFalse(true);
+        catch(InvalidPlacementException | NotEnoughResourcesException e){
+            fail();
         }
         assertEquals(vertexGraph.getVertex(vertexId).getOwner(),player);
 
@@ -470,16 +470,14 @@ public class GameTest {
         try{
             game.placeSettlement(vertexId,player);
             }
-            catch(InvalidPlacementException e){
-                assertFalse(true);
+            catch(InvalidPlacementException | NotEnoughResourcesException e){
+                fail();
             }
-            catch(NotEnoughResourcesException e){
-                assertFalse(true);
-            }
-            assertEquals(vertexGraph.getVertex(vertexId).getOwner(),player);
+        assertEquals(vertexGraph.getVertex(vertexId).getOwner(),player);
     }
+    
     @Test
-    public void testPlaceRoad_Unmocked(){
+    public void testPlaceRoad_NotMocked() {
         GameBoard gb = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gb);
         int vertexId = 0;
@@ -488,20 +486,17 @@ public class GameTest {
         VertexGraph vertexGraph = new VertexGraph(GameType.Beginner);
         RoadGraph roadgraph = new RoadGraph();
         GameLoader.initializeGraphs(roadgraph, vertexGraph);
+        Bank bank = new Bank();
+        Player player = new Player(1, bank);
 
-        Player player = new Player(1);
-
-        Game game = new Game(gb,vertexGraph,roadgraph,null);
+        Game game = new Game(gb, vertexGraph, roadgraph, null, bank);
 
         //setup
         try{
         game.placeRoad(roadID,vertexId,player);
         }
-        catch(InvalidPlacementException e){
-            assertFalse(true);
-        }
-        catch(NotEnoughResourcesException e){
-            assertFalse(true);
+        catch(InvalidPlacementException | NotEnoughResourcesException e){
+            fail();
         }
         assertEquals(roadgraph.getRoad(roadID).getOwner(),player);
 
@@ -513,16 +508,14 @@ public class GameTest {
         try{
             game.placeRoad(roadID,vertexId,player);
             }
-            catch(InvalidPlacementException e){
-                assertFalse(true);
+            catch(InvalidPlacementException | NotEnoughResourcesException e){
+                fail();
             }
-            catch(NotEnoughResourcesException e){
-                assertFalse(true);
-            }
-            assertEquals(roadgraph.getRoad(roadID).getOwner(),player);
+        assertEquals(roadgraph.getRoad(roadID).getOwner(),player);
     }
+    
     @Test
-    public void testDistributeResources_Unmocked(){
+    public void testDistributeResources_NotMocked() {
         GameBoard gb = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gb);
         RoadGraph roadgraph = new RoadGraph();
@@ -530,10 +523,11 @@ public class GameTest {
         int die = 10;
         VertexGraph vertexGraph = new VertexGraph(GameType.Beginner);
         GameLoader.initializeGraphs(roadgraph, vertexGraph);
-      
-        Player player = new Player(1);
 
-        Game game = new Game(gb,vertexGraph,roadgraph,null);
+        Bank bank = new Bank();
+        Player player = new Player(1, new HarvestBooster(), bank);
+
+        Game game = new Game(gb, vertexGraph, roadgraph, null, bank);
         vertexGraph.getVertex(vertexId).setOwner(player);
 
         Resource[] expected = {Resource.ORE};
@@ -547,7 +541,7 @@ public class GameTest {
         assertNotNull(game.resourcesFromVertex(player,vertexId));
     }
  
-    //resourcesFromDie
+    // resourcesFromDie
     @Test
     public void testResourcesFromDie_NoSettlements() {
         Player player = new Player(1);
@@ -555,7 +549,7 @@ public class GameTest {
         GameLoader.initializeGameBoard(gameBoard);
         VertexGraph vertexGraph = new VertexGraph(GameType.Beginner);
         RoadGraph mockedRoadGraph = EasyMock.createStrictMock(RoadGraph.class);
-        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph,null);
+        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph, null, null);
 
         //Check hand before
         int before = player.hand.getResourceCardCount();
@@ -568,6 +562,7 @@ public class GameTest {
         assertEquals(before, after);
         assertEquals(0,resources.length);
     }
+    
     @Test
     public void testResourcesFromDie_1_Die() {
         Player player = new Player(1);
@@ -575,7 +570,7 @@ public class GameTest {
         GameLoader.initializeGameBoard(gameBoard);
         VertexGraph vertexGraph = new VertexGraph(GameType.Beginner);
         RoadGraph mockedRoadGraph = EasyMock.createStrictMock(RoadGraph.class);
-        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph,null);
+        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph, null, null);
         int die = 10;
 
         vertexGraph.getVertex(0).setOwner(player);
@@ -593,6 +588,7 @@ public class GameTest {
         assertEquals(1,actual.length);
         assertEquals(expected[0],actual[0]);
     }
+    
     @Test
     public void testResourcesFromDie_1_NoDie() {
         Player player = new Player(1);
@@ -600,7 +596,7 @@ public class GameTest {
         GameLoader.initializeGameBoard(gameBoard);
         VertexGraph vertexGraph = new VertexGraph(GameType.Beginner);
         RoadGraph mockedRoadGraph = EasyMock.createStrictMock(RoadGraph.class);
-        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph,null);
+        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph, null, null);
         int die = 5;
 
         vertexGraph.getVertex(0).setOwner(player);
@@ -618,6 +614,7 @@ public class GameTest {
         assertEquals(0,actual.length);
         //assertEquals(expected[0],actual[0]);
     }
+    
     @Test
     public void testResourcesFromDie_Many_One_Die() {
         Player player = new Player(1);
@@ -625,7 +622,7 @@ public class GameTest {
         GameLoader.initializeGameBoard(gameBoard);
         VertexGraph vertexGraph = new VertexGraph(GameType.Beginner);
         RoadGraph mockedRoadGraph = EasyMock.createStrictMock(RoadGraph.class);
-        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph,null);
+        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph, null, null);
         int die = 10;
 
         vertexGraph.getVertex(0).setOwner(player);
@@ -651,6 +648,7 @@ public class GameTest {
             assertEquals(expected[i],actual[i]);
         }
     }
+    
     @Test
     public void testResourcesFromDie_Many_One_NoDie() {
         Player player = new Player(1);
@@ -658,7 +656,7 @@ public class GameTest {
         GameLoader.initializeGameBoard(gameBoard);
         VertexGraph vertexGraph = new VertexGraph(GameType.Beginner);
         RoadGraph mockedRoadGraph = EasyMock.createStrictMock(RoadGraph.class);
-        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph,null);
+        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph, null, null);
         int die = 5;
 
         vertexGraph.getVertex(0).setOwner(player);
@@ -682,6 +680,7 @@ public class GameTest {
         assertEquals(0,actual.length);
 
     }
+    
     @Test
     public void testResourcesFromDie_Many_Many_Die() {
         Player player = new Player(1);
@@ -689,7 +688,7 @@ public class GameTest {
         GameLoader.initializeGameBoard(gameBoard);
         VertexGraph vertexGraph = new VertexGraph(GameType.Beginner);
         RoadGraph mockedRoadGraph = EasyMock.createStrictMock(RoadGraph.class);
-        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph,null);
+        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph, null, null);
         int die = 10;
 
         vertexGraph.getVertex(1).setOwner(player);
@@ -713,6 +712,7 @@ public class GameTest {
             assertEquals(expected[i],actual[i]);
         }
     }
+    
     @Test
     public void testResourcesFromDie_Many_Many_NoDie() {
         Player player = new Player(1);
@@ -720,7 +720,7 @@ public class GameTest {
         GameLoader.initializeGameBoard(gameBoard);
         VertexGraph vertexGraph = new VertexGraph(GameType.Beginner);
         RoadGraph mockedRoadGraph = EasyMock.createStrictMock(RoadGraph.class);
-        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph,null);
+        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph, null, null);
         int die = 5;
 
         vertexGraph.getVertex(1).setOwner(player);
@@ -741,9 +741,10 @@ public class GameTest {
         assertEquals(before, after);
         assertEquals(0,actual.length);  
     }
+    
     @Test
     public void testResourcesFromDie_Die7() {
-        Game game = new Game(null, null, null,null);
+        Game game = new Game(null, null, null,null, null);
         int die = 7; // robber
 
         //Call method
@@ -751,16 +752,17 @@ public class GameTest {
 
         assertEquals(0,actual.length);
     }
+    
     @Test 
     public void testDropCards_empty() {
-        //Initilize Objects
+        
         GameBoard gameBoard =  EasyMock.createStrictMock(GameBoard.class);
         VertexGraph vertexGraph = EasyMock.createStrictMock(VertexGraph.class);
         RoadGraph mockedRoadGraph = EasyMock.createStrictMock(RoadGraph.class);
-        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph,null);
+        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph, null, null);
 
         //Create Hashmap
-        HashMap<Player,Resource[]> testHash = new HashMap<Player,Resource[]>();
+        HashMap<Player,Resource[]> testHash = new HashMap<>();
         
         //Replay
         EasyMock.replay(gameBoard, vertexGraph, mockedRoadGraph);
@@ -769,21 +771,21 @@ public class GameTest {
         try{ 
             game.dropCards(testHash);
         } catch( Exception e) {
-            //Make sure nothing is thrown
-            assertFalse(true);
+            fail();
         }
         
         //Verify
         EasyMock.verify(gameBoard, vertexGraph, mockedRoadGraph);
     }
+    
     @Test
     public void testDropCards_1player_nothing() {
-        //Initilize Objects
+        
         GameBoard gameBoard =  EasyMock.createStrictMock(GameBoard.class);
         VertexGraph vertexGraph = EasyMock.createStrictMock(VertexGraph.class);
         RoadGraph mockedRoadGraph = EasyMock.createStrictMock(RoadGraph.class);
         Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph,null);
+        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph, null, null);
         
        
         //Replay
@@ -793,7 +795,7 @@ public class GameTest {
 
         Resource[] resources = new Resource[0];
          
-        HashMap<Player,Resource[]> testHash = new HashMap<Player,Resource[]>();
+        HashMap<Player,Resource[]> testHash = new HashMap<>();
         testHash.put(mockedPlayer1, resources);
 
         //Call method
@@ -802,22 +804,23 @@ public class GameTest {
         } catch( Exception e) {
             //Make sure nothing is thrown
             e.printStackTrace();
-            assertTrue(false);
+            fail();
         }
         
         //Verify
         EasyMock.verify(gameBoard, vertexGraph, mockedRoadGraph,mockedPlayer1);
     }
+    
     @Test 
     public void testDropCards_1player_1card() {
-        //Initilize Objects
+        
         GameBoard gameBoard =  EasyMock.createStrictMock(GameBoard.class);
         VertexGraph vertexGraph = EasyMock.createStrictMock(VertexGraph.class);
         RoadGraph mockedRoadGraph = EasyMock.createStrictMock(RoadGraph.class);
         Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
         Hand mockedHand1 = EasyMock.createStrictMock(Hand.class);
         mockedPlayer1.hand = mockedHand1;
-        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph,null);
+        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph, null, null);
        
         //Expect 
         Resource[] resources = {Resource.WOOL};
@@ -826,7 +829,7 @@ public class GameTest {
         EasyMock.replay(gameBoard, vertexGraph, mockedRoadGraph,mockedPlayer1,mockedHand1);
         
         //Create Hashmap
-        HashMap<Player,Resource[]> testHash = new HashMap<Player,Resource[]>();
+        HashMap<Player,Resource[]> testHash = new HashMap<>();
         testHash.put(mockedPlayer1, resources);
 
         //Call method
@@ -835,15 +838,16 @@ public class GameTest {
         } catch( Exception e) {
             //Make sure nothing is thrown
             e.printStackTrace();
-            assertTrue(false);
+            fail();
         }
         
         //Verify
         EasyMock.verify(gameBoard, vertexGraph, mockedRoadGraph,mockedPlayer1,mockedHand1);
     }
+    
     @Test 
     public void testDropCards_ManyPlayer_MixCard() {
-        //Initilize Objects
+        
         GameBoard gameBoard =  EasyMock.createStrictMock(GameBoard.class);
         VertexGraph vertexGraph = EasyMock.createStrictMock(VertexGraph.class);
         RoadGraph mockedRoadGraph = EasyMock.createStrictMock(RoadGraph.class);
@@ -859,7 +863,7 @@ public class GameTest {
         mockedPlayer2.hand = mockedHand2;
         //max cards possible(22 of each)
         mockedPlayer3.hand = mockedHand3;
-        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph,null);
+        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph, null, null);
        
         //Setup resources
         Resource[] resources1 = new Resource[0];
@@ -879,7 +883,7 @@ public class GameTest {
         EasyMock.replay(gameBoard, vertexGraph, mockedRoadGraph,mockedPlayer1,mockedHand1,mockedPlayer2,mockedHand2,mockedPlayer3,mockedHand3);
         
         //Create Hashmap
-        HashMap<Player,Resource[]> testHash = new HashMap<Player,Resource[]>();
+        HashMap<Player,Resource[]> testHash = new HashMap<>();
         testHash.put(mockedPlayer1, resources1);
         testHash.put(mockedPlayer2, resources2);
         testHash.put(mockedPlayer3, resources3);
@@ -890,15 +894,16 @@ public class GameTest {
         } catch( Exception e) {
             //Make sure nothing is thrown
             e.printStackTrace();
-            assertTrue(false);
+            fail();
         }
         
         //Verify
         EasyMock.verify(gameBoard, vertexGraph, mockedRoadGraph,mockedPlayer1,mockedHand1,mockedPlayer2,mockedHand2,mockedPlayer3,mockedHand3);
     }
+    
     @Test 
     public void testDropCards_ManyPlayer_SameResources() {
-        //Initilize Objects
+        
         GameBoard gameBoard =  EasyMock.createStrictMock(GameBoard.class);
         VertexGraph vertexGraph = EasyMock.createStrictMock(VertexGraph.class);
         RoadGraph mockedRoadGraph = EasyMock.createStrictMock(RoadGraph.class);
@@ -922,7 +927,7 @@ public class GameTest {
         mockedPlayer5.hand = mockedHand5;
         mockedPlayer6.hand = mockedHand6;
 
-        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph,null);
+        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph, null, null);
        
         //Setup resources
         Resource[] resources = {Resource.WOOL};
@@ -939,7 +944,7 @@ public class GameTest {
         ,mockedPlayer4,mockedHand4,mockedPlayer5,mockedHand5,mockedPlayer6,mockedHand6);
         
         //Create Hashmap
-        HashMap<Player,Resource[]> testHash = new HashMap<Player,Resource[]>();
+        HashMap<Player,Resource[]> testHash = new HashMap<>();
         testHash.put(mockedPlayer1, resources);
         testHash.put(mockedPlayer2, resources);
         testHash.put(mockedPlayer3, resources);
@@ -953,23 +958,24 @@ public class GameTest {
         } catch( Exception e) {
             //Make sure nothing is thrown
             e.printStackTrace();
-            assertTrue(false);
+            fail();
         }
         
         //Verify
         EasyMock.verify(gameBoard, vertexGraph, mockedRoadGraph,mockedPlayer1,mockedHand1,mockedPlayer2,mockedHand2,mockedPlayer3,mockedHand3
         ,mockedPlayer4,mockedHand4,mockedPlayer5,mockedHand5,mockedPlayer6,mockedHand6);
     }
+    
     @Test 
     void testDropCards_1player_Invalid() {
-        //Initilize Objects
+        
         GameBoard gameBoard =  EasyMock.createStrictMock(GameBoard.class);
         VertexGraph vertexGraph = EasyMock.createStrictMock(VertexGraph.class);
         RoadGraph mockedRoadGraph = EasyMock.createStrictMock(RoadGraph.class);
         Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
         Hand mockedHand1 = EasyMock.createStrictMock(Hand.class);
         mockedPlayer1.hand = mockedHand1;
-        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph,null);
+        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph, null, null);
        
         //Expect 
         Resource[] resources = {Resource.WOOL};
@@ -978,23 +984,24 @@ public class GameTest {
         EasyMock.replay(gameBoard, vertexGraph, mockedRoadGraph,mockedPlayer1,mockedHand1);
         
         //Create Hashmap
-        HashMap<Player,Resource[]> testHash = new HashMap<Player,Resource[]>();
+        HashMap<Player,Resource[]> testHash = new HashMap<>();
         testHash.put(mockedPlayer1, resources);
 
         //Call method
-       assertThrows(IllegalArgumentException.class, ()->{game.dropCards(testHash);},"DropCards was called on player with not enough cards - desync issue"); 
+       assertThrows(IllegalArgumentException.class, ()-> game.dropCards(testHash),"DropCards was called on player with not enough cards - synchronization issue");
            
         //Verify
         EasyMock.verify(gameBoard, vertexGraph, mockedRoadGraph,mockedPlayer1,mockedHand1);
     }
-    //move robber
+    
+    // move robber
     @Test 
     void testMoveRobber_without() {
-        //Initilize Objects
+        
         GameBoard gameBoard =  EasyMock.createStrictMock(GameBoard.class);
         Tile tile1 = EasyMock.createStrictMock(Tile.class);
         Tile tile2 = EasyMock.createStrictMock(Tile.class);
-        Game game = new Game(gameBoard, null, null ,null);
+        Game game = new Game(gameBoard, null, null , null, null);
         int tileNum = 0;
 
         //Expect 
@@ -1012,18 +1019,19 @@ public class GameTest {
         try{ game.moveRobber(tileNum); }
         catch(Exception e) {
             e.printStackTrace();
-            assertTrue(false);
+            fail();
         }
 
         //Verify
         EasyMock.verify(gameBoard, tile1, tile2);
     }
+    
     @Test 
     void testMoveRobber_with() {
-        //Initilize Objects
+        
         GameBoard gameBoard =  EasyMock.createStrictMock(GameBoard.class);
         Tile tile1 = EasyMock.createStrictMock(Tile.class);
-        Game game = new Game(gameBoard, null, null ,null);
+        Game game = new Game(gameBoard, null, null , null, null);
         int tileNum = 0;
 
         //Expect 
@@ -1034,37 +1042,38 @@ public class GameTest {
         EasyMock.replay(gameBoard, tile1);
         
         //Call method
-        assertThrows(InvalidPlacementException.class,()->{game.moveRobber(tileNum); });
+        assertThrows(InvalidPlacementException.class,()-> game.moveRobber(tileNum));
 
         //Verify
         EasyMock.verify(gameBoard, tile1);
     }
+    
     @Test 
     void testMoveRobber_invalid() {
-        //Initilize Objects
+        
         GameBoard gameBoard =  EasyMock.createStrictMock(GameBoard.class);
-        Game game = new Game(gameBoard, null, null ,null);
+        Game game = new Game(gameBoard, null, null , null, null);
 
         //Replay
         EasyMock.replay(gameBoard);
         
         //Call method
-        assertThrows(RuntimeException.class,()->{game.moveRobber(-1); });
-        assertThrows(RuntimeException.class,()->{game.moveRobber(19); });
+        assertThrows(RuntimeException.class,()-> game.moveRobber(-1));
+        assertThrows(RuntimeException.class,()-> game.moveRobber(19));
 
         //Verify
         EasyMock.verify(gameBoard);
     }
-    //Steal from player
+    
+    // Steal from player
     @Test 
     void test_StealFromPlayer_None() {
-        //Initilize Objects
+        
         GameBoard gameBoard =  EasyMock.createStrictMock(GameBoard.class);
         Player mockedRobber = EasyMock.createStrictMock(Player.class);
         Player mockedVictim = EasyMock.createStrictMock(Player.class);
-        Hand mockedHand = EasyMock.createStrictMock(Hand.class);
-        mockedVictim.hand = mockedHand;
-        Game game = new Game(gameBoard, null, null ,null);
+        mockedVictim.hand = EasyMock.createStrictMock(Hand.class);
+        Game game = new Game(gameBoard, null, null , null, null);
 
         //Expect 
         EasyMock.expect(mockedVictim.hand.getResourceCardCount()).andReturn(0);
@@ -1072,18 +1081,19 @@ public class GameTest {
         EasyMock.replay(gameBoard, mockedRobber, mockedVictim);
         
         //Call method
-        assertThrows(NotEnoughResourcesException.class, ()->{game.stealFromPlayer(mockedRobber,mockedVictim);});
+        assertThrows(NotEnoughResourcesException.class, ()-> game.stealFromPlayer(mockedRobber,mockedVictim));
         
         //Verify
         EasyMock.verify(gameBoard, mockedRobber, mockedVictim);
     }
+    
     @Test 
     void test_StealFromPlayer_One() {
-        //Initilize Objects
+        
         GameBoard gameBoard =  EasyMock.createStrictMock(GameBoard.class);
         Player robber = new Player(1);
         Player robbed = new Player(2);
-        Game game = new Game(gameBoard, null, null ,null);
+        Game game = new Game(gameBoard, null, null , null, null);
 
         EasyMock.replay(gameBoard);
         robbed.hand.addResource(Resource.WOOL, 1);
@@ -1095,7 +1105,7 @@ public class GameTest {
         try{ game.stealFromPlayer(robber,robbed); }
         catch(Exception e) {
             e.printStackTrace();
-            assertTrue(false);
+            fail();
         }
         
         int robberAfter = robber.hand.getResourceCardCount();
@@ -1107,13 +1117,14 @@ public class GameTest {
         assertEquals(robbedAfter,0);
         EasyMock.verify(gameBoard);
     }
+    
     @Test 
     void test_StealFromPlayer_Many() {
-        //Initilize Objects
+        
         GameBoard gameBoard =  EasyMock.createStrictMock(GameBoard.class);
         Player robber = new Player(1);
         Player robbed = new Player(2);
-        Game game = new Game(gameBoard, null, null ,null);
+        Game game = new Game(gameBoard, null, null , null, null);
 
         EasyMock.replay(gameBoard);
         robbed.hand.addResources(new Resource[]{Resource.WOOL,Resource.BRICK,Resource.LUMBER});
@@ -1125,7 +1136,7 @@ public class GameTest {
         try{ game.stealFromPlayer(robber,robbed); }
         catch(Exception e) {
             e.printStackTrace();
-            assertTrue(false);
+            fail();
         }
         
         int robberAfter = robber.hand.getResourceCardCount();
@@ -1137,14 +1148,15 @@ public class GameTest {
         assertEquals(robbedAfter,2);
         EasyMock.verify(gameBoard);
     }
-    //Get owners from tile
+    
+    // Get owners from tile
     @Test 
     void test_GetPlayersFromTile_None() {
-        //Initilize Objects
+        
         GameBoard gameBoard =  EasyMock.createStrictMock(GameBoard.class);
         VertexGraph mockVertexGraph = EasyMock.createStrictMock(VertexGraph.class);
         Vertex mockVertex = EasyMock.createStrictMock(Vertex.class);
-        Game game = new Game(gameBoard, mockVertexGraph, null ,null);
+        Game game = new Game(gameBoard, mockVertexGraph, null, null, null);
         int tileId = 0;
 
         //Expect
@@ -1169,14 +1181,15 @@ public class GameTest {
         assertEquals(actual.length, 0);
         EasyMock.verify(gameBoard, mockVertexGraph, mockVertex);
     }
+    
     @Test 
     void test_GetPlayersFromTile_One() {
-        //Initilize Objects
+        
         GameBoard gameBoard =  EasyMock.createStrictMock(GameBoard.class);
         VertexGraph mockVertexGraph = EasyMock.createStrictMock(VertexGraph.class);
         Vertex mockVertex = EasyMock.createStrictMock(Vertex.class);
         Player mockPlayer = EasyMock.createStrictMock(Player.class);
-        Game game = new Game(gameBoard, mockVertexGraph, null ,null);
+        Game game = new Game(gameBoard, mockVertexGraph, null, null, null);
         int tileId = 0;
 
         //Expect
@@ -1196,23 +1209,24 @@ public class GameTest {
         try{actual = game.getPlayersFromTile(tileId); }
         catch(Exception e) {
             e.printStackTrace();
-            assertTrue(false);
+            fail();
         }
 
         assertEquals(actual.length, 1);
         assertEquals(actual[0], mockPlayer);
         EasyMock.verify(gameBoard, mockVertexGraph, mockVertex, mockPlayer);
     }
+    
     @Test 
     void test_GetPlayersFromTile_ManyFromOne() {
-        //Initilize Objects
+        
         GameBoard gameBoard =  EasyMock.createStrictMock(GameBoard.class);
         VertexGraph mockVertexGraph = EasyMock.createStrictMock(VertexGraph.class);
         Vertex mockVertex1 = EasyMock.createStrictMock(Vertex.class);
         Vertex mockVertex2 = EasyMock.createStrictMock(Vertex.class);
         Vertex mockVertex3 = EasyMock.createStrictMock(Vertex.class);
         Player mockPlayer = EasyMock.createStrictMock(Player.class);
-        Game game = new Game(gameBoard, mockVertexGraph, null ,null);
+        Game game = new Game(gameBoard, mockVertexGraph, null, null, null);
         int tileId = 0;
 
         //Expect
@@ -1243,23 +1257,24 @@ public class GameTest {
         try{actual = game.getPlayersFromTile(tileId); }
         catch(Exception e) {
             e.printStackTrace();
-            assertTrue(false);
+            fail();
         }
 
         assertEquals(actual.length, 1);
         assertEquals(actual[0], mockPlayer);
         EasyMock.verify(gameBoard, mockVertexGraph, mockVertex1,mockVertex2,mockVertex3, mockPlayer);
     }
+    
     @Test 
     void test_GetPlayersFromTile_2From2() {
-        //Initilize Objects
+        
         GameBoard gameBoard =  EasyMock.createStrictMock(GameBoard.class);
         VertexGraph mockVertexGraph = EasyMock.createStrictMock(VertexGraph.class);
         Vertex mockVertex1 = EasyMock.createStrictMock(Vertex.class);
         Vertex mockVertex2 = EasyMock.createStrictMock(Vertex.class);
         Player mockPlayer1 = EasyMock.createStrictMock(Player.class);
         Player mockPlayer2 = EasyMock.createStrictMock(Player.class);
-        Game game = new Game(gameBoard, mockVertexGraph, null ,null);
+        Game game = new Game(gameBoard, mockVertexGraph, null, null, null);
         int tileId = 0;
 
         //Expect
@@ -1284,7 +1299,7 @@ public class GameTest {
         try{actual = game.getPlayersFromTile(tileId); }
         catch(Exception e) {
             e.printStackTrace();
-            assertTrue(false);
+            fail();
         }
 
         assertEquals(actual.length, 2);
@@ -1292,9 +1307,9 @@ public class GameTest {
         assertEquals(actual[1], mockPlayer2);
         EasyMock.verify(gameBoard, mockVertexGraph, mockVertex1,mockVertex2,mockPlayer1, mockPlayer2);
     }
+    
     @Test 
     void test_GetPlayersFromTile_6Players() {
-        //Initilize Objects
         GameBoard gameBoard =  EasyMock.createStrictMock(GameBoard.class);
         VertexGraph mockVertexGraph = EasyMock.createStrictMock(VertexGraph.class);
         Vertex mockVertex1 = EasyMock.createStrictMock(Vertex.class);
@@ -1309,7 +1324,7 @@ public class GameTest {
         Player mockPlayer4 = EasyMock.createStrictMock(Player.class);
         Player mockPlayer5 = EasyMock.createStrictMock(Player.class);
         Player mockPlayer6 = EasyMock.createStrictMock(Player.class);
-        Game game = new Game(gameBoard, mockVertexGraph, null ,null);
+        Game game = new Game(gameBoard, mockVertexGraph, null, null, null);
         int tileId = 0;
 
         //Expect
@@ -1337,11 +1352,11 @@ public class GameTest {
          EasyMock.expect(mockVertexGraph.getVertex(3)).andReturn(mockVertex4);
          EasyMock.expect(mockVertex4.isOccupied()).andReturn(true);
          EasyMock.expect(mockVertex4.getOwner()).andReturn(mockPlayer4);
-         //Fith
+         // Fifth
          EasyMock.expect(mockVertexGraph.getVertex(4)).andReturn(mockVertex5);
          EasyMock.expect(mockVertex5.isOccupied()).andReturn(true);
          EasyMock.expect(mockVertex5.getOwner()).andReturn(mockPlayer5);
-         //Sixth
+         // Sixth
          EasyMock.expect(mockVertexGraph.getVertex(5)).andReturn(mockVertex6);
          EasyMock.expect(mockVertex6.isOccupied()).andReturn(true);
          EasyMock.expect(mockVertex6.getOwner()).andReturn(mockPlayer6);
@@ -1356,7 +1371,7 @@ public class GameTest {
         try{actual = game.getPlayersFromTile(tileId); }
         catch(Exception e) {
             e.printStackTrace();
-            assertTrue(false);
+            fail();
         }
 
         assertEquals(actual.length, 6);
@@ -1369,20 +1384,21 @@ public class GameTest {
         EasyMock.verify(gameBoard, mockVertexGraph, mockVertex1,mockVertex2, mockVertex3, mockVertex4, mockVertex5, mockVertex6,
         mockPlayer1, mockPlayer2, mockPlayer3, mockPlayer4, mockPlayer5, mockPlayer6);
     }
+    
     @Test 
     void test_GetPlayersFromTile_Error() {
-        //Initilize Objects
+        
         GameBoard gameBoard =  EasyMock.createStrictMock(GameBoard.class);
         VertexGraph mockVertexGraph = EasyMock.createStrictMock(VertexGraph.class);
         Vertex mockVertex = EasyMock.createStrictMock(Vertex.class);
-        Game game = new Game(gameBoard, mockVertexGraph, null ,null);
+        Game game = new Game(gameBoard, mockVertexGraph, null, null, null);
 
         //Replay
         EasyMock.replay(gameBoard, mockVertexGraph, mockVertex);
                 
         //Call method
-        assertThrows(IllegalArgumentException.class,()->{game.getPlayersFromTile(-1);});
-        assertThrows(IllegalArgumentException.class,()->{game.getPlayersFromTile(19);});
+        assertThrows(IllegalArgumentException.class,()-> game.getPlayersFromTile(-1));
+        assertThrows(IllegalArgumentException.class,()-> game.getPlayersFromTile(19));
         
         EasyMock.verify(gameBoard,mockVertexGraph, mockVertex);
     }

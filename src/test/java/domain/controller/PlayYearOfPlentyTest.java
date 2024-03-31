@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import domain.controller.Controller;
-import domain.controller.SuccessCode;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
@@ -51,7 +49,7 @@ public class PlayYearOfPlentyTest {
 
         // assert on expected results
         assertEquals(SuccessCode.SUCCESS, actual);
-        assertFalse(controller.getDevCardsEnabled()); // dev cards are now disabled becasuse we can only play one per turn
+        assertFalse(controller.getDevCardsEnabled()); // dev cards are now disabled because we can only play one per turn
     }
 
     @Test
@@ -129,7 +127,7 @@ public class PlayYearOfPlentyTest {
     }
 
     @Test
-    public void testPlayYearOfPlentyCardsDisabled() throws CardNotPlayableException {
+    public void testPlayYearOfPlentyCardsDisabled() {
         Game mockedGame = EasyMock.createMock(Game.class);
         Player mockedPlayer1 = EasyMock.createMock(Player.class);
         Player mockedPlayer2 = EasyMock.createMock(Player.class);

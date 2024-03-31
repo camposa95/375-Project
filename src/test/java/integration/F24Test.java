@@ -9,6 +9,8 @@ import java.time.Duration;
 import java.util.concurrent.atomic.AtomicReference;
 
 import data.GameLoader;
+import domain.bank.Bank;
+import domain.player.HarvestBooster;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -34,10 +36,10 @@ public class F24Test {
     private static final int POINTS_FROM_SETUP = 2;
 
     private static final Resource[] RESOURCES_FOR_ROAD = {Resource.BRICK, Resource.LUMBER};
-    private static final Resource[] RESOURCES_FOR_DEVCARD = {Resource.ORE, Resource.WOOL, Resource.GRAIN};
-    private static final Resource[] RESOURCES_FOR_SETTLMENT = {Resource.BRICK, Resource.LUMBER, Resource.WOOL, Resource.GRAIN};
+    private static final Resource[] RESOURCES_FOR_DEV_CARD = {Resource.ORE, Resource.WOOL, Resource.GRAIN};
+    private static final Resource[] RESOURCES_FOR_SETTLEMENT = {Resource.BRICK, Resource.LUMBER, Resource.WOOL, Resource.GRAIN};
     
-    private void loopToBeginging(final Controller controller) {
+    private void loopToBeginning(final Controller controller) {
         for (int i = 0; i < 4; i++) {
             controller.setState(GameState.DEFAULT);
             assertEquals(SuccessCode.SUCCESS, controller.endTurn());
@@ -48,38 +50,35 @@ public class F24Test {
     public void testWinClickedRoad() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players. Note: 3 players is enough for our purposes here
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // Note: we assume everything about setup was correct because it was tested earlier
 
         // Note: at this point the players would have gotten some starter resources during the 
         // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the players's hand and assert that the players have zero resources to controll
+        // clear out the players' hand and assert that the players have zero resources to control
         // the test more
         for (Player player: players) {
             for (Resource resource: Resource.values()) {
@@ -95,7 +94,7 @@ public class F24Test {
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
 
-        // -------------------------- Player 1 build enough to get the longes road ---------------------------
+        // -------------------------- Player 1 build enough to get the longest road ---------------------------
         // Note here the controller default to player 1 first
         // give the player enough resources to build 4 roads
         for (int i = 0; i < 4; i++) {
@@ -128,7 +127,7 @@ public class F24Test {
         assertEquals(player1, controller.getCurrentPlayer());
 
         // Note: it doesn't matter if we get longest road first or by overtaking, or even that we got
-        // longest road at all because the controller method will detect the win regardless of what caused it.
+        // the longest road at all because the controller method will detect the win regardless of what caused it.
         // The exact source of the points don't really matter in the scope of this test. The only thing that mattered
         // is that we got enough points to win from the click
     }
@@ -137,31 +136,28 @@ public class F24Test {
     public void testWinClickedVertex() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players. Note: 3 players is enough for our purposes here
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
@@ -182,10 +178,10 @@ public class F24Test {
         assertEquals(0, player1.hand.getResourceCardCount());
     
         // now make sure the player has the enough resources
-        player1.hand.addResources(RESOURCES_FOR_SETTLMENT);
+        player1.hand.addResources(RESOURCES_FOR_SETTLEMENT);
 
 
-        // give the player another road so we can follow the distance rule
+        // give the player another road, so we can follow the distance rule
         roads.getRoad(24).setOwner(player1);
 
         // up to this point we haven't gained any points other that setup so assert on that
@@ -198,7 +194,7 @@ public class F24Test {
 
         // make sure we the current player is the right one
         assertEquals(player1, controller.getCurrentPlayer());
-        // here is the click to buy a new settlment
+        // here is the click to buy a new settlement
         int newVertexId = 17; // use a valid id
         controller.setState(GameState.BUILD_SETTLEMENT);
         assertEquals(SuccessCode.GAME_WIN, controller.clickedVertex(newVertexId));
@@ -206,44 +202,41 @@ public class F24Test {
         // assert that the player who won (the current player) is the one who clicked 
         assertEquals(player1, controller.getCurrentPlayer());
 
-        // Note: again here, it doesn't really matter that we won because of the settlment build.
+        // Note: again here, it doesn't really matter that we won because of the settlement build.
         // What matters is that the clicked vertex method is able to detect that the player gained
         // enough points to win by going that click. The specific action that caused the points to
         // increase does not matter as long as something did it. For example, this could be from
-        // building a settlment, upgrading one to a city, or breaking another persons road and 
+        // building a settlement, upgrading one to a city, or breaking another persons road and 
         // stealing their longest road card. All of these actions cause point gains and are tested
-        // in thier respespective test classes
+        // in their respective test classes
     }
 
     @Test
     public void testWinClickedBuyDevCard() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players. Note: 3 players is enough for our purposes here
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
@@ -272,15 +265,12 @@ public class F24Test {
 
         // Here we essentially buy dev cards until we gain a point, ie the victory point card was bought
         SuccessCode result;
-        while(true) {
-            player1.hand.addResources(RESOURCES_FOR_DEVCARD);
+        do {
+            player1.hand.addResources(RESOURCES_FOR_DEV_CARD);
             result = controller.clickedBuyDevCard();
 
             // if we gained a point exit the loop
-            if (player1.getVictoryPoints() == 10) {
-                break;
-            }
-        }
+        } while (player1.getVictoryPoints() != 10);
 
         // assert that the win was detected
         assertEquals(SuccessCode.GAME_WIN, result);
@@ -293,31 +283,28 @@ public class F24Test {
     public void testLargestArmyClaimedFirst() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players. Note: 3 players is enough for our purposes here
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // Note: we assume everything about setup was correct because it was tested earlier
@@ -344,9 +331,9 @@ public class F24Test {
         assertEquals(player1, controller.getCurrentPlayer());
 
         // give the player some resources
-        player1.hand.addResources(RESOURCES_FOR_DEVCARD);
-        player1.hand.addResources(RESOURCES_FOR_DEVCARD);
-        player1.hand.addResources(RESOURCES_FOR_DEVCARD);
+        player1.hand.addResources(RESOURCES_FOR_DEV_CARD);
+        player1.hand.addResources(RESOURCES_FOR_DEV_CARD);
+        player1.hand.addResources(RESOURCES_FOR_DEV_CARD);
 
         // player buys three cards
         assertTrue(player1.purchaseDevCard(DevCard.KNIGHT));
@@ -354,17 +341,17 @@ public class F24Test {
         assertTrue(player1.purchaseDevCard(DevCard.KNIGHT));
 
         // can't use bought card on same turn, so end turn until we are back at player 1
-        loopToBeginging(controller);
+        loopToBeginning(controller);
         assertEquals(player1, controller.getCurrentPlayer());
         assertEquals(SuccessCode.SUCCESS, controller.playKnightCard());
         
-        // can only use one card per turn so loop back to begining
-        loopToBeginging(controller);
+        // can only use one card per turn so loop back to beginning
+        loopToBeginning(controller);
         assertEquals(player1, controller.getCurrentPlayer());
         assertEquals(SuccessCode.SUCCESS, controller.playKnightCard());
 
-        // can only use one card per turn so loop back to begining
-        loopToBeginging(controller);
+        // can only use one card per turn so loop back to beginning
+        loopToBeginning(controller);
         assertEquals(player1, controller.getCurrentPlayer());
 
         // at this point assume the player has 9 points, again the exact source doesn't matter
@@ -376,7 +363,7 @@ public class F24Test {
         // assert that the player who won (the current player) is the one who clicked 
         assertEquals(player1, controller.getCurrentPlayer());
 
-        // Note: as usual, the fact that we gained largest army for the first time doesn't matter as long
+        // Note: as usual, the fact that we gained the largest army for the first time doesn't matter as long
         // as the click caused us to gain enough points to win
     }
 
@@ -384,31 +371,28 @@ public class F24Test {
     public void testWinClickedEndTurn() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players. Note: 3 players is enough for our purposes here
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
@@ -445,45 +429,42 @@ public class F24Test {
         // as the controller is able to do win detection upon it becoming the next persons turn. In reality
         // though this is only possible if the player2 got the longest road from a third party road break on
         // the player who currently had it. However, if we were to adjust the game rules such that there are
-        // more ways to gain points not on yout turn this provides a nice abstraction
+        // more ways to gain points not on your turn this provides a nice abstraction
     }
 
     @Test
     public void testNoWinOnNotYourTurn() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players. Note: 3 players is enough for our purposes here
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // Note: we assume everything about setup was correct because it was tested earlier
 
         // Note: at this point the players would have gotten some starter resources during the 
         // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the players's hand and assert that the players have zero resources to controll
+        // clear out the players' hand and assert that the players have zero resources to control
         // the test more
         for (Player player: players) {
             for (Resource resource: Resource.values()) {
@@ -574,13 +555,13 @@ public class F24Test {
         controller.setState(GameState.BUILD_ROAD);
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(36));
 
-        // give the player enough resources to build a settlment
-        controller.getCurrentPlayer().hand.addResources(RESOURCES_FOR_SETTLMENT);
+        // give the player enough resources to build a settlement
+        controller.getCurrentPlayer().hand.addResources(RESOURCES_FOR_SETTLEMENT);
 
         // Directly before the significant click assume player 3 has 9 points
         player3.setVictoryPoints(9);
 
-        // build the settlment to break player1's path
+        // build the settlement to break player1's path
         // after this the player 1 has road max 4 long, player 2 hand path max 4 long, and player 3 has path 5 long
         controller.setState(GameState.BUILD_SETTLEMENT);
         SuccessCode result = controller.clickedVertex(22);

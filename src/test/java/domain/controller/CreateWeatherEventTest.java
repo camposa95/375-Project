@@ -1,7 +1,6 @@
 package domain.controller;
 
 import domain.bank.Resource;
-import domain.controller.Controller;
 import domain.game.Game;
 import domain.game.GameType;
 import domain.player.BoostType;
@@ -20,9 +19,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class CreateWeatherEventTest {
 
     @Test
-    public void test_createWeatherEventSpread(){
+    public void test_createWeatherEventSpread() {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
-        Player player = new Player(1);
+        Player player = new Player(1, new HarvestBooster());
 
         GameType gameType = GameType.Advanced;
         Controller controller = new Controller(mockedGame, new Player[] {player}, gameType);

@@ -1,18 +1,13 @@
 package domain.graphs;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.Arrays;
-
 import data.GameLoader;
-import domain.graphs.Vertex;
-import domain.graphs.VertexGraph;
 import org.junit.jupiter.api.Test;
 
 import domain.game.GameType;
 import domain.player.Player;
 import domain.bank.Resource;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BuildVertexTest {
 
@@ -27,7 +22,7 @@ public class BuildVertexTest {
         // get its trade boosts before the build
         Resource[] boostsBefore = player.getTradeBoosts();
         Resource[] expectedBoostsBefore = {};
-        assertTrue(Arrays.equals(expectedBoostsBefore, boostsBefore));
+        assertArrayEquals(expectedBoostsBefore, boostsBefore);
 
         // grab a vertex not adjacent to a port
         Vertex testVertex = vertexes.getVertex(20);
@@ -39,13 +34,12 @@ public class BuildVertexTest {
         Resource[] boostsAfter = player.getTradeBoosts();
 
         // assert that the vertex is owned by the player
-        Player expectedOwner = player;
         Player actualOwner = testVertex.getOwner();
-        assertEquals(expectedOwner, actualOwner);
+        assertEquals(player, actualOwner);
 
 
         // assert that the player has no change to its trade boosts available
-        assertTrue(Arrays.equals(boostsBefore, boostsAfter));
+        assertArrayEquals(boostsBefore, boostsAfter);
     }
 
     @Test
@@ -60,7 +54,7 @@ public class BuildVertexTest {
         Resource[] boostsBefore = player.getTradeBoosts();
         // assert that the player had not boosts before
         Resource[] expectedBoostsBefore = {};
-        assertTrue(Arrays.equals(expectedBoostsBefore, boostsBefore));
+        assertArrayEquals(expectedBoostsBefore, boostsBefore);
 
         // grab a vertex adjacent to port with brick
         Vertex testVertex = vertexes.getVertex(28);
@@ -69,15 +63,14 @@ public class BuildVertexTest {
         testVertex.build(player);
 
         // assert that the vertex is owned by the player
-        Player expectedOwner = player;
         Player actualOwner = testVertex.getOwner();
-        assertEquals(expectedOwner, actualOwner);
+        assertEquals(player, actualOwner);
 
 
-        // assert that the playerhas the expected boosts after
+        // assert that the player has the expected boosts after
         Resource[] expectedBoostsAfter = {Resource.BRICK};
         Resource[] boostsAfter = player.getTradeBoosts();
-        assertTrue(Arrays.equals(expectedBoostsAfter, boostsAfter));
+        assertArrayEquals(expectedBoostsAfter, boostsAfter);
     }
 
     @Test
@@ -92,7 +85,7 @@ public class BuildVertexTest {
         Resource[] boostsBefore = player.getTradeBoosts();
         // assert that the player had not boosts before
         Resource[] expectedBoostsBefore = {};
-        assertTrue(Arrays.equals(expectedBoostsBefore, boostsBefore));
+        assertArrayEquals(expectedBoostsBefore, boostsBefore);
 
         // grab a vertex adjacent to port with brick
         Vertex testVertex = vertexes.getVertex(3);
@@ -101,15 +94,14 @@ public class BuildVertexTest {
         testVertex.build(player);
 
         // assert that the vertex is owned by the player
-        Player expectedOwner = player;
         Player actualOwner = testVertex.getOwner();
-        assertEquals(expectedOwner, actualOwner);
+        assertEquals(player, actualOwner);
 
 
-        // assert that the playerhas the expected boosts after
+        // assert that the player has the expected boosts after
         Resource[] expectedBoostsAfter = {Resource.GRAIN};
         Resource[] boostsAfter = player.getTradeBoosts();
-        assertTrue(Arrays.equals(expectedBoostsAfter, boostsAfter));
+        assertArrayEquals(expectedBoostsAfter, boostsAfter);
     }
 
     @Test
@@ -124,7 +116,7 @@ public class BuildVertexTest {
         Resource[] boostsBefore = player.getTradeBoosts();
         // assert that the player had not boosts before
         Resource[] expectedBoostsBefore = {};
-        assertTrue(Arrays.equals(expectedBoostsBefore, boostsBefore));
+        assertArrayEquals(expectedBoostsBefore, boostsBefore);
 
         // grab a vertex adjacent to port with brick
         Vertex testVertex = vertexes.getVertex(14);
@@ -133,15 +125,14 @@ public class BuildVertexTest {
         testVertex.build(player);
 
         // assert that the vertex is owned by the player
-        Player expectedOwner = player;
         Player actualOwner = testVertex.getOwner();
-        assertEquals(expectedOwner, actualOwner);
+        assertEquals(player, actualOwner);
 
 
-        // assert that the playerhas the expected boosts after
+        // assert that the player has the expected boosts after
         Resource[] expectedBoostsAfter = {Resource.WOOL};
         Resource[] boostsAfter = player.getTradeBoosts();
-        assertTrue(Arrays.equals(expectedBoostsAfter, boostsAfter));
+        assertArrayEquals(expectedBoostsAfter, boostsAfter);
     }
 
     @Test
@@ -156,7 +147,7 @@ public class BuildVertexTest {
         Resource[] boostsBefore = player.getTradeBoosts();
         // assert that the player had not boosts before
         Resource[] expectedBoostsBefore = {};
-        assertTrue(Arrays.equals(expectedBoostsBefore, boostsBefore));
+        assertArrayEquals(expectedBoostsBefore, boostsBefore);
 
         // grab a vertex adjacent to port with brick
         Vertex testVertex = vertexes.getVertex(45);
@@ -165,15 +156,14 @@ public class BuildVertexTest {
         testVertex.build(player);
 
         // assert that the vertex is owned by the player
-        Player expectedOwner = player;
         Player actualOwner = testVertex.getOwner();
-        assertEquals(expectedOwner, actualOwner);
+        assertEquals(player, actualOwner);
 
 
-        // assert that the playerhas the expected boosts after
+        // assert that the player has the expected boosts after
         Resource[] expectedBoostsAfter = {Resource.ORE};
         Resource[] boostsAfter = player.getTradeBoosts();
-        assertTrue(Arrays.equals(expectedBoostsAfter, boostsAfter));
+        assertArrayEquals(expectedBoostsAfter, boostsAfter);
     }
 
     @Test
@@ -188,7 +178,7 @@ public class BuildVertexTest {
         Resource[] boostsBefore = player.getTradeBoosts();
         // assert that the player had not boosts before
         Resource[] expectedBoostsBefore = {};
-        assertTrue(Arrays.equals(expectedBoostsBefore, boostsBefore));
+        assertArrayEquals(expectedBoostsBefore, boostsBefore);
 
         // grab a vertex adjacent to port with brick
         Vertex testVertex = vertexes.getVertex(17);
@@ -197,15 +187,14 @@ public class BuildVertexTest {
         testVertex.build(player);
 
         // assert that the vertex is owned by the player
-        Player expectedOwner = player;
         Player actualOwner = testVertex.getOwner();
-        assertEquals(expectedOwner, actualOwner);
+        assertEquals(player, actualOwner);
 
 
-        // assert that the playerhas the expected boosts after
+        // assert that the player has the expected boosts after
         Resource[] expectedBoostsAfter = {Resource.LUMBER};
         Resource[] boostsAfter = player.getTradeBoosts();
-        assertTrue(Arrays.equals(expectedBoostsAfter, boostsAfter));
+        assertArrayEquals(expectedBoostsAfter, boostsAfter);
     }
 
     @Test
@@ -220,7 +209,7 @@ public class BuildVertexTest {
         Resource[] boostsBefore = player.getTradeBoosts();
         // assert that the player had not boosts before
         Resource[] expectedBoostsBefore = {};
-        assertTrue(Arrays.equals(expectedBoostsBefore, boostsBefore));
+        assertArrayEquals(expectedBoostsBefore, boostsBefore);
 
         // grab a vertex adjacent to port with brick
         Vertex testVertex = vertexes.getVertex(50);
@@ -229,15 +218,14 @@ public class BuildVertexTest {
         testVertex.build(player);
 
         // assert that the vertex is owned by the player
-        Player expectedOwner = player;
         Player actualOwner = testVertex.getOwner();
-        assertEquals(expectedOwner, actualOwner);
+        assertEquals(player, actualOwner);
 
 
-        // assert that the playerhas the expected boosts after
+        // assert that the player has the expected boosts after
         Resource[] expectedBoostsAfter = {Resource.ANY};
         Resource[] boostsAfter = player.getTradeBoosts();
-        assertTrue(Arrays.equals(expectedBoostsAfter, boostsAfter));
+        assertArrayEquals(expectedBoostsAfter, boostsAfter);
     }
 
     @Test
@@ -253,7 +241,7 @@ public class BuildVertexTest {
         Resource[] boostsBefore = player.getTradeBoosts();
         // assert that the player had not boosts before
         Resource[] expectedBoostsBefore = {Resource.GRAIN};
-        assertTrue(Arrays.equals(expectedBoostsBefore, boostsBefore));
+        assertArrayEquals(expectedBoostsBefore, boostsBefore);
 
         // grab a vertex adjacent to port with lumber
         Vertex testVertex = vertexes.getVertex(17);
@@ -262,15 +250,14 @@ public class BuildVertexTest {
         testVertex.build(player);
 
         // assert that the vertex is owned by the player
-        Player expectedOwner = player;
         Player actualOwner = testVertex.getOwner();
-        assertEquals(expectedOwner, actualOwner);
+        assertEquals(player, actualOwner);
 
 
-        // assert that the playerhas the expected boosts after
+        // assert that the player has the expected boosts after
         Resource[] expectedBoostsAfter = {Resource.GRAIN, Resource.LUMBER};
         Resource[] boostsAfter = player.getTradeBoosts();
-        assertTrue(Arrays.equals(expectedBoostsAfter, boostsAfter));
+        assertArrayEquals(expectedBoostsAfter, boostsAfter);
     }
 
     @Test
@@ -293,7 +280,7 @@ public class BuildVertexTest {
         Resource[] boostsBefore = player.getTradeBoosts();
         // assert that the player had not boosts before
         Resource[] expectedBoostsBefore = {Resource.GRAIN, Resource.WOOL, Resource.ANY, Resource.ORE, Resource.ANY, Resource.ANY, Resource.BRICK, Resource.ANY};
-        assertTrue(Arrays.equals(expectedBoostsBefore, boostsBefore));
+        assertArrayEquals(expectedBoostsBefore, boostsBefore);
 
         // grab a vertex adjacent to port with lumber
         Vertex testVertex = vertexes.getVertex(17);
@@ -302,14 +289,13 @@ public class BuildVertexTest {
         testVertex.build(player);
 
         // assert that the vertex is owned by the player
-        Player expectedOwner = player;
         Player actualOwner = testVertex.getOwner();
-        assertEquals(expectedOwner, actualOwner);
+        assertEquals(player, actualOwner);
 
 
-        // assert that the playerhas the expected boosts after
+        // assert that the player has the expected boosts after
         Resource[] expectedBoostsAfter = {Resource.GRAIN, Resource.WOOL, Resource.ANY, Resource.ORE, Resource.ANY, Resource.ANY, Resource.BRICK, Resource.ANY, Resource.LUMBER};
         Resource[] boostsAfter = player.getTradeBoosts();
-        assertTrue(Arrays.equals(expectedBoostsAfter, boostsAfter));
+        assertArrayEquals(expectedBoostsAfter, boostsAfter);
     }
 }

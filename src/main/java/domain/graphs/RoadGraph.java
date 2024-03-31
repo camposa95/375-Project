@@ -1,12 +1,8 @@
 package domain.graphs;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -22,12 +18,12 @@ public class RoadGraph implements Restorable {
     public static final int NUM_ROADS = 72;
     private static final Integer MIN_ROADS_FOR_CARD = 5;
 
-    private Road[] roads;
+    private final Road[] roads;
 
     /**
-     * Creates a new RoadGrapgh with the default number of Roads
-     *
-     * Note: Adjacency must be initialized separatly by calling
+     * Creates a new RoadGraph with the default number of Roads
+     * <p>
+     * Note: Adjacency must be initialized separately by calling
      * the appropriate initializer methods
      */
     public RoadGraph() {
@@ -61,13 +57,6 @@ public class RoadGraph implements Restorable {
 
     /**
      * Function that calculates the longest path given the starting road and origin vertex of the path.
-     *
-     * @param startingRoad
-     * @param player
-     * @param paths
-     * @param visitedRoads
-     * @param origin
-     * @return
      */
     public int getLongestPath(final Road startingRoad, final Player player, final HashSet<HashSet<Road>> paths, final HashSet<Road> visitedRoads, final Vertex origin) {
         if (startingRoad.getOwner() != player) {
@@ -75,7 +64,7 @@ public class RoadGraph implements Restorable {
         }
 
         if (origin.ownedByEnemyOf(player)) {
-            return -1; // stop here before we add ourself to the path because we are blocked off
+            return -1; // stop here before we add ourselves to the path because we are blocked off
         }
 
         // add ourselves to the current path and the path to the list of paths
@@ -86,7 +75,7 @@ public class RoadGraph implements Restorable {
         for (Road neighbor: tail.getAdjacentRoads()) { // now we only have 2 options to branch off of
             if (neighbor.getOwner() == player && !visitedRoads.contains(neighbor)) {
 
-                HashSet<Road> newPath = new HashSet<Road>(visitedRoads);
+                HashSet<Road> newPath = new HashSet<>(visitedRoads);
                 getLongestPath(neighbor, player, paths, newPath, tail); // origin of the next one is the tail of this one
             }
         }
@@ -101,17 +90,17 @@ public class RoadGraph implements Restorable {
 
     /**
      * Method that gives the correct player the longest road card according to the game rules
-     *
-     * Note: Doesn't really give a player the card. But sets a flag in the player indicatig it owns it and
-     * also increment and degrements victory points accordingly.
-     *
+     * <p>
+     * Note: Doesn't really give a player the card. But sets a flag in the player indicating it owns it and
+     * also increment and decrements victory points accordingly.
+     * <p>
      * Also Note: This method is assuming it is called after a Road or Vertex was built. This is to ensure
-     * that the special cases of transfership are correctly set up.
+     * that the special cases of transfer-ship are correctly set up.
      */
     public void giveLongestRoadCard() {
         // Code that maps players to their longest paths
         Set<Player> players = this.getPlayers();
-        HashMap<Player, Integer> playerToLongestPathMap = new HashMap<Player, Integer>();
+        HashMap<Player, Integer> playerToLongestPathMap = new HashMap<>();
         for (Player player: players) {
 
             Set<Vertex> origins = this.getOrigins(player); // get starting points for our searches
@@ -119,17 +108,17 @@ public class RoadGraph implements Restorable {
             int longest = 0;
             for (Vertex origin: origins) { // loop though all the path origin vertexes
 
-                // Note: looping though all of these is fine becuase only 1 will be the longest and if it is a vertex not connected
+                // Note: looping though all of these is fine because only 1 will be the longest and if it is a vertex not connected
                 // to anything then it simply be skipped
                 for (Road startingRoad: origin.getAdjacentRoads()) {
                     if (startingRoad.getOwner() == player) { // make sure we only start at Roads owned by the player
-                        int pathLength = this.getLongestPath(startingRoad, player, new HashSet<HashSet<Road>>(), new HashSet<Road>(), origin);
+                        int pathLength = this.getLongestPath(startingRoad, player, new HashSet<>(), new HashSet<>(), origin);
                         longest = Math.max(pathLength, longest);
                     }
                 }
             }
 
-            playerToLongestPathMap.put(player, longest); // add the longest path to the map of players to their longes path
+            playerToLongestPathMap.put(player, longest); // add the longest path to the map of players to their longest path
         }
 
         // ----------------------------------------------------------------------------
@@ -138,7 +127,7 @@ public class RoadGraph implements Restorable {
         //
         // ----------------------------------------------------------------------------
 
-        // find out who currently has the longest road before transfering
+        // find out who currently has the longest road before transferring
         Player playerWithCard = null;
         for (Player player: players) {
             if (player.hasLongestRoad()) {
@@ -177,7 +166,7 @@ public class RoadGraph implements Restorable {
                 tempPlayerWithLongestRoad = player;
             }
         }
-        if (tempPlayerWithLongestRoad == playerWithCard) { // we know the player who origionally had is was not overtaken
+        if (tempPlayerWithLongestRoad == playerWithCard) { // we know the player who originally had it was not overtaken
             return; // stop here
         }
 
@@ -191,16 +180,14 @@ public class RoadGraph implements Restorable {
     }
 
     /**
-     * Helper method to tell us if anybody has a road at minumum 5 in length
-     *
-     * @param playerToLongestPathMap
-     * @return
+     * Helper method to tell us if anybody has a road at minimum 5 in length
      */
     private boolean somebodyHasLongEnoughRoad(final HashMap<Player, Integer> playerToLongestPathMap) {
-        Boolean somebodyIsAbove5 = false;
+        boolean somebodyIsAbove5 = false;
         for (Entry<Player, Integer> entry: playerToLongestPathMap.entrySet()) {
             if (entry.getValue() >= MIN_ROADS_FOR_CARD) {
                 somebodyIsAbove5 = true;
+                break;
             }
         }
 
@@ -208,10 +195,7 @@ public class RoadGraph implements Restorable {
     }
 
     /**
-     * Helper method that looks throught the given map and returns the player with the longest path
-     *
-     * @param playerToLongestPathMap
-     * @return
+     * Helper method that looks through the given map and returns the player with the longest path
      */
     private Player getPlayerWithLongestRoad(final HashMap<Player, Integer> playerToLongestPathMap) {
 
@@ -229,14 +213,11 @@ public class RoadGraph implements Restorable {
 
     /**
      * Helper method that tells if two players have the same max path length
-     * @param players
-     * @param playerToLongestPathMap
-     * @return
      */
     private boolean twoPlayersTiedForLongestRoad(final Set<Player> players, final HashMap<Player, Integer> playerToLongestPathMap) {
         for (Player player1: players) {
             for (Player player2: players) { // test all combination of players
-                if (playerToLongestPathMap.get(player1) >= MIN_ROADS_FOR_CARD) { // only care about ties if the tie is eligible for longes road
+                if (playerToLongestPathMap.get(player1) >= MIN_ROADS_FOR_CARD) { // only care about ties if the tie is eligible for longest road
                     if (player1 != player2) { // don't want to compare the same object would defeat the purpose of this check
                         if (playerToLongestPathMap.get(player1).equals(playerToLongestPathMap.get(player2))) { // both players got the same max road length
                             return true;
@@ -254,9 +235,9 @@ public class RoadGraph implements Restorable {
      * owned by an enemy
      */
     private Set<Vertex> getOrigins(final Player player) {
-        HashSet<Vertex> origins = new HashSet<Vertex>();
+        HashSet<Vertex> origins = new HashSet<>();
 
-        for (Road road: this.roads) { // note we don't have to enfore that this be a road adjacent to the player because that is checked later
+        for (Road road: this.roads) { // note we don't have to enforce that this be a road adjacent to the player because that is checked later
             for (Vertex vertex: road.getAdjacentVertexes()) {
                 if (!vertex.ownedByEnemyOf(player)) {
                     origins.add(vertex);
@@ -275,7 +256,7 @@ public class RoadGraph implements Restorable {
      */
     private Set<Player> getPlayers() {
 
-        HashSet<Player> players = new HashSet<Player>();
+        HashSet<Player> players = new HashSet<>();
         for (Road road: this.roads) {
             Player potentialNewPlayer = road.getOwner();
 
@@ -313,7 +294,7 @@ public class RoadGraph implements Restorable {
             // Create a MementoReader for reading memento data
             MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
 
-            // Read sub-mementos from the appropriate subfolders
+            // Read sub-mementos from the appropriate sub-folders
             this.roadMementos = new Memento[RoadGraph.this.roads.length];
             for (int i = 0; i < this.roadMementos.length; i++) {
                 File roadSubFolder = reader.getSubFolder(ROAD_SUBFOLDER_PREFIX + i);

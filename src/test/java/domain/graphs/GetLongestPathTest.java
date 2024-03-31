@@ -9,10 +9,6 @@ import java.util.List;
 
 import data.GameLoader;
 import domain.game.GameType;
-import domain.graphs.Road;
-import domain.graphs.RoadGraph;
-import domain.graphs.Vertex;
-import domain.graphs.VertexGraph;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
@@ -35,9 +31,7 @@ public class GetLongestPathTest {
 
         EasyMock.replay(mockedEnemy, mockedVertex);
 
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
-            roads.getLongestPath(testRoad, mockedEnemy, new HashSet<HashSet<Road>>(), new HashSet<Road>(), mockedVertex);
-        });
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> roads.getLongestPath(testRoad, mockedEnemy, new HashSet<>(), new HashSet<>(), mockedVertex));
         EasyMock.verify(mockedEnemy, mockedVertex);
 
         String expectedMessage = "Road does not own player, check calling method";
@@ -45,7 +39,7 @@ public class GetLongestPathTest {
         assertEquals(expectedMessage, actualMessage);
     }
 
-    @Test public void testGetLongestPathContinous() {
+    @Test public void testGetLongestPathContinuous() {
         VertexGraph vertexes = new VertexGraph(GameType.Beginner);
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
@@ -53,8 +47,8 @@ public class GetLongestPathTest {
 
         Player mockedPlayer = EasyMock.createStrictMock(Player.class);
 
-        // create a continous path of length 5
-        Road testStartingRoad = roads.getRoad(13); // start at begining of path
+        // create a continuous path of length 5
+        Road testStartingRoad = roads.getRoad(13); // start at beginning of path
         roads.getRoad(13).setOwner(mockedPlayer);
         roads.getRoad(20).setOwner(mockedPlayer);
         roads.getRoad(28).setOwner(mockedPlayer);
@@ -67,7 +61,7 @@ public class GetLongestPathTest {
 
         // method call
         EasyMock.replay(mockedPlayer);
-        int actualLength = roads.getLongestPath(testStartingRoad, mockedPlayer, new HashSet<HashSet<Road>>(), new HashSet<Road>(), origin);
+        int actualLength = roads.getLongestPath(testStartingRoad, mockedPlayer, new HashSet<>(), new HashSet<>(), origin);
         EasyMock.verify(mockedPlayer);
 
         int expectedLength = 5;
@@ -82,7 +76,7 @@ public class GetLongestPathTest {
         Player mockedPlayer = EasyMock.createStrictMock(Player.class);
 
         // create a forked path where one is 5 and the other is 4 long
-        Road testStartingRoad = roads.getRoad(13); // start at begining of path
+        Road testStartingRoad = roads.getRoad(13); // start at beginning of path
         roads.getRoad(13).setOwner(mockedPlayer);
         roads.getRoad(20).setOwner(mockedPlayer);
         roads.getRoad(28).setOwner(mockedPlayer);
@@ -97,14 +91,14 @@ public class GetLongestPathTest {
 
         // method call
         EasyMock.replay(mockedPlayer);
-        int actualLength = roads.getLongestPath(testStartingRoad, mockedPlayer, new HashSet<HashSet<Road>>(), new HashSet<Road>(), origin);
+        int actualLength = roads.getLongestPath(testStartingRoad, mockedPlayer, new HashSet<>(), new HashSet<>(), origin);
         EasyMock.verify(mockedPlayer);
 
         int expectedLength = 6;
         assertEquals(expectedLength, actualLength);
     }
 
-    @Test public void testGetLongestPathloop() {
+    @Test public void testGetLongestPathLoop() {
         VertexGraph vertexes = new VertexGraph(GameType.Beginner);
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
@@ -112,7 +106,7 @@ public class GetLongestPathTest {
         Player mockedPlayer = EasyMock.createStrictMock(Player.class);
 
         // create a forked path where one is 5 and the other is 4 long
-        Road testStartingRoad = roads.getRoad(13); // start at begining of path
+        Road testStartingRoad = roads.getRoad(13); // start at beginning of path
         roads.getRoad(13).setOwner(mockedPlayer);
         roads.getRoad(20).setOwner(mockedPlayer);
         roads.getRoad(28).setOwner(mockedPlayer);
@@ -128,7 +122,7 @@ public class GetLongestPathTest {
 
         // method call
         EasyMock.replay(mockedPlayer);
-        int actualLength = roads.getLongestPath(testStartingRoad, mockedPlayer, new HashSet<HashSet<Road>>(), new HashSet<Road>(), origin);
+        int actualLength = roads.getLongestPath(testStartingRoad, mockedPlayer, new HashSet<>(), new HashSet<>(), origin);
         EasyMock.verify(mockedPlayer);
 
         int expectedLength = 7;
@@ -143,7 +137,7 @@ public class GetLongestPathTest {
         Player mockedPlayer = EasyMock.createStrictMock(Player.class);
 
         // create a forked path where one is 5 and the other is 4 long
-        Road testStartingRoad = roads.getRoad(13); // start at begining of path
+        Road testStartingRoad = roads.getRoad(13); // start at beginning of path
         roads.getRoad(13).setOwner(mockedPlayer);
         roads.getRoad(20).setOwner(mockedPlayer);
         roads.getRoad(28).setOwner(mockedPlayer);
@@ -163,7 +157,7 @@ public class GetLongestPathTest {
 
         // method call
         EasyMock.replay(mockedPlayer);
-        int actualLength = roads.getLongestPath(testStartingRoad, mockedPlayer, new HashSet<HashSet<Road>>(), new HashSet<Road>(), origin);
+        int actualLength = roads.getLongestPath(testStartingRoad, mockedPlayer, new HashSet<>(), new HashSet<>(), origin);
         EasyMock.verify(mockedPlayer);
 
         int expectedLength = 8;
@@ -179,7 +173,7 @@ public class GetLongestPathTest {
         Player mockedEnemy = EasyMock.createStrictMock(Player.class);
 
         // create a forked path where one is 5 and the other is 4 long
-        Road testStartingRoad = roads.getRoad(13); // start at begining of path
+        Road testStartingRoad = roads.getRoad(13); // start at beginning of path
         roads.getRoad(13).setOwner(mockedPlayer);
         roads.getRoad(20).setOwner(mockedPlayer);
         roads.getRoad(28).setOwner(mockedPlayer);
@@ -200,7 +194,7 @@ public class GetLongestPathTest {
 
         // method call
         EasyMock.replay(mockedPlayer, mockedEnemy);
-        int actualLength = roads.getLongestPath(testStartingRoad, mockedPlayer, new HashSet<HashSet<Road>>(), new HashSet<Road>(), origin);
+        int actualLength = roads.getLongestPath(testStartingRoad, mockedPlayer, new HashSet<>(), new HashSet<>(), origin);
         EasyMock.verify(mockedPlayer, mockedEnemy);
 
         int expectedLength = 4;
@@ -215,7 +209,7 @@ public class GetLongestPathTest {
         Player mockedPlayer = EasyMock.createStrictMock(Player.class);
 
         // create a forked path where one is 5 and the other is 4 long
-        Road testStartingRoad = roads.getRoad(13); // start at begining of path
+        Road testStartingRoad = roads.getRoad(13); // start at beginning of path
         roads.getRoad(13).setOwner(mockedPlayer);
         roads.getRoad(20).setOwner(mockedPlayer);
         roads.getRoad(28).setOwner(mockedPlayer);
@@ -236,7 +230,7 @@ public class GetLongestPathTest {
 
         // method call
         EasyMock.replay(mockedPlayer);
-        int actualLength = roads.getLongestPath(testStartingRoad, mockedPlayer, new HashSet<HashSet<Road>>(), new HashSet<Road>(), origin);
+        int actualLength = roads.getLongestPath(testStartingRoad, mockedPlayer, new HashSet<>(), new HashSet<>(), origin);
         EasyMock.verify(mockedPlayer);
 
         int expectedLength = 7;
@@ -252,7 +246,7 @@ public class GetLongestPathTest {
         Player mockedEnemy = EasyMock.createStrictMock(Player.class);
 
         // create a forked path where one is 5 and the other is 4 long
-        Road testStartingRoad = roads.getRoad(13); // start at begining of path
+        Road testStartingRoad = roads.getRoad(13); // start at beginning of path
         roads.getRoad(13).setOwner(mockedPlayer);
         roads.getRoad(20).setOwner(mockedPlayer);
         roads.getRoad(28).setOwner(mockedPlayer);
@@ -272,7 +266,7 @@ public class GetLongestPathTest {
 
         // method call
         EasyMock.replay(mockedPlayer, mockedEnemy);
-        int actualLength = roads.getLongestPath(testStartingRoad, mockedPlayer, new HashSet<HashSet<Road>>(), new HashSet<Road>(), origin);
+        int actualLength = roads.getLongestPath(testStartingRoad, mockedPlayer, new HashSet<>(), new HashSet<>(), origin);
         EasyMock.verify(mockedPlayer, mockedEnemy);
 
         int expectedLength = -1;
@@ -288,9 +282,7 @@ public class GetLongestPathTest {
         badVertexes.add(testVertex);
         testRoad.setAdjacentVertexes(badVertexes);
 
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
-            testRoad.getTail(testVertex);
-        });
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> testRoad.getTail(testVertex));
         
         String expectedMessage = "This road only has one adjacent vertex?";
         String actualMessage = exception.getMessage();

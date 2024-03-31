@@ -3,10 +3,6 @@ package domain.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import domain.controller.Controller;
-import domain.controller.GamePhase;
-import domain.controller.GameState;
-import domain.controller.SuccessCode;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +13,7 @@ import domain.game.NotEnoughResourcesException;
 import domain.player.Player;
 
 public class ClickedRoadTest {
+
     @Test
     void testClickedRoad_RegPlay_NoChange(){
         Game mockedGame = EasyMock.createStrictMock(Game.class);
@@ -39,7 +36,7 @@ public class ClickedRoadTest {
 
         // method call
         EasyMock.replay(mockedGame);
-        assertThrows(IllegalStateException.class,()->{controller.clickedRoad(35);});
+        assertThrows(IllegalStateException.class,()-> controller.clickedRoad(35));
         EasyMock.verify(mockedGame);
 
         // states after
@@ -51,6 +48,7 @@ public class ClickedRoadTest {
         // assert states after the click are correct
         assertEquals(GamePhase.REGULAR_PLAY, phaseAfter);
     }
+
     @Test
     void testClickedRoad_Setup_FirstSettlement_NoChange(){
         Game mockedGame = EasyMock.createStrictMock(Game.class);
@@ -93,8 +91,9 @@ public class ClickedRoadTest {
         assertEquals(GamePhase.SETUP, phaseAfter);
         assertEquals(GameState.FIRST_SETTLEMENT, stateAfter);
     }
+
     @Test
-    void testClickedRoad_Setup_SecondtSettlement_NoChange(){
+    void testClickedRoad_Setup_SecondSettlement_NoChange(){
         Game mockedGame = EasyMock.createStrictMock(Game.class);
         GameType gameType = GameType.Advanced;
 
@@ -135,6 +134,7 @@ public class ClickedRoadTest {
         assertEquals(GamePhase.SETUP, phaseAfter);
         assertEquals(GameState.SECOND_SETTLEMENT, stateAfter);
     }
+
     @Test
     public void testClickedRoad_Setup_FirstRoad_Invalid_NoChange() throws InvalidPlacementException, NotEnoughResourcesException {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
@@ -184,8 +184,9 @@ public class ClickedRoadTest {
         assertEquals(GamePhase.SETUP, phaseAfter);
         assertEquals(GameState.FIRST_ROAD, stateAfter);
     }
+
     @Test
-    public void testClickedRoad_Setup_First_Succesesful_IncPlay() throws InvalidPlacementException, NotEnoughResourcesException{
+    public void testClickedRoad_Setup_First_Successful_IncPlay() throws InvalidPlacementException, NotEnoughResourcesException{
         Game mockedGame = EasyMock.createStrictMock(Game.class);
         GameType gameType = GameType.Advanced;
 
@@ -235,8 +236,9 @@ public class ClickedRoadTest {
         assertEquals(GameState.FIRST_SETTLEMENT, stateAfter);
         assertEquals(mockedPlayer2,playerAfter);
     }
+
     @Test
-    public void testClickedRoad_Setup_First_Succesesful_NoInc() throws InvalidPlacementException, NotEnoughResourcesException{
+    public void testClickedRoad_Setup_First_Successful_NoInc() throws InvalidPlacementException, NotEnoughResourcesException{
         Game mockedGame = EasyMock.createStrictMock(Game.class);
         GameType gameType = GameType.Advanced;
 
@@ -286,8 +288,9 @@ public class ClickedRoadTest {
         assertEquals(GameState.SECOND_SETTLEMENT, stateAfter);
         assertEquals(mockedPlayer4, playerAfter);
     }
+
     @Test
-    public void testClickedRoad_Setup_FirstRoad_Desync() throws InvalidPlacementException, NotEnoughResourcesException{
+    public void testClickedRoad_Setup_FirstRoad_DeSync() throws InvalidPlacementException, NotEnoughResourcesException{
         Game mockedGame = EasyMock.createStrictMock(Game.class);
         GameType gameType = GameType.Advanced;
 
@@ -317,12 +320,10 @@ public class ClickedRoadTest {
 
         // method call
         EasyMock.replay(mockedGame);
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
-            controller.clickedRoad(testRoadId);
-        });
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> controller.clickedRoad(testRoadId));
         EasyMock.verify(mockedGame);
 
-        String expectedMessage = "Controller and Game states unsyncronized";
+        String expectedMessage = "Controller and Game states not synchronized";
         String actualMessage = exception.getMessage();
         assertEquals(expectedMessage, actualMessage);
 
@@ -330,6 +331,7 @@ public class ClickedRoadTest {
         assertEquals(GamePhase.SETUP, phaseBefore);
         assertEquals(GameState.FIRST_ROAD, stateBefore);
     }
+
     @Test
     public void testClickedRoad_Setup_SecondRoad_Invalid_NoChange() throws InvalidPlacementException, NotEnoughResourcesException {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
@@ -379,6 +381,7 @@ public class ClickedRoadTest {
         assertEquals(GamePhase.SETUP, phaseAfter);
         assertEquals(GameState.SECOND_ROAD, stateAfter);
     }
+
     @Test
     public void testClickedRoad_Setup_SecondRoad_NoChange() throws InvalidPlacementException, NotEnoughResourcesException{
         Game mockedGame = EasyMock.createStrictMock(Game.class);
@@ -427,6 +430,7 @@ public class ClickedRoadTest {
         assertEquals(GamePhase.REGULAR_PLAY, phaseAfter);
         assertEquals(GameState.TURN_START, stateAfter);
     }
+
     @Test
     public void testClickedRoad_Setup_SecondRoad_IncPlayer() throws InvalidPlacementException, NotEnoughResourcesException{
         Game mockedGame = EasyMock.createStrictMock(Game.class);
@@ -478,6 +482,7 @@ public class ClickedRoadTest {
         assertEquals(GameState.SECOND_SETTLEMENT, stateAfter);
         assertEquals(mockedPlayer1, playerAfter);
     }
+
     @Test
     public void testClickedRoad_Setup_SecondRoad_NoInc() throws InvalidPlacementException, NotEnoughResourcesException{
         Game mockedGame = EasyMock.createStrictMock(Game.class);
@@ -530,8 +535,9 @@ public class ClickedRoadTest {
         assertEquals(GameState.TURN_START, stateAfter);
         assertEquals(mockedPlayer1, playerAfter);
     }
+
     @Test
-    public void testClickedRoad_Setup_SecondRoad_Desync() throws InvalidPlacementException, NotEnoughResourcesException{
+    public void testClickedRoad_Setup_SecondRoad_DeSync() throws InvalidPlacementException, NotEnoughResourcesException{
         Game mockedGame = EasyMock.createStrictMock(Game.class);
         GameType gameType = GameType.Advanced;
 
@@ -561,12 +567,10 @@ public class ClickedRoadTest {
 
         // method call
         EasyMock.replay(mockedGame);
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
-            controller.clickedRoad(testRoadId);
-        });
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> controller.clickedRoad(testRoadId));
         EasyMock.verify(mockedGame);
 
-        String expectedMessage = "Controller and Game states unsyncronized";
+        String expectedMessage = "Controller and Game states not synchronized";
         String actualMessage = exception.getMessage();
         assertEquals(expectedMessage, actualMessage);
 
@@ -574,5 +578,4 @@ public class ClickedRoadTest {
         assertEquals(GamePhase.SETUP, phaseBefore);
         assertEquals(GameState.SECOND_ROAD, stateBefore);
     }
-    
 }

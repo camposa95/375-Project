@@ -1,13 +1,7 @@
 package domain.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.Arrays;
 import java.util.HashMap;
 
-import domain.controller.Controller;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +9,8 @@ import domain.game.Game;
 import domain.game.GameType;
 import domain.player.Player;
 import domain.bank.Resource;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DropResourcesTest {
     
@@ -39,24 +35,24 @@ public class DropResourcesTest {
         Resource[] toDrop = {Resource.WOOL, Resource.WOOL, Resource.LUMBER, Resource.LUMBER};
 
         // create map to pass into controller
-        HashMap<Integer, Resource[]> playerIdToResouceMap = new HashMap<Integer, Resource[]>();
-        playerIdToResouceMap.put(1, toDrop);
-        playerIdToResouceMap.put(2, toDrop);
-        playerIdToResouceMap.put(3, toDrop);
+        HashMap<Integer, Resource[]> playerIdToResourceMap = new HashMap<>();
+        playerIdToResourceMap.put(1, toDrop);
+        playerIdToResourceMap.put(2, toDrop);
+        playerIdToResourceMap.put(3, toDrop);
 
 
         // map that should be passed into game
-        HashMap<Player, Resource[]> playerToResouceMap = new HashMap<Player, Resource[]>();
-        playerToResouceMap.put(player1, toDrop);
-        playerToResouceMap.put(player2, toDrop);
-        playerToResouceMap.put(player3, toDrop);
+        HashMap<Player, Resource[]> playerToResourceMap = new HashMap<>();
+        playerToResourceMap.put(player1, toDrop);
+        playerToResourceMap.put(player2, toDrop);
+        playerToResourceMap.put(player3, toDrop);
 
         // create expectations
-        mockedGame.dropCards(playerToResouceMap);
+        mockedGame.dropCards(playerToResourceMap);
 
         // method call
         EasyMock.replay(mockedGame);
-        controller.dropResources(playerIdToResouceMap);
+        controller.dropResources(playerIdToResourceMap);
         EasyMock.verify(mockedGame);
     }
 
@@ -81,18 +77,16 @@ public class DropResourcesTest {
         Resource[] toDrop = {Resource.WOOL, Resource.WOOL, Resource.LUMBER, Resource.LUMBER};
 
         // create map to pass into controller
-        HashMap<Integer, Resource[]> playerIdToResouceMap = new HashMap<Integer, Resource[]>();
-        playerIdToResouceMap.put(1, toDrop);
-        playerIdToResouceMap.put(4, toDrop); // invalid Id
-        playerIdToResouceMap.put(3, toDrop);
+        HashMap<Integer, Resource[]> playerIdToResourceMap = new HashMap<>();
+        playerIdToResourceMap.put(1, toDrop);
+        playerIdToResourceMap.put(4, toDrop); // invalid Id
+        playerIdToResourceMap.put(3, toDrop);
 
         // create expectations: game should not be called
 
         // method call: should throw the illegal argument exception
         EasyMock.replay(mockedGame);
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            controller.dropResources(playerIdToResouceMap);
-        });
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> controller.dropResources(playerIdToResourceMap));
         EasyMock.verify(mockedGame);
 
         String expectedMessage = "Player ID does not exists";
@@ -116,6 +110,6 @@ public class DropResourcesTest {
 
         Player[] actualPlayers = controller.getPlayerArr();
 
-        assertTrue(Arrays.equals(expectedPlayers, actualPlayers));
+        assertArrayEquals(expectedPlayers, actualPlayers);
     }
 }
