@@ -2,14 +2,13 @@ package domain.graphs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import domain.graphs.Road;
-import domain.graphs.RoadGraph;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
 import domain.player.Player;
 
 public class RoadIsBuildableTest {
+
     @Test
     public void testRoadIsBuildableIsOccupied() {
         RoadGraph roads = new RoadGraph();

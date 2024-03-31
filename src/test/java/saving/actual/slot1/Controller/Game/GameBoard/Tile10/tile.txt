@@ -1,3 +1,0 @@
-TerrainType: FORREST
-DieNumber: 3
-HasRobber: false

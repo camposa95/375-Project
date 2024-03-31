@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import domain.game.GameType;
-import domain.graphs.Vertex;
-import domain.graphs.VertexGraph;
 import org.junit.jupiter.api.Test;
 
 public class GetVertexTest {
@@ -18,10 +16,9 @@ public class GetVertexTest {
         VertexGraph vertexes =  new VertexGraph(GameType.Beginner);
         Vertex vertex = vertexes.getVertex(MIN_LOCATION_ID);
 
-        int expectedId = MIN_LOCATION_ID;
         int actualId = vertex.getLocationId();
 
-        assertEquals(expectedId, actualId);
+        assertEquals(MIN_LOCATION_ID, actualId);
     }
 
     @Test
@@ -36,25 +33,22 @@ public class GetVertexTest {
     }
 
     @Test
-    public void getVertexNWithNfrom2to53() {
+    public void getVertexNWithN_2to53() {
         VertexGraph vertexes =  new VertexGraph(GameType.Beginner);
 
         for (int i = 2; i <= MAX_LOCATION_ID; i++) {
             Vertex vertex = vertexes.getVertex(i);
 
-            int expectedId = i;
             int actualId = vertex.getLocationId();
 
-            assertEquals(expectedId, actualId);
+            assertEquals(i, actualId);
         }
     }
 
     @Test
     public void getVertexWithInvalidId54() {
         VertexGraph vertexes =  new VertexGraph(GameType.Beginner);
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            vertexes.getVertex(MAX_LOCATION_ID + 1);
-        });
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vertexes.getVertex(MAX_LOCATION_ID + 1));
 
         String expectedMessage = "Invalid locationId; Try[0, 53]";
         String actualMessage = exception.getMessage();
@@ -65,9 +59,7 @@ public class GetVertexTest {
     @Test
     public void getVertexWithInvalidIdNegative1() {
         VertexGraph vertexes =  new VertexGraph(GameType.Beginner);
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            vertexes.getVertex(-1);
-        });
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vertexes.getVertex(-1));
 
         String expectedMessage = "Invalid locationId; Try[0, 53]";
         String actualMessage = exception.getMessage();

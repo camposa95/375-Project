@@ -30,10 +30,10 @@ public class F1Test {
             Terrain.FIELDS,Terrain.FORREST, Terrain.DESERT,Terrain.FORREST,Terrain.MOUNTAINS,Terrain.FORREST,Terrain.MOUNTAINS,
             Terrain.FIELDS,Terrain.PASTURE,Terrain.HILLS,Terrain.FIELDS,Terrain.PASTURE};
         //Expected Die Values for Default
-        int[] expectedDieVals =  {10,2,9,12,6,4,10,9,11,7,3,8,8,3,4,5,5,6,11};
+        int[] expectedDieNumbers =  {10,2,9,12,6,4,10,9,11,7,3,8,8,3,4,5,5,6,11};
         //Expected robber booleans for Default
         boolean[] expectedRobbers = {false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false};
-        //Vetexes with ports
+        // Vertexes with ports
         int[] vertexWithPorts ={0,1,14,15,7,17,26,37,28,38,47,48,50,51,45,46};
        
         int i = 0;
@@ -41,7 +41,7 @@ public class F1Test {
             //Tiles should be ordered in default
             assertEquals(i,tile.getTileNumber());
             assertEquals(tile.getTerrain(), expectedTerrain[i]);
-            assertEquals(tile.getDieNumber(), expectedDieVals[i]);
+            assertEquals(tile.getDieNumber(), expectedDieNumbers[i]);
             assertEquals(tile.getHasRobber(), expectedRobbers[i]);
             //Assert that the desert tile starts with the robber
             if(i == 9){
@@ -55,7 +55,7 @@ public class F1Test {
         assertEquals(19,i);
 
 
-        //Now check each vertex for ports as exepected
+        //Now check each vertex for ports as expected
         for(int vertex : vertexWithPorts) {
             assertTrue(vertexes.getVertex(vertex).hasPort());
         }

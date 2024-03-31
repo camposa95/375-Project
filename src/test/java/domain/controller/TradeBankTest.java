@@ -2,8 +2,6 @@ package domain.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import domain.controller.Controller;
-import domain.controller.SuccessCode;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
@@ -13,6 +11,7 @@ import domain.player.Player;
 import domain.bank.Resource;
 
 public class TradeBankTest {
+
     @Test
     public void testTradeBank_Valid() {
         
@@ -36,6 +35,7 @@ public class TradeBankTest {
                 
         assertEquals(SuccessCode.SUCCESS, actual);
     }
+
     @Test
     public void testTradeBank_Invalid() {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
@@ -58,5 +58,4 @@ public class TradeBankTest {
                 
         assertEquals(SuccessCode.INSUFFICIENT_RESOURCES, actual);
     }
-   
 }

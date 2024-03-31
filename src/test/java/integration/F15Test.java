@@ -31,7 +31,7 @@ public class F15Test {
     public void moveRobberAndRobAPlayer() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
@@ -78,11 +78,12 @@ public class F15Test {
         assertEquals(4, player1.hand.getResourceCardCount());
         assertEquals(2, player2.hand.getResourceCardCount());
     }
+
     @Test
     public void tryMoveRobberAndRobAPlayerAndFail() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
@@ -121,9 +122,9 @@ public class F15Test {
         //the gui will call these two methods
         //This time the robber tile is the same
         assertEquals(SuccessCode.INVALID_PLACEMENT, controller.moveRobber(newRobber));
-        assertThrows(IllegalArgumentException.class,()->{controller.robPlayer(robbedPlayer);});
+        assertThrows(IllegalArgumentException.class,()-> controller.robPlayer(robbedPlayer));
         
-        //check that the robber didnt move
+        //check that the robber didn't move
         assertEquals(newRobber,gameBoard.getRobberTile().getTileNumber());
         //check that the hands are correct
         assertEquals(3, player1.hand.getResourceCardCount());

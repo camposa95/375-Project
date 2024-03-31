@@ -4,9 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import data.GameLoader;
 import domain.game.GameType;
-import domain.graphs.Road;
-import domain.graphs.RoadGraph;
-import domain.graphs.VertexGraph;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 

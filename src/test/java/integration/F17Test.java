@@ -21,14 +21,15 @@ import java.time.Duration;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 public class F17Test {
     //F12: Victory point development card: allow the player to secretly collect a victory point for each of these cards that they hold
-    //Note: on the GUI level, we decided against the "secretly" portion since four players are sharing the same screen
+    //Note: on the GUI level, we decided against the "secretly" portion since four players are sharing the same screen,
     // and you'd be able to deduce what card they got either way
 
     //Add Victory Point card to hand and show that VP goes up for the player
     @Test
-    public void testAddVictoryPointCard_normalPlay(){
+    public void testAddVictoryPointCard_normalPlay() {
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
@@ -49,9 +50,7 @@ public class F17Test {
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
         assertEquals(GameState.TURN_START, controller.getState());
 
@@ -117,7 +116,7 @@ public class F17Test {
 
     //Add Victory Point card, then cycle between two players and show that ending turn will win the game
     @Test
-    public void testAddVictoryPointCard_winGameOnPurchase(){
+    public void testAddVictoryPointCard_winGameOnPurchase() {
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
@@ -137,9 +136,7 @@ public class F17Test {
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // Note: at this point the players would have gotten some starter resources during the
@@ -218,7 +215,7 @@ public class F17Test {
 
     //make sure that adding a sixth victory point card is not possible
     @Test
-    public void testAddVictoryPoint_FailsTooManyVPCards(){
+    public void testAddVictoryPoint_FailsTooManyVPCards() {
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
@@ -239,9 +236,7 @@ public class F17Test {
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
         assertEquals(GameState.TURN_START, controller.getState());
 

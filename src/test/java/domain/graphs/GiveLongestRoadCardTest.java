@@ -1,15 +1,13 @@
 package domain.graphs;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import data.GameLoader;
 import domain.game.GameType;
-import domain.graphs.RoadGraph;
-import domain.graphs.VertexGraph;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
 import domain.player.Player;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GiveLongestRoadCardTest {
 
@@ -33,7 +31,7 @@ public class GiveLongestRoadCardTest {
         int player3_origin1 = 34;
         int player3_origin2 = 24;
 
-        // create some basic paths for each of these player where nobody has a 5 long road
+        // create some basic paths for each of these players where nobody has a 5 long road
         // player 1:
         vertexes.getVertex(player1_origin1).setOwner(mockedPlayer1); // origin 1
         roads.getRoad(50).setOwner(mockedPlayer1);
@@ -96,7 +94,7 @@ public class GiveLongestRoadCardTest {
         int player3_origin1 = 34;
         int player3_origin2 = 24;
 
-        // create some basic paths for each of these player
+        // create some basic paths for each of these players
         // player 1: gets a 5 length
         vertexes.getVertex(player1_origin1).setOwner(mockedPlayer1); // origin 1
         roads.getRoad(50).setOwner(mockedPlayer1);
@@ -165,7 +163,7 @@ public class GiveLongestRoadCardTest {
         int player3_origin1 = 34;
         int player3_origin2 = 24;
 
-        // create some basic paths for each of these player
+        // create some basic paths for each of these players
         // player 1: gets a 5 length
         vertexes.getVertex(player1_origin1).setOwner(mockedPlayer1); // origin 1
         roads.getRoad(50).setOwner(mockedPlayer1);
@@ -235,7 +233,7 @@ public class GiveLongestRoadCardTest {
         int player3_origin1 = 34;
         int player3_origin2 = 24;
 
-        // create some basic paths for each of these player
+        // create some basic paths for each of these players
         // player 1: gets a 5 length
         vertexes.getVertex(player1_origin1).setOwner(mockedPlayer1); // origin 1
         roads.getRoad(50).setOwner(mockedPlayer1);
@@ -308,7 +306,7 @@ public class GiveLongestRoadCardTest {
         int player3_origin1 = 34;
         int player3_origin2 = 24;
 
-        // create some basic paths for each of these player
+        // create some basic paths for each of these players
         // player 1: gets a 9 length
         roads.getRoad(68).setOwner(mockedPlayer1);
         roads.getRoad(63).setOwner(mockedPlayer1);
@@ -325,7 +323,7 @@ public class GiveLongestRoadCardTest {
         roads.getRoad(11).setOwner(mockedPlayer1);
 
         // player 2: breaks player 1 road, into 6 and 3
-        vertexes.getVertex(player2_origin1).setOwner(mockedPlayer2); // origin 1, blockin player 1
+        vertexes.getVertex(player2_origin1).setOwner(mockedPlayer2); // origin 1, blocking player 1
         roads.getRoad(27).setOwner(mockedPlayer2);
         roads.getRoad(20).setOwner(mockedPlayer2);
         roads.getRoad(13).setOwner(mockedPlayer2);
@@ -382,7 +380,7 @@ public class GiveLongestRoadCardTest {
         int player3_origin1 = 34;
         int player3_origin2 = 24;
 
-        // create some basic paths for each of these player
+        // create some basic paths for each of these players
         // player 1: gets a 6 length
         vertexes.getVertex(player1_origin1).setOwner(mockedPlayer1); // origin 1
         roads.getRoad(50).setOwner(mockedPlayer1);
@@ -396,7 +394,7 @@ public class GiveLongestRoadCardTest {
         roads.getRoad(11).setOwner(mockedPlayer1);
 
         // player 2: overtakes player 1 with break into 3 and 3
-        vertexes.getVertex(player2_origin1).setOwner(mockedPlayer2); // origin 1, blockin player 1
+        vertexes.getVertex(player2_origin1).setOwner(mockedPlayer2); // origin 1, blocking player 1
         roads.getRoad(27).setOwner(mockedPlayer2);
         roads.getRoad(20).setOwner(mockedPlayer2);
         roads.getRoad(13).setOwner(mockedPlayer2);
@@ -455,7 +453,7 @@ public class GiveLongestRoadCardTest {
         int player3_origin1 = 34;
         int player3_origin2 = 24;
 
-        // create some basic paths for each of these player
+        // create some basic paths for each of these players
         // player 1: gets a 9 length
         roads.getRoad(63).setOwner(mockedPlayer1);
         roads.getRoad(56).setOwner(mockedPlayer1);
@@ -472,7 +470,7 @@ public class GiveLongestRoadCardTest {
         roads.getRoad(6).setOwner(mockedPlayer1);
 
         // player 2: breaks player 1 road with break into 4 and 5
-        vertexes.getVertex(player2_origin1).setOwner(mockedPlayer2); // origin 1, blockin player 1
+        vertexes.getVertex(player2_origin1).setOwner(mockedPlayer2); // origin 1, blocking player 1
         roads.getRoad(27).setOwner(mockedPlayer2);
         roads.getRoad(20).setOwner(mockedPlayer2);
         roads.getRoad(13).setOwner(mockedPlayer2);
@@ -529,7 +527,7 @@ public class GiveLongestRoadCardTest {
         int player3_origin1 = 34;
         int player3_origin2 = 24;
 
-        // create some basic paths for each of these player
+        // create some basic paths for each of these players
         // player 1: gets a 6 length
         vertexes.getVertex(player1_origin1).setOwner(mockedPlayer1); // origin 1
         roads.getRoad(50).setOwner(mockedPlayer1);
@@ -543,7 +541,7 @@ public class GiveLongestRoadCardTest {
         roads.getRoad(11).setOwner(mockedPlayer1);
 
         // player 2: overtakes player 1 with break into 3 and 3
-        vertexes.getVertex(player2_origin1).setOwner(mockedPlayer2); // origin 1, blockin player 1
+        vertexes.getVertex(player2_origin1).setOwner(mockedPlayer2); // origin 1, blocking player 1
         roads.getRoad(27).setOwner(mockedPlayer2);
         roads.getRoad(20).setOwner(mockedPlayer2);
         roads.getRoad(13).setOwner(mockedPlayer2);
@@ -604,7 +602,7 @@ public class GiveLongestRoadCardTest {
         int player3_origin1 = 34;
         int player3_origin2 = 24;
 
-        // create some basic paths for each of these player
+        // create some basic paths for each of these players
         // player 1: gets a 6 length
         vertexes.getVertex(player1_origin1).setOwner(mockedPlayer1); // origin 1
         roads.getRoad(50).setOwner(mockedPlayer1);
@@ -618,7 +616,7 @@ public class GiveLongestRoadCardTest {
         roads.getRoad(11).setOwner(mockedPlayer1);
 
         // player 2: overtakes player 1 with break into 3 and 3
-        vertexes.getVertex(player2_origin1).setOwner(mockedPlayer2); // origin 1, blockin player 1
+        vertexes.getVertex(player2_origin1).setOwner(mockedPlayer2); // origin 1, blocking player 1
         roads.getRoad(27).setOwner(mockedPlayer2);
         roads.getRoad(20).setOwner(mockedPlayer2);
         roads.getRoad(28).setOwner(mockedPlayer2);
@@ -674,7 +672,7 @@ public class GiveLongestRoadCardTest {
         int player3_origin1 = 34;
         int player3_origin2 = 24;
 
-        // create some basic paths for each of these player
+        // create some basic paths for each of these players
         // player 1: gets a 6 length
         vertexes.getVertex(player1_origin1).setOwner(mockedPlayer1); // origin 1
         roads.getRoad(50).setOwner(mockedPlayer1);
@@ -688,7 +686,7 @@ public class GiveLongestRoadCardTest {
         roads.getRoad(11).setOwner(mockedPlayer1);
 
         // player 2: overtakes player 1 with break into 3 and 3
-        vertexes.getVertex(player2_origin1).setOwner(mockedPlayer2); // origin 1, blockin player 1
+        vertexes.getVertex(player2_origin1).setOwner(mockedPlayer2); // origin 1, blocking player 1
         roads.getRoad(27).setOwner(mockedPlayer2);
         roads.getRoad(20).setOwner(mockedPlayer2);
         roads.getRoad(13).setOwner(mockedPlayer2);
@@ -714,7 +712,7 @@ public class GiveLongestRoadCardTest {
 
 
         // Expectations
-        // expect that no body has the card
+        // expect that nobody has the card
         EasyMock.expect(mockedPlayer1.hasLongestRoad()).andReturn(false);
         EasyMock.expect(mockedPlayer2.hasLongestRoad()).andReturn(false);
         EasyMock.expect(mockedPlayer3.hasLongestRoad()).andReturn(false);
@@ -739,32 +737,32 @@ public class GiveLongestRoadCardTest {
     public void testGiveLongestRoadCard() {
         Player player = new Player(0);
         assertEquals(0, player.getVictoryPoints());
-        assertEquals(false, player.hasLongestRoad());
+        assertFalse(player.hasLongestRoad());
 
         player.giveLongestRoadCard();
 
         assertEquals(2, player.getVictoryPoints());
-        assertEquals(true, player.hasLongestRoad());
+        assertTrue(player.hasLongestRoad());
     }
 
     @Test
-    public void testRemoveLongesRoadCard(){
+    public void testRemoveLongestRoadCard() {
         Player player = new Player(0);
         assertEquals(0, player.getVictoryPoints());
-        assertEquals(false, player.hasLongestRoad());
+        assertFalse(player.hasLongestRoad());
 
         // give the player the longest road
         player.giveLongestRoadCard();
 
         // assert that it was given
         assertEquals(2, player.getVictoryPoints());
-        assertEquals(true, player.hasLongestRoad());
+        assertTrue(player.hasLongestRoad());
 
         // remove the card
         player.removeLongestRoadCard();
 
         // assert that it was given
         assertEquals(0, player.getVictoryPoints());
-        assertEquals(false, player.hasLongestRoad());
+        assertFalse(player.hasLongestRoad());
     }
 }

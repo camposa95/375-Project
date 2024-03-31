@@ -49,7 +49,7 @@ public class F14Test {
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         Controller controller = new Controller(game, players, gameType);
 
-        //Based on beginner locations these are the resources each player should recieve after setup
+        //Based on beginner locations these are the resources each player should receive after setup
         Resource[] resources1 = {Resource.GRAIN,Resource.BRICK,Resource.LUMBER};
         Resource[] resources2 = {Resource.GRAIN,Resource.GRAIN,Resource.ORE};
         Resource[] resources3 = {Resource.BRICK,Resource.LUMBER,Resource.ORE};
@@ -63,7 +63,7 @@ public class F14Test {
         player2.hand.addResource(Resource.BRICK, 7);
         player3.hand.addResource(Resource.BRICK, 8);
         player4.hand.addResource(Resource.BRICK, 18);
-        //create the expected hash map with resources as theyd come from gui(Only players with 8+ lose cards)
+        //create the expected hash map with resources as they'd come from gui(Only players with 8+ lose cards)
         HashMap<Integer,Resource[]> resourcesMap = new HashMap<>();
         resourcesMap.put(3,new Resource[]{Resource.BRICK,Resource.BRICK,Resource.BRICK,Resource.BRICK});
         resourcesMap.put(4,new Resource[]{Resource.BRICK,Resource.BRICK,Resource.BRICK,Resource.BRICK,

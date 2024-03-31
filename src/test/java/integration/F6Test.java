@@ -1,6 +1,7 @@
 package integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicReference;
@@ -33,10 +34,10 @@ import domain.graphs.VertexGraph;
 public class F6Test {
     
     @Test
-    public void testBuildSettlmentSuccess() {
+    public void testBuildSettlementSuccess() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
@@ -55,11 +56,9 @@ public class F6Test {
         GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
@@ -67,7 +66,7 @@ public class F6Test {
 
         // Note: at this point the players would have gotten some starter resources during the 
         // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources so we can
+        // clear out the player1's hand and assert that the player has zero resources, so we can
         // better test on the specific cases.
         for (Resource resource: Resource.values()) {
             if (resource != Resource.ANY) { // skip this one used for trading
@@ -80,33 +79,33 @@ public class F6Test {
         assertEquals(0, player1.hand.getResourceCardCount());
     
         // now make sure the player has the enough resources
-        Resource[] resourcesForSettlment = {Resource.BRICK, Resource.LUMBER, Resource.WOOL, Resource.GRAIN};
-        player1.hand.addResources(resourcesForSettlment);
+        Resource[] resourcesForSettlement = {Resource.BRICK, Resource.LUMBER, Resource.WOOL, Resource.GRAIN};
+        player1.hand.addResources(resourcesForSettlement);
 
         // set up the controller for the click
         controller.setState(GameState.BUILD_SETTLEMENT);
-        // Note controller should already default to currentPlayer == to player1
+        // Note controller should already default to currentPlayer == to player1,
         // and we should already be in regular play
 
-        // give the player another road so we can follow the distance rule
+        // give the player another road, so we can follow the distance rule
         roads.getRoad(24).setOwner(player1);
 
 
         // here is the actual click
         int newVertexId = 17; // use a valid id
         assertEquals(SuccessCode.SUCCESS, controller.clickedVertex(newVertexId)); // click should succeed
-        assertEquals(GameState.DEFAULT, controller.getState()); // gameState should now be revert on succees
-        assertEquals(2, player1.getNumSettlements()); // player should have used a settlment
+        assertEquals(GameState.DEFAULT, controller.getState()); // gameState should now be reverted on success
+        assertEquals(2, player1.getNumSettlements()); // player should have used a settlement
         assertEquals(3, player1.getVictoryPoints()); // player should have gained a victory point
         assertEquals(player1, vertexes.getVertex(newVertexId).getOwner()); // vertex should now be owned by the player
         assertEquals(0, player1.hand.getResourceCardCount()); // player should have used the resources
     }
 
     @Test
-    public void testBuildSettlmentInvalidPlacementDisconnected() {
+    public void testBuildSettlementInvalidPlacementDisconnected() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
@@ -125,11 +124,9 @@ public class F6Test {
         GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
@@ -137,7 +134,7 @@ public class F6Test {
 
         // Note: at this point the players would have gotten some starter resources during the 
         // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources so we can
+        // clear out the player1's hand and assert that the player has zero resources, so we can
         // better test on the specific cases.
         for (Resource resource: Resource.values()) {
             if (resource != Resource.ANY) { // skip this one used for trading
@@ -150,15 +147,15 @@ public class F6Test {
         assertEquals(0, player1.hand.getResourceCardCount());
     
         // now make sure the player has the enough resources
-        Resource[] resourcesForSettlment = {Resource.BRICK, Resource.LUMBER, Resource.WOOL, Resource.GRAIN};
-        player1.hand.addResources(resourcesForSettlment);
+        Resource[] resourcesForSettlement = {Resource.BRICK, Resource.LUMBER, Resource.WOOL, Resource.GRAIN};
+        player1.hand.addResources(resourcesForSettlement);
 
         // set up the controller for the click
         controller.setState(GameState.BUILD_SETTLEMENT);
-        // Note controller should already default to currentPlayer == to player1
+        // Note controller should already default to currentPlayer == to player1,
         // and we should already be in regular play
 
-        // don't give the player this Road so we try to place a disconnected settlment
+        // don't give the player this Road, so we try to place a disconnected settlement
         // roads.getRoad(24).setOwner(player1);
 
 
@@ -166,17 +163,17 @@ public class F6Test {
         int newVertexId = 17; // use the disconnected id
         assertEquals(SuccessCode.INVALID_PLACEMENT, controller.clickedVertex(newVertexId)); // click should succeed
         assertEquals(GameState.BUILD_SETTLEMENT, controller.getState()); // gameState should not change to allow for re-click
-        assertEquals(3, player1.getNumSettlements()); // player settlments should be the same
+        assertEquals(3, player1.getNumSettlements()); // player settlements should be the same
         assertEquals(2, player1.getVictoryPoints()); // player victory points should be the same
-        assertEquals(null, vertexes.getVertex(newVertexId).getOwner()); // vertex should still be unowned
+        assertNull(vertexes.getVertex(newVertexId).getOwner()); // vertex should still be unowned
         assertEquals(4, player1.hand.getResourceCardCount()); // player should not have used the resources
     }
 
     @Test
-    public void testBuildSettlmentInvalidPlacementTooClose() {
+    public void testBuildSettlementInvalidPlacementTooClose() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
@@ -195,11 +192,9 @@ public class F6Test {
         GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
@@ -207,7 +202,7 @@ public class F6Test {
 
         // Note: at this point the players would have gotten some starter resources during the 
         // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources so we can
+        // clear out the player1's hand and assert that the player has zero resources, so we can
         // better test on the specific cases.
         for (Resource resource: Resource.values()) {
             if (resource != Resource.ANY) { // skip this one used for trading
@@ -220,29 +215,29 @@ public class F6Test {
         assertEquals(0, player1.hand.getResourceCardCount());
     
         // now make sure the player has the enough resources
-        Resource[] resourcesForSettlment = {Resource.BRICK, Resource.LUMBER, Resource.WOOL, Resource.GRAIN};
-        player1.hand.addResources(resourcesForSettlment);
+        Resource[] resourcesForSettlement = {Resource.BRICK, Resource.LUMBER, Resource.WOOL, Resource.GRAIN};
+        player1.hand.addResources(resourcesForSettlement);
 
         // set up the controller for the click
         controller.setState(GameState.BUILD_SETTLEMENT);
-        // Note controller should already default to currentPlayer == to player1
+        // Note controller should already default to currentPlayer == to player1,
         // and we should already be in regular play
 
         // here is the actual click
         int newVertexId = 18; // use the and id that is too close to existing road
         assertEquals(SuccessCode.INVALID_PLACEMENT, controller.clickedVertex(newVertexId)); // click should succeed
         assertEquals(GameState.BUILD_SETTLEMENT, controller.getState()); // gameState should not change to allow for re-click
-        assertEquals(3, player1.getNumSettlements()); // player settlments should be the same
+        assertEquals(3, player1.getNumSettlements()); // player settlements should be the same
         assertEquals(2, player1.getVictoryPoints()); // player victory points should be the same
-        assertEquals(null, vertexes.getVertex(newVertexId).getOwner()); // vertex should still be unowned
+        assertNull(vertexes.getVertex(newVertexId).getOwner()); // vertex should still be unowned
         assertEquals(4, player1.hand.getResourceCardCount()); // player should not have used the resources
     }
 
     @Test
-    public void testBuildSettlmentInvalidPlacementAlreadyOwned() {
+    public void testBuildSettlementInvalidPlacementAlreadyOwned() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
@@ -261,11 +256,9 @@ public class F6Test {
         GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
@@ -273,7 +266,7 @@ public class F6Test {
 
         // Note: at this point the players would have gotten some starter resources during the 
         // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources so we can
+        // clear out the player1's hand and assert that the player has zero resources, so we can
         // better test on the specific cases.
         for (Resource resource: Resource.values()) {
             if (resource != Resource.ANY) { // skip this one used for trading
@@ -286,29 +279,29 @@ public class F6Test {
         assertEquals(0, player1.hand.getResourceCardCount());
     
         // now make sure the player has the enough resources
-        Resource[] resourcesForSettlment = {Resource.BRICK, Resource.LUMBER, Resource.WOOL, Resource.GRAIN};
-        player1.hand.addResources(resourcesForSettlment);
+        Resource[] resourcesForSettlement = {Resource.BRICK, Resource.LUMBER, Resource.WOOL, Resource.GRAIN};
+        player1.hand.addResources(resourcesForSettlement);
 
         // set up the controller for the click
         controller.setState(GameState.BUILD_SETTLEMENT);
-        // Note controller should already default to currentPlayer == to player1
+        // Note controller should already default to currentPlayer == to player1,
         // and we should already be in regular play
 
         // here is the actual click
         int newVertexId = 13; // use the and id that is already owned by someone 
         assertEquals(SuccessCode.INVALID_PLACEMENT, controller.clickedVertex(newVertexId)); // click should succeed
         assertEquals(GameState.BUILD_SETTLEMENT, controller.getState()); // gameState should not change to allow for re-click
-        assertEquals(3, player1.getNumSettlements()); // player settlments should be the same
+        assertEquals(3, player1.getNumSettlements()); // player settlements should be the same
         assertEquals(2, player1.getVictoryPoints()); // player victory points should be the same
         assertEquals(player2, vertexes.getVertex(newVertexId).getOwner()); // vertex should still be owned by the enemy
         assertEquals(4, player1.hand.getResourceCardCount()); // player should not have used the resources
     }
 
     @Test
-    public void testBuildSettlmentNotEnoughResources() {
+    public void testBuildSettlementNotEnoughResources() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
@@ -327,11 +320,9 @@ public class F6Test {
         GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
@@ -339,7 +330,7 @@ public class F6Test {
 
         // Note: at this point the players would have gotten some starter resources during the 
         // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources so we can
+        // clear out the player1's hand and assert that the player has zero resources, so we can
         // better test on the specific cases.
         for (Resource resource: Resource.values()) {
             if (resource != Resource.ANY) { // skip this one used for trading
@@ -352,23 +343,23 @@ public class F6Test {
         assertEquals(0, player1.hand.getResourceCardCount());
     
         // don't add the necessary resources
-        // Resource[] resourcesForSettlment = {Resource.BRICK, Resource.LUMBER, Resource.WOOL, Resource.GRAIN};
-        // player1.hand.addResources(resourcesForSettlment);
+        // Resource[] resourcesForSettlement = {Resource.BRICK, Resource.LUMBER, Resource.WOOL, Resource.GRAIN};
+        // player1.hand.addResources(resourcesForSettlement);
 
         // set up the controller for the click
         controller.setState(GameState.BUILD_SETTLEMENT);
-        // Note controller should already default to currentPlayer == to player1
+        // Note controller should already default to currentPlayer == to player1,
         // and we should already be in regular play
 
-        // give the player another road so we can follow the distance rule
+        // give the player another road, so we can follow the distance rule
         roads.getRoad(24).setOwner(player1);
 
         // here is the actual click
         int newVertexId = 17; // use a valid id
         assertEquals(SuccessCode.INSUFFICIENT_RESOURCES, controller.clickedVertex(newVertexId)); // click should succeed
         assertEquals(GameState.BUILD_SETTLEMENT, controller.getState()); // gameState stays the same
-        assertEquals(3, player1.getNumSettlements()); // player has same num settlments
+        assertEquals(3, player1.getNumSettlements()); // player has same num settlements
         assertEquals(2, player1.getVictoryPoints()); // player has same num victory points
-        assertEquals(null, vertexes.getVertex(newVertexId).getOwner()); // vertex should still be unowned
+        assertNull(vertexes.getVertex(newVertexId).getOwner()); // vertex should still be unowned
     }
 }

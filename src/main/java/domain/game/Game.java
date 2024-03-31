@@ -235,7 +235,7 @@ public class Game implements Restorable {
             Resource[] toRemove = entry.getValue();
             if (toRemove.length != 0) {
                 if (!player.hand.removeResources(toRemove)) {
-                    throw new IllegalArgumentException("DropCards was called on player with not enough cards - desync issue");
+                    throw new IllegalArgumentException("DropCards was called on player with not enough cards - synchronization issue");
                 }
             }
         }

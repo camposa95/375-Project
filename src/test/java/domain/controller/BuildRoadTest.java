@@ -4,10 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import domain.controller.Controller;
-import domain.controller.GamePhase;
-import domain.controller.GameState;
-import domain.controller.SuccessCode;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
@@ -18,6 +14,7 @@ import domain.game.NotEnoughResourcesException;
 import domain.player.Player;
 
 public class BuildRoadTest {
+
     @Test
     public void test_BuildRoad_Build_Valid_Enough() throws InvalidPlacementException, NotEnoughResourcesException {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
@@ -62,6 +59,7 @@ public class BuildRoadTest {
         assertEquals(GamePhase.REGULAR_PLAY, phaseAfter);
         assertEquals(GameState.DEFAULT, stateAfter);
     }
+
     @Test
     public void test_BuildRoad_Build_Valid_NotEnough() throws InvalidPlacementException, NotEnoughResourcesException {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
@@ -104,6 +102,7 @@ public class BuildRoadTest {
         assertEquals(GamePhase.REGULAR_PLAY, phaseAfter);
         assertEquals(GameState.BUILD_ROAD, stateAfter);
     }
+
     @Test
     public void test_BuildRoad_Build_InValid_Enough() throws InvalidPlacementException, NotEnoughResourcesException {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
@@ -146,8 +145,9 @@ public class BuildRoadTest {
         assertEquals(GamePhase.REGULAR_PLAY, phaseAfter);
         assertEquals(GameState.BUILD_ROAD, stateAfter);
     }
+
     @Test
-    public void test_BuildRoad_Defalut() throws InvalidPlacementException, NotEnoughResourcesException {
+    public void test_BuildRoad_Default() {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
         GameType gameType = GameType.Advanced;
 
@@ -187,8 +187,9 @@ public class BuildRoadTest {
         assertEquals(GamePhase.REGULAR_PLAY, phaseAfter);
         assertEquals(GameState.DEFAULT, stateAfter);
     }
+
     @Test
-    public void test_BuildRoad_SetupStates1() throws InvalidPlacementException, NotEnoughResourcesException {
+    public void test_BuildRoad_SetupStates1() {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
         GameType gameType = GameType.Advanced;
 
@@ -225,8 +226,9 @@ public class BuildRoadTest {
 
         
     }
+
     @Test
-    public void test_BuildRoad_SetupStates2() throws InvalidPlacementException, NotEnoughResourcesException {
+    public void test_BuildRoad_SetupStates2() {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
         GameType gameType = GameType.Advanced;
 
@@ -263,8 +265,9 @@ public class BuildRoadTest {
 
         
     }
+
     @Test
-    public void test_BuildRoad_SetupStates3() throws InvalidPlacementException, NotEnoughResourcesException {
+    public void test_BuildRoad_SetupStates3() {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
         GameType gameType = GameType.Advanced;
 
@@ -301,8 +304,9 @@ public class BuildRoadTest {
 
         
     }
+
     @Test
-    public void test_BuildRoad_SetupStates4() throws InvalidPlacementException, NotEnoughResourcesException {
+    public void test_BuildRoad_SetupStates4() {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
         GameType gameType = GameType.Advanced;
 

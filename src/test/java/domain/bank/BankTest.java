@@ -9,9 +9,7 @@ public class BankTest {
     public void testRemoveResource_0Lumber_throwIllegalArgumentException() {
         Bank bank = new Bank();
         String expectedMessage = "Must be a value between 1 and 19";
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            bank.removeResource(Resource.LUMBER, 0);
-        });
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> bank.removeResource(Resource.LUMBER, 0));
         String actualMessage = exception.getMessage();
         assertEquals(expectedMessage, actualMessage);
     }
@@ -20,9 +18,7 @@ public class BankTest {
     public void testRemoveResource_20Lumber_fullBank_throwIllegalArgumentException() {
         Bank bank = new Bank();
         String expectedMessage = "Must be a value between 1 and 19";
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            bank.removeResource(Resource.LUMBER, 20);
-        });
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> bank.removeResource(Resource.LUMBER, 20));
         String actualMessage = exception.getMessage();
         assertEquals(expectedMessage, actualMessage);
     }
@@ -71,29 +67,11 @@ public class BankTest {
         assertFalse(success);
     }
 
-//    @Test
-//    public void testRemoveResource_1Desert_throwIllegalArgumentException(){
-//        Bank bank = Bank.getInstance();
-//        bank.resetBank();
-//        String expectedMessage = "Cannot use Desert";
-//        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-//            bank.removeResource(Resource.LUMBER, 1);
-//        });
-//        String actualMessage = exception.getMessage();
-//        assertEquals(expectedMessage, actualMessage);
-//
-//    }
-
-
-
-
     @Test
     public void testAddResource_0Lumber_throwIllegalArgumentException() {
         Bank bank = new Bank();
         String expectedMessage = "Must be a value between 1 and 19";
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            bank.addResource(Resource.LUMBER, 0);
-        });
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> bank.addResource(Resource.LUMBER, 0));
         String actualMessage = exception.getMessage();
         assertEquals(expectedMessage, actualMessage);
     }
@@ -102,9 +80,7 @@ public class BankTest {
     public void testAddResource_20Lumber_emptyBank_throwIllegalArgumentException() {
         Bank bank = new Bank();
         String expectedMessage = "Must be a value between 1 and 19";
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            bank.addResource(Resource.LUMBER, 20);
-        });
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> bank.addResource(Resource.LUMBER, 20));
         String actualMessage = exception.getMessage();
         assertEquals(expectedMessage, actualMessage);
     }
@@ -134,32 +110,6 @@ public class BankTest {
         assertTrue(success);
     }
 
-//    @Test
-//    public void testAddResource_1Desert_throwIllegalArgumentException() {
-//        Bank bank = Bank.getInstance();
-//        bank.resetBank();
-//        String expectedMessage = "Cannot use Desert";
-//        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-//            bank.addResource(Resource.LUMBER, 1);
-//        });
-//        String actualMessage = exception.getMessage();
-//        assertEquals(expectedMessage, actualMessage);
-//    }
-
-
-
-//    @Test
-//    public void testGetResourceAmount_Desert_ReturnIllegalArgumentException() {
-//        Bank bank = Bank.getInstance();
-//        bank.resetBank();
-//        String expectedMessage = "Cannot use Desert";
-//        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-//            bank.getResourceAmount(Terrain.DESERT);
-//        });
-//        String actualMessage = exception.getMessage();
-//        assertEquals(expectedMessage, actualMessage);
-//    }
-
     @Test
     public void testGetResourceAmount_Lumber_FullBank_Return19(){
         Bank bank = new Bank();
@@ -169,7 +119,7 @@ public class BankTest {
     }
 
     @Test
-    public void testGetResourceAmount_Lumber_Emptybank_Return0(){
+    public void testGetResourceAmount_Lumber_EmptyBank_Return0(){
         Bank bank = new Bank();
         int expected = 0;
         bank.removeResource(Resource.LUMBER, 19);
@@ -316,9 +266,6 @@ public class BankTest {
         assertFalse(success);
         assertEquals(expectedSize, actualSize);
     }
-
-
-
 
     @Test
     public void testRemoveResources_emptyList_returnTrue(){

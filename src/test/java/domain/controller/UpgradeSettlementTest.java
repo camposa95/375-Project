@@ -2,10 +2,6 @@ package domain.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import domain.controller.Controller;
-import domain.controller.GamePhase;
-import domain.controller.GameState;
-import domain.controller.SuccessCode;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 

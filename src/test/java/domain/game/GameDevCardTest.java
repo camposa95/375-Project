@@ -5,9 +5,6 @@ import domain.bank.Resource;
 import domain.devcarddeck.DevCard;
 import domain.devcarddeck.DevelopmentCardDeck;
 import domain.devcarddeck.EmptyDevCardDeckException;
-import domain.game.CardNotPlayableException;
-import domain.game.Game;
-import domain.game.NotEnoughResourcesException;
 import domain.gameboard.GameBoard;
 import domain.player.Hand;
 import domain.player.Player;
@@ -17,13 +14,12 @@ import org.junit.jupiter.api.Test;
 import domain.graphs.RoadGraph;
 import domain.graphs.VertexGraph;
 
-import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GameDevCardTest {
+
     @Test
-    public void testBuyCard_NoResources_NoCard_ExpectError(){
+    public void testBuyCard_NoResources_NoCard_ExpectError() {
         VertexGraph mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
         GameBoard mockGameBoard =  EasyMock.createMock(GameBoard.class);
         RoadGraph mockRoadGraph =  EasyMock.createMock(RoadGraph.class);
@@ -38,7 +34,7 @@ public class GameDevCardTest {
         int deckBefore = deck.getDeck().size();
         //int handBefore = player.hand.getDevCards();
         
-        assertThrows(EmptyDevCardDeckException.class,()->{game.buyDevCard(mockplayer);});
+        assertThrows(EmptyDevCardDeckException.class,()-> game.buyDevCard(mockplayer));
 
         int deckAfter = deck.getDeck().size();
         //int handAfter = player.hand.getDevCards();
@@ -48,8 +44,9 @@ public class GameDevCardTest {
 
         EasyMock.verify(mockGameBoard,mockRoadGraph,mockVertexGraph,mockplayer);
     }
+
     @Test
-    public void testBuyCard_Resources_NoCard_ExpectError(){
+    public void testBuyCard_Resources_NoCard_ExpectError() {
         VertexGraph mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
         GameBoard mockGameBoard =  EasyMock.createMock(GameBoard.class);
         RoadGraph mockRoadGraph =  EasyMock.createMock(RoadGraph.class);
@@ -63,7 +60,7 @@ public class GameDevCardTest {
         emptyDeck(deck);
         int deckBefore = deck.getDeck().size();
         
-        assertThrows(EmptyDevCardDeckException.class,()->{game.buyDevCard(mockplayer);});        
+        assertThrows(EmptyDevCardDeckException.class,()-> game.buyDevCard(mockplayer));
 
         int deckAfter = deck.getDeck().size();
 
@@ -71,8 +68,9 @@ public class GameDevCardTest {
         assertEquals(deckBefore, deckAfter);
         EasyMock.verify(mockGameBoard,mockRoadGraph,mockVertexGraph,mockplayer);
     }
+
     @Test
-    public void testBuyCard_NoResources_Card_ExpectError(){
+    public void testBuyCard_NoResources_Card_ExpectError() {
         VertexGraph mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
         GameBoard mockGameBoard =  EasyMock.createMock(GameBoard.class);
         RoadGraph mockRoadGraph =  EasyMock.createMock(RoadGraph.class);
@@ -89,7 +87,7 @@ public class GameDevCardTest {
 
         int deckBefore = deck.getDeck().size();
         
-        assertThrows(NotEnoughResourcesException.class,()->{game.buyDevCard(mockplayer);});
+        assertThrows(NotEnoughResourcesException.class,()-> game.buyDevCard(mockplayer));
 
         int deckAfter = deck.getDeck().size();
 
@@ -97,8 +95,9 @@ public class GameDevCardTest {
         assertEquals(deckBefore, deckAfter);
         EasyMock.verify(mockGameBoard,mockRoadGraph,mockVertexGraph,mockplayer);
     }
+
     @Test
-    public void testBuyCard_Resources_Card(){
+    public void testBuyCard_Resources_Card() {
         VertexGraph mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
         GameBoard mockGameBoard =  EasyMock.createMock(GameBoard.class);
         RoadGraph mockRoadGraph =  EasyMock.createMock(RoadGraph.class);
@@ -118,7 +117,7 @@ public class GameDevCardTest {
         try {
             game.buyDevCard(mockplayer);
         } catch (NotEnoughResourcesException | EmptyDevCardDeckException e) {
-            assertFalse(true);
+            fail();
             e.printStackTrace();
         }    
 
@@ -128,8 +127,9 @@ public class GameDevCardTest {
         assertEquals(--deckBefore, deckAfter);
         EasyMock.verify(mockGameBoard,mockRoadGraph,mockVertexGraph,mockplayer);
     }
+
     @Test
-    public void testPlayMonopoly_GetCards(){
+    public void testPlayMonopoly_GetCards() {
         VertexGraph mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
         GameBoard mockGameBoard =  EasyMock.createMock(GameBoard.class);
         RoadGraph mockRoadGraph =  EasyMock.createMock(RoadGraph.class);
@@ -165,14 +165,15 @@ public class GameDevCardTest {
         try {
             game.playMonopoly(mockplayer,robbed,resource);
         } catch (CardNotPlayableException e) {
-            assertFalse(true);
+            fail();
             e.printStackTrace();
         } 
 
         EasyMock.verify(mockGameBoard,mockRoadGraph,mockVertexGraph,mockplayer,mockRobbed1,mockRobbed2,mockHand);
     }
+
     @Test
-    public void testPlayMonopoly_GetSome(){
+    public void testPlayMonopoly_GetSome() {
         VertexGraph mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
         GameBoard mockGameBoard =  EasyMock.createMock(GameBoard.class);
         RoadGraph mockRoadGraph =  EasyMock.createMock(RoadGraph.class);
@@ -206,14 +207,15 @@ public class GameDevCardTest {
         try {
             game.playMonopoly(mockplayer,robbed,resource);
         } catch (CardNotPlayableException e) {
-            assertFalse(true);
+            fail();
             e.printStackTrace();
         } 
 
         EasyMock.verify(mockGameBoard,mockRoadGraph,mockVertexGraph,mockplayer,mockRobbed1,mockRobbed2,mockHand);
     }
+
     @Test
-    public void testPlayMonopoly_Error(){
+    public void testPlayMonopoly_Error() {
         VertexGraph mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
         GameBoard mockGameBoard =  EasyMock.createMock(GameBoard.class);
         RoadGraph mockRoadGraph =  EasyMock.createMock(RoadGraph.class);
@@ -240,13 +242,14 @@ public class GameDevCardTest {
        
         EasyMock.replay(mockGameBoard,mockRoadGraph,mockVertexGraph,mockplayer,mockRobbed1,mockRobbed2,mockHand);
         
-        assertThrows(CardNotPlayableException.class,()->{game.playMonopoly(mockplayer,robbed,resource);});
+        assertThrows(CardNotPlayableException.class,()-> game.playMonopoly(mockplayer,robbed,resource));
         
         EasyMock.verify(mockGameBoard,mockRoadGraph,mockVertexGraph,mockplayer,mockRobbed1,mockRobbed2,mockHand);
    
     } 
+
     @Test
-    public void testPlayYearOfPlenty_NoDev(){
+    public void testPlayYearOfPlenty_NoDev() {
         VertexGraph mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
         GameBoard mockGameBoard =  EasyMock.createMock(GameBoard.class);
         RoadGraph mockRoadGraph =  EasyMock.createMock(RoadGraph.class);
@@ -266,12 +269,13 @@ public class GameDevCardTest {
       
         EasyMock.replay(mockGameBoard,mockRoadGraph,mockVertexGraph,mockplayer,mockHand);
         
-        assertThrows(CardNotPlayableException.class,()->{game.playYearOfPlenty(mockplayer,r1,r2);});
+        assertThrows(CardNotPlayableException.class,()-> game.playYearOfPlenty(mockplayer,r1,r2));
 
         EasyMock.verify(mockGameBoard,mockRoadGraph,mockVertexGraph,mockplayer,mockHand);
     }
+
     @Test
-    public void testPlayYearOfPlenty_NoResources(){
+    public void testPlayYearOfPlenty_NoResources() {
         VertexGraph mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
         GameBoard mockGameBoard =  EasyMock.createMock(GameBoard.class);
         RoadGraph mockRoadGraph =  EasyMock.createMock(RoadGraph.class);
@@ -296,12 +300,13 @@ public class GameDevCardTest {
       
         EasyMock.replay(mockGameBoard,mockRoadGraph,mockVertexGraph,mockplayer,mockHand);
         
-        assertThrows(NotEnoughResourcesException.class,()->{game.playYearOfPlenty(mockplayer,r1,r2);});
+        assertThrows(NotEnoughResourcesException.class,()-> game.playYearOfPlenty(mockplayer,r1,r2));
 
         EasyMock.verify(mockGameBoard,mockRoadGraph,mockVertexGraph,mockplayer,mockHand);
     }
+
     @Test
-    public void testPlayYearOfPlenty_NoR1(){
+    public void testPlayYearOfPlenty_NoR1() {
         VertexGraph mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
         GameBoard mockGameBoard =  EasyMock.createMock(GameBoard.class);
         RoadGraph mockRoadGraph =  EasyMock.createMock(RoadGraph.class);
@@ -333,10 +338,11 @@ public class GameDevCardTest {
       
         EasyMock.replay(mockGameBoard,mockRoadGraph,mockVertexGraph,mockplayer,mockHand);
         
-        assertThrows(NotEnoughResourcesException.class,()->{game.playYearOfPlenty(mockplayer,r1,r2);});
+        assertThrows(NotEnoughResourcesException.class,()-> game.playYearOfPlenty(mockplayer,r1,r2));
 
         EasyMock.verify(mockGameBoard,mockRoadGraph,mockVertexGraph,mockplayer,mockHand);
     }
+
     @Test
     public void testPlayYearOfPlenty_NoR2() {
         VertexGraph mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
@@ -361,12 +367,13 @@ public class GameDevCardTest {
       
         EasyMock.replay(mockGameBoard,mockRoadGraph,mockVertexGraph,mockplayer,mockHand);
         
-        assertThrows(NotEnoughResourcesException.class,()->{game.playYearOfPlenty(mockplayer,r1,r2);});
+        assertThrows(NotEnoughResourcesException.class,()-> game.playYearOfPlenty(mockplayer,r1,r2));
 
         EasyMock.verify(mockGameBoard,mockRoadGraph,mockVertexGraph,mockplayer,mockHand);
     }
+
     @Test
-    public void testPlayYearOfPlenty_GetResources(){
+    public void testPlayYearOfPlenty_GetResources() {
         VertexGraph mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
         GameBoard mockGameBoard =  EasyMock.createMock(GameBoard.class);
         RoadGraph mockRoadGraph =  EasyMock.createMock(RoadGraph.class);

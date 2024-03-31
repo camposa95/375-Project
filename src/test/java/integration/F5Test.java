@@ -57,7 +57,7 @@ public class F5Test {
 
     // -------------------------- Start of Test  ---------------------------
         
-        //Based on beginner locations these are the resources each player should recieve after setup
+        //Based on beginner locations these are the resources each player should receive after setup
         Resource[] resources1 = {Resource.GRAIN,Resource.BRICK,Resource.LUMBER};
         Resource[] resources2 = {Resource.GRAIN,Resource.GRAIN,Resource.ORE};
         Resource[] resources3 = {Resource.BRICK,Resource.LUMBER,Resource.ORE};
@@ -68,10 +68,11 @@ public class F5Test {
         assertTrue(player3.hand.removeResources(resources3));
         assertTrue(player4.hand.removeResources(resources4));
         
-        //avoid an spotbug error with controller not called
+        //avoid a spot-bug error with controller not called
         controller.endTurn();
 
     }
+
     @Test
     public void testGettingResourcesFromSetupAdvanced() {
      // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
@@ -89,7 +90,7 @@ public class F5Test {
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        // must have gameBoard in beginner still so we know where tiles are
+        // must have gameBoard in beginner still, so we know where tiles are
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
@@ -97,14 +98,14 @@ public class F5Test {
 
     // -------------------------- Start of Test  ---------------------------
         
-        //Based on beginner locations these are the resources each player should recieve after setup
+        //Based on beginner locations these are the resources each player should receive after setup
         //Note resources4 only has 2 since it was moved to edge of desert tile to test
         Resource[] resources1 = {Resource.GRAIN,Resource.BRICK,Resource.LUMBER};
         Resource[] resources2 = {Resource.GRAIN,Resource.GRAIN,Resource.ORE};
         Resource[] resources3 = {Resource.BRICK,Resource.LUMBER,Resource.ORE};
         Resource[] resources4 = {Resource.LUMBER,Resource.WOOL};
 
-        //Manualy imput player turns, these are the same as beginner except for a first location
+        //Manually input player turns, these are the same as beginner except for a first location
         
         //First player first settlement and road
         assertEquals(SuccessCode.SUCCESS,controller.clickedVertex(35));
@@ -143,6 +144,7 @@ public class F5Test {
         assertTrue(player1.hand.removeResources(resources1));
 
     }
+
     @Test
     public void testFirstTurnRollDieAndGetResources() {
          // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
@@ -182,7 +184,7 @@ public class F5Test {
         player3.hand.removeResources(r3);
         player4.hand.removeResources(r4);
 
-        //Based on beginner locations these are the resources each player should recieve on given die roll
+        //Based on beginner locations these are the resources each player should receive on given die roll
         EasyMock.expect(mockedRandom.nextInt(2,13)).andReturn(10);
         EasyMock.replay(mockedRandom);
         controller.rollDice();
@@ -198,9 +200,10 @@ public class F5Test {
         assertTrue(player3.hand.removeResources(resources3));
         assertTrue(player4.hand.removeResources(resources4));
         
-        // avoid an spotbug error with controller not called
+        // avoid a spot-bug error with controller not called
         controller.endTurn();
     }
+
     @Test
     public void testGetMoreResourcesFromUpgradedSettlements() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
@@ -266,7 +269,7 @@ public class F5Test {
 
         
         
-        //Based on beginner locations these are the resources each player should recieve on given die roll
+        //Based on beginner locations these are the resources each player should receive on given die roll
         EasyMock.expect(mockedRandom.nextInt(2,13)).andReturn(10);
         EasyMock.replay(mockedRandom);
         controller.rollDice();
@@ -282,9 +285,10 @@ public class F5Test {
         assertTrue(player3.hand.removeResources(resources3));
         assertTrue(player4.hand.removeResources(resources4));
         
-        //avoid an spotbug error with controller not called
+        //avoid a spot-bug error with controller not called
         controller.endTurn();
     }
+
     @Test
     public void testNoOneGetsResourcesOn7() {
          // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
@@ -321,7 +325,7 @@ public class F5Test {
         player2.hand.removeResources(r2);
         player3.hand.removeResources(r3);
         player4.hand.removeResources(r4);
-        //Based on beginner locations these are the resources each player should recieve on given die roll
+        //Based on beginner locations these are the resources each player should receive on given die roll
 
         EasyMock.expect(mockedRandom.nextInt(2, 13)).andReturn(7);
         EasyMock.replay(mockedRandom);
@@ -331,13 +335,12 @@ public class F5Test {
         Resource[] resources2 = {Resource.BRICK};
         Resource[] resources4 = {Resource.ORE};
 
-        //check players didnt recieve
+        //check players didn't receive
         assertFalse(player2.hand.removeResources(resources2));
         assertFalse(player4.hand.removeResources(resources4));
         
-        //avoid an spotbug error with controller not called
+        //avoid a spot-bug error with controller not called
         controller.endTurn();
 
     }
-
 }

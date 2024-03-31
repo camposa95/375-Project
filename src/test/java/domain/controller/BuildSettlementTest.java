@@ -3,10 +3,6 @@ package domain.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import domain.controller.Controller;
-import domain.controller.GamePhase;
-import domain.controller.GameState;
-import domain.controller.SuccessCode;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
@@ -80,7 +76,7 @@ public class BuildSettlementTest {
         controller.setState(GameState.BUILD_SETTLEMENT);
         controller.setCurrentPlayer(mockedPlayer1);
 
-        // Game tells us that we don't haev enough resources
+        // Game tells us that we don't have enough resources
         mockedGame.placeSettlement(testVertexId, mockedPlayer1);
         EasyMock.expectLastCall().andThrow(new NotEnoughResourcesException());
 
@@ -151,7 +147,7 @@ public class BuildSettlementTest {
     }
 
     @Test
-    public void testClickedVertex12() throws InvalidPlacementException, NotEnoughResourcesException {
+    public void testClickedVertex12() {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
         GameType gameType = GameType.Advanced;
 
@@ -192,7 +188,7 @@ public class BuildSettlementTest {
     }
 
     @Test
-    public void testClickedVertex13() throws InvalidPlacementException, NotEnoughResourcesException {
+    public void testClickedVertex13() {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
         GameType gameType = GameType.Advanced;
 
@@ -231,12 +227,12 @@ public class BuildSettlementTest {
         assertEquals(GamePhase.REGULAR_PLAY, phaseBefore);
         assertEquals(GameState.FIRST_SETTLEMENT, stateBefore);
 
-        // note we don't test after states because the illegaStateException should crash
+        // note we don't test after states because the IllegalStateException should crash
         // the program
     }
 
     @Test
-    public void testClickedVertex14() throws InvalidPlacementException, NotEnoughResourcesException {
+    public void testClickedVertex14() {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
         GameType gameType = GameType.Advanced;
 
@@ -275,12 +271,12 @@ public class BuildSettlementTest {
         assertEquals(GamePhase.REGULAR_PLAY, phaseBefore);
         assertEquals(GameState.SECOND_SETTLEMENT, stateBefore);
 
-        // note we don't test after states because the illegaStateException should crash
+        // note we don't test after states because the IllegalStateException should crash
         // the program
     }
 
     @Test
-    public void testClickedVertex15() throws InvalidPlacementException, NotEnoughResourcesException {
+    public void testClickedVertex15() {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
         GameType gameType = GameType.Advanced;
 
@@ -319,12 +315,12 @@ public class BuildSettlementTest {
         assertEquals(GamePhase.REGULAR_PLAY, phaseBefore);
         assertEquals(GameState.FIRST_ROAD, stateBefore);
 
-        // note we don't test after states because the illegaStateException should crash
+        // note we don't test after states because the IllegalStateException should crash
         // the program
     }
 
     @Test
-    public void testClickedVertex16() throws InvalidPlacementException, NotEnoughResourcesException {
+    public void testClickedVertex16() {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
         GameType gameType = GameType.Advanced;
 
@@ -363,7 +359,7 @@ public class BuildSettlementTest {
         assertEquals(GamePhase.REGULAR_PLAY, phaseBefore);
         assertEquals(GameState.SECOND_ROAD, stateBefore);
 
-        // note we don't test after states because the illegaStateException should crash
+        // note we don't test after states because the IllegalStateException should crash
         // the program
     }
 

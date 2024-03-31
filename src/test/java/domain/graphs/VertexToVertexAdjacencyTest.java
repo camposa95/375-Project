@@ -483,9 +483,7 @@ public class VertexToVertexAdjacencyTest {
         VertexGraph vertexes = new VertexGraph(GameType.Beginner);
         Vertex testVertex = vertexes.getVertex(0); // get any road
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            testVertex.getAdjacentVertexes();
-        });
+        RuntimeException exception = assertThrows(RuntimeException.class, testVertex::getAdjacentVertexes);
 
         String expectedMessage = "Vertex-to-Vertex adjacency uninitialized";
         String actualMessage = exception.getMessage();

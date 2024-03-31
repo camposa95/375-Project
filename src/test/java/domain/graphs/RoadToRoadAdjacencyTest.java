@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import data.GameLoader;
 import domain.game.GameType;
-import domain.graphs.Road;
-import domain.graphs.RoadGraph;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -935,9 +933,7 @@ public class RoadToRoadAdjacencyTest {
         RoadGraph roads = new RoadGraph();
         Road testRoad = roads.getRoad(0); // get any road
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            testRoad.getAdjacentRoads();
-        });
+        RuntimeException exception = assertThrows(RuntimeException.class, testRoad::getAdjacentRoads);
 
         String expectedMessage = "Road-to-Road adjacency uninitialized";
         String actualMessage = exception.getMessage();

@@ -1,7 +1,6 @@
 package domain.controller;
 
 import domain.bank.Resource;
-import domain.controller.Controller;
 import domain.game.Game;
 import domain.game.GameType;
 import domain.player.BoostType;

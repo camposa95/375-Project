@@ -4,22 +4,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import domain.controller.Controller;
-import domain.controller.SuccessCode;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
-import domain.game.CardNotPlayableException;
 import domain.devcarddeck.DevCard;
 import domain.game.Game;
 import domain.game.GameType;
-import domain.game.NotEnoughResourcesException;
 import domain.player.Player;
 
 public class PlayKnightCardTest {
     
     @Test
-    public void testPlayKnightCardSuccess() throws NotEnoughResourcesException, CardNotPlayableException {
+    public void testPlayKnightCardSuccess() {
         Game mockedGame = EasyMock.createNiceMock(Game.class);
         Player mockedPlayer1 = EasyMock.createMock(Player.class);
         Player mockedPlayer2 = EasyMock.createMock(Player.class);
@@ -65,11 +61,11 @@ public class PlayKnightCardTest {
 
         // assert on expected results
         assertEquals(SuccessCode.SUCCESS, actual);
-        assertFalse(controller.getDevCardsEnabled()); // dev cards are now disabled becasuse we can only play one per turn
+        assertFalse(controller.getDevCardsEnabled()); // dev cards are now disabled because we can only play one per turn
     }
 
     @Test
-    public void testPlayKnightCardNoCard() throws NotEnoughResourcesException, CardNotPlayableException {
+    public void testPlayKnightCardNoCard() {
         Game mockedGame = EasyMock.createMock(Game.class);
         Player mockedPlayer1 = EasyMock.createMock(Player.class);
         Player mockedPlayer2 = EasyMock.createMock(Player.class);
@@ -99,11 +95,11 @@ public class PlayKnightCardTest {
 
         // assert on expected results
         assertEquals(SuccessCode.CANNOT_PLAY_CARD, actual);
-        assertTrue(controller.getDevCardsEnabled()); // dev cards are now disabled becasuse we can only play one per turn
+        assertTrue(controller.getDevCardsEnabled()); // dev cards are now disabled because we can only play one per turn
     }
 
     @Test
-    public void testPlayKnightCardsDisabled() throws CardNotPlayableException {
+    public void testPlayKnightCardsDisabled() {
         Game mockedGame = EasyMock.createMock(Game.class);
         Player mockedPlayer1 = EasyMock.createMock(Player.class);
         Player mockedPlayer2 = EasyMock.createMock(Player.class);
@@ -137,7 +133,7 @@ public class PlayKnightCardTest {
     }
 
     @Test
-    public void testPlayKnightCardWin() throws NotEnoughResourcesException, CardNotPlayableException {
+    public void testPlayKnightCardWin() {
         Game mockedGame = EasyMock.createNiceMock(Game.class);
         Player mockedPlayer1 = EasyMock.createMock(Player.class);
         Player mockedPlayer2 = EasyMock.createMock(Player.class);
@@ -183,6 +179,6 @@ public class PlayKnightCardTest {
 
         // assert on expected results
         assertEquals(SuccessCode.GAME_WIN, actual);
-        assertFalse(controller.getDevCardsEnabled()); // dev cards are now disabled becasuse we can only play one per turn
+        assertFalse(controller.getDevCardsEnabled()); // dev cards are now disabled because we can only play one per turn
     }
 }

@@ -1,10 +1,6 @@
 package integration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
 
 import data.GameLoader;
@@ -24,6 +20,8 @@ import domain.bank.Resource;
 import domain.graphs.RoadGraph;
 import domain.graphs.VertexGraph;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 
 /**
  * The purpose of this test class is to test feature 13 (F13):
@@ -32,10 +30,10 @@ import domain.graphs.VertexGraph;
 public class F13Test {
     
     @Test
-    public void testBuildSettlmentNoPort() {
+    public void testBuildSettlementNoPort() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
@@ -54,11 +52,9 @@ public class F13Test {
         GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
@@ -66,7 +62,7 @@ public class F13Test {
 
         // Note: at this point the players would have gotten some starter resources during the 
         // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources so we can
+        // clear out the player1's hand and assert that the player has zero resources, so we can
         // better test on the specific cases.
         for (Resource resource: Resource.values()) {
             if (resource != Resource.ANY) { // skip this one used for trading
@@ -79,15 +75,15 @@ public class F13Test {
         assertEquals(0, player1.hand.getResourceCardCount());
     
         // now make sure the player has the enough resources
-        Resource[] resourcesForSettlment = {Resource.BRICK, Resource.LUMBER, Resource.WOOL, Resource.GRAIN};
-        player1.hand.addResources(resourcesForSettlment);
+        Resource[] resourcesForSettlement = {Resource.BRICK, Resource.LUMBER, Resource.WOOL, Resource.GRAIN};
+        player1.hand.addResources(resourcesForSettlement);
 
         // set up the controller for the click
         controller.setState(GameState.BUILD_SETTLEMENT);
-        // Note controller should already default to currentPlayer == to player1
+        // Note controller should already default to currentPlayer == to player1,
         // and we should already be in regular play
 
-        // give the player another road so we can follow the network rule
+        // give the player another road, so we can follow the network rule
         roads.getRoad(26).setOwner(player1);
         roads.getRoad(27).setOwner(player1);
 
@@ -95,25 +91,25 @@ public class F13Test {
         Resource[] boostsBefore = player1.getTradeBoosts();
         // assert that the player had not boosts before
         Resource[] expectedBoostsBefore = {};
-        assertTrue(Arrays.equals(expectedBoostsBefore, boostsBefore));
+        assertArrayEquals(expectedBoostsBefore, boostsBefore);
 
         // here is the actual click
         int newVertexId = 21; // use a vertex not next to a ports
         controller.clickedVertex(newVertexId); // click should succeed
         // Note: we don't need to assert on states and such here because that
-        // is outside of the scope of this tests
+        // is outside the scope of this tests
 
         // assert that the player didn't gain a boost
         Resource[] expectedBoostsAfter = {};
         Resource[] boostsAfter = player1.getTradeBoosts();
-        assertTrue(Arrays.equals(expectedBoostsAfter, boostsAfter));
+        assertArrayEquals(expectedBoostsAfter, boostsAfter);
     }
 
     @Test
-    public void testBuildSettlmentHasSpecialPort() {
+    public void testBuildSettlementHasSpecialPort() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
@@ -132,11 +128,9 @@ public class F13Test {
         GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
@@ -144,7 +138,7 @@ public class F13Test {
 
         // Note: at this point the players would have gotten some starter resources during the 
         // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources so we can
+        // clear out the player1's hand and assert that the player has zero resources, so we can
         // better test on the specific cases.
         for (Resource resource: Resource.values()) {
             if (resource != Resource.ANY) { // skip this one used for trading
@@ -157,40 +151,40 @@ public class F13Test {
         assertEquals(0, player1.hand.getResourceCardCount());
     
         // now make sure the player has the enough resources
-        Resource[] resourcesForSettlment = {Resource.BRICK, Resource.LUMBER, Resource.WOOL, Resource.GRAIN};
-        player1.hand.addResources(resourcesForSettlment);
+        Resource[] resourcesForSettlement = {Resource.BRICK, Resource.LUMBER, Resource.WOOL, Resource.GRAIN};
+        player1.hand.addResources(resourcesForSettlement);
 
         // set up the controller for the click
         controller.setState(GameState.BUILD_SETTLEMENT);
-        // Note controller should already default to currentPlayer == to player1
+        // Note controller should already default to currentPlayer == to player1,
         // and we should already be in regular play
 
-        // give the player another road so we can get to the special port
+        // give the player another road, so we can get to the special port
         roads.getRoad(24).setOwner(player1);
 
         // get its trade boosts before the build
         Resource[] boostsBefore = player1.getTradeBoosts();
         // assert that the player had not boosts before
         Resource[] expectedBoostsBefore = {};
-        assertTrue(Arrays.equals(expectedBoostsBefore, boostsBefore));
+        assertArrayEquals(expectedBoostsBefore, boostsBefore);
 
         // here is the actual click
         int newVertexId = 17; // use a vertex not next to a ports
         controller.clickedVertex(newVertexId); // click should succeed
         // Note: we don't need to assert on states and such here because that
-        // is outside of the scope of this tests
+        // is outside the scope of this tests
 
         // assert that the player didn't gain a boost
         Resource[] expectedBoostsAfter = {Resource.LUMBER};
         Resource[] boostsAfter = player1.getTradeBoosts();
-        assertTrue(Arrays.equals(expectedBoostsAfter, boostsAfter));
+        assertArrayEquals(expectedBoostsAfter, boostsAfter);
     }
 
     @Test
-    public void testBuildSettlmentHasGenericPort() {
+    public void testBuildSettlementHasGenericPort() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
@@ -209,11 +203,9 @@ public class F13Test {
         GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
@@ -221,7 +213,7 @@ public class F13Test {
 
         // Note: at this point the players would have gotten some starter resources during the 
         // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources so we can
+        // clear out the player1's hand and assert that the player has zero resources, so we can
         // better test on the specific cases.
         for (Resource resource: Resource.values()) {
             if (resource != Resource.ANY) { // skip this one used for trading
@@ -234,15 +226,15 @@ public class F13Test {
         assertEquals(0, player1.hand.getResourceCardCount());
     
         // now make sure the player has the enough resources
-        Resource[] resourcesForSettlment = {Resource.BRICK, Resource.LUMBER, Resource.WOOL, Resource.GRAIN};
-        player1.hand.addResources(resourcesForSettlment);
+        Resource[] resourcesForSettlement = {Resource.BRICK, Resource.LUMBER, Resource.WOOL, Resource.GRAIN};
+        player1.hand.addResources(resourcesForSettlement);
 
         // set up the controller for the click
         controller.setState(GameState.BUILD_SETTLEMENT);
-        // Note controller should already default to currentPlayer == to player1
+        // Note controller should already default to currentPlayer == to player1,
         // and we should already be in regular play
 
-        // give the player another road so we can get to the special port
+        // give the player another road, so we can get to the special port
         roads.getRoad(19).setOwner(player1);
         roads.getRoad(11).setOwner(player1);
         roads.getRoad(6).setOwner(player1);
@@ -251,17 +243,17 @@ public class F13Test {
         Resource[] boostsBefore = player1.getTradeBoosts();
         // assert that the player had not boosts before
         Resource[] expectedBoostsBefore = {};
-        assertTrue(Arrays.equals(expectedBoostsBefore, boostsBefore));
+        assertArrayEquals(expectedBoostsBefore, boostsBefore);
 
         // here is the actual click
         int newVertexId = 0; // use a vertex next to a generic port
         controller.clickedVertex(newVertexId); // click should succeed
         // Note: we don't need to assert on states and such here because that
-        // is outside of the scope of this tests
+        // is outside the scope of this tests
 
         // assert that the player didn't gain a boost
         Resource[] expectedBoostsAfter = {Resource.ANY};
         Resource[] boostsAfter = player1.getTradeBoosts();
-        assertTrue(Arrays.equals(expectedBoostsAfter, boostsAfter));
+        assertArrayEquals(expectedBoostsAfter, boostsAfter);
     }
 }

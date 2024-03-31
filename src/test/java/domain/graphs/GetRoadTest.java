@@ -2,8 +2,6 @@ package domain.graphs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import domain.graphs.Road;
-import domain.graphs.RoadGraph;
 import org.junit.jupiter.api.Test;
 
 public class GetRoadTest {
@@ -31,15 +29,14 @@ public class GetRoadTest {
         assertEquals(expectedId, actualId);
     }
 
-    @Test void testGetRoadWithNfrom2to71() {
+    @Test void testGetRoadWithN_2to71() {
         RoadGraph roads = new RoadGraph();
 
         for (int i = 2; i < NUM_ROADS; i++) {
             Road road = roads.getRoad(i);
-            int expectedId = i;
             int actualId = road.getLocationId();
 
-            assertEquals(expectedId, actualId);
+            assertEquals(i, actualId);
         }
     }
 
@@ -47,9 +44,7 @@ public class GetRoadTest {
     public void testGetRoadWithInvalidLocationId72() {
         RoadGraph roads = new RoadGraph();
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            roads.getRoad(NUM_ROADS);
-        });
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> roads.getRoad(NUM_ROADS));
         String expectedMessage = "LocationId out of bounds: Try [0, 72]";
         String actualMessage = exception.getMessage();
         assertEquals(expectedMessage, actualMessage);
@@ -59,9 +54,7 @@ public class GetRoadTest {
     public void testGetRoadWithInvalidLocationIdNegative1() {
         RoadGraph roads = new RoadGraph();
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            roads.getRoad(-1);
-        });
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> roads.getRoad(-1));
         String expectedMessage = "LocationId out of bounds: Try [0, 72]";
         String actualMessage = exception.getMessage();
         assertEquals(expectedMessage, actualMessage);

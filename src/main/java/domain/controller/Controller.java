@@ -225,7 +225,7 @@ public class Controller implements Restorable {
             } catch (InvalidPlacementException e) {
                 return SuccessCode.INVALID_PLACEMENT;
             } catch (NotEnoughResourcesException e) {
-                throw new IllegalStateException("Controller and Game states unsyncronized");
+                throw new IllegalStateException("Controller and Game states not synchronized");
             }
         }
 
@@ -240,7 +240,7 @@ public class Controller implements Restorable {
             } catch (InvalidPlacementException e) {
                 return SuccessCode.INVALID_PLACEMENT;
             } catch (NotEnoughResourcesException e) {
-                throw new IllegalStateException("Controller and Game states unsyncronized");
+                throw new IllegalStateException("Controller and Game states not synchronized");
             }
         }
 
@@ -377,7 +377,7 @@ public class Controller implements Restorable {
             } catch (InvalidPlacementException e) {
                 return SuccessCode.INVALID_PLACEMENT;
             } catch (NotEnoughResourcesException e) {
-                throw new IllegalStateException("Controller and Game states unsyncronized");
+                throw new IllegalStateException("Controller and Game states not synchronized");
             }
         }
         if (gameState == GameState.SECOND_ROAD) {
@@ -395,7 +395,7 @@ public class Controller implements Restorable {
             } catch (InvalidPlacementException e) {
                 return SuccessCode.INVALID_PLACEMENT;
             } catch (NotEnoughResourcesException e) {
-                throw new IllegalStateException("Controller and Game states unsyncronized");
+                throw new IllegalStateException("Controller and Game states not synchronized");
             }
         }
         return SuccessCode.UNDEFINED;

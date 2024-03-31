@@ -7,9 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class GameBoardTest {
@@ -21,14 +19,14 @@ public class GameBoardTest {
         Terrain[] expectedTerrain = {Terrain.MOUNTAINS,Terrain.PASTURE,Terrain.FORREST,Terrain.FIELDS,Terrain.HILLS,Terrain.PASTURE,Terrain.HILLS,
             Terrain.FIELDS,Terrain.FORREST, Terrain.DESERT,Terrain.FORREST,Terrain.MOUNTAINS,Terrain.FORREST,Terrain.MOUNTAINS,
             Terrain.FIELDS,Terrain.PASTURE,Terrain.HILLS,Terrain.FIELDS,Terrain.PASTURE};
-        int[] expectedDieVals =  {10,2,9,12,6,4,10,9,11,7,3,8,8,3,4,5,5,6,11};
+        int[] expectedDieNumbers =  {10,2,9,12,6,4,10,9,11,7,3,8,8,3,4,5,5,6,11};
         boolean[] expectedRobbers = {false,false,false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false};
        
         int i = 0;
         for(Tile tile : gameBoard.getTiles()){
             assertEquals(i,tile.getTileNumber());
             assertEquals(tile.getTerrain(), expectedTerrain[i]);
-            assertEquals(tile.getDieNumber(), expectedDieVals[i]);
+            assertEquals(tile.getDieNumber(), expectedDieNumbers[i]);
             assertEquals(tile.getHasRobber(), expectedRobbers[i]);
             if(i == 9){
                 assertTrue(tile.getHasRobber());
@@ -80,11 +78,11 @@ public class GameBoardTest {
     GameBoard gameBoard = new GameBoard(GameType.Beginner);
     GameLoader.initializeGameBoard(gameBoard);
     for (int tileNum = 0; tileNum < 19; tileNum++){
-        List<Integer> AcutalIDs = gameBoard.getTileVertexIDs(tileNum);
-        //If needed: System.out.println("TILE["+tileNum+"]: "+ Arrays.toString(AcutalIDs));
+        List<Integer> ActualIDs = gameBoard.getTileVertexIDs(tileNum);
+        //If needed: System.out.println("TILE["+tileNum+"]: "+ Arrays.toString(ActualIDs));
 
         for(int i = 0; i < 6 ; i++){
-            assertEquals(expectedIDs[tileNum][i], AcutalIDs.get(i));
+            assertEquals(expectedIDs[tileNum][i], ActualIDs.get(i));
         }
     }}
 
@@ -96,7 +94,7 @@ public class GameBoardTest {
         Tile tile4 = new Tile(Terrain.HILLS, 0, 0, false);
         Tile tile5 = new Tile(Terrain.MOUNTAINS, 0, 0, false);
         Tile tile6 = new Tile(Terrain.PASTURE, 0, 0, false);
-        assertEquals(null,tile1.getResource());
+        assertNull(tile1.getResource());
         assertEquals(Resource.GRAIN,tile2.getResource());
         assertEquals(Resource.LUMBER,tile3.getResource());
         assertEquals(Resource.BRICK,tile4.getResource());

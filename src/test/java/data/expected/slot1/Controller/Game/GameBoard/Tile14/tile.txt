@@ -1,4 +1,3 @@
-TerrainType: MOUNTAINS
-DieNumber: 9
+TerrainType: FIELDS
+DieNumber: 4
 HasRobber: false
-VertexIDs: [32, 33, 34, 42, 43, 44]

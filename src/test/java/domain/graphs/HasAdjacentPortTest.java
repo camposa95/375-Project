@@ -6,8 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.HashSet;
 
 import data.GameLoader;
-import domain.graphs.Vertex;
-import domain.graphs.VertexGraph;
 import org.junit.jupiter.api.Test;
 
 import domain.game.GameType;
@@ -40,8 +38,8 @@ public class HasAdjacentPortTest {
         final int[] ids = {0, 1, 3, 4, 14, 15, 26, 37, 46, 45, 51, 50, 48, 47, 38, 28, 17, 7};
 
         HashSet<Integer> vertexesWithPorts = new HashSet<>();
-        for (int i = 0; i < ids.length; i++) {
-            vertexesWithPorts.add(ids[i]);
+        for (int j : ids) {
+            vertexesWithPorts.add(j);
         }
 
         for (int id = 0; id < NUM_VERTEXES; id++) {
@@ -61,9 +59,7 @@ public class HasAdjacentPortTest {
         VertexGraph vertexes = new VertexGraph(GameType.Beginner);
         Vertex testVertex = vertexes.getVertex(0); // get any vertex
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            testVertex.hasPort();
-        });
+        RuntimeException exception = assertThrows(RuntimeException.class, testVertex::hasPort);
 
         String expectedMessage = "Vertex-to-Port adjacency uninitialized";
         String actualMessage = exception.getMessage();

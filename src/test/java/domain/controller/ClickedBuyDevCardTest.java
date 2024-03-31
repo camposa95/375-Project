@@ -3,10 +3,6 @@ package domain.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import domain.controller.Controller;
-import domain.controller.GamePhase;
-import domain.controller.GameState;
-import domain.controller.SuccessCode;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
@@ -99,7 +95,7 @@ public class ClickedBuyDevCardTest {
     }
 
     @Test
-    public void testClickedBuyDevCard4() throws NotEnoughResourcesException, EmptyDevCardDeckException {
+    public void testClickedBuyDevCard4() {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
         Player mockedPlayer = EasyMock.createStrictMock(Player.class);
         GameType gameType = GameType.Advanced;
@@ -115,9 +111,7 @@ public class ClickedBuyDevCardTest {
 
         // method call
         EasyMock.replay(mockedGame);
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
-            controller.clickedBuyDevCard();
-        });
+        IllegalStateException exception = assertThrows(IllegalStateException.class, controller::clickedBuyDevCard);
         EasyMock.verify(mockedGame);
 
         // assert the message is correct

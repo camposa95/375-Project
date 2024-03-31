@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SavingTest {
 
-    private static final String EXPECTED_OUTPUT_PATH = "src/test/java/saving/expected";
-    private static final String ACTUAL_OUTPUT_PATH = "src/test/java/saving/actual";
+    private static final String EXPECTED_OUTPUT_PATH = "src/test/java/data/expected";
+    private static final String ACTUAL_OUTPUT_PATH = "src/test/java/data/actual";
 
     @Test
     public void testSaveAndLoadConsistency() throws IOException {

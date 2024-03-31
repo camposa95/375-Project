@@ -1,3 +1,0 @@
-TerrainType: PASTURE
-DieNumber: 5
-HasRobber: false

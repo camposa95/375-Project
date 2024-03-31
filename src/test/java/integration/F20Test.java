@@ -31,7 +31,7 @@ public class F20Test {
     public void testMonopolyWorks() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
@@ -82,7 +82,7 @@ public class F20Test {
     public void testMonopolyNoCard() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
@@ -118,9 +118,8 @@ public class F20Test {
         // play the card to start us off
         assertEquals(SuccessCode.CANNOT_PLAY_CARD, controller.playMonopolyCard(resource));
 
-        // assert we didnt get the resources
+        // assert we didn't get the resources
         assertEquals(0, player3.hand.getResourceCardAmount(resource));
        
     }
-
 }

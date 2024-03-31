@@ -1,16 +1,13 @@
 package domain.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import domain.controller.Controller;
-import domain.controller.GameState;
-import domain.controller.SuccessCode;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
 import domain.game.Game;
 import domain.game.GameType;
 import domain.player.Player;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EndTurnTest {
     
@@ -46,7 +43,7 @@ public class EndTurnTest {
         assertEquals(SuccessCode.SUCCESS, actualCode);
         assertEquals(mockedPlayer2, controller.getCurrentPlayer());
         assertEquals(GameState.TURN_START, controller.getState());
-        assertEquals(true, controller.getDevCardsEnabled());
+        assertTrue(controller.getDevCardsEnabled());
     }
 
     @Test
@@ -73,7 +70,7 @@ public class EndTurnTest {
         assertEquals(SuccessCode.UNDEFINED, actualCode);
         assertEquals(mockedPlayer1, controller.getCurrentPlayer());
         assertEquals(GameState.BUILD_ROAD, controller.getState());
-        assertEquals(false, controller.getDevCardsEnabled());
+        assertFalse(controller.getDevCardsEnabled());
     }
 
     @Test
@@ -109,6 +106,6 @@ public class EndTurnTest {
         assertEquals(SuccessCode.GAME_WIN, actualCode);
         assertEquals(mockedPlayer2, controller.getCurrentPlayer());
         assertEquals(GameState.TURN_START, controller.getState());
-        assertEquals(true, controller.getDevCardsEnabled());
+        assertTrue(controller.getDevCardsEnabled());
     }
 }

@@ -1,10 +1,11 @@
 package integration;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import org.junit.jupiter.api.Test;
 
 import domain.devcarddeck.DevCard;
 import domain.devcarddeck.DevelopmentCardDeck;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 public class F2Test {
 
     int knightCount=0;
@@ -14,7 +15,7 @@ public class F2Test {
     int monopolyCount=0;
 
     @Test
-    public void testInitilizeGameAndHaveDevCards() {
+    public void testInitializeGameAndHaveDevCards() {
      // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
@@ -28,25 +29,31 @@ public class F2Test {
         int expP = 2;
         int expM = 2;
         for(DevCard card : devCardDeck.getDeck()) {
-            switch(card) {
-                case KNIGHT :
+            switch (card) {
+                case KNIGHT -> {
                     knightCount++;
                     return;
-                case VICTORY:
+                }
+                case VICTORY -> {
                     victoryCount++;
                     return;
-                case ROAD:
+                }
+                case ROAD -> {
                     roadCount++;
                     return;
-                case PLENTY:
+                }
+                case PLENTY -> {
                     plentyCount++;
                     return;
-                case MONOPOLY:
+                }
+                case MONOPOLY -> {
                     monopolyCount++;
                     return;
-                default:
+                }
+                default -> {
                     System.out.println(card);
-                    assertFalse(true);
+                    fail();
+                }
             }
         }
         assertEquals(expK,knightCount);

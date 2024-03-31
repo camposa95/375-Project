@@ -35,18 +35,18 @@ import domain.graphs.VertexGraph;
 public class F23Test {
 
     private static final int POINTS_FROM_SETUP = 2;
-    private static final int POINTS_FOR_SETTLMENT = 1;
+    private static final int POINTS_FOR_SETTLEMENT = 1;
     private static final int POINTS_FOR_CITY = 2;
     private static final int POINTS_FOR_LONGEST_ROAD = 2;
     private static final int POINTS_FOR_LARGEST_ARMY = 2;
     private static final int POINTS_FOR_VICTORY_POINT_CARD = 1;
 
-    private static final Resource[] RESOURCES_FOR_SETTLMENT = {Resource.BRICK, Resource.LUMBER, Resource.WOOL, Resource.GRAIN};
+    private static final Resource[] RESOURCES_FOR_SETTLEMENT = {Resource.BRICK, Resource.LUMBER, Resource.WOOL, Resource.GRAIN};
     private static final Resource[] RESOURCES_FOR_ROAD = {Resource.BRICK, Resource.LUMBER};
     private static final Resource[] RESOURCES_FOR_CITY = {Resource.ORE, Resource.ORE, Resource.ORE, Resource.GRAIN, Resource.GRAIN};
-    private static final Resource[] RESOURCES_FOR_DEVCARD = {Resource.ORE, Resource.WOOL, Resource.GRAIN};
+    private static final Resource[] RESOURCES_FOR_DEV_CARD = {Resource.ORE, Resource.WOOL, Resource.GRAIN};
 
-    private void loopToBeginging(final Controller controller) {
+    private void loopToBeginning(final Controller controller) {
         for (int i = 0; i < 4; i++) {
             controller.setState(GameState.DEFAULT);
             assertEquals(SuccessCode.SUCCESS, controller.endTurn());
@@ -54,10 +54,10 @@ public class F23Test {
     }
 
     @Test
-    public void testVictoryPointsSettlment() {
+    public void testVictoryPointsSettlement() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
@@ -76,18 +76,16 @@ public class F23Test {
         GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // Note: we assume everything about setup was correct because it was tested earlier
 
         // Note: at this point the players would have gotten some starter resources during the 
         // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources so we can
+        // clear out the player1's hand and assert that the player has zero resources, so we can
         // better test on the specific cases.
         for (Player player: players) {
             for (Resource resource: Resource.values()) {
@@ -112,7 +110,7 @@ public class F23Test {
         // give the player enough resources to build a road
         player1.hand.addResources(RESOURCES_FOR_ROAD);
 
-        // player builds a road so we can follow the distance rule
+        // player builds a road, so we can follow the distance rule
         controller.setState(GameState.BUILD_ROAD);
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(24));
 
@@ -120,22 +118,22 @@ public class F23Test {
         assertEquals(POINTS_FROM_SETUP, player1.getVictoryPoints());
 
 
-        // give the player enough resources for the settlment
-        player1.hand.addResources(RESOURCES_FOR_SETTLMENT);
+        // give the player enough resources for the settlement
+        player1.hand.addResources(RESOURCES_FOR_SETTLEMENT);
 
-        // player builds the settlment
+        // player builds the settlement
         controller.setState(GameState.BUILD_SETTLEMENT);
         assertEquals(SuccessCode.SUCCESS, controller.clickedVertex(17));
 
-        // assert that we gained th eright amount of points
-        assertEquals(POINTS_FROM_SETUP + POINTS_FOR_SETTLMENT, player1.getVictoryPoints());
+        // assert that we gained the right amount of points
+        assertEquals(POINTS_FROM_SETUP + POINTS_FOR_SETTLEMENT, player1.getVictoryPoints());
     }
 
     @Test
     public void testVictoryPointsCity() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
@@ -154,18 +152,16 @@ public class F23Test {
         GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // Note: we assume everything about setup was correct because it was tested earlier
 
         // Note: at this point the players would have gotten some starter resources during the 
         // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources so we can
+        // clear out the player1's hand and assert that the player has zero resources, so we can
         // better test on the specific cases.
         for (Player player: players) {
             for (Resource resource: Resource.values()) {
@@ -190,7 +186,7 @@ public class F23Test {
         // give the player enough resources to build a road
         player1.hand.addResources(RESOURCES_FOR_ROAD);
 
-        // player builds a road so we can follow the distance rule
+        // player builds a road, so we can follow the distance rule
         controller.setState(GameState.BUILD_ROAD);
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(24));
 
@@ -198,21 +194,21 @@ public class F23Test {
         assertEquals(POINTS_FROM_SETUP, player1.getVictoryPoints());
 
 
-        // give the player enough resources for the settlment
-        player1.hand.addResources(RESOURCES_FOR_SETTLMENT);
+        // give the player enough resources for the settlement
+        player1.hand.addResources(RESOURCES_FOR_SETTLEMENT);
 
-        // player builds the settlment
+        // player builds the settlement
         controller.setState(GameState.BUILD_SETTLEMENT);
         assertEquals(SuccessCode.SUCCESS, controller.clickedVertex(17));
 
         // assert that we gained the right amount of points
-        assertEquals(POINTS_FROM_SETUP + POINTS_FOR_SETTLMENT, player1.getVictoryPoints());
+        assertEquals(POINTS_FROM_SETUP + POINTS_FOR_SETTLEMENT, player1.getVictoryPoints());
 
 
         // give the player enough resources for a city
         player1.hand.addResources(RESOURCES_FOR_CITY);
 
-        // player upgrades the previous settlment to a city
+        // player upgrades the previous settlement to a city
         controller.setState(GameState.UPGRADE_SETTLEMENT);
         assertEquals(SuccessCode.SUCCESS, controller.clickedVertex(17));
 
@@ -224,7 +220,7 @@ public class F23Test {
     public void testVictoryPointsLongestRoad() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
@@ -243,18 +239,16 @@ public class F23Test {
         GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // Note: we assume everything about setup was correct because it was tested earlier
 
         // Note: at this point the players would have gotten some starter resources during the 
         // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the players's hand and assert that the players have zero resources to controll
+        // clear out the players' hand and assert that the players have zero resources to control
         // the test more
         for (Player player: players) {
             for (Resource resource: Resource.values()) {
@@ -275,7 +269,7 @@ public class F23Test {
         // points before the builds
         assertEquals(POINTS_FROM_SETUP, player1.getVictoryPoints());
 
-        // -------------------------- Player 1 build enough to get he longes road ---------------------------
+        // -------------------------- Player 1 build enough to get he longest road ---------------------------
         // Note here the controller default to player 1 first
         // give the player enough resources to build 4 roads
         for (int i = 0; i < 4; i++) {
@@ -303,7 +297,7 @@ public class F23Test {
     public void testVictoryPointsLargestArmy() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
@@ -322,18 +316,16 @@ public class F23Test {
         GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // Note: we assume everything about setup was correct because it was tested earlier
 
         // Note: at this point the players would have gotten some starter resources during the 
         // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources so we can
+        // clear out the player1's hand and assert that the player has zero resources, so we can
         // better test on the specific cases.
         for (Player player: players) {
             for (Resource resource: Resource.values()) {
@@ -357,9 +349,9 @@ public class F23Test {
         assertEquals(player1, controller.getCurrentPlayer());
 
         // give the player some resources
-        player1.hand.addResources(RESOURCES_FOR_DEVCARD);
-        player1.hand.addResources(RESOURCES_FOR_DEVCARD);
-        player1.hand.addResources(RESOURCES_FOR_DEVCARD);
+        player1.hand.addResources(RESOURCES_FOR_DEV_CARD);
+        player1.hand.addResources(RESOURCES_FOR_DEV_CARD);
+        player1.hand.addResources(RESOURCES_FOR_DEV_CARD);
 
         // player buys three cards
         assertTrue(player1.purchaseDevCard(DevCard.KNIGHT));
@@ -367,17 +359,17 @@ public class F23Test {
         assertTrue(player1.purchaseDevCard(DevCard.KNIGHT));
 
         // can't use bought card on same turn, so end turn until we are back at player 1
-        loopToBeginging(controller);
+        loopToBeginning(controller);
         assertEquals(player1, controller.getCurrentPlayer());
         assertEquals(SuccessCode.SUCCESS, controller.playKnightCard());
         
-        // can only use one card per turn so loop back to begining
-        loopToBeginging(controller);
+        // can only use one card per turn so loop back to beginning
+        loopToBeginning(controller);
         assertEquals(player1, controller.getCurrentPlayer());
         assertEquals(SuccessCode.SUCCESS, controller.playKnightCard());
 
-        // can only use one card per turn so loop back to begining
-        loopToBeginging(controller);
+        // can only use one card per turn so loop back to beginning
+        loopToBeginning(controller);
         assertEquals(player1, controller.getCurrentPlayer());
         assertEquals(SuccessCode.SUCCESS, controller.playKnightCard());
 
@@ -392,7 +384,7 @@ public class F23Test {
     public void testVictoryPointsCard() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
         VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
@@ -411,18 +403,16 @@ public class F23Test {
         GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // Note: we assume everything about setup was correct because it was tested earlier
 
         // Note: at this point the players would have gotten some starter resources during the 
         // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources so we can
+        // clear out the player1's hand and assert that the player has zero resources, so we can
         // better test on the specific cases.
         for (Player player: players) {
             for (Resource resource: Resource.values()) {
@@ -445,7 +435,7 @@ public class F23Test {
         assertEquals(POINTS_FROM_SETUP, player1.getVictoryPoints());
 
         // give the player enough resources to buy the card
-        player1.hand.addResources(RESOURCES_FOR_DEVCARD);
+        player1.hand.addResources(RESOURCES_FOR_DEV_CARD);
 
         // player buys gets the victory point dev card
         player1.purchaseDevCard(DevCard.VICTORY);

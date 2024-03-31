@@ -1,11 +1,5 @@
 package domain.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import domain.controller.Controller;
-import domain.controller.SuccessCode;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +8,8 @@ import domain.game.GameType;
 import domain.game.InvalidPlacementException;
 import domain.game.NotEnoughResourcesException;
 import domain.player.Player;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RobberMethodsTest {
     
@@ -37,7 +33,7 @@ public class RobberMethodsTest {
         EasyMock.verify(mockedGame);
         
         // assert that the controller method returns what the game method does
-        assertTrue(expectedPlayers == actualPlayers);
+        assertSame(expectedPlayers, actualPlayers);
     }
 
     @Test
@@ -95,7 +91,7 @@ public class RobberMethodsTest {
 
         Controller controller = new Controller(mockedGame, players, gameType);
         int playerId = 2;
-        controller.setCurrentPlayer(player1); // any player should do as long it is not the same as the robbee
+        controller.setCurrentPlayer(player1); // any player should do as long it is not the same as the robbed
 
 
         // set expectations
@@ -122,7 +118,7 @@ public class RobberMethodsTest {
 
         Controller controller = new Controller(mockedGame, players, gameType);
         int playerId = 2;
-        controller.setCurrentPlayer(player1); // any player should do as long it is not the same as the robbee
+        controller.setCurrentPlayer(player1); // any player should do as long it is not the same as the robbed
 
 
         // set expectations
@@ -140,7 +136,7 @@ public class RobberMethodsTest {
     }
 
     @Test
-    public void testRobPlayerDNE() throws NotEnoughResourcesException {
+    public void testRobPlayerDNE() {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
         Player player1 = new Player(1);
         Player player2 = new Player(2);
@@ -150,7 +146,7 @@ public class RobberMethodsTest {
 
         Controller controller = new Controller(mockedGame, players, gameType);
         int playerId = 4;
-        controller.setCurrentPlayer(player1); // any player should do as long it is not the same as the robbee
+        controller.setCurrentPlayer(player1); // any player should do as long it is not the same as the robbed
 
 
         // set expectations
@@ -158,9 +154,7 @@ public class RobberMethodsTest {
 
         // method call
         EasyMock.replay(mockedGame); // don't really care about players here
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            controller.robPlayer(playerId);
-        });
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> controller.robPlayer(playerId));
         EasyMock.verify(mockedGame);
 
         String expectedMessage = "Player to rob does not exist";
@@ -169,7 +163,7 @@ public class RobberMethodsTest {
     }
 
     @Test
-    public void testRobPlayerSameAsRobber() throws NotEnoughResourcesException {
+    public void testRobPlayerSameAsRobber() {
         Game mockedGame = EasyMock.createStrictMock(Game.class);
         Player player1 = new Player(1);
         Player player2 = new Player(2);
@@ -179,7 +173,7 @@ public class RobberMethodsTest {
 
         Controller controller = new Controller(mockedGame, players, gameType);
         int playerId = 1;
-        controller.setCurrentPlayer(player1); // any player should do as long it is not the same as the robbee
+        controller.setCurrentPlayer(player1); // any player should do as long it is not the same as the robbed
 
 
         // set expectations
@@ -187,9 +181,7 @@ public class RobberMethodsTest {
 
         // method call
         EasyMock.replay(mockedGame); // don't really care about players here
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            controller.robPlayer(playerId);
-        });
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> controller.robPlayer(playerId));
         EasyMock.verify(mockedGame);
 
         String expectedMessage = "Cannot Rob Yourself";
