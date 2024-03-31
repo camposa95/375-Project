@@ -2,11 +2,9 @@ package domain.gameboard;
 
 import domain.bank.Resource;
 import data.*;
-import domain.graphs.Vertex;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -45,7 +43,7 @@ public class Tile implements Restorable {
 
     /**
      * Returns the vertex list of the tile
-     * @return this.vertexes the list of vertexs
+     * @return this.vertexes the list of vertexes
      */
     public List<Integer> getVertexIDs() {
         return this.vertexIDs;
@@ -64,14 +62,14 @@ public class Tile implements Restorable {
      * @return Resource
      */
     public Resource getResource() {
-        switch (this.terrainType) {
-        default: return null;
-        case HILLS: return Resource.BRICK;
-        case FORREST: return Resource.LUMBER;
-        case MOUNTAINS: return Resource.ORE;
-        case FIELDS: return Resource.GRAIN;
-        case PASTURE: return Resource.WOOL;
-        }
+        return switch (this.terrainType) {
+            default -> null;
+            case HILLS -> Resource.BRICK;
+            case FORREST -> Resource.LUMBER;
+            case MOUNTAINS -> Resource.ORE;
+            case FIELDS -> Resource.GRAIN;
+            case PASTURE -> Resource.WOOL;
+        };
     }
 
     /**
@@ -100,7 +98,6 @@ public class Tile implements Restorable {
 
     /**
      * Sets the robber field true or false based on input
-     * @param has
      */
     public void setRobber(final Boolean has) {
         this.hasRobber = has;
@@ -140,17 +137,6 @@ public class Tile implements Restorable {
             this.terrainType = Terrain.valueOf(reader.readField(TERRAIN_TYPE));
             this.dieNumber = Integer.parseInt(reader.readField(DIE_NUMBER));
             this.hasRobber = Boolean.parseBoolean(reader.readField(HAS_ROBBER));
-        }
-
-        private int[] parseVertexIDs(final String vertexIDsString) {
-            String[] vertexIDValues = vertexIDsString.substring(1, vertexIDsString.length() - 1).split(", ");
-
-            int[] ids = new int[vertexIDValues.length];
-            for (int i = 0; i < vertexIDValues.length; i++) {
-                ids[i] = Integer.parseInt(vertexIDValues[i].trim());
-            }
-
-            return ids;
         }
 
         public void save(final File folder) throws SaveException {

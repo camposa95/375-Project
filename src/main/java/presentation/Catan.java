@@ -12,7 +12,7 @@ import java.io.IOException;
 public class Catan extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        String pageToStartAt = "";
+        String pageToStartAt;
         if (GameLoader.getInstance().hasSavedSlot()) {
             pageToStartAt = "start_screen.fxml";
         } else {

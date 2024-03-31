@@ -72,7 +72,6 @@ public class CatanGUIController {
     private Circle[] numberBackgrounds;
     private Text[] victoryPointTexts;
     private Circle[] robberSpots;
-    private HashMap<Circle, Polygon> settlementsAndCitiesBuilt = new HashMap<>();
 
     HashMap<Polygon, Integer> settlementToVertexMap = new HashMap<>();
     ResourceBundle messages;
@@ -154,18 +153,13 @@ public class CatanGUIController {
     }
 
     public Color getPlayerColor(int playerNum){
-        switch(playerNum){
-            case 1:
-                return Color.BLUE;
-            case 2:
-                return Color.GREEN;
-            case 3:
-                return Color.RED;
-            case 4:
-                return Color.BROWN;
-            default:
-                return Color.WHITE;
-        }
+        return switch (playerNum) {
+            case 1 -> Color.BLUE;
+            case 2 -> Color.GREEN;
+            case 3 -> Color.RED;
+            case 4 -> Color.BROWN;
+            default -> Color.WHITE;
+        };
     }
 
     private void setImages(){
@@ -234,7 +228,7 @@ public class CatanGUIController {
         VertexGraph vertexGraph = GameLoader.getInstance().getVertexGraph();
         for(int p = 0; p < VertexGraph.NUM_PORTS; p++){
             Port cur = vertexGraph.getPort(p);
-            setPortTrade(ports[p], cur.getResourse());
+            setPortTrade(ports[p], cur.getResource());
         }
     }
 
@@ -242,31 +236,13 @@ public class CatanGUIController {
     private void setPortTrade(Circle port, Resource tradeType){
         //Called in initialization
         Image backgroundImage = null;
-        switch(tradeType) {
-            case ANY: { //3:1 improved trade with bank
-                backgroundImage = new Image("images/improved_trade.png");
-                break;
-            }
-            case LUMBER: {
-                backgroundImage = new Image("images/card_lumber.png");
-                break;
-            }
-            case BRICK: {
-                backgroundImage = new Image("images/card_brick.png");
-                break;
-            }
-            case WOOL: {
-                backgroundImage = new Image("images/card_wool.png");
-                break;
-            }
-            case GRAIN: {
-                backgroundImage = new Image("images/card_wheat.png");
-                break;
-            }
-            case ORE: {
-                backgroundImage = new Image("images/card_ore.png");
-                break;
-            }
+        switch (tradeType) {
+            case ANY -> backgroundImage = new Image("images/improved_trade.png");
+            case LUMBER -> backgroundImage = new Image("images/card_lumber.png");
+            case BRICK -> backgroundImage = new Image("images/card_brick.png");
+            case WOOL -> backgroundImage = new Image("images/card_wool.png");
+            case GRAIN -> backgroundImage = new Image("images/card_wheat.png");
+            case ORE -> backgroundImage = new Image("images/card_ore.png");
         }
         if(backgroundImage==null){
             return;
@@ -332,7 +308,7 @@ public class CatanGUIController {
     //
     // ----------------------------------------------------------------
 
-    public void saveButtonPressed(MouseEvent event) throws IOException {
+    public void saveButtonPressed() throws IOException {
         if (this.controller.getState() == GameState.TURN_START && this.guiState == GUIState.IDLE) {
             if (!GameLoader.getInstance().saveGame()) {
                 this.tooltipText.setText(messages.getString("saveFail"));
@@ -429,7 +405,7 @@ public class CatanGUIController {
             renderRobberOnHex(((Circle) event.getSource()).getLayoutX(), ((Circle) event.getSource()).getLayoutY());
             setAllRobberSpotsVisibility(false);
 
-            FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("robplayer.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("RobPlayer.fxml"));
             Stage stage = new Stage();
             Scene scene = new Scene(fxmlLoader.load());
             stage.setTitle(messages.getString("sevenRolledTitle"));
@@ -495,7 +471,7 @@ public class CatanGUIController {
         }
     }
 
-    public void buildSettlementButtonPress(MouseEvent event){
+    public void buildSettlementButtonPress(){
         //Triggered by Build Settlement button pressed
         if(this.controller.getState()==GameState.DEFAULT){
             this.guiState = GUIState.BUSY;
@@ -504,7 +480,7 @@ public class CatanGUIController {
         }
     }
 
-    public void buildRoadButtonPress(MouseEvent event){
+    public void buildRoadButtonPress(){
         //Triggered by Build Road button pressed
         if(this.controller.getState()==GameState.DEFAULT) {
             this.guiState = GUIState.BUSY;
@@ -513,7 +489,7 @@ public class CatanGUIController {
         }
     }
 
-    public void buildCityButtonPress(MouseEvent event){
+    public void buildCityButtonPress(){
         //Triggered by Buy City button pressed
         if(this.controller.getState()==GameState.DEFAULT) {
             this.guiState = GUIState.BUSY;
@@ -522,7 +498,7 @@ public class CatanGUIController {
         }
     }
 
-    public void buyDevCardButtonPress(MouseEvent event) throws IOException {
+    public void buyDevCardButtonPress() throws IOException {
         //Triggered by Buy Development Card button pressed
         if(this.controller.getState()==GameState.DEFAULT || this.controller.getState() == GameState.TURN_START){
             SuccessCode success = controller.clickedBuyDevCard();
@@ -539,7 +515,7 @@ public class CatanGUIController {
         }
     }
 
-    public void rollButtonPressed(MouseEvent event) throws IOException {
+    public void rollButtonPressed() throws IOException {
         //Triggered by Roll Button pressed
         if(this.controller.getState() == GameState.TURN_START && this.guiState == GUIState.IDLE){
             int dieNumber = this.controller.rollDice();
@@ -567,7 +543,7 @@ public class CatanGUIController {
     }
 
     private void doRobber() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("dropcards.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("DropCards.fxml"));
         Stage stage = new Stage();
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle(messages.getString("sevenRolledTitle"));
@@ -595,7 +571,7 @@ public class CatanGUIController {
         }
     }
 
-    public void playKnightButtonPressed(MouseEvent event) throws IOException {
+    public void playKnightButtonPressed() throws IOException {
         //Triggered by Play Knight Card pressed
         if(this.controller.getState() == GameState.DEFAULT && this.guiState == GUIState.IDLE){
             SuccessCode success = this.controller.playKnightCard();
@@ -612,7 +588,7 @@ public class CatanGUIController {
         }
     }
 
-    public void playMonopolyButtonPressed(MouseEvent event) throws IOException {
+    public void playMonopolyButtonPressed() throws IOException {
         //Triggered by Play Monopoly card pressed
         if(this.controller.getState()==GameState.DEFAULT && this.guiState == GUIState.IDLE){
             FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("monopoly.fxml"));
@@ -632,7 +608,7 @@ public class CatanGUIController {
         }
     }
 
-    public void playRoadBuildingButtonPressed(MouseEvent event){
+    public void playRoadBuildingButtonPressed(){
         //Triggered by Play Road Building Card pressed
         if(this.controller.getState() == GameState.DEFAULT && this.guiState == GUIState.IDLE){
             SuccessCode success = controller.useRoadBuildingCard();
@@ -646,7 +622,7 @@ public class CatanGUIController {
         }
     }
 
-    public void playYearOfPlentyButtonPressed(MouseEvent event) throws IOException {
+    public void playYearOfPlentyButtonPressed() throws IOException {
         //Triggered by Play YearOfPlenty card pressed
         if(this.controller.getState()==GameState.DEFAULT && this.guiState==GUIState.IDLE){
             FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("year_of_plenty.fxml"));
@@ -665,7 +641,7 @@ public class CatanGUIController {
         }
     }
 
-    public void endTurnButtonPressed(MouseEvent event) throws IOException {
+    public void endTurnButtonPressed() throws IOException {
         //Triggered by End Turn button pressed
         if(this.controller.getState()==GameState.DEFAULT && this.guiState == GUIState.IDLE){
             SuccessCode success = this.controller.endTurn();
@@ -680,10 +656,10 @@ public class CatanGUIController {
         }
     }
 
-    public void playerTradeButtonPressed(MouseEvent event) throws IOException {
+    public void playerTradeButtonPressed() throws IOException {
         //Triggered by Player Trade button pressed
         if(this.controller.getState() == GameState.DEFAULT && this.guiState == GUIState.IDLE){
-            FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("playertrade_window.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("PlayerTradeWindow.fxml"));
             Stage stage = new Stage();
             Scene scene = new Scene(fxmlLoader.load());
             stage.setTitle(messages.getString("playerTradeTitle"));
@@ -699,10 +675,10 @@ public class CatanGUIController {
         }
     }
 
-    public void bankTradeButtonPressed(MouseEvent event) throws IOException {
+    public void bankTradeButtonPressed() throws IOException {
         //Triggered by Trade with Bank button pressed
         if(this.controller.getState() == GameState.DEFAULT && this.guiState == GUIState.IDLE) {
-            FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("banktrade_window.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("BankTradeWindow.fxml"));
             Stage stage = new Stage();
             Scene scene = new Scene(fxmlLoader.load());
             stage.setTitle(messages.getString("bankTradeTitle"));
@@ -814,30 +790,13 @@ public class CatanGUIController {
     private void setHexBackground(Polygon location, Terrain resource){
         //used in initialization
         Image backgroundImage = null;
-        switch(resource){
-            case FORREST: {
-                backgroundImage = new Image("images/tile_lumber.png");
-                break;
-            }
-            case HILLS: {
-                backgroundImage = new Image("images/tile_brick.png");
-                break;
-            }
-            case PASTURE: {
-                backgroundImage = new Image("images/tile_wool.png");
-                break;
-            }
-            case FIELDS: {
-                backgroundImage = new Image("images/tile_wheat.png");
-                break;
-            }
-            case MOUNTAINS: {
-                backgroundImage = new Image("images/tile_ore.png");
-                break;
-            }
-            case DESERT: {
-                backgroundImage = new Image("images/tile_desert.png");
-            }
+        switch (resource) {
+            case FORREST -> backgroundImage = new Image("images/tile_lumber.png");
+            case HILLS -> backgroundImage = new Image("images/tile_brick.png");
+            case PASTURE -> backgroundImage = new Image("images/tile_wool.png");
+            case FIELDS -> backgroundImage = new Image("images/tile_wheat.png");
+            case MOUNTAINS -> backgroundImage = new Image("images/tile_ore.png");
+            case DESERT -> backgroundImage = new Image("images/tile_desert.png");
         }
         if(backgroundImage==null){
             return;

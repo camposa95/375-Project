@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Hand implements Restorable {
-    private HashMap<Resource, Integer> hand = new HashMap<>();
+    private final HashMap<Resource, Integer> hand = new HashMap<>();
     private static final int MAX_AMOUNT = 19;
     private static final int MAX_KNIGHTS = 14;
     private static final int MAX_YOP = 2;
@@ -160,16 +160,16 @@ public class Hand implements Restorable {
         this.devCards.put(card, this.devCards.get(card) - 1);
         return true;
     }
+
     //helper method for robbing player
     public Resource[] getResourceTypes() {
-        ArrayList<Resource> resources = new ArrayList<Resource>();
+        ArrayList<Resource> resources = new ArrayList<>();
         for (java.util.Map.Entry<Resource, Integer> entry : hand.entrySet()) {
             if (entry.getValue() > 0) {
                 resources.add(entry.getKey());
             }
         }
-        Resource[] rArr = resources.toArray(new Resource[resources.size()]);
-        return rArr;
+        return resources.toArray(new Resource[0]);
     }
 
     // -----------------------------------
@@ -186,8 +186,8 @@ public class Hand implements Restorable {
 
         // Storage Constants
         private static final String HAND_FILE_NAME = "Hand.txt";
-        private static final String DEVCARDS_FILE_NAME = "DevCards.txt";
-        private static final String DEVCARDS_BOUGHT_FILE_NAME = "DevCardsBoughtThisTurn.txt";
+        private static final String DEV_CARDS_FILE_NAME = "DevCards.txt";
+        private static final String DEV_CARDS_BOUGHT_FILE_NAME = "DevCardsBoughtThisTurn.txt";
 
         private HandMemento() {
             this.hand = new HashMap<>();
@@ -208,13 +208,13 @@ public class Hand implements Restorable {
             this.devCardsBoughtThisTurn = new HashMap<>();
 
             // Read data from separate files and populate the HashMaps
-            readResourceMap(folder, HAND_FILE_NAME, hand);
-            readDevCardMap(folder, DEVCARDS_FILE_NAME, devCards);
-            readDevCardMap(folder, DEVCARDS_BOUGHT_FILE_NAME, devCardsBoughtThisTurn);
+            readResourceMap(folder, hand);
+            readDevCardMap(folder, DEV_CARDS_FILE_NAME, devCards);
+            readDevCardMap(folder, DEV_CARDS_BOUGHT_FILE_NAME, devCardsBoughtThisTurn);
         }
 
-        private void readResourceMap(final File folder, final String fileName, final Map<Resource, Integer> map) {
-            MementoReader reader = new MementoReader(folder, fileName);
+        private void readResourceMap(final File folder, final Map<Resource, Integer> map) {
+            MementoReader reader = new MementoReader(folder, HandMemento.HAND_FILE_NAME);
 
             for (Map.Entry<String, String> entry : reader.readAllFields().entrySet()) {
                 map.put(Resource.valueOf(entry.getKey()),
@@ -234,8 +234,8 @@ public class Hand implements Restorable {
         public void save(final File folder) throws SaveException {
             // Write the state of the class's attributes to separate files
             writeHashMap(folder, HAND_FILE_NAME, hand);
-            writeHashMap(folder, DEVCARDS_FILE_NAME, devCards);
-            writeHashMap(folder, DEVCARDS_BOUGHT_FILE_NAME, devCardsBoughtThisTurn);
+            writeHashMap(folder, DEV_CARDS_FILE_NAME, devCards);
+            writeHashMap(folder, DEV_CARDS_BOUGHT_FILE_NAME, devCardsBoughtThisTurn);
         }
 
         // Helper method to write a HashMap to a separate file

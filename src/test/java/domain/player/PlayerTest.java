@@ -1310,7 +1310,7 @@ public class PlayerTest {
         player.purchaseDevCard(card);
 
         // make it so it wasn't bought this turn
-        player.addboughtCardsToHand();
+        player.addBoughtCardsToHand();
 
         // attempt to play card
         boolean success = player.useDevCard(card);
@@ -1333,7 +1333,7 @@ public class PlayerTest {
         });
         player.purchaseDevCard(card);
         // make it so it wasn't bought this turn
-        player.addboughtCardsToHand();
+        player.addBoughtCardsToHand();
 
 
         // buy another of the same card
@@ -1403,7 +1403,7 @@ public class PlayerTest {
         player.purchaseDevCard(card);
 
         // make it so it wasn't bought this turn
-        player.addboughtCardsToHand();
+        player.addBoughtCardsToHand();
 
         // attempt to play victory point card. note regardless if we have it or not it should fail
         boolean success = player.useDevCard(card);

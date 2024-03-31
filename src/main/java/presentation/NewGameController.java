@@ -18,7 +18,7 @@ public class NewGameController {
     @FXML
     public ChoiceBox<Integer> playersSelector;
     @FXML
-    public ChoiceBox<String> gamemodeSelector;
+    public ChoiceBox<String> gameModeSelector;
     @FXML
     public ChoiceBox<String> languageSelector;
 
@@ -26,15 +26,15 @@ public class NewGameController {
     public Button startGameButton;
 
     @FXML
-    private void initialize(){
-        gamemodeSelector.setItems(FXCollections.observableArrayList("Beginner (Principiante)", "Advanced (Experto)"));
+    private void initialize() {
+        gameModeSelector.setItems(FXCollections.observableArrayList("Beginner (Principiante)", "Advanced (Experto)"));
         playersSelector.setItems(FXCollections.observableArrayList(2,3,4));
         languageSelector.setItems(FXCollections.observableArrayList("English", "Espanol"));
     }
 
     @FXML
     public void startGame() throws IOException {
-        if(playersSelector.getValue() == null || gamemodeSelector.getValue() == null || languageSelector.getValue() == null) {
+        if(playersSelector.getValue() == null || gameModeSelector.getValue() == null || languageSelector.getValue() == null) {
             return;
         }
 
@@ -42,7 +42,7 @@ public class NewGameController {
         int playerCount = Integer.parseInt(playersSelector.getValue().toString());
 
         // get the gameType from input
-        String input = gamemodeSelector.getValue();
+        String input = gameModeSelector.getValue();
         String result = input.substring(0, input.indexOf(' ')); // Extract the substring before the space
         GameType gameType = GameType.valueOf(result);
 

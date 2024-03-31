@@ -15,14 +15,14 @@ public class HarvestBooster implements Restorable {
     private final Map<Resource, Integer> durations;
 
     public HarvestBooster() {
-        this.boosts = new HashMap<Resource, BoostType>();
+        this.boosts = new HashMap<>();
         this.boosts.put(Resource.BRICK, BoostType.NONE);
         this.boosts.put(Resource.LUMBER, BoostType.NONE);
         this.boosts.put(Resource.ORE, BoostType.NONE);
         this.boosts.put(Resource.GRAIN, BoostType.NONE);
         this.boosts.put(Resource.WOOL, BoostType.NONE);
 
-        this.durations = new HashMap<Resource, Integer>();
+        this.durations = new HashMap<>();
         this.durations.put(Resource.BRICK, DONE_TIME);
         this.durations.put(Resource.LUMBER, DONE_TIME);
         this.durations.put(Resource.ORE, DONE_TIME);
@@ -93,12 +93,12 @@ public class HarvestBooster implements Restorable {
             this.durations = new HashMap<>();
 
             // Read data from separate files and populate the HashMaps
-            readBoostMap(folder, BOOSTS_FILE_NAME, this.boosts);
-            readDurationMap(folder, DURATIONS_FILE_NAME, this.durations);
+            readBoostMap(folder, this.boosts);
+            readDurationMap(folder, this.durations);
         }
 
-        private void readBoostMap(final File folder, final String fileName, final Map<Resource, BoostType> map) {
-            MementoReader reader = new MementoReader(folder, fileName);
+        private void readBoostMap(final File folder, final Map<Resource, BoostType> map) {
+            MementoReader reader = new MementoReader(folder, HarvestBoosterMemento.BOOSTS_FILE_NAME);
 
             for (Map.Entry<String, String> entry : reader.readAllFields().entrySet()) {
                 map.put(Resource.valueOf(entry.getKey()),
@@ -106,8 +106,8 @@ public class HarvestBooster implements Restorable {
             }
         }
 
-        private void readDurationMap(final File folder, final String fileName, final Map<Resource, Integer> map) {
-            MementoReader reader = new MementoReader(folder, fileName);
+        private void readDurationMap(final File folder, final Map<Resource, Integer> map) {
+            MementoReader reader = new MementoReader(folder, HarvestBoosterMemento.DURATIONS_FILE_NAME);
 
             for (Map.Entry<String, String> entry : reader.readAllFields().entrySet()) {
                 map.put(Resource.valueOf(entry.getKey()),

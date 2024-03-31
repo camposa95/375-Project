@@ -82,7 +82,7 @@ public class Road implements Restorable {
     }
 
     /**
-     * Gets an List of Roads adjacent to this one.
+     * Gets a List of Roads adjacent to this one.
      *
      * @throws RuntimeException if the graph is not initialized correctly for this type of adjacency
      */
@@ -137,8 +137,8 @@ public class Road implements Restorable {
     /**
      * Tells whether any Player can build on this Road.
      * This is true only if the Road is currently unoccupied.
-     * Note: this is a simple check that is mean to be used during setup,
-     * later during regular gameplay other checks in conjunciton with this
+     * Note: this is a simple check that is meant to be used during setup,
+     * later during regular gameplay other checks in conjunction with this
      * one will need to ba called as well.
      *
      * @return true is this Road is unoccupied, false otherwise
@@ -150,7 +150,7 @@ public class Road implements Restorable {
     /**
      * Tells whether the given Vertex is adjacent to this Road,
      * and is meant to be used during setup in conjunction with
-     * isBuildable to determine buildability. The vertex passed
+     * isBuildable to determine build ability. The vertex passed
      * in should be the last Vertex placed by the setup rules.
      * Note: does not give information about settlements
      *
@@ -169,7 +169,7 @@ public class Road implements Restorable {
     /**
      * Tells whether the given Player can build on this Road.
      * This is based off the rules for regular gameplay:
-     * https://www.catan.com/sites/default/files/2021-06/catan_base_rules_2020_200707.pdf
+     * <a href="https://www.catan.com/sites/default/files/2021-06/catan_base_rules_2020_200707.pdf">...</a>
      *
      * @return true is this Road can be built by the player, false otherwise
      */
@@ -177,11 +177,7 @@ public class Road implements Restorable {
         if (this.isOccupied()) {
             return false;
         }
-        if (existsAdjacentFriendlyRoadNotAdjacentToEnemyVertex(player)) {
-            return true;
-        }
-
-        return false;
+        return existsAdjacentFriendlyRoadNotAdjacentToEnemyVertex(player);
     }
 
     /**
@@ -201,7 +197,7 @@ public class Road implements Restorable {
     }
 
     /**
-     * Tells this road is adjacent to an vertex owned by an enemy of the give player
+     * Tells this road is adjacent to a vertex owned by an enemy of the give player
      *
      * @return true if this road is adjacent to an enemies vertex, false otherwise
      */
@@ -241,9 +237,6 @@ public class Road implements Restorable {
 
     /**
      * Returns the vertex in this.adjacent vertexes that is not the given vertex
-     *
-     * @param origin
-     * @return
      */
     public Vertex getTail(final Vertex origin) {
         for (Vertex vertex: this.getAdjacentVertexes()) {

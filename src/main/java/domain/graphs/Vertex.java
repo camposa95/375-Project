@@ -155,24 +155,21 @@ public class Vertex implements Restorable {
     /**
      * Tells whether a settlement can be built on this Vertex.
      * This is true only if the Vertex has not already been developed,
-     * and the distance rule is observed: there can be no other settlments
+     * and the distance rule is observed: there can be no other settlements
      * directly adjacent to this Vertex
-     *
-     * Note: this is a simple check that is mean to be used during setup,
-     * later during regular gameplay other checks in conjunciton with this
+     * <p>
+     * Note: this is a simple check that is meant to be used during setup,
+     * later during regular gameplay other checks in conjunction with this
      * one will need to be called as well.
      *
      * @return true if this Vertex can be built upon, false otherwise
      */
-    public boolean isbuildable() {
+    public boolean isBuildable() {
         if (this.isOccupied()) {
             return false;
         }
 
-        if (this.isAdjacentToSettlement()) {
-            return false;
-        }
-        return true;
+        return !this.isAdjacentToSettlement();
     }
 
     /**
@@ -199,14 +196,14 @@ public class Vertex implements Restorable {
     }
 
     /**
-     * Builds a settlment on this vertex by first registering this vertex as being owned
-     * by the given player. Also adds the a trade boost to the player if the vertex was
+     * Builds a settlement on this vertex by first registering this vertex as being owned
+     * by the given player. Also adds the trade boost to the player if the vertex was
      * next to a port
      */
     public void build(final Player player) {
         setOwner(player);
         if (hasPort()) {
-            player.addTradeBoost(getAdjacentPort().getResourse());
+            player.addTradeBoost(getAdjacentPort().getResource());
         }
     }
 
@@ -220,7 +217,7 @@ public class Vertex implements Restorable {
 
     /**
      * Gets this Vertexes Owner.
-     *
+     * <p>
      * Note: this method is meant to be primarily used for testing assertion purposes,
      * and for internal use by the graphs. Beware it will return null if this is unoccupied.
      * Best use is to call isOccupied() first to avoid null pointer exceptions.
@@ -235,24 +232,20 @@ public class Vertex implements Restorable {
     /**
      * Tells whether a settlement can be built on this Vertex by the given player
      * in regular play.
-     *
+     * <p>
      * This is true only if the Vertex has not already been developed,
-     * the distance rule is observed: there can be no other settlments
+     * the distance rule is observed: there can be no other settlements
      * directly adjacent to this Vertex, and this Vertex is adjacent to
      * one of the players built roads.
      *
      * @return true if this Vertex can be built upon by the given player, false otherwise
      */
-    public boolean isbuildableBy(final Player player) {
-        if (!this.isbuildable()) {
+    public boolean isBuildableBy(final Player player) {
+        if (!this.isBuildable()) {
             return false;
         }
 
-        if (!this.isAdjacentToFriendlyRoad(player)) {
-            return false;
-        }
-
-        return true;
+        return this.isAdjacentToFriendlyRoad(player);
     }
 
     /**
@@ -275,7 +268,7 @@ public class Vertex implements Restorable {
     }
 
     /**
-     * Tells this if this Vertex is is upgradable by the given player.
+     * Tells this if this Vertex is upgradable by the given player.
      * This is true if the player already owns the vertex, and the vertex is not already a city.
      *
      * @return true if the vertex is upgradable by the player, false otherwise
@@ -284,11 +277,7 @@ public class Vertex implements Restorable {
         if (this.isCity) {
             return false;
         }
-        if (this.getOwner() != player) {
-            return false;
-        }
-
-        return true;
+        return this.getOwner() == player;
     }
 
     /**
@@ -302,7 +291,6 @@ public class Vertex implements Restorable {
 
     /**
      * Simple getter to tell is this vertex is a city or not
-     * @return
      */
     public boolean getIsCity() {
         return this.isCity;
@@ -310,8 +298,6 @@ public class Vertex implements Restorable {
 
     /**
      * Helper that tells us if this vertex is owned by an enemy of the given player
-     * @param player
-     * @return
      */
     public boolean ownedByEnemyOf(final Player player) {
 

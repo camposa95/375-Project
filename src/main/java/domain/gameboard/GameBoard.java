@@ -1,13 +1,10 @@
 package domain.gameboard;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import domain.game.GameType;
 import data.*;
-import domain.graphs.Vertex;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class GameBoard implements Restorable {
@@ -18,7 +15,7 @@ public class GameBoard implements Restorable {
     private final Tile[] tiles;
 
     /**
-     * Initializes a new gameboard with specified game type.
+     * Initializes a new GameBoard with specified game type.
      * @param type the game difficulty
      */
     public GameBoard(final GameType type) {
@@ -40,7 +37,7 @@ public class GameBoard implements Restorable {
     }
 
     /**
-     * Returns the corner vertexs of a tile
+     * Returns the corner vertexes of a tile
      * @param tileNum the number of the tile with desired vertexes
      * @return int[] the vertex IDs of tile with tileNum
      */
@@ -66,7 +63,7 @@ public class GameBoard implements Restorable {
     }
 
     /**
-     * Returns the tile that currentley has a robber
+     * Returns the tile that currently has a robber
      * @return Tile the robber tile
      */
     @SuppressFBWarnings("EI_EXPOSE_REP")
@@ -75,7 +72,7 @@ public class GameBoard implements Restorable {
     }
 
     /**
-     * Sets the robber tile to the inputed tile
+     * Sets the robber tile to the inputted tile
      */
     @SuppressFBWarnings("EI_EXPOSE_REP2")
     public void setRobberTile(final Tile tile) {
@@ -128,7 +125,7 @@ public class GameBoard implements Restorable {
             this.dieOrder = parseDieArr(reader.readField(DIE_ORDER));
             this.robberTileNum = Integer.parseInt(reader.readField(ROBBER_TILE_NUM));
 
-            // Read sub-mementos from the appropriate subfolders
+            // Read sub-mementos from the appropriate sub-folders
             this.tileMementos = new Memento[GameBoard.this.tiles.length];
             for (int i = 0; i < this.tileMementos.length; i++) {
                 File tileSubFolder = reader.getSubFolder(TILE_SUBFOLDER_PREFIX + i);

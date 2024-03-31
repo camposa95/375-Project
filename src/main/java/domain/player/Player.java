@@ -115,8 +115,8 @@ public class Player implements Restorable {
 
     /**
      * Gets the array of trade boosts this player has
-     * Note: ANY type means that is 3:1 for any resourse type.
-     * Specific boosts mean 2:1 for the indicated resourse
+     * Note: ANY type means that is 3:1 for any resource type.
+     * Specific boosts mean 2:1 for the indicated resource
      *
      * @return array of trade boosts.
      */
@@ -127,11 +127,9 @@ public class Player implements Restorable {
     /**
      * Method called from vertex to add the ports trade boosts
      * to this player
-     *
-     * @param resourse
      */
-    public void addTradeBoost(final Resource resourse) {
-        this.tradeBoosts[numTradeBoosts] = resourse;
+    public void addTradeBoost(final Resource resource) {
+        this.tradeBoosts[numTradeBoosts] = resource;
         this.numTradeBoosts++;
     }
 
@@ -165,10 +163,10 @@ public class Player implements Restorable {
     public boolean tradeWithBank(final Resource resourceGiven, final Resource resourceTaken) {
         //determine trade boost for resourceGiven
         int amountToGive = MAX_AMOUNT;
-        for (int i = 0; i < tradeBoosts.length; i++) {
-            if (tradeBoosts[i] == resourceGiven) {
+        for (Resource tradeBoost : tradeBoosts) {
+            if (tradeBoost == resourceGiven) {
                 amountToGive = RESOURCE_PORT;
-            } else if (tradeBoosts[i] == Resource.ANY) {
+            } else if (tradeBoost == Resource.ANY) {
                 amountToGive = Math.min(amountToGive, BUFF_AMOUNT);
             }
         }
@@ -257,7 +255,7 @@ public class Player implements Restorable {
      * Method that makes it so dev cards bought during the turn are
      * now playable. This is called during end turn
      */
-    public void addboughtCardsToHand() {
+    public void addBoughtCardsToHand() {
         hand.devCardsBoughtThisTurn.put(DevCard.KNIGHT, 0);
         hand.devCardsBoughtThisTurn.put(DevCard.ROAD, 0);
         hand.devCardsBoughtThisTurn.put(DevCard.MONOPOLY, 0);
@@ -268,11 +266,8 @@ public class Player implements Restorable {
     /**
      * This is the new version of canPlayDevelopmentCard
      * This method will check if the hand has an available card of the given type
-     * that was not bought this turn. If there is one avialable, it will then remove the
-     * card from the hand. Will return false on victory point cards because these are non playerable.
-     *
-     * @param card
-     * @return
+     * that was not bought this turn. If there is one available, it will then remove the
+     * card from the hand. Will return false on victory point cards because these are non-playable.
      */
     public boolean useDevCard(final DevCard card) {
         if (card == null) {
@@ -295,9 +290,6 @@ public class Player implements Restorable {
     /**
      * Note this is the old method.
      * Do not use
-     *
-     * @param card
-     * @return
      */
     public boolean canPlayDevelopmentCard(final DevCard card) {
         if (card == null) {
@@ -329,10 +321,8 @@ public class Player implements Restorable {
     }
 
     /**
-     * This gets the number of settlment pieces left in thier possesion for use.
-     * Not the number of settlments they built.
-     *
-     * @return
+     * This gets the number of settlement pieces left in their possession for use.
+     * Not the number of settlements they built.
      */
     public int getNumSettlements() {
         return numSettlements;
@@ -347,9 +337,9 @@ public class Player implements Restorable {
     }
 
     /**
-     * Helper method that manually places the settlment for setup.
-     *
-     * Note: This does not do resource checking because it is assumeed to
+     * Helper method that manually places the settlement for setup.
+     * <p>
+     * Note: This does not do resource checking because it is assumed to
      * not matter during setup
      */
     public void placeSettlementSetup() {
@@ -359,8 +349,8 @@ public class Player implements Restorable {
 
     /**
      * Helper method that manually places the road for setup.
-     *
-     * Note: This does not do resource checking because it is assumeed to
+     * <p>
+     * Note: This does not do resource checking because it is assumed to
      * not matter during setup
      */
     public void placeRoadSetup() {
@@ -398,7 +388,6 @@ public class Player implements Restorable {
     /**
      * Simple setter used during testing
      * Warning: do not use outside of testing to establish state of world
-     * @param points
      */
     public void setVictoryPoints(final int points) {
         this.victoryPoints = points;
@@ -406,7 +395,6 @@ public class Player implements Restorable {
 
     /**
      * Simple setter for integration testing purposes
-     * @param num
      */
     public void setNumRoads(final int num) {
         this.numRoads = num;

@@ -21,7 +21,7 @@ public class VertexIsBuildableTest {
         Vertex testVertex = vertexes.getVertex(0);
 
         boolean expected = true;
-        boolean actual = testVertex.isbuildable();
+        boolean actual = testVertex.isBuildable();
         assertEquals(expected, actual);
     }
 
@@ -47,7 +47,7 @@ public class VertexIsBuildableTest {
         EasyMock.replay(mockPlayer); // Note: Nothing should be called by player
 
         boolean expected = false;
-        boolean actual = testVertex.isbuildable();
+        boolean actual = testVertex.isBuildable();
         assertEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);
@@ -71,7 +71,7 @@ public class VertexIsBuildableTest {
         EasyMock.replay(mockPlayer); // Note: Nothing should be called by player
 
         boolean expected = false;
-        boolean actual = testVertex.isbuildable();
+        boolean actual = testVertex.isBuildable();
         assertEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);
@@ -94,7 +94,7 @@ public class VertexIsBuildableTest {
         EasyMock.replay(mockPlayer); // Note: Nothing should be called by player
 
         boolean expected = false;
-        boolean actual = testVertex.isbuildable();
+        boolean actual = testVertex.isBuildable();
         assertEquals(expected, actual);
 
         EasyMock.verify(mockPlayer);

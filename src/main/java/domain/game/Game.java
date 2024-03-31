@@ -31,7 +31,7 @@ public class Game implements Restorable {
     private final DevelopmentCardDeck deck;
     private final Bank bank;
     private boolean setup = true;
-    private static final int ROBBERNUM = 7;
+    private static final int ROBBER_NUM = 7;
     private final ValueRange range = java.time.temporal.ValueRange.of(0, 18);
 
      /**
@@ -39,7 +39,7 @@ public class Game implements Restorable {
      * @param gb the gameBoard
      * @param vg the vertexGraph
      * @param rg the roadGraph
-     * @param devDeck the devcard deck
+     * @param devDeck the development card deck
      */
     @SuppressFBWarnings("EI_EXPOSE_REP2")
     public Game(final GameBoard gb, final VertexGraph vg, final RoadGraph rg, final DevelopmentCardDeck devDeck, final Bank resourceBank) {
@@ -55,11 +55,11 @@ public class Game implements Restorable {
      * @param vertex the settlement location
      * @param player the player placing the vertex
      * @throws InvalidPlacementException if the placement is invalid
-     * @throws NotEnoughResourcesException if its not setup and the player cant afford the settlement
+     * @throws NotEnoughResourcesException if it is not setup and the player cant afford the settlement
      */
     public void placeSettlement(final int vertex, final Player player) throws InvalidPlacementException, NotEnoughResourcesException {
         Vertex v = vertexes.getVertex(vertex);
-        if (!v.isbuildable()) {
+        if (!v.isBuildable()) {
             throw new InvalidPlacementException();
         }
 
@@ -87,7 +87,7 @@ public class Game implements Restorable {
      * @param vertex the adjacent settlement
      * @param player the player placing the vertex
      * @throws InvalidPlacementException if the placement is invalid
-     * @throws NotEnoughResourcesException if its not setup and the player cant afford the road
+     * @throws NotEnoughResourcesException if it is not setup and the player cant afford the road
      */
     public void placeRoad(final int road, final int vertex, final Player player) throws InvalidPlacementException, NotEnoughResourcesException {
         Vertex v =  vertexes.getVertex(vertex);
@@ -114,7 +114,7 @@ public class Game implements Restorable {
 
     /**
      * Distributes resources to the player based on the setup state and a condition
-     * this condition is interperted as a vertex if in setup or a die value if not in setup
+     * this condition is interpreted as a vertex if in setup or a die value if not in setup
      * @param player the player
      * @param condition the vertex or die value
      */
@@ -134,8 +134,8 @@ public class Game implements Restorable {
      * @return Resource[] an array of resource enums to give to player
      */
     Resource[] resourcesFromVertex(final Player player, final int vertex) {
-        ArrayList<Resource> resources = new ArrayList<Resource>();
-        //Checks what tiles the last placed vertex gets resoures from
+        ArrayList<Resource> resources = new ArrayList<>();
+        //Checks what tiles the last placed vertex gets resources from
         for (Tile tile : this.gameBoard.getTiles()) {
             List<Integer> tileVertexes = tile.getVertexIDs();
             if (tile.getTerrain() != Terrain.DESERT) {
@@ -146,7 +146,7 @@ public class Game implements Restorable {
                 }
             }
         }
-        return resources.toArray(new Resource[resources.size()]);
+        return resources.toArray(new Resource[0]);
     }
 
     /**
@@ -156,8 +156,8 @@ public class Game implements Restorable {
      * @return Resource[] an array of resource enums to give to player
      */
     Resource[] resourcesFromDie(final Player player, final int die) {
-        ArrayList<Resource> resources = new ArrayList<Resource>();
-        if (die == ROBBERNUM) {
+        ArrayList<Resource> resources = new ArrayList<>();
+        if (die == ROBBER_NUM) {
             return new Resource[0];
         }
         for (Tile tile : this.gameBoard.getTiles()) {
@@ -174,13 +174,12 @@ public class Game implements Restorable {
                 }
             }
         }
-        return resources.toArray(new Resource[resources.size()]);
+
+        return resources.toArray(new Resource[0]);
     }
 
     /**
      * Tries to Upgrade a settlement from a player and a vertexID
-     * @param player
-     * @param vertexId
      */
     public void upgradeSettlement(final Player player, final int vertexId) throws InvalidPlacementException, NotEnoughResourcesException {
         Vertex vertex = vertexes.getVertex(vertexId);
@@ -194,18 +193,11 @@ public class Game implements Restorable {
     }
 
     /**
-     * Allows the player to buy a devcard if they have enough resources
-     * @param player
-     * @throws NotEnoughResourcesException
-     * @throws EmptyDevCardDeckException
+     * Allows the player to buy a dev card if they have enough resources
      */
     public void buyDevCard(final Player player) throws NotEnoughResourcesException, EmptyDevCardDeckException {
         DevCard card;
-        try {
-            card = this.deck.draw();
-        } catch (EmptyDevCardDeckException e) {
-            throw e;
-        }
+        card = this.deck.draw();
         if (!player.purchaseDevCard(card)) {
             this.deck.returnToDeck(card);
             throw new NotEnoughResourcesException();
@@ -213,8 +205,7 @@ public class Game implements Restorable {
     }
 
     /**
-     * Sets setuo to false
-     * @return false
+     * Transitions the game from setup to regular play mode
      */
     public void endSetup() {
         this.setup = false;
@@ -226,11 +217,10 @@ public class Game implements Restorable {
 
     /**
      * Tries to drop cards from players based on the input hashmap
-     * @param map
      * @throws IllegalArgumentException when player doesn't have the corresponding resources
      */
-    public void dropCards(final HashMap<Player, Resource[]> map) throws IllegalArgumentException {
-        for (Entry<Player, Resource[]> entry : map.entrySet()) {
+    public void dropCards(final HashMap<Player, Resource[]> resourceMap) throws IllegalArgumentException {
+        for (Entry<Player, Resource[]> entry : resourceMap.entrySet()) {
             Player player = entry.getKey();
             Resource[] toRemove = entry.getValue();
             if (toRemove.length != 0) {
@@ -243,8 +233,6 @@ public class Game implements Restorable {
 
     /**
      * Tries to move the robber to the tile with the given ID
-     * @param tileId
-     * @throws InvalidPlacementException
      */
     public void moveRobber(final int tileId) throws InvalidPlacementException {
         if (!range.isValidIntValue(tileId)) {
@@ -262,16 +250,13 @@ public class Game implements Restorable {
 
     /**
      * Allows the robber player to steal a resource from the robbed player given they have enough
-     * @param robber
-     * @param robbed
-     * @throws NotEnoughResourcesException
      */
     @SuppressFBWarnings("PREDICTABLE_RANDOM")
     public void stealFromPlayer(final Player robber, final Player robbed) throws NotEnoughResourcesException {
         if (robbed.hand.getResourceCardCount() == 0) {
             throw new NotEnoughResourcesException();
         }
-        //Get all posible resources
+        //Get all possible resources
         Resource[] robbedHand = robbed.hand.getResourceTypes();
         //"Randomly" pick a resource
         int index = (int) (Math.random() * robbedHand.length);
@@ -283,9 +268,6 @@ public class Game implements Restorable {
 
     /**
      * Gets the list of players who own a settlement on the given tile
-     * @param tileID
-     * @return
-     * @throws IllegalArgumentException
      */
     public Player[] getPlayersFromTile(final int tileID) throws IllegalArgumentException {
         if (!range.isValidIntValue(tileID)) {
@@ -306,11 +288,6 @@ public class Game implements Restorable {
 
     /**
      * Method that plays tries to play the monopoly card
-     *
-     * @param robber
-     * @param playersToRob
-     * @param resourceToRob
-     * @throws CardNotPlayableException
      */
     public void playMonopoly(final Player robber, final Player[] playersToRob, final Resource resourceToRob) throws CardNotPlayableException {
         if (!robber.useDevCard(DevCard.MONOPOLY)) {
@@ -327,12 +304,6 @@ public class Game implements Restorable {
 
     /**
      * Method that tries to play the year of plenty card
-     *
-     * @param player
-     * @param resource1
-     * @param resource2
-     * @throws NotEnoughResourcesException
-     * @throws CardNotPlayableException
      */
     public void playYearOfPlenty(final Player player, final Resource resource1, final Resource resource2) throws NotEnoughResourcesException, CardNotPlayableException {
         if (!player.useDevCard(DevCard.PLENTY)) {
@@ -399,7 +370,7 @@ public class Game implements Restorable {
             // Read simple fields from the file
             this.setup = Boolean.parseBoolean(reader.readField(SETUP));
 
-            // Read sub-mementos from the appropriate subfolders
+            // Read sub-mementos from the appropriate sub-folders
             File gameBoardSubFolder = reader.getSubFolder(GAME_BOARD_SUBFOLDER_NAME);
             this.gameBoardMemento = Game.this.gameBoard.new GameBoardMemento(gameBoardSubFolder);
 

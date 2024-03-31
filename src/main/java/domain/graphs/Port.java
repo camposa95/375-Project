@@ -13,9 +13,6 @@ public class Port implements Restorable {
 
     /**
      * Creates a new Port with the given location ID.
-     *
-     * @param id the locationId of the Port on the map
-     * @param resourceType
      */
     public Port(final int id, final Resource resourceType) {
         this.locationId = id;
@@ -31,7 +28,7 @@ public class Port implements Restorable {
         return this.locationId;
     }
 
-    public Resource getResourse() {
+    public Resource getResource() {
         return this.resource;
     }
 

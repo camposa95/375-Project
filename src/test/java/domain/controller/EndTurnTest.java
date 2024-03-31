@@ -29,7 +29,7 @@ public class EndTurnTest {
         controller.setDevCardsEnabled(false);
 
         // expect this to be called
-        mockedPlayer1.addboughtCardsToHand();
+        mockedPlayer1.addBoughtCardsToHand();
 
         // next player to go does not have enough points to win
         EasyMock.expect(mockedPlayer2.getVictoryPoints()).andReturn(9);
@@ -91,7 +91,7 @@ public class EndTurnTest {
         controller.setDevCardsEnabled(false);
 
         // expect this to be called
-        mockedPlayer1.addboughtCardsToHand();
+        mockedPlayer1.addBoughtCardsToHand();
         // next player already has enough points to win
         EasyMock.expect(mockedPlayer2.getVictoryPoints()).andReturn(10);
 

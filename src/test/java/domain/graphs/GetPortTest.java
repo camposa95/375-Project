@@ -26,7 +26,7 @@ public class GetPortTest {
         int actualId = port.getLocationId();
 
         Resource expectedResource = Resource.ANY;
-        Resource actualResource = port.getResourse();
+        Resource actualResource = port.getResource();
 
         assertEquals(MIN_LOCATION_ID, actualId);
         assertEquals(expectedResource, actualResource);
@@ -43,7 +43,7 @@ public class GetPortTest {
         int actualId = port.getLocationId();
 
         Resource expectedResource = Resource.GRAIN;
-        Resource actualResource = port.getResourse();
+        Resource actualResource = port.getResource();
 
         assertEquals(expectedId, actualId);
         assertEquals(expectedResource, actualResource);
@@ -60,7 +60,7 @@ public class GetPortTest {
         int actualId = port.getLocationId();
 
         Resource expectedResource = Resource.WOOL;
-        Resource actualResource = port.getResourse();
+        Resource actualResource = port.getResource();
 
         assertEquals(expectedId, actualId);
         assertEquals(expectedResource, actualResource);
@@ -77,7 +77,7 @@ public class GetPortTest {
         int actualId = port.getLocationId();
 
         Resource expectedResource = Resource.ANY;
-        Resource actualResource = port.getResourse();
+        Resource actualResource = port.getResource();
 
         assertEquals(expectedId, actualId);
         assertEquals(expectedResource, actualResource);
@@ -94,7 +94,7 @@ public class GetPortTest {
         int actualId = port.getLocationId();
 
         Resource expectedResource = Resource.ORE;
-        Resource actualResource = port.getResourse();
+        Resource actualResource = port.getResource();
 
         assertEquals(expectedId, actualId);
         assertEquals(expectedResource, actualResource);
@@ -111,7 +111,7 @@ public class GetPortTest {
         int actualId = port.getLocationId();
 
         Resource expectedResource = Resource.ANY;
-        Resource actualResource = port.getResourse();
+        Resource actualResource = port.getResource();
 
         assertEquals(expectedId, actualId);
         assertEquals(expectedResource, actualResource);
@@ -128,7 +128,7 @@ public class GetPortTest {
         int actualId = port.getLocationId();
 
         Resource expectedResource = Resource.ANY;
-        Resource actualResource = port.getResourse();
+        Resource actualResource = port.getResource();
 
         assertEquals(expectedId, actualId);
         assertEquals(expectedResource, actualResource);
@@ -145,7 +145,7 @@ public class GetPortTest {
         int actualId = port.getLocationId();
 
         Resource expectedResource = Resource.BRICK;
-        Resource actualResource = port.getResourse();
+        Resource actualResource = port.getResource();
 
         assertEquals(expectedId, actualId);
         assertEquals(expectedResource, actualResource);
@@ -162,7 +162,7 @@ public class GetPortTest {
         int actualId = port.getLocationId();
 
         Resource expectedResource = Resource.LUMBER;
-        Resource actualResource = port.getResourse();
+        Resource actualResource = port.getResource();
 
         assertEquals(expectedId, actualId);
         assertEquals(expectedResource, actualResource);

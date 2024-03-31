@@ -1,0 +1,2 @@
+Owner: Player 3
+IsCity: false
