@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import data.GameLoader;
+import domain.bank.Bank;
+import domain.player.HarvestBooster;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
@@ -39,19 +41,18 @@ public class F5Test {
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         Controller controller = new Controller(game, players, gameType);
 
     // -------------------------- Start of Test  ---------------------------
@@ -79,12 +80,11 @@ public class F5Test {
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
@@ -92,7 +92,7 @@ public class F5Test {
         // must have gameBoard in beginner still so we know where tiles are
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         Controller controller = new Controller(game, players, gameType);
 
     // -------------------------- Start of Test  ---------------------------
@@ -153,23 +153,18 @@ public class F5Test {
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players
-        //white
-        Player player1 = new Player(1);
-        //orange
-        Player player2 = new Player(2);
-        //blue
-        Player player3 = new Player(3);
-        //red
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
 
         Random mockedRandom = EasyMock.createStrictMock(Random.class);
 
@@ -216,23 +211,18 @@ public class F5Test {
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players
-        //white
-        Player player1 = new Player(1);
-        //orange
-        Player player2 = new Player(2);
-        //blue
-        Player player3 = new Player(3);
-        //red
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         Random mockedRandom = EasyMock.createStrictMock(Random.class);
         Controller controller = new Controller(game, players, gameType, mockedRandom);
 
@@ -305,23 +295,18 @@ public class F5Test {
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players
-        //white
-        Player player1 = new Player(1);
-        //orange
-        Player player2 = new Player(2);
-        //blue
-        Player player3 = new Player(3);
-        //red
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         Random mockedRandom = EasyMock.createStrictMock(Random.class);
         Controller controller = new Controller(game, players, gameType, mockedRandom);
 

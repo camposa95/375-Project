@@ -22,6 +22,7 @@ public class Player implements Restorable {
     public final int playerNum;
     public Hand hand;
     public final HarvestBooster harvestBooster;
+    public final Bank bank;
     public int victoryPoints;
     public boolean hasPlayedDevCard;
     public int numKnightsPlayed;
@@ -29,16 +30,15 @@ public class Player implements Restorable {
     int numSettlements;
     int numRoads;
     int numCities;
-    private Resource[] tradeBoosts;
+    private final Resource[] tradeBoosts;
     private int numTradeBoosts;
     private boolean hasLongestRoadCard;
     private boolean hasLargestArmy;
 
-    public Player(final int num) {
-        this(num, new HarvestBooster());
-    }
-
-    public Player(final int num, final HarvestBooster booster) {
+    /**
+     * Production constructor
+     */
+    public Player(final int num, final HarvestBooster booster, final Bank resourceBank) {
         this.playerNum = num;
         this.hand = new Hand();
         this.numSettlements = MAX_SETTLEMENTS;
@@ -50,6 +50,18 @@ public class Player implements Restorable {
         this.hasPlayedDevCard = false;
         this.numKnightsPlayed = 0;
         this.harvestBooster = booster;
+        this.bank = resourceBank;
+    }
+
+    // Test Constructors provide simpler syntax when certain fields are unnecessary
+    public Player(final int num) {
+        this(num, null, null);
+    }
+    public Player(final int num, final HarvestBooster booster) {
+        this(num, booster, null);
+    }
+    public Player(final int num, final Bank resourceBank) {
+        this(num, null, resourceBank);
     }
 
     public boolean purchaseSettlement() {
@@ -66,7 +78,7 @@ public class Player implements Restorable {
             return false;
         }
         //return the cards to the bank
-        Bank.getInstance().addResources(new Resource[]{
+        this.bank.addResources(new Resource[]{
            Resource.LUMBER,
            Resource.BRICK,
            Resource.WOOL,
@@ -91,7 +103,7 @@ public class Player implements Restorable {
             return false;
         }
         //return the cards to the bank
-        Bank.getInstance().addResources(new Resource[]{
+        this.bank.addResources(new Resource[]{
                 Resource.LUMBER,
                 Resource.BRICK,
         });
@@ -160,7 +172,7 @@ public class Player implements Restorable {
                 amountToGive = Math.min(amountToGive, BUFF_AMOUNT);
             }
         }
-        Bank bank = Bank.getInstance();
+
         boolean playerCanTrade = this.hand.removeResource(resourceGiven, amountToGive);
         if (!playerCanTrade) {
             return false;
@@ -193,7 +205,6 @@ public class Player implements Restorable {
             return false;
         }
 
-        Bank bank = Bank.getInstance();
         bank.addResources(new Resource[]{
                 Resource.ORE,
                 Resource.ORE,
@@ -218,7 +229,7 @@ public class Player implements Restorable {
         })) {
             return false;
         }
-        Bank bank = Bank.getInstance();
+
         bank.addResources(new Resource[]{
                 Resource.WOOL, Resource.GRAIN, Resource.ORE
         });

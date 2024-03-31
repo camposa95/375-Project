@@ -29,6 +29,7 @@ public class Game implements Restorable {
     private final VertexGraph vertexes;
     private final RoadGraph roads;
     private final DevelopmentCardDeck deck;
+    private final Bank bank;
     private boolean setup = true;
     private static final int ROBBERNUM = 7;
     private final ValueRange range = java.time.temporal.ValueRange.of(0, 18);
@@ -41,11 +42,12 @@ public class Game implements Restorable {
      * @param devDeck the devcard deck
      */
     @SuppressFBWarnings("EI_EXPOSE_REP2")
-    public Game(final GameBoard gb, final VertexGraph vg, final RoadGraph rg, final DevelopmentCardDeck devDeck) {
+    public Game(final GameBoard gb, final VertexGraph vg, final RoadGraph rg, final DevelopmentCardDeck devDeck, final Bank resourceBank) {
         this.gameBoard = gb;
         this.vertexes = vg;
         this.roads = rg;
         this.deck = devDeck;
+        this.bank = resourceBank;
     }
 
     /**
@@ -121,7 +123,7 @@ public class Game implements Restorable {
        Resource[] adjustedHarvest = player.harvestBooster.getAdjustedHarvest(unadjustedHarvest);
 
        if (player.hand.addResources(adjustedHarvest)) {
-           Bank.getInstance().removeResources(adjustedHarvest);
+           bank.removeResources(adjustedHarvest);
        }
     }
 
@@ -336,7 +338,6 @@ public class Game implements Restorable {
         if (!player.useDevCard(DevCard.PLENTY)) {
             throw new CardNotPlayableException();
         }
-        Bank bank =  Bank.getInstance();
         int amount1 = bank.getResourceAmount(resource1);
         int amount2 = bank.getResourceAmount(resource2);
         if (amount1 == 0 || amount2 == 0) {
@@ -365,6 +366,7 @@ public class Game implements Restorable {
         private final Memento vertexesMemento;
         private final Memento roadsMemento;
         private final Memento deckMemento;
+        private final Memento bankMemento;
 
         // Storage Constants
         private static final String TARGET_FILE_NAME = "game.txt";
@@ -372,6 +374,7 @@ public class Game implements Restorable {
         private static final String VERTEXES_SUBFOLDER_NAME = "Vertexes";
         private static final String ROADS_SUBFOLDER_NAME = "Roads";
         private static final String DECK_SUBFOLDER_NAME = "Deck";
+        private static final String BANK_SUBFOLDER_NAME = "Bank";
 
         // Field Keys
         private static final String SETUP = "Setup";
@@ -385,6 +388,7 @@ public class Game implements Restorable {
             this.vertexesMemento = Game.this.vertexes.createMemento();
             this.roadsMemento = Game.this.roads.createMemento();
             this.deckMemento = Game.this.deck.createMemento();
+            this.bankMemento = Game.this.bank.createMemento();
         }
 
         @SuppressFBWarnings("EI_EXPOSE_REP2")
@@ -407,6 +411,9 @@ public class Game implements Restorable {
 
             File deckSubFolder = reader.getSubFolder(DECK_SUBFOLDER_NAME);
             this.deckMemento = Game.this.deck.new DevCardDeckMemento(deckSubFolder);
+
+            File bankSubFolder = reader.getSubFolder(BANK_SUBFOLDER_NAME);
+            this.bankMemento = Game.this.bank.new BankMemento(bankSubFolder);
         }
 
         public void save(final File folder) throws SaveException {
@@ -428,6 +435,9 @@ public class Game implements Restorable {
 
             File deckSubFolder = writer.getSubFolder(DECK_SUBFOLDER_NAME);
             deckMemento.save(deckSubFolder);
+
+            File bankSubFolder = writer.getSubFolder(BANK_SUBFOLDER_NAME);
+            bankMemento.save(bankSubFolder);
         }
 
         public void restore() {
@@ -439,6 +449,7 @@ public class Game implements Restorable {
             vertexesMemento.restore();
             roadsMemento.restore();
             deckMemento.restore();
+            bankMemento.restore();
         }
     }
 

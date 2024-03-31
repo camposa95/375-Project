@@ -10,6 +10,7 @@ import domain.devcarddeck.DevelopmentCardDeck;
 import domain.game.Game;
 import domain.game.GameType;
 import domain.gameboard.GameBoard;
+import domain.player.HarvestBooster;
 import domain.player.Player;
 import domain.graphs.RoadGraph;
 import domain.graphs.VertexGraph;
@@ -33,15 +34,18 @@ public class F17Test {
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player[] players = {player1, player2};
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
+        Player[] players = {player1, player2, player3, player4};
 
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
-        Bank.getInstance().resetBank();
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        bank.reset();
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
@@ -74,8 +78,8 @@ public class F17Test {
         }
         assertEquals(0, player2.hand.getResourceCardCount());
 
-        Bank.getInstance().resetBank();
-        Bank bank = Bank.getInstance();
+        bank.reset();
+        
 
         //Begin test
         Resource[] resourceForHand = {
@@ -119,15 +123,17 @@ public class F17Test {
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
+        Bank bank = new Bank();
+        // Only two player here, important
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
         Player[] players = {player1, player2};
 
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
-        Bank.getInstance().resetBank();
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        bank.reset();
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
@@ -159,8 +165,8 @@ public class F17Test {
         }
         assertEquals(0, player2.hand.getResourceCardCount());
 
-        Bank.getInstance().resetBank();
-        Bank bank = Bank.getInstance();
+        bank.reset();
+        
 
         //Begin test
 
@@ -218,15 +224,18 @@ public class F17Test {
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player[] players = {player1, player2};
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
+        Player[] players = {player1, player2, player3, player4};
 
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
-        Bank.getInstance().resetBank();
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        bank.reset();
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
@@ -259,8 +268,8 @@ public class F17Test {
         }
         assertEquals(0, player2.hand.getResourceCardCount());
 
-        Bank.getInstance().resetBank();
-        Bank bank = Bank.getInstance();
+        bank.reset();
+        
 
         //Begin test
         player1.hand.addResource(Resource.WOOL, 6);

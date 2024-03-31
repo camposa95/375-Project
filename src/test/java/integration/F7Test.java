@@ -6,6 +6,8 @@ import java.time.Duration;
 import java.util.concurrent.atomic.AtomicReference;
 
 import data.GameLoader;
+import domain.bank.Bank;
+import domain.player.HarvestBooster;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -41,19 +43,18 @@ public class F7Test {
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players. Note: 3 players is enough for our purposes here
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
         // Assert that the begineer setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
@@ -107,19 +108,18 @@ public class F7Test {
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players. Note: 3 players is enough for our purposes here
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
         // Assert that the begineer setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
@@ -173,19 +173,18 @@ public class F7Test {
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players. Note: 3 players is enough for our purposes here
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
         // Assert that the begineer setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();

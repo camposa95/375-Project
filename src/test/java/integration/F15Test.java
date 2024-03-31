@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import data.GameLoader;
+import domain.player.HarvestBooster;
 import org.junit.jupiter.api.Test;
 
 import domain.controller.Controller;
@@ -36,20 +37,19 @@ public class F15Test {
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players. Note: 3 players is enough for our purposes here
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
-        Bank.getInstance().resetBank();
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        bank.reset();
         Controller controller = new Controller(game, players, gameType);
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
@@ -88,20 +88,19 @@ public class F15Test {
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players. Note: 3 players is enough for our purposes here
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
-        Bank.getInstance().resetBank();
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        bank.reset();
         Controller controller = new Controller(game, players, gameType);
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
