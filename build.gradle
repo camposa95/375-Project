@@ -46,7 +46,7 @@ test {
 
 pitest {
     junit5PluginVersion = '1.0.0'
-    targetClasses = ['gamedatastructures.*', 'graphs.*', 'controller.*', 'integration.*']  //by default "${project.group}.*"
+    targetClasses = ['data.*', 'domain.*', 'integration.*']  //by default "${project.group}.*"
     pitestVersion = '1.9.0' //not needed when a default PIT version should be used
     threads = 4
     outputFormats = ['XML', 'HTML']

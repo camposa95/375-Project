@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 
 import java.util.ResourceBundle;
 
-public class RobPlayerController {
+public class RobPlayerController implements Popup {
 
     @FXML
     private Button otherPlayer1, otherPlayer2, otherPlayer3;
@@ -42,8 +42,7 @@ public class RobPlayerController {
         int playerRobbed = this.getSelectedPlayer(event);
         SuccessCode success = this.rob(playerRobbed);
         if(success == SuccessCode.SUCCESS){
-            Stage stage = (Stage) otherPlayer1.getScene().getWindow();
-            stage.close();
+            this.close();
         }
     }
 
@@ -99,9 +98,14 @@ public class RobPlayerController {
         }
         if(count==total){
             this.rob(-1);
-            Stage stage = (Stage) otherPlayer1.getScene().getWindow();
-            stage.close();
+            this.close();
         }
 
+    }
+
+    public void close() {
+        this.guiController.notifyOfPopupClose(this);
+        Stage stage = (Stage) otherPlayer1.getScene().getWindow();
+        stage.close();
     }
 }

@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
-public class DropCardsController {
+public class DropCardsController implements Popup {
 
     @FXML
     private Text player1name, player2name, player3name, player4name, dropHalfTitle, tooltip;
@@ -100,12 +100,11 @@ public class DropCardsController {
         boolean check = doesAnyoneNeedToDrop();
         if(!check){
             this.dropResources(null);
-            Stage stage = (Stage) lumberIcon.getScene().getWindow();
-            stage.close();
+            this.close();
         }
     }
 
-    private Resource[] getPlayerResources(TextField[] playerResources){
+    private Resource[] getPlayerResources(TextField[] playerResources) {
         int lumber = Integer.parseInt(playerResources[0].getText());
         int brick = Integer.parseInt(playerResources[1].getText());
         int wool = Integer.parseInt(playerResources[2].getText());
@@ -138,7 +137,7 @@ public class DropCardsController {
         return resources;
     }
 
-    public void submitDropResource(){
+    public void submitDropResource() {
         HashMap<Integer,Resource[]> resources = new HashMap<>();
 
         for(int i = 0; i < playersThatNeedToDrop.size(); i++){
@@ -152,11 +151,10 @@ public class DropCardsController {
             }
         }
         this.dropResources(resources);
-        Stage stage = (Stage) lumberIcon.getScene().getWindow();
-        stage.close();
+        this.close();
     }
 
-    private void dropResources(HashMap<Integer, Resource[]> resourcesToDrop){
+    private void dropResources(HashMap<Integer, Resource[]> resourcesToDrop) {
         //Called from DropCardsController.java
         if(resourcesToDrop!=null){ //if null, no dropping occurred
             this.domainController.dropResources(resourcesToDrop);
@@ -167,7 +165,7 @@ public class DropCardsController {
     }
 
     //returns true if at least one player needs to drop cards
-    public boolean doesAnyoneNeedToDrop(){
+    public boolean doesAnyoneNeedToDrop() {
         for(int i = 0; i < players.length; i++){
             if(players[i].hand.getResourceCardCount() <=7 ){
                 for(int j = 0; j < playerResources2d[i].length; j++){
@@ -179,5 +177,11 @@ public class DropCardsController {
             }
         }
         return playersThatNeedToDrop.size() != 0;
+    }
+
+    public void close() {
+        this.guiController.notifyOfPopupClose(this);
+        Stage stage = (Stage) lumberIcon.getScene().getWindow();
+        stage.close();
     }
 }

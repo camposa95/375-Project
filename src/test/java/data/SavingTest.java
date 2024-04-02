@@ -54,7 +54,7 @@ public class SavingTest {
 
             assert expectedFiles != null;
             assert actualFiles != null;
-            assertEquals(expectedFiles.length, actualFiles.length);
+            assertEquals(expectedFiles.length, actualFiles.length, expected.getName());
 
             for (File expectedFile : expectedFiles) {
                 File actualFile = new File(actual, expectedFile.getName());
@@ -72,7 +72,7 @@ public class SavingTest {
 
         assertEquals(expectedLines.size(), actualLines.size());
         for (String expectedLine : expectedLines) {
-            assertTrue(actualLines.contains(expectedLine));
+            assertTrue(actualLines.contains(expectedLine), "File: " + expectedFile.getName() + "\nLine: \n\t" + expectedLine);
         }
     }
 }
