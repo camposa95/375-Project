@@ -1,5 +1,6 @@
 package gamedatastructures;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -699,6 +700,37 @@ public class GameTest {
             assertEquals(expected[i],actual[i]);  
         }
     }
+
+    @Test
+    public void testResourcesFromDie_withSettlementWithMine_expectThreeOre() {
+        Player player = new Player(1);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner, LAYOUT_FILE);
+        VertexGraph vertexGraph = new VertexGraph();
+        vertexGraph.initializeVertexToPortAdjacency(VERTEXPORT_FILE, GameType.Beginner);
+        RoadGraph mockedRoadGraph = EasyMock.createStrictMock(RoadGraph.class);
+        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph,null);
+        int die = 10;
+
+        vertexGraph.getVertex(1).build(player);
+        vertexGraph.getVertex(1).buildDistrict(player, DistrictType.MINE);
+
+        Resource[] expected = {Resource.ORE,Resource.ORE,Resource.ORE};
+        //Check hand before
+        int before = player.hand.getResourceCardCount();
+        //Call method
+        Resource[] actual = game.resourcesFromDie(player, die);
+        player.hand.addResources(actual);
+        //Check After
+        int after = player.hand.getResourceCardCount();
+
+
+        assertNotEquals(before, after);
+        assertEquals(3,actual.length);
+        for(int i =0; i<3; i++) {
+            assertEquals(expected[i],actual[i]);
+        }
+    }
+
     @Test
     public void testResourcesFromDie_Many_Many_NoDie() {
         Player player = new Player(1);
@@ -1383,5 +1415,46 @@ public class GameTest {
         assertThrows(IllegalArgumentException.class,()->{game.getPlayersFromTile(19);});
         
         EasyMock.verify(gameBoard,mockVertexGraph, mockVertex);
+    }
+
+    @Test
+    public void testBuildDistrict_withVertexOwnedByPlayerBuildSawmill_expectSuccess() {
+        Player player = new Player(1);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner, LAYOUT_FILE);
+        VertexGraph vertexGraph = new VertexGraph();
+        vertexGraph.initializeVertexToPortAdjacency(VERTEXPORT_FILE, GameType.Beginner);
+        RoadGraph mockedRoadGraph = EasyMock.createStrictMock(RoadGraph.class);
+        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph,null);
+
+        vertexGraph.getVertex(1).build(player);
+
+        //Replay
+        EasyMock.replay(mockedRoadGraph);
+
+        game.buildDistrictOnVertex(player, 1, DistrictType.SAWMILL);
+
+        Assertions.assertEquals(DistrictType.SAWMILL, vertexGraph.getVertex(1).getBuilding().getDistrict());
+
+        EasyMock.verify(mockedRoadGraph);
+    }
+
+    @Test
+    public void testBuildDistrict_withVertexOwnedByOtherPlayerBuildSawmill_expectIllegalArgumentException() {
+        Player player = new Player(1);
+        Player enemy = new Player(2);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner, LAYOUT_FILE);
+        VertexGraph vertexGraph = new VertexGraph();
+        vertexGraph.initializeVertexToPortAdjacency(VERTEXPORT_FILE, GameType.Beginner);
+        RoadGraph mockedRoadGraph = EasyMock.createStrictMock(RoadGraph.class);
+        Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph,null);
+
+        vertexGraph.getVertex(1).build(enemy);
+
+        //Replay
+        EasyMock.replay(mockedRoadGraph);
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> game.buildDistrictOnVertex(player, 1, DistrictType.SAWMILL));
+
+        EasyMock.verify(mockedRoadGraph);
     }
 }

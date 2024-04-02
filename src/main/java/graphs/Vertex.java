@@ -1,6 +1,7 @@
 package graphs;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import gamedatastructures.DistrictType;
 import gamedatastructures.Player;
 import gamedatastructures.Resource;
 import gamedatastructures.Building;
@@ -16,7 +17,7 @@ public class Vertex {
     private Port adjacentPort;
     private Player owner;
     private boolean portsInitialized;
-    private Building building;
+    protected Building building;
 
     /**
      * Creates a new vertex with the given ID.
@@ -301,6 +302,22 @@ public class Vertex {
     protected void setBuildingToCity() {
         this.building = new Building();
         this.building.upgradeToCity();
+    }
+
+    public void buildDistrict(final Player player, final DistrictType type) {
+        if (canBuildDistrict(player)) {
+            this.building.buildDistrict(type);
+        } else {
+            throw new IllegalArgumentException("Player must own the vertex to build a district");
+        }
+    }
+
+    private boolean canBuildDistrict(final Player player) {
+        return (this.getOwner() == player);
+    }
+
+    public Building getBuilding() {
+        return this.building;
     }
 
     /**

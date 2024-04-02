@@ -163,7 +163,18 @@ public class Game {
         vertex.upgradeToCity(player);
     }
 
-    // TODO: Add method here to add a location add-on to the building on the given vertex
+    /**
+     * Builds a district on an established building on the given vertex if the player owns the building
+     * and a district doesn't already exist. Each district provides its own unique +3 resource bonus
+     * to resource yields
+     * @param player the player building the district. Must already own a building on the vertex
+     * @param vertexId the vertex to build a district on
+     * @param type the district type to build
+     */
+    public void buildDistrictOnVertex(final Player player, final int vertexId, final DistrictType type) {
+        Vertex vertex = vertexes.getVertex(vertexId);
+        vertex.buildDistrict(player, type);
+    }
 
     /**
      * Allows the player to buy a devcard if they have enough resources
