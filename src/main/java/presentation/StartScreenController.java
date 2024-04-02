@@ -23,7 +23,7 @@ public class StartScreenController {
         Controller domainController = loader.loadGame();
         ResourceBundle messages = loader.getMessageBundle();
 
-        //close Start Screen window
+        // close Start Screen window
         Stage stage = (Stage) createNewGameButton.getScene().getWindow();
         stage.close();
 
@@ -39,8 +39,8 @@ public class StartScreenController {
         guiController.setController(domainController);
 
         // initialize the game-board
-        guiController.initializeGameBoard();
         guiController.internationalize(messages);
+        guiController.initializeGameBoard();
     }
 
     @FXML

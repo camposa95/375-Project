@@ -17,7 +17,7 @@ import javafx.stage.Stage;
 
 import java.util.ResourceBundle;
 
-public class PlayerTradeWindowController {
+public class PlayerTradeWindowController implements Popup {
 
     @FXML
     private Button otherPlayer1, otherPlayer2, otherPlayer3;
@@ -36,7 +36,7 @@ public class PlayerTradeWindowController {
     ResourceBundle messages;
 
     @FXML
-    private void initialize(){
+    private void initialize() {
         lumberIcon.setFill(new ImagePattern(new Image("images/card_lumber.png")));
         brickIcon.setFill(new ImagePattern(new Image("images/card_brick.png")));
         woolIcon.setFill(new ImagePattern(new Image("images/card_wool.png")));
@@ -47,7 +47,7 @@ public class PlayerTradeWindowController {
         receive = new TextField[]{receiveLumber, receiveBrick, receiveWool, receiveGrain, receiveOre};
     }
 
-    private void internationalize(){
+    private void internationalize() {
         playerTradeWindowTitle.setText(messages.getString("playerTradeWindowTitle"));
 
         youGiveText.setText(messages.getString("playerTradeYouGiveText"));
@@ -55,7 +55,7 @@ public class PlayerTradeWindowController {
         tooltip.setText(messages.getString("playerTradeTooltipDefault"));
     }
 
-    public void setPlayersData(Player currentPlayer, Player[] players, ResourceBundle messages){
+    public void setPlayersData(Player currentPlayer, Player[] players, ResourceBundle messages) {
         this.currentPlayer = currentPlayer;
         this.players = players;
         this.messages = messages;
@@ -85,7 +85,7 @@ public class PlayerTradeWindowController {
         this.domainController = domainController;
     }
 
-    private Resource[] getResources(TextField[] fields){
+    private Resource[] getResources(TextField[] fields) {
         int numLumber = Integer.parseInt(fields[0].getText());
         int numBrick = Integer.parseInt(fields[1].getText());
         int numWool = Integer.parseInt(fields[2].getText());
@@ -116,19 +116,17 @@ public class PlayerTradeWindowController {
         return resources;
     }
 
-    private int getOtherPlayerNum(MouseEvent event){
+    private int getOtherPlayerNum(MouseEvent event) {
         String buttonPressedText = ((Button)event.getSource()).getText();
-        int otherPlayerNum = Integer.parseInt(buttonPressedText.substring(buttonPressedText.length()-1));
-        return otherPlayerNum;
+        return Integer.parseInt(buttonPressedText.substring(buttonPressedText.length()-1));
     }
 
-    public void otherPlayerAccepts(MouseEvent event){
+    public void otherPlayerAccepts(MouseEvent event) {
         int otherPlayer = getOtherPlayerNum(event);
         Player other = null;
-        for(int i = 0; i < players.length; i++){
-            Player cur = players[i];
-            if(cur.playerNum==otherPlayer){
-                other=cur;
+        for (Player cur : players) {
+            if (cur.playerNum == otherPlayer) {
+                other = cur;
             }
         }
         Resource[] giving = this.getResources(give);
@@ -136,7 +134,7 @@ public class PlayerTradeWindowController {
         SuccessCode success = this.executeTrade(other, giving, receiving);
 
         if(success==SuccessCode.SUCCESS){
-            closeModal();
+            this.close();
         }else if(success == SuccessCode.INSUFFICIENT_RESOURCES){
             tooltip.setText(messages.getString("playerTradeTooltipInsufficientResources"));
         }else{
@@ -144,7 +142,7 @@ public class PlayerTradeWindowController {
         }
     }
 
-    private SuccessCode executeTrade(Player otherPlayer, Resource[] giving, Resource[] receiving){
+    private SuccessCode executeTrade(Player otherPlayer, Resource[] giving, Resource[] receiving) {
         //Called from  PlayerTradeController.java
         SuccessCode code = domainController.tradeWithPlayer(otherPlayer, giving, receiving);
         if(code==SuccessCode.SUCCESS){
@@ -153,7 +151,8 @@ public class PlayerTradeWindowController {
         return code;
     }
 
-    private void closeModal(){
+    public void close() {
+        this.guiController.notifyOfPopupClose(this);
         Stage stage = (Stage) lumberIcon.getScene().getWindow();
         stage.close();
     }

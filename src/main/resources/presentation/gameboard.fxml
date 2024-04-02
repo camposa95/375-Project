@@ -761,5 +761,7 @@
          </font>
       </Text>
       <Button fx:id="saveButton" layoutX="34.0" layoutY="744.0" mnemonicParsing="false" onMouseClicked="#saveButtonPressed" prefHeight="52.0" prefWidth="104.0" text="Save &amp; Exit" />
+      <Button fx:id="undoButton" layoutX="20.0" layoutY="810.0" mnemonicParsing="false" onAction="#undo" text="Undo" />
+      <Button fx:id="redoButton" layoutX="104.0" layoutY="810.0" mnemonicParsing="false" onAction="#redo" text="Redo" />
    </children>
 </Pane>

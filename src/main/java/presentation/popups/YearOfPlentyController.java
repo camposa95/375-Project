@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 
 import java.util.ResourceBundle;
 
-public class YearOfPlentyController {
+public class YearOfPlentyController implements Popup {
     private CatanGUIController guiController;
     private Controller domainController;
 
@@ -27,7 +27,7 @@ public class YearOfPlentyController {
     @FXML
     private Text yearOfPlentyTitleText, firstResourceText, secondResourceText;
     @FXML
-    public void initialize(){
+    public void initialize() {
         resource1 = new ToggleGroup();
         resource2 = new ToggleGroup();
 
@@ -49,13 +49,13 @@ public class YearOfPlentyController {
         this.domainController = domainController;
     }
 
-    public void setMessages(ResourceBundle messages){
+    public void setMessages(ResourceBundle messages) {
         this.messages=messages;
         internationalize();
     }
 
 
-    private void internationalize(){
+    private void internationalize() {
         yearOfPlentyTitleText.setText(messages.getString("yearOfPlentyTitleText"));
         firstResourceText.setText(messages.getString("yearOfPlentyFirstResourceText"));
         secondResourceText.setText(messages.getString("yearOfPlentySecondResourceText"));
@@ -74,20 +74,19 @@ public class YearOfPlentyController {
         selectButton.setText(messages.getString("yearOfPlentySelectButton"));
     }
 
-    public void submitYOP(){
+    public void submitYOP() {
         Resource selected1 = stringToResource(((RadioButton) resource1.getSelectedToggle()).getText());
         Resource selected2 = stringToResource(((RadioButton) resource2.getSelectedToggle()).getText());
 
         SuccessCode code = this.submitYearOfPlenty(selected1, selected2);
         if(code == SuccessCode.SUCCESS){
-            Stage stage = (Stage) lumber1.getScene().getWindow();
-            stage.close();
+            this.close();
         }else{
             System.out.println("Bank does not have enough resources!");
         }
     }
 
-    private SuccessCode submitYearOfPlenty(Resource resource1, Resource resource2){
+    private SuccessCode submitYearOfPlenty(Resource resource1, Resource resource2) {
         //submit year of plenty
         SuccessCode success = this.domainController.playYearOfPlenty(resource1, resource2);
         if(success == SuccessCode.SUCCESS){
@@ -96,7 +95,7 @@ public class YearOfPlentyController {
         return success;
     }
 
-    private Resource stringToResource(String resource){
+    private Resource stringToResource(String resource) {
         if(resource.equals(messages.getString("bankTradeWindowLumber"))){
             return Resource.LUMBER;
         }else if(resource.equals(messages.getString("bankTradeWindowBrick"))){
@@ -110,5 +109,11 @@ public class YearOfPlentyController {
         }else{
             throw new IllegalArgumentException("No matching resource");
         }
+    }
+
+    public void close() {
+        this.guiController.notifyOfPopupClose(this);
+        Stage stage = (Stage) lumber1.getScene().getWindow();
+        stage.close();
     }
 }

@@ -15,7 +15,7 @@
          </font>
       </Text>
       <Button fx:id="tradeButton" layoutX="228.0" layoutY="331.0" mnemonicParsing="false" onMouseClicked="#tradeButtonPressed" text="Trade" />
-      <Button fx:id="cancelButton" layoutX="323.0" layoutY="331.0" mnemonicParsing="false" onMouseClicked="#closeModal" text="Cancel" />
+      <Button fx:id="cancelButton" layoutX="323.0" layoutY="331.0" mnemonicParsing="false" onMouseClicked="#close" text="Cancel" />
       <Text fx:id="resourceGiveText" layoutX="165.0" layoutY="120.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select Resource to give:" />
       <Group fx:id="giveGroup" layoutX="220.0" layoutY="151.0">
          <children>

@@ -70,7 +70,7 @@ public class NewGameController {
         guiController.setController(domainController);
 
         // initialize the game-board
-        guiController.initializeGameBoard();
         guiController.internationalize(messages);
+        guiController.initializeGameBoard();
     }
 }

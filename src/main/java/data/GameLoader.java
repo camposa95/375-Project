@@ -2,6 +2,7 @@ package data;
 
 import domain.bank.Bank;
 import domain.controller.Controller;
+import domain.controller.GameState;
 import domain.graphs.*;
 import domain.player.HarvestBooster;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -31,7 +32,7 @@ public class GameLoader {
 
 
     // Storage constants
-    private String savedGamesPath = "src/main/java/data/slots";
+    private String savedGamesPath = "src/main/java/data/slots"; // default
     private static final String SLOT_PREFIX = "slot";
     private static final String EXTENSION = ".txt";
     private static final String GAME_TYPE = "gameType";
@@ -47,8 +48,11 @@ public class GameLoader {
     private Player[] players;
     private GameType gameType;
     private int numPlayers;
-
     private String language;
+
+    // Core Undo Redo stuff
+    private Stack<Memento> undoStack;
+    private Stack<Memento> redoStack;
 
     private GameLoader() {
         // restricts access
@@ -71,6 +75,7 @@ public class GameLoader {
     }
 
     private void instantiateGameObjects(final GameType gameMode, final int playerCount) {
+        // Game setup
         this.gameType = gameMode;
         this.numPlayers = playerCount;
 
@@ -93,6 +98,10 @@ public class GameLoader {
         }
 
         this.controller = new Controller(game, players, gameMode);
+
+        // Core undo-redo setup
+        this.undoStack = new Stack<>();
+        this.redoStack = new Stack<>();
     }
 
     public ResourceBundle getMessageBundle() {
@@ -123,8 +132,7 @@ public class GameLoader {
 
             // Save the controllerMemento memento in the Controller folder
             File controllerFolder = writer.getSubFolder("Controller");
-            Memento controllerMemento = this.controller.createMemento();
-            controllerMemento.save(controllerFolder);
+            undoStack.peek().save(controllerFolder);
         } catch (SaveException e) {
             return false;
         }
@@ -160,6 +168,7 @@ public class GameLoader {
         Controller.ControllerMemento controllerMemento = this.controller.new ControllerMemento(controllerFolder);
         controllerMemento.restore();
 
+        notifyOfTurnStart();
         return this.controller;
     }
 
@@ -167,6 +176,8 @@ public class GameLoader {
     public Controller createNewGame(final GameType gameTypeSelected, final int playerCount, final String languageSelected) {
         this.language = languageSelected;
         this.instantiateGameObjects(gameTypeSelected, playerCount);
+
+        notifyOfTurnStart();
         return this.controller;
     }
 
@@ -201,6 +212,12 @@ public class GameLoader {
         return roadGraph;
     }
 
+    // --------------------------------------------------------
+    //
+    // Static Initialization
+    //
+    // --------------------------------------------------------
+
     public static void initializeGraphs(final RoadGraph roadGraph, final VertexGraph vertexGraph) {
         initializeRoadToRoadAdjacency(roadGraph);
         initializeVertexToVertexAdjacency(vertexGraph);
@@ -213,12 +230,7 @@ public class GameLoader {
         initializeTileToVertexAdjacency(gameBoard);
     }
 
-    // --------------------------------------------------------
-    //
     // Initialization of VertexGraph
-    //
-    // --------------------------------------------------------
-
     private static void initializeVertexToVertexAdjacency(final VertexGraph vertexGraph) {
         File vertexLayout = new File(GameLoader.VERTEX_TO_VERTEX_FILE);
         try (Scanner scanner = new Scanner(vertexLayout, StandardCharsets.UTF_8)) {
@@ -300,16 +312,7 @@ public class GameLoader {
         }
     }
 
-    // --------------------------------------------------------
-    //
     // Initialization of RoadGraph
-    //
-    // --------------------------------------------------------
-
-    /**
-     * Reads through the layout file and initializes the graph with the defined
-     * adjacency relationships
-     */
     private static void initializeRoadToRoadAdjacency(final RoadGraph roadGraph) {
         File roadLayout = new File(GameLoader.ROAD_TO_ROAD_FILE);
         try (Scanner scanner = new Scanner(roadLayout, StandardCharsets.UTF_8)) {
@@ -336,10 +339,6 @@ public class GameLoader {
         }
     }
 
-    /**
-     * Reads through the RoadToVertexLayout file and initializes the graph with the defined
-     * adjacency relationships
-     */
     private static void initializeRoadToVertexAdjacency(final RoadGraph roadGraph, final VertexGraph vertexGraph) {
         File roadToVertexLayout = new File(GameLoader.ROAD_TO_VERTEX_FILE);
         try (Scanner scanner = new Scanner(roadToVertexLayout, StandardCharsets.UTF_8)) {
@@ -366,15 +365,7 @@ public class GameLoader {
         }
     }
 
-    // --------------------------------------------------------
-    //
     // Initialization of GameBoard
-    //
-    // --------------------------------------------------------
-
-    /**
-     * Generates from the layout file and initializes the tile array
-     */
     private static void initializeTileToVertexAdjacency(final GameBoard gameBoard) {
         File tileLayout = new File(GameLoader.TILE_LAYOUT);
         try (Scanner scanner = new Scanner(tileLayout, StandardCharsets.UTF_8)) {
@@ -397,5 +388,57 @@ public class GameLoader {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    // -----------------------------------------------------------
+    //
+    // Core Undo Repo Functionality
+    //
+    // -----------------------------------------------------------
+
+    /**
+     * Tells the loader that a turn has been started.
+     * Will save the turn, so it can be undone later.
+     * Also clears out the redo-able turns since the timeline changed.
+     */
+    public void notifyOfTurnStart() {
+        undoStack.add(controller.createMemento());
+        redoStack.clear();
+    }
+
+    /**
+     * Restores the game to the beginning of the turn if in the middle of it.
+     * <p>
+     * Otherwise, restores the game to the beginning of the most recently completed turn,
+     * and adds the turn to the redo-able turns
+     *
+     * @return true if there was a turn restored, false otherwise.
+     */
+    public boolean undo() {
+        if (undoStack.size() == 1 && controller.getState() == GameState.TURN_START) {
+            return false;
+        }
+
+        if (controller.getState() == GameState.TURN_START) {
+            redoStack.push(undoStack.pop());
+        }
+        undoStack.peek().restore();
+        return true;
+    }
+
+    /**
+     * Restores the game to the beginning of the last turn undone.
+     * Adds the restored turn to the restorable turns.
+     *
+     * @return true if there was a turn restored, false otherwise.
+     */
+    public boolean redo() {
+        if (redoStack.empty()) {
+            return false;
+        }
+
+        undoStack.push(redoStack.pop());
+        undoStack.peek().restore();
+        return true;
     }
 }

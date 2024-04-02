@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 
 import java.util.ResourceBundle;
 
-public class BankTradeWindowController {
+public class BankTradeWindowController implements Popup {
 
     @FXML
     private RadioButton giveLumber, giveBrick, giveWool, giveGrain, giveOre, receiveLumber, receiveBrick, receiveWool, receiveGrain, receiveOre;
@@ -99,7 +99,7 @@ public class BankTradeWindowController {
         }else{
             SuccessCode success = this.executeBankTrade(giveSelected, receiveSelected);
             if(success == SuccessCode.SUCCESS){
-                closeModal();
+                close();
             }else if(success == SuccessCode.INSUFFICIENT_RESOURCES){
                 tooltip.setText(messages.getString("bankTradeWindowTooltipTradeFailed"));
             }
@@ -115,8 +115,8 @@ public class BankTradeWindowController {
         return success;
     }
 
-    public void closeModal(){
-        //close Bank Trade window
+    public void close() {
+        this.guiController.notifyOfPopupClose(this);
         Stage stage = (Stage) giveLumber.getScene().getWindow();
         stage.close();
     }

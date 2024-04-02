@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 
 import java.util.ResourceBundle;
 
-public class MonopolyController {
+public class MonopolyController implements Popup {
 
     @FXML
     private Button lumber, brick, wool, grain, ore;
@@ -46,41 +46,37 @@ public class MonopolyController {
         monopolyTitleText.setText(messages.getString("monopolyTitleText"));
     }
 
-    public void selectResource(MouseEvent event){
+    public void selectResource(MouseEvent event) {
         String source = ((Button)event.getSource()).getId();
         SuccessCode success;
-        switch(source){
-            case "lumber":
-                success = this.executeMonopoly(Resource.LUMBER);
-                break;
-            case "brick":
-                success = this.executeMonopoly(Resource.BRICK);
-                break;
-            case "wool":
-                success = this.executeMonopoly(Resource.WOOL);
-                break;
-            case "grain":
-                success = this.executeMonopoly(Resource.GRAIN);
-                break;
-            case "ore":
-                success = this.executeMonopoly(Resource.ORE);
-                break;
-            default:
+        switch (source) {
+            case "lumber" -> success = this.executeMonopoly(Resource.LUMBER);
+            case "brick" -> success = this.executeMonopoly(Resource.BRICK);
+            case "wool" -> success = this.executeMonopoly(Resource.WOOL);
+            case "grain" -> success = this.executeMonopoly(Resource.GRAIN);
+            case "ore" -> success = this.executeMonopoly(Resource.ORE);
+            default -> {
                 System.out.println("Something went wrong, try again.");
                 return;
+            }
         }
         if(success == SuccessCode.SUCCESS){
-            Stage stage = (Stage)lumber.getScene().getWindow();
-            stage.close();
+            this.close();
         }
     }
 
-    private SuccessCode executeMonopoly(Resource resource){
+    private SuccessCode executeMonopoly(Resource resource) {
         SuccessCode success = this.domainController.playMonopolyCard(resource);
         if(success == SuccessCode.SUCCESS){
             this.guiController.finishedMove();
         }
 
         return success;
+    }
+
+    public void close() {
+        this.guiController.notifyOfPopupClose(this);
+        Stage stage = (Stage)lumber.getScene().getWindow();
+        stage.close();
     }
 }
