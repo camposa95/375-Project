@@ -7,21 +7,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicReference;
 
+import data.GameLoader;
+import domain.bank.Bank;
+import domain.player.HarvestBooster;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import controller.Controller;
-import controller.GameState;
-import controller.SuccessCode;
-import gamedatastructures.DevCard;
-import gamedatastructures.DevelopmentCardDeck;
-import gamedatastructures.Game;
-import gamedatastructures.GameBoard;
-import gamedatastructures.GameType;
-import gamedatastructures.Player;
-import gamedatastructures.Resource;
-import graphs.RoadGraph;
-import graphs.VertexGraph;
+import domain.controller.Controller;
+import domain.controller.GameState;
+import domain.controller.SuccessCode;
+import domain.devcarddeck.DevCard;
+import domain.devcarddeck.DevelopmentCardDeck;
+import domain.game.Game;
+import domain.gameboard.GameBoard;
+import domain.game.GameType;
+import domain.player.Player;
+import domain.bank.Resource;
+import domain.graphs.RoadGraph;
+import domain.graphs.VertexGraph;
 
 
 /**
@@ -31,20 +34,11 @@ import graphs.VertexGraph;
  *      accrue a larger army.
  */
 public class F22Test {
-    
-    private static final String GAMEBOARD_LAYOUT_FILE = "src/main/java/gamedatastructures/TileLayout.txt";
-
-    private static final String ROAD_TO_ROAD_LAYOUT_FILE = "src/main/java/graphs/RoadToRoadLayout.txt";
-    private static final String ROAD_TO_VERTEX_LAYOUT_FILE = "src/main/java/graphs/RoadToVertexLayout.txt";
-    private static final String VERTEX_TO_VERTEX_LAYOUT_FILE = "src/main/java/graphs/VertexToVertexLayout.txt";
-    private static final String VERTEX_TO_ROAD_LAYOUT_FILE = "src/main/java/graphs/VertexToRoadLayout.txt";
-    private static final String VERTEX_TO_PORT_LAYOUT_FILE = "src/main/java/graphs/VertexToPortLayout.txt";
-
     private static final int POINTS_FROM_SETUP = 2;
     private static final int POINTS_FOR_LARGEST_ARMY = 2;
     private static final Resource[] resourcesForDevCard = {Resource.ORE, Resource.WOOL, Resource.GRAIN};
 
-    private void loopToBeginging(final Controller controller) {
+    private void loopToBeginning(final Controller controller) {
         for (int i = 0; i < 4; i++) {
             controller.setState(GameState.DEFAULT);
             assertEquals(SuccessCode.SUCCESS, controller.endTurn());
@@ -55,42 +49,33 @@ public class F22Test {
     public void testLargestArmyNoOneHasIt() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
-
-        // graphs
-        VertexGraph vertexes = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-        vertexes.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertexes.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertexes.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertexes, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players. Note: 3 players is enough for our purposes here
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
-        final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        // Assert that the beginner setup does not time out to kill mutant
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {new Controller(game, players, gameType);}, "Setup while loop timed out");
 
         // Note: we assume everything about setup was correct because it was tested earlier
 
         // Note: at this point the players would have gotten some starter resources during the 
         // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources so we can
+        // clear out the player1's hand and assert that the player has zero resources, so we can
         // better test on the specific cases.
         for (Player player: players) {
             for (Resource resource: Resource.values()) {
@@ -121,43 +106,35 @@ public class F22Test {
     public void testLargestArmyClaimedFirst() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
-
-        // graphs
-        VertexGraph vertexes = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-        vertexes.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertexes.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertexes.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertexes, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players. Note: 3 players is enough for our purposes here
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // Note: we assume everything about setup was correct because it was tested earlier
 
         // Note: at this point the players would have gotten some starter resources during the 
         // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources so we can
+        // clear out the player1's hand and assert that the player has zero resources, so we can
         // better test on the specific cases.
         for (Player player: players) {
             for (Resource resource: Resource.values()) {
@@ -173,7 +150,7 @@ public class F22Test {
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
 
-        // at the begining of the game no one has it
+        // at the beginning of the game no one has it
         assertFalse(player1.hasLargestArmy());
         assertFalse(player2.hasLargestArmy());
         assertFalse(player3.hasLargestArmy());
@@ -198,17 +175,17 @@ public class F22Test {
         assertTrue(player1.purchaseDevCard(DevCard.KNIGHT));
 
         // can't use bought card on same turn, so end turn until we are back at player 1
-        loopToBeginging(controller);
+        loopToBeginning(controller);
         assertEquals(player1, controller.getCurrentPlayer());
         assertEquals(SuccessCode.SUCCESS, controller.playKnightCard());
         
-        // can only use one card per turn so loop back to begining
-        loopToBeginging(controller);
+        // can only use one card per turn so loop back to beginning
+        loopToBeginning(controller);
         assertEquals(player1, controller.getCurrentPlayer());
         assertEquals(SuccessCode.SUCCESS, controller.playKnightCard());
 
-        // can only use one card per turn so loop back to begining
-        loopToBeginging(controller);
+        // can only use one card per turn so loop back to beginning
+        loopToBeginning(controller);
         assertEquals(player1, controller.getCurrentPlayer());
         assertEquals(SuccessCode.SUCCESS, controller.playKnightCard());
 
@@ -234,43 +211,35 @@ public class F22Test {
     public void testLargestArmyTied() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
-
-        // graphs
-        VertexGraph vertexes = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-        vertexes.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertexes.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertexes.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertexes, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players. Note: 3 players is enough for our purposes here
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // Note: we assume everything about setup was correct because it was tested earlier
 
         // Note: at this point the players would have gotten some starter resources during the 
         // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources so we can
+        // clear out the player1's hand and assert that the player has zero resources, so we can
         // better test on the specific cases.
         for (Player player: players) {
             for (Resource resource: Resource.values()) {
@@ -286,7 +255,7 @@ public class F22Test {
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
 
-        // at the begining of the game no one has it
+        // at the beginning of the game no one has it
         assertFalse(player1.hasLargestArmy());
         assertFalse(player2.hasLargestArmy());
         assertFalse(player3.hasLargestArmy());
@@ -311,17 +280,17 @@ public class F22Test {
         assertTrue(player1.purchaseDevCard(DevCard.KNIGHT));
 
         // can't use bought card on same turn, so end turn until we are back at player 1
-        loopToBeginging(controller);
+        loopToBeginning(controller);
         assertEquals(player1, controller.getCurrentPlayer());
         assertEquals(SuccessCode.SUCCESS, controller.playKnightCard());
         
-        // can only use one card per turn so loop back to begining
-        loopToBeginging(controller);
+        // can only use one card per turn so loop back to beginning
+        loopToBeginning(controller);
         assertEquals(player1, controller.getCurrentPlayer());
         assertEquals(SuccessCode.SUCCESS, controller.playKnightCard());
 
-        // can only use one card per turn so loop back to begining
-        loopToBeginging(controller);
+        // can only use one card per turn so loop back to beginning
+        loopToBeginning(controller);
         assertEquals(player1, controller.getCurrentPlayer());
         assertEquals(SuccessCode.SUCCESS, controller.playKnightCard());
 
@@ -360,17 +329,17 @@ public class F22Test {
         assertTrue(player2.purchaseDevCard(DevCard.KNIGHT));
 
         // can't use bought card on same turn, so end turn until we are back at player 1
-        loopToBeginging(controller);
+        loopToBeginning(controller);
         assertEquals(player2, controller.getCurrentPlayer());
         assertEquals(SuccessCode.SUCCESS, controller.playKnightCard());
         
-        // can only use one card per turn so loop back to begining
-        loopToBeginging(controller);
+        // can only use one card per turn so loop back to beginning
+        loopToBeginning(controller);
         assertEquals(player2, controller.getCurrentPlayer());
         assertEquals(SuccessCode.SUCCESS, controller.playKnightCard());
 
-        // can only use one card per turn so loop back to begining
-        loopToBeginging(controller);
+        // can only use one card per turn so loop back to beginning
+        loopToBeginning(controller);
         assertEquals(player2, controller.getCurrentPlayer());
         assertEquals(SuccessCode.SUCCESS, controller.playKnightCard());
 
@@ -396,43 +365,35 @@ public class F22Test {
     public void testLargestArmyOvertaken() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
-
-        // graphs
-        VertexGraph vertexes = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-        vertexes.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertexes.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertexes.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertexes, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players. Note: 3 players is enough for our purposes here
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // Note: we assume everything about setup was correct because it was tested earlier
 
         // Note: at this point the players would have gotten some starter resources during the 
         // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources so we can
+        // clear out the player1's hand and assert that the player has zero resources, so we can
         // better test on the specific cases.
         for (Player player: players) {
             for (Resource resource: Resource.values()) {
@@ -448,7 +409,7 @@ public class F22Test {
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
 
-        // at the begining of the game no one has it
+        // at the beginning of the game no one has it
         assertFalse(player1.hasLargestArmy());
         assertFalse(player2.hasLargestArmy());
         assertFalse(player3.hasLargestArmy());
@@ -473,17 +434,17 @@ public class F22Test {
         assertTrue(player1.purchaseDevCard(DevCard.KNIGHT));
 
         // can't use bought card on same turn, so end turn until we are back at player 1
-        loopToBeginging(controller);
+        loopToBeginning(controller);
         assertEquals(player1, controller.getCurrentPlayer());
         assertEquals(SuccessCode.SUCCESS, controller.playKnightCard());
         
-        // can only use one card per turn so loop back to begining
-        loopToBeginging(controller);
+        // can only use one card per turn so loop back to beginning
+        loopToBeginning(controller);
         assertEquals(player1, controller.getCurrentPlayer());
         assertEquals(SuccessCode.SUCCESS, controller.playKnightCard());
 
-        // can only use one card per turn so loop back to begining
-        loopToBeginging(controller);
+        // can only use one card per turn so loop back to beginning
+        loopToBeginning(controller);
         assertEquals(player1, controller.getCurrentPlayer());
         assertEquals(SuccessCode.SUCCESS, controller.playKnightCard());
 
@@ -524,26 +485,26 @@ public class F22Test {
         assertTrue(player2.purchaseDevCard(DevCard.KNIGHT));
 
         // can't use bought card on same turn, so end turn until we are back at player 1
-        loopToBeginging(controller);
+        loopToBeginning(controller);
         assertEquals(player2, controller.getCurrentPlayer());
         assertEquals(SuccessCode.SUCCESS, controller.playKnightCard());
         
-        // can only use one card per turn so loop back to begining
-        loopToBeginging(controller);
+        // can only use one card per turn so loop back to beginning
+        loopToBeginning(controller);
         assertEquals(player2, controller.getCurrentPlayer());
         assertEquals(SuccessCode.SUCCESS, controller.playKnightCard());
 
-        // can only use one card per turn so loop back to begining
-        loopToBeginging(controller);
+        // can only use one card per turn so loop back to beginning
+        loopToBeginning(controller);
         assertEquals(player2, controller.getCurrentPlayer());
         assertEquals(SuccessCode.SUCCESS, controller.playKnightCard());
 
-        // can only use one card per turn so loop back to begining
-        loopToBeginging(controller);
+        // can only use one card per turn so loop back to beginning
+        loopToBeginning(controller);
         assertEquals(player2, controller.getCurrentPlayer());
         assertEquals(SuccessCode.SUCCESS, controller.playKnightCard());
 
-        // player 2 shoudl have the largest army card now
+        // player 2 should have the largest army card now
         assertEquals(3, player1.getNumKnightsPlayed());
         assertEquals(4, player2.getNumKnightsPlayed());
         assertEquals(0, player3.getNumKnightsPlayed());

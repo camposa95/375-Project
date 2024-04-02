@@ -1,0 +1,5 @@
+package domain.controller;
+
+public enum SuccessCode {
+    UNDEFINED, INVALID_PLACEMENT, SUCCESS, INSUFFICIENT_RESOURCES, EMPTY_DEV_CARD_DECK, CANNOT_PLAY_CARD, GAME_WIN
+}

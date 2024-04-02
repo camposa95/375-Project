@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FindBugsFilter>
     <Match>
-        <Class name="gui.Catan"/>
+        <Class name="presentation.Catan"/>
     </Match>
     <Match>
-        <Class name="gui.CatanGUIController"/>
+        <Class name="presentation.CatanGUIController"/>
     </Match>
     <Match>
-        <Class name="gui.StartScreenController"/>
+        <Class name="presentation.NewGameController"/>
     </Match>
     <Match>
-        <Class name="gui.RunGame"/>
+        <Class name="presentation.RunGame"/>
     </Match>
     <Match>
-        <Class name="gui.DropCardsController"/>
+        <Class name="presentation.popups.DropCardsController"/>
     </Match>
     <Match>
-        <Class name="gui.PlayerTradeWindowController"/>
+        <Class name="presentation.popups.PlayerTradeWindowController"/>
     </Match>
     <Match>
-        <Class name="gui.RobPlayerController"/>
+        <Class name="presentation.popups.RobPlayerController"/>
     </Match>
     <Match>
-        <Class name="gui.BankTradeWindowController"/>
+        <Class name="presentation.popups.BankTradeWindowController"/>
     </Match>
     <Match>
-        <Class name="gui.YearOfPlentyController"/>
+        <Class name="presentation.popups.YearOfPlentyController"/>
     </Match>
     <Match>
-        <Class name="gui.MonopolyController"/>
+        <Class name="presentation.popups.MonopolyController"/>
     </Match>
     <Match>
-        <Class name="gui.GameWonController"/>
+        <Class name="presentation.popups.GameWonController"/>
     </Match>
 </FindBugsFilter>

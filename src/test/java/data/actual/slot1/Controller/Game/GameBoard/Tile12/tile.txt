@@ -1,0 +1,3 @@
+TerrainType: FORREST
+DieNumber: 8
+HasRobber: false

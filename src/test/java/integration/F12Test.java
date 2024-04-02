@@ -1,10 +1,18 @@
 package integration;
 
-import controller.Controller;
-import controller.SuccessCode;
-import gamedatastructures.*;
-import graphs.RoadGraph;
-import graphs.VertexGraph;
+import data.GameLoader;
+import domain.controller.Controller;
+import domain.controller.SuccessCode;
+import domain.bank.Bank;
+import domain.bank.Resource;
+import domain.devcarddeck.DevelopmentCardDeck;
+import domain.game.Game;
+import domain.game.GameType;
+import domain.gameboard.GameBoard;
+import domain.player.HarvestBooster;
+import domain.player.Player;
+import domain.graphs.RoadGraph;
+import domain.graphs.VertexGraph;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -15,16 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class F12Test {
-    private static final String GAMEBOARD_LAYOUT_FILE = "src/main/java/gamedatastructures/TileLayout.txt";
-    private static final String ROAD_TO_ROAD_LAYOUT_FILE = "src/main/java/graphs/RoadToRoadLayout.txt";
-    private static final String ROAD_TO_VERTEX_LAYOUT_FILE = "src/main/java/graphs/RoadToVertexLayout.txt";
-    private static final String VERTEX_TO_VERTEX_LAYOUT_FILE = "src/main/java/graphs/VertexToVertexLayout.txt";
-    private static final String VERTEX_TO_ROAD_LAYOUT_FILE = "src/main/java/graphs/VertexToRoadLayout.txt";
-    private static final String VERTEX_TO_PORT_LAYOUT_FILE = "src/main/java/graphs/VertexToPortLayout.txt";
 
-    private boolean contains(Resource[] tradeBoosts, Resource tradeBoost){
-        for(int i = 0; i < tradeBoosts.length; i++){
-            if(tradeBoosts[i]==tradeBoost){
+    private boolean contains(Resource[] tradeBoosts, Resource tradeBoost) {
+        for (Resource boost : tradeBoosts) {
+            if (boost == tradeBoost) {
                 return true;
             }
         }
@@ -33,31 +35,28 @@ public class F12Test {
 
     //Test the basic 4:1 trade succeeding
     @Test
-    public void testBankTradeSuccessful_baseTrade(){
+    public void testBankTradeSuccessful_baseTrade() {
         GameType gameType = GameType.Beginner;
-        VertexGraph vertices = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        vertices.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertices.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertices.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertices, ROAD_TO_VERTEX_LAYOUT_FILE);
-
-        Player player1 = new Player(1);
-        Player player2 = new Player(2); //need a minimum of two players
-        Player[] players = {player1, player2};
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
+        Player[] players = {player1, player2, player3, player4};
 
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertices, roads, devCardDeck);
-        Bank.getInstance().resetBank();
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        bank.reset();
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         //--------------------------------------------------------------------
@@ -85,8 +84,8 @@ public class F12Test {
             }
         }
         assertEquals(0, player2.hand.getResourceCardCount());
-
-        Bank bank = Bank.getInstance();
+        
+        bank.reset();
 
         Resource[] playerHandResources = {
                 Resource.LUMBER,
@@ -117,31 +116,28 @@ public class F12Test {
 
     //Test the 4:1 trade failing: Player does not have enough resources
     @Test
-    public void testBankTradeFailed_PlayerNotEnoughResources_baseTrade(){
+    public void testBankTradeFailed_PlayerNotEnoughResources_baseTrade() {
         GameType gameType = GameType.Beginner;
-        VertexGraph vertices = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        vertices.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertices.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertices.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertices, ROAD_TO_VERTEX_LAYOUT_FILE);
-
-        Player player1 = new Player(1);
-        Player player2 = new Player(2); //need a minimum of two players
-        Player[] players = {player1, player2};
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
+        Player[] players = {player1, player2, player3, player4};
 
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertices, roads, devCardDeck);
-        Bank.getInstance().resetBank();
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        bank.reset();
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         //--------------------------------------------------------------------
@@ -169,8 +165,8 @@ public class F12Test {
             }
         }
         assertEquals(0, player2.hand.getResourceCardCount());
-
-        Bank bank = Bank.getInstance();
+        
+        bank.reset();
 
         //Give the player only three resources
         Resource[] playerHandResources = {
@@ -201,31 +197,28 @@ public class F12Test {
 
     //Test trading with the bank - failed because the bank is out of resources
     @Test
-    public void testBankTradeFailed_BankNotEnoughResources_baseTrade(){
+    public void testBankTradeFailed_BankNotEnoughResources_baseTrade() {
         GameType gameType = GameType.Beginner;
-        VertexGraph vertices = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        vertices.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertices.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertices.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertices, ROAD_TO_VERTEX_LAYOUT_FILE);
-
-        Player player1 = new Player(1);
-        Player player2 = new Player(2); //need a minimum of two players
-        Player[] players = {player1, player2};
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
+        Player[] players = {player1, player2, player3, player4};
 
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertices, roads, devCardDeck);
-        Bank.getInstance().resetBank();
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        bank.reset();
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         //--------------------------------------------------------------------
@@ -254,7 +247,8 @@ public class F12Test {
         }
         assertEquals(0, player2.hand.getResourceCardCount());
 
-        Bank bank = Bank.getInstance();
+        
+        bank.reset();
 
         //Give the player 4x ore cards
         Resource[] playerHandResources = {
@@ -288,31 +282,28 @@ public class F12Test {
 
     //Test trading with the bank 3:1 trade boost applied
     @Test
-    public void testBankTradeSuccess_3for1Trade(){
+    public void testBankTradeSuccess_3for1Trade() {
         GameType gameType = GameType.Beginner;
-        VertexGraph vertices = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        vertices.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertices.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertices.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertices, ROAD_TO_VERTEX_LAYOUT_FILE);
-
-        Player player1 = new Player(1);
-        Player player2 = new Player(2); //need a minimum of two players
-        Player[] players = {player1, player2};
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
+        Player[] players = {player1, player2, player3, player4};
 
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertices, roads, devCardDeck);
-        Bank.getInstance().resetBank();
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        bank.reset();
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         //--------------------------------------------------------------------
@@ -341,7 +332,8 @@ public class F12Test {
         }
         assertEquals(0, player2.hand.getResourceCardCount());
 
-        Bank bank = Bank.getInstance();
+        
+        bank.reset();
 
         Resource[] playerHandResources = {
                 Resource.LUMBER,
@@ -376,31 +368,28 @@ public class F12Test {
 
     //Test trading with the bank 3:1 trade boost - fails, player does not have enough resources
     @Test
-    public void testBankTradeSuccess_3for1Trade_Failed_PlayerNotEnoughResources(){
+    public void testBankTradeSuccess_3for1Trade_Failed_PlayerNotEnoughResources() {
         GameType gameType = GameType.Beginner;
-        VertexGraph vertices = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        vertices.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertices.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertices.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertices, ROAD_TO_VERTEX_LAYOUT_FILE);
-
-        Player player1 = new Player(1);
-        Player player2 = new Player(2); //need a minimum of two players
-        Player[] players = {player1, player2};
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
+        Player[] players = {player1, player2, player3, player4};
 
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertices, roads, devCardDeck);
-        Bank.getInstance().resetBank();
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        bank.reset();
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         //--------------------------------------------------------------------
@@ -428,8 +417,8 @@ public class F12Test {
             }
         }
         assertEquals(0, player2.hand.getResourceCardCount());
-
-        Bank bank = Bank.getInstance();
+        
+        bank.reset();
 
         //Give the player only three resources
         Resource[] playerHandResources = {
@@ -464,31 +453,28 @@ public class F12Test {
 
     //Test trading with the bank 3:1 trade boost - fails, bank does not have enough resources
     @Test
-    public void testBankTradeSuccess_3for1Trade_Failed_BankNotEnoughResources(){
+    public void testBankTradeSuccess_3for1Trade_Failed_BankNotEnoughResources() {
         GameType gameType = GameType.Beginner;
-        VertexGraph vertices = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        vertices.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertices.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertices.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertices, ROAD_TO_VERTEX_LAYOUT_FILE);
-
-        Player player1 = new Player(1);
-        Player player2 = new Player(2); //need a minimum of two players
-        Player[] players = {player1, player2};
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
+        Player[] players = {player1, player2, player3, player4};
 
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertices, roads, devCardDeck);
-        Bank.getInstance().resetBank();
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        bank.reset();
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         //--------------------------------------------------------------------
@@ -517,7 +503,8 @@ public class F12Test {
         }
         assertEquals(0, player2.hand.getResourceCardCount());
 
-        Bank bank = Bank.getInstance();
+        
+        bank.reset();
 
         //Give the player 4x ore cards
         Resource[] playerHandResources = {
@@ -542,7 +529,7 @@ public class F12Test {
 
         assertTrue(contains(player1.getTradeBoosts(), Resource.ANY));
 
-        //Attempt to trade 3 Ore for 1x Lumber
+        //Attempt to trade 3 Or for 1x Lumber
         SuccessCode success = controller.tradeWithBank(Resource.ORE, Resource.LUMBER);
 
         assertEquals(SuccessCode.INSUFFICIENT_RESOURCES, success);
@@ -555,31 +542,28 @@ public class F12Test {
 
     //Test trading with the bank 2:1 lumber trade boost applied
     @Test
-    public void testTradeBank_2for1Trade_Success(){
+    public void testTradeBank_2for1Trade_Success() {
         GameType gameType = GameType.Beginner;
-        VertexGraph vertices = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        vertices.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertices.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertices.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertices, ROAD_TO_VERTEX_LAYOUT_FILE);
-
-        Player player1 = new Player(1);
-        Player player2 = new Player(2); //need a minimum of two players
-        Player[] players = {player1, player2};
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
+        Player[] players = {player1, player2, player3, player4};
 
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertices, roads, devCardDeck);
-        Bank.getInstance().resetBank();
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        bank.reset();
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         //--------------------------------------------------------------------
@@ -608,7 +592,8 @@ public class F12Test {
         }
         assertEquals(0, player2.hand.getResourceCardCount());
 
-        Bank bank = Bank.getInstance();
+        
+        bank.reset();
 
         Resource[] playerHandResources = {
                 Resource.LUMBER,
@@ -642,31 +627,28 @@ public class F12Test {
 
     //Test trading with the bank 2:1 lumber trade boost applied - fails, player does not have enough resources
     @Test
-    public void testTradeBank_2for1Trade_Failed_PlayerNotEnoughResources(){
+    public void testTradeBank_2for1Trade_Failed_PlayerNotEnoughResources() {
         GameType gameType = GameType.Beginner;
-        VertexGraph vertices = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        vertices.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertices.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertices.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertices, ROAD_TO_VERTEX_LAYOUT_FILE);
-
-        Player player1 = new Player(1);
-        Player player2 = new Player(2); //need a minimum of two players
-        Player[] players = {player1, player2};
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
+        Player[] players = {player1, player2, player3, player4};
 
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertices, roads, devCardDeck);
-        Bank.getInstance().resetBank();
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        bank.reset();
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         //--------------------------------------------------------------------
@@ -695,7 +677,8 @@ public class F12Test {
         }
         assertEquals(0, player2.hand.getResourceCardCount());
 
-        Bank bank = Bank.getInstance();
+        
+        bank.reset();
 
         //Give the player only three resources
         Resource[] playerHandResources = {
@@ -729,31 +712,28 @@ public class F12Test {
 
     //Test trading with the bank 2:1 lumber trade boost applied - fails, bank does not have enough resources
     @Test
-    public void testTradeBank_2for1Trade_Failed_BankNotEnoughResources(){
+    public void testTradeBank_2for1Trade_Failed_BankNotEnoughResources() {
         GameType gameType = GameType.Beginner;
-        VertexGraph vertices = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        vertices.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertices.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertices.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertices, ROAD_TO_VERTEX_LAYOUT_FILE);
-
-        Player player1 = new Player(1);
-        Player player2 = new Player(2); //need a minimum of two players
-        Player[] players = {player1, player2};
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
+        Player[] players = {player1, player2, player3, player4};
 
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertices, roads, devCardDeck);
-        Bank.getInstance().resetBank();
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        bank.reset();
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         //--------------------------------------------------------------------
@@ -782,7 +762,8 @@ public class F12Test {
         }
         assertEquals(0, player2.hand.getResourceCardCount());
 
-        Bank bank = Bank.getInstance();
+        
+        bank.reset();
 
         //Give the player 4x ore cards
         Resource[] playerHandResources = {

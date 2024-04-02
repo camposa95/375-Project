@@ -4,33 +4,32 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import data.GameLoader;
+import domain.bank.Bank;
+import domain.player.HarvestBooster;
+import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
-import controller.Controller;
-import controller.GameState;
-import controller.SuccessCode;
-import gamedatastructures.DevelopmentCardDeck;
-import gamedatastructures.Game;
-import gamedatastructures.GameBoard;
-import gamedatastructures.GameType;
-import gamedatastructures.Player;
-import gamedatastructures.Resource;
-import graphs.RoadGraph;
-import graphs.VertexGraph;
- 
+import domain.controller.Controller;
+import domain.controller.GameState;
+import domain.controller.SuccessCode;
+import domain.devcarddeck.DevelopmentCardDeck;
+import domain.game.Game;
+import domain.gameboard.GameBoard;
+import domain.game.GameType;
+import domain.player.Player;
+import domain.bank.Resource;
+import domain.graphs.RoadGraph;
+import domain.graphs.VertexGraph;
+
+import java.util.Random;
+
 /**
  * The purpose of this test class is to test feature 5 (F5):
  *      Ability for the Player to roll the dice, and all players to collect resources
  *      from spaces with the number on the dice
  */
 public class F5Test {
-       
-    private static final String GAMEBOARD_LAYOUT_FILE = "src/main/java/gamedatastructures/TileLayout.txt";
-    private static final String ROAD_TO_ROAD_LAYOUT_FILE = "src/main/java/graphs/RoadToRoadLayout.txt";
-    private static final String ROAD_TO_VERTEX_LAYOUT_FILE = "src/main/java/graphs/RoadToVertexLayout.txt";
-    private static final String VERTEX_TO_VERTEX_LAYOUT_FILE = "src/main/java/graphs/VertexToVertexLayout.txt";
-    private static final String VERTEX_TO_ROAD_LAYOUT_FILE = "src/main/java/graphs/VertexToRoadLayout.txt";
-    private static final String VERTEX_TO_PORT_LAYOUT_FILE = "src/main/java/graphs/VertexToPortLayout.txt";
 
     @Test
     public void testGettingResourcesFromSetupBeginner() {
@@ -38,33 +37,27 @@ public class F5Test {
         
         // Testing for beginner
         GameType gameType = GameType.Beginner;
-
-        // graphs
-        VertexGraph vertexes = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-        vertexes.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertexes.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertexes.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertexes, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         Controller controller = new Controller(game, players, gameType);
 
     // -------------------------- Start of Test  ---------------------------
         
-        //Based on beginner locations these are the resources each player should recieve after setup
+        //Based on beginner locations these are the resources each player should receive after setup
         Resource[] resources1 = {Resource.GRAIN,Resource.BRICK,Resource.LUMBER};
         Resource[] resources2 = {Resource.GRAIN,Resource.GRAIN,Resource.ORE};
         Resource[] resources3 = {Resource.BRICK,Resource.LUMBER,Resource.ORE};
@@ -75,51 +68,44 @@ public class F5Test {
         assertTrue(player3.hand.removeResources(resources3));
         assertTrue(player4.hand.removeResources(resources4));
         
-        //avoid an spotbug error with controller not called
+        //avoid a spot-bug error with controller not called
         controller.endTurn();
 
     }
+
     @Test
     public void testGettingResourcesFromSetupAdvanced() {
      // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Testing for beginner
         GameType gameType = GameType.Advanced;
-
-        // graphs
-        VertexGraph vertexes = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-        vertexes.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertexes.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertexes.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertexes, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        //must have gameBoard in beginner still so we know where tiles are
-        GameBoard gameBoard = new GameBoard(GameType.Beginner, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        // must have gameBoard in beginner still, so we know where tiles are
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         Controller controller = new Controller(game, players, gameType);
 
     // -------------------------- Start of Test  ---------------------------
         
-        //Based on beginner locations these are the resources each player should recieve after setup
+        //Based on beginner locations these are the resources each player should receive after setup
         //Note resources4 only has 2 since it was moved to edge of desert tile to test
         Resource[] resources1 = {Resource.GRAIN,Resource.BRICK,Resource.LUMBER};
         Resource[] resources2 = {Resource.GRAIN,Resource.GRAIN,Resource.ORE};
         Resource[] resources3 = {Resource.BRICK,Resource.LUMBER,Resource.ORE};
         Resource[] resources4 = {Resource.LUMBER,Resource.WOOL};
 
-        //Manualy imput player turns, these are the same as beginner except for a first location
+        //Manually input player turns, these are the same as beginner except for a first location
         
         //First player first settlement and road
         assertEquals(SuccessCode.SUCCESS,controller.clickedVertex(35));
@@ -158,39 +144,33 @@ public class F5Test {
         assertTrue(player1.hand.removeResources(resources1));
 
     }
+
     @Test
     public void testFirstTurnRollDieAndGetResources() {
          // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
         // Testing for beginner
         GameType gameType = GameType.Beginner;
-
-        // graphs
-        VertexGraph vertexes = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-        vertexes.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertexes.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertexes.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertexes, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players
-        //white
-        Player player1 = new Player(1);
-        //orange
-        Player player2 = new Player(2);
-        //blue
-        Player player3 = new Player(3);
-        //red
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
-        Controller controller = new Controller(game, players, gameType);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+
+        Random mockedRandom = EasyMock.createStrictMock(Random.class);
+
+        Controller controller = new Controller(game, players, gameType, mockedRandom);
 
     // -------------------------- Start of Test  ---------------------------
         
@@ -203,8 +183,12 @@ public class F5Test {
         player2.hand.removeResources(r2);
         player3.hand.removeResources(r3);
         player4.hand.removeResources(r4);
-        //Based on beginner locations these are the resources each player should recieve on given die roll
-        controller.rollDice(10);
+
+        //Based on beginner locations these are the resources each player should receive on given die roll
+        EasyMock.expect(mockedRandom.nextInt(2,13)).andReturn(10);
+        EasyMock.replay(mockedRandom);
+        controller.rollDice();
+        EasyMock.verify(mockedRandom);
 
         Resource[] resources1 = {};
         Resource[] resources2 = {Resource.BRICK};
@@ -216,43 +200,34 @@ public class F5Test {
         assertTrue(player3.hand.removeResources(resources3));
         assertTrue(player4.hand.removeResources(resources4));
         
-        //avoid an spotbug error with controller not called
+        // avoid a spot-bug error with controller not called
         controller.endTurn();
-
     }
+
     @Test
     public void testGetMoreResourcesFromUpgradedSettlements() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
         // Testing for beginner
         GameType gameType = GameType.Beginner;
-
-        // graphs
-        VertexGraph vertexes = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-        vertexes.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertexes.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertexes.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertexes, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players
-        //white
-        Player player1 = new Player(1);
-        //orange
-        Player player2 = new Player(2);
-        //blue
-        Player player3 = new Player(3);
-        //red
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
-        Controller controller = new Controller(game, players, gameType);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        Random mockedRandom = EasyMock.createStrictMock(Random.class);
+        Controller controller = new Controller(game, players, gameType, mockedRandom);
 
     // -------------------------- Start of Test  ---------------------------
         
@@ -294,9 +269,11 @@ public class F5Test {
 
         
         
-        //Based on beginner locations these are the resources each player should recieve on given die roll
-       
-        controller.rollDice(10);
+        //Based on beginner locations these are the resources each player should receive on given die roll
+        EasyMock.expect(mockedRandom.nextInt(2,13)).andReturn(10);
+        EasyMock.replay(mockedRandom);
+        controller.rollDice();
+        EasyMock.verify(mockedRandom);
 
         Resource[] resources1 = {};
         Resource[] resources2 = {Resource.BRICK,Resource.BRICK};
@@ -308,42 +285,34 @@ public class F5Test {
         assertTrue(player3.hand.removeResources(resources3));
         assertTrue(player4.hand.removeResources(resources4));
         
-        //avoid an spotbug error with controller not called
+        //avoid a spot-bug error with controller not called
         controller.endTurn();
     }
+
     @Test
     public void testNoOneGetsResourcesOn7() {
          // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
         // Testing for beginner
         GameType gameType = GameType.Beginner;
-
-        // graphs
-        VertexGraph vertexes = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-        vertexes.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertexes.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertexes.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertexes, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players
-        //white
-        Player player1 = new Player(1);
-        //orange
-        Player player2 = new Player(2);
-        //blue
-        Player player3 = new Player(3);
-        //red
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
-        Controller controller = new Controller(game, players, gameType);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        Random mockedRandom = EasyMock.createStrictMock(Random.class);
+        Controller controller = new Controller(game, players, gameType, mockedRandom);
 
     // -------------------------- Start of Test  ---------------------------
         
@@ -356,20 +325,22 @@ public class F5Test {
         player2.hand.removeResources(r2);
         player3.hand.removeResources(r3);
         player4.hand.removeResources(r4);
-        //Based on beginner locations these are the resources each player should recieve on given die roll
-        
-        controller.rollDice(7);
+        //Based on beginner locations these are the resources each player should receive on given die roll
+
+        EasyMock.expect(mockedRandom.nextInt(2, 13)).andReturn(7);
+        EasyMock.replay(mockedRandom);
+        controller.rollDice();
+        EasyMock.verify(mockedRandom);
 
         Resource[] resources2 = {Resource.BRICK};
         Resource[] resources4 = {Resource.ORE};
 
-        //check players didnt recieve
+        //check players didn't receive
         assertFalse(player2.hand.removeResources(resources2));
         assertFalse(player4.hand.removeResources(resources4));
         
-        //avoid an spotbug error with controller not called
+        //avoid a spot-bug error with controller not called
         controller.endTurn();
 
     }
-
 }

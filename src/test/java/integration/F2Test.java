@@ -1,19 +1,13 @@
 package integration;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import org.junit.jupiter.api.Test;
 
-import gamedatastructures.DevCard;
-import gamedatastructures.DevelopmentCardDeck;
+import domain.devcarddeck.DevCard;
+import domain.devcarddeck.DevelopmentCardDeck;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 public class F2Test {
-    
-       
-    private static final String GAMEBOARD_LAYOUT_FILE = "src/main/java/gamedatastructures/TileLayout.txt";
-    private static final String ROAD_TO_ROAD_LAYOUT_FILE = "src/main/java/graphs/RoadToRoadLayout.txt";
-    private static final String ROAD_TO_VERTEX_LAYOUT_FILE = "src/main/java/graphs/RoadToVertexLayout.txt";
-    private static final String VERTEX_TO_VERTEX_LAYOUT_FILE = "src/main/java/graphs/VertexToVertexLayout.txt";
-    private static final String VERTEX_TO_ROAD_LAYOUT_FILE = "src/main/java/graphs/VertexToRoadLayout.txt";
-    private static final String VERTEX_TO_PORT_LAYOUT_FILE = "src/main/java/graphs/VertexToPortLayout.txt";
+
     int knightCount=0;
     int victoryCount=0;
     int roadCount=0;
@@ -21,7 +15,7 @@ public class F2Test {
     int monopolyCount=0;
 
     @Test
-    public void testInitilizeGameAndHaveDevCards() {
+    public void testInitializeGameAndHaveDevCards() {
      // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
@@ -35,25 +29,31 @@ public class F2Test {
         int expP = 2;
         int expM = 2;
         for(DevCard card : devCardDeck.getDeck()) {
-            switch(card) {
-                case KNIGHT :
+            switch (card) {
+                case KNIGHT -> {
                     knightCount++;
                     return;
-                case VICTORY:
+                }
+                case VICTORY -> {
                     victoryCount++;
                     return;
-                case ROAD:
+                }
+                case ROAD -> {
                     roadCount++;
                     return;
-                case PLENTY:
+                }
+                case PLENTY -> {
                     plentyCount++;
                     return;
-                case MONOPOLY:
+                }
+                case MONOPOLY -> {
                     monopolyCount++;
                     return;
-                default:
+                }
+                default -> {
                     System.out.println(card);
-                    assertFalse(true);
+                    fail();
+                }
             }
         }
         assertEquals(expK,knightCount);

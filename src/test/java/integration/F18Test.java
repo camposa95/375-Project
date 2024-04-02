@@ -1,27 +1,28 @@
 package integration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicReference;
 
+import data.GameLoader;
+import domain.bank.Bank;
+import domain.player.HarvestBooster;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import controller.Controller;
-import controller.GameState;
-import controller.SuccessCode;
-import gamedatastructures.DevCard;
-import gamedatastructures.DevelopmentCardDeck;
-import gamedatastructures.Game;
-import gamedatastructures.GameBoard;
-import gamedatastructures.GameType;
-import gamedatastructures.Player;
-import gamedatastructures.Resource;
-import graphs.RoadGraph;
-import graphs.VertexGraph;
+import domain.controller.Controller;
+import domain.controller.GameState;
+import domain.controller.SuccessCode;
+import domain.devcarddeck.DevCard;
+import domain.devcarddeck.DevelopmentCardDeck;
+import domain.game.Game;
+import domain.gameboard.GameBoard;
+import domain.game.GameType;
+import domain.player.Player;
+import domain.bank.Resource;
+import domain.graphs.RoadGraph;
+import domain.graphs.VertexGraph;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The purpose of this test class is to test feature 18 (F18):
@@ -30,48 +31,32 @@ import graphs.VertexGraph;
  */
 public class F18Test {
     
-    private static final String GAMEBOARD_LAYOUT_FILE = "src/main/java/gamedatastructures/TileLayout.txt";
-
-    private static final String ROAD_TO_ROAD_LAYOUT_FILE = "src/main/java/graphs/RoadToRoadLayout.txt";
-    private static final String ROAD_TO_VERTEX_LAYOUT_FILE = "src/main/java/graphs/RoadToVertexLayout.txt";
-    private static final String VERTEX_TO_VERTEX_LAYOUT_FILE = "src/main/java/graphs/VertexToVertexLayout.txt";
-    private static final String VERTEX_TO_ROAD_LAYOUT_FILE = "src/main/java/graphs/VertexToRoadLayout.txt";
-    private static final String VERTEX_TO_PORT_LAYOUT_FILE = "src/main/java/graphs/VertexToPortLayout.txt";
-    
     @Test
     public void testRoadBuildingAllGood() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
-
-        // graphs
-        VertexGraph vertexes = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-        vertexes.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertexes.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertexes.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertexes, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players. Note: 3 players is enough for our purposes here
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
@@ -100,7 +85,7 @@ public class F18Test {
         // also set up the controller for the subsequent clicks
         SuccessCode canPlayCard = controller.useRoadBuildingCard();
         assertEquals(SuccessCode.SUCCESS, canPlayCard);
-        // also note the player here starts with the max amount of road pieces so we shouldn't fail
+        // also note the player here starts with the max amount of road pieces, so we shouldn't fail
 
 
         // here is the first click which is valid
@@ -125,36 +110,28 @@ public class F18Test {
     public void testRoadBuildingNoRoadsOnSecond() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
-
-        // graphs
-        VertexGraph vertexes = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-        vertexes.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertexes.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertexes.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertexes, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players. Note: 3 players is enough for our purposes here
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
@@ -183,7 +160,7 @@ public class F18Test {
         // also set up the controller for the subsequent clicks
         SuccessCode canPlayCard = controller.useRoadBuildingCard();
         assertEquals(SuccessCode.SUCCESS, canPlayCard);
-        // also note the player here starts with the max amount of road pieces so we shouldn't fail
+        // also note the player here starts with the max amount of road pieces, so we shouldn't fail
 
 
         // here is the first click which is valid
@@ -195,7 +172,7 @@ public class F18Test {
         assertEquals(0, player1.hand.getResourceCardCount()); // player resources should not have changed
 
 
-        // here we make sure that the player has not roads left
+        // here we make sure that the player has no roads left
         player1.setNumRoads(0);
         assertEquals(0, player1.getNumRoads());
         
@@ -203,8 +180,8 @@ public class F18Test {
         // here is the second click which is valid and connects to the road we just built
         int newRoadId2 = 23; // use a valid id
         assertEquals(SuccessCode.INSUFFICIENT_RESOURCES, controller.clickedRoad(newRoadId2)); // click should fail because of no roads left
-        assertEquals(GameState.DEFAULT, controller.getState()); // ran out of roads so we exit the flow of logic here
-        assertEquals(null, roads.getRoad(newRoadId2).getOwner()); // road should still be unowned
+        assertEquals(GameState.DEFAULT, controller.getState()); // ran out of roads, so we exit the flow of logic here
+        assertNull(roads.getRoad(newRoadId2).getOwner()); // road should still be unowned
         assertEquals(0, player1.hand.getResourceCardCount()); // player resources should not have changed
     }
 
@@ -212,36 +189,28 @@ public class F18Test {
     public void testRoadBuildingNoRoadsOnFirst() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
-
-        // graphs
-        VertexGraph vertexes = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-        vertexes.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertexes.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertexes.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertexes, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players. Note: 3 players is enough for our purposes here
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
@@ -270,7 +239,7 @@ public class F18Test {
         // also set up the controller for the subsequent clicks
         SuccessCode canPlayCard = controller.useRoadBuildingCard();
         assertEquals(SuccessCode.SUCCESS, canPlayCard);
-        // also note the player here starts with the max amount of road pieces so we shouldn't fail
+        // also note the player here starts with the max amount of road pieces, so we shouldn't fail
 
         // manually set player to have zero roads left
         player1.setNumRoads(0);
@@ -279,9 +248,9 @@ public class F18Test {
 
         // here is the first click which is valid
         int newRoadId1 = 24; // use a valid id
-        assertEquals(SuccessCode.INSUFFICIENT_RESOURCES, controller.clickedRoad(newRoadId1)); // click should fai because of lack of raods
+        assertEquals(SuccessCode.INSUFFICIENT_RESOURCES, controller.clickedRoad(newRoadId1)); // click should fai because of lack of roads
         assertEquals(GameState.DEFAULT, controller.getState()); // gameState should reset because flow is killed off
-        assertEquals(null, roads.getRoad(newRoadId1).getOwner()); // road should still be unowned
+        assertNull(roads.getRoad(newRoadId1).getOwner()); // road should still be unowned
         assertEquals(0, player1.hand.getResourceCardCount()); // resources should not change
     }
 
@@ -289,36 +258,28 @@ public class F18Test {
     public void testRoadBuildingInvalidOnFirstThenAllGood() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
-
-        // graphs
-        VertexGraph vertexes = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-        vertexes.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertexes.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertexes.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertexes, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players. Note: 3 players is enough for our purposes here
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
@@ -347,15 +308,15 @@ public class F18Test {
         // also set up the controller for the subsequent clicks
         SuccessCode canPlayCard = controller.useRoadBuildingCard();
         assertEquals(SuccessCode.SUCCESS, canPlayCard);
-        // also note the player here starts with the max amount of road pieces so we shouldn't fail
+        // also note the player here starts with the max amount of road pieces, so we shouldn't fail
 
 
         // try clicking a road that is invalid
         int newRoadId1 = 12; // use a valid id
         assertEquals(SuccessCode.INVALID_PLACEMENT, controller.clickedRoad(newRoadId1)); // click should succeed
         assertEquals(GameState.ROAD_BUILDING_1, controller.getState()); // gameState should stay the same
-        assertEquals(13, player1.getNumRoads()); // player should still have the same amount of raods
-        assertEquals(null, roads.getRoad(newRoadId1).getOwner()); // road should be unowned by the player
+        assertEquals(13, player1.getNumRoads()); // player should still have the same amount of roads
+        assertNull(roads.getRoad(newRoadId1).getOwner()); // road should be unowned by the player
         assertEquals(0, player1.hand.getResourceCardCount()); // player resources should not have changed
 
 
@@ -381,36 +342,28 @@ public class F18Test {
     public void testRoadBuildingInvalidOnSecondThenAllGood() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
-
-        // graphs
-        VertexGraph vertexes = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-        vertexes.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertexes.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertexes.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertexes, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players. Note: 3 players is enough for our purposes here
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
@@ -441,7 +394,7 @@ public class F18Test {
         SuccessCode canPlayCard = controller.useRoadBuildingCard();
         assertEquals(SuccessCode.SUCCESS, canPlayCard);
         assertFalse(controller.getDevCardsEnabled());
-        // also note the player here starts with the max amount of road pieces so we shouldn't fail
+        // also note the player here starts with the max amount of road pieces, so we shouldn't fail
 
         // here is the first click which is valid
         int newRoadId1 = 24; // use a valid id
@@ -456,8 +409,8 @@ public class F18Test {
         int newRoadId2 = 12; // use a valid id
         assertEquals(SuccessCode.INVALID_PLACEMENT, controller.clickedRoad(newRoadId2)); // click should succeed
         assertEquals(GameState.ROAD_BUILDING_2, controller.getState()); // gameState should stay the same
-        assertEquals(12, player1.getNumRoads()); // player should still have the same amount of raods
-        assertEquals(null, roads.getRoad(newRoadId2).getOwner()); // road should be unowned by the player
+        assertEquals(12, player1.getNumRoads()); // player should still have the same amount of roads
+        assertNull(roads.getRoad(newRoadId2).getOwner()); // road should be unowned by the player
         assertEquals(0, player1.hand.getResourceCardCount()); // player resources should not have changed
 
 
@@ -474,36 +427,28 @@ public class F18Test {
     public void testRoadBuildingNoCard() {
         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
         
-        // Here we use begineer game to skip through to the regular gameplay
+        // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
-
-        // graphs
-        VertexGraph vertexes = new VertexGraph();
+        VertexGraph vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
-        vertexes.initializeVertexToVertexAdjacency(VERTEX_TO_VERTEX_LAYOUT_FILE);
-        vertexes.initializeVertexToRoadAdjacency(roads, VERTEX_TO_ROAD_LAYOUT_FILE);
-        vertexes.initializeVertexToPortAdjacency(VERTEX_TO_PORT_LAYOUT_FILE, gameType);
-        roads.initializeRoadToRoadAdjacency(ROAD_TO_ROAD_LAYOUT_FILE);
-        roads.initializeRoadToVertexAdjacency(vertexes, ROAD_TO_VERTEX_LAYOUT_FILE);
+        GameLoader.initializeGraphs(roads, vertexes);
 
-        // Players. Note: 3 players is enough for our purposes here
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player player4 = new Player(4);
-
+        Bank bank = new Bank();
+        Player player1 = new Player(1, new HarvestBooster(), bank);
+        Player player2 = new Player(2, new HarvestBooster(), bank);
+        Player player3 = new Player(3, new HarvestBooster(), bank);
+        Player player4 = new Player(4, new HarvestBooster(), bank);
         Player[] players = {player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(gameType, GAMEBOARD_LAYOUT_FILE);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck);
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
         
-        // Assert that the begineer setup does not time out to kill mutant
+        // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {
-            controllerRef.set(new Controller(game, players, gameType));
-        }, "Setup while loop timed out");
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
         Controller controller = controllerRef.get();
 
         // -------------------------- Start of Actual Test Stuff ---------------------------
@@ -533,6 +478,6 @@ public class F18Test {
         SuccessCode canPlayCard = controller.useRoadBuildingCard();
         assertEquals(SuccessCode.CANNOT_PLAY_CARD, canPlayCard);
         assertTrue(controller.getDevCardsEnabled());
-        // also note the player here starts with the max amount of road pieces so we shouldn't 
+        // also note the player here starts with the max amount of road pieces, so we shouldn't
     }
 }

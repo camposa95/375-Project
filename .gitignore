@@ -1,3 +1,7 @@
+# saved games
+src/main/java/saving/slots/
+
+
 # Compiled class file
 *.class
 

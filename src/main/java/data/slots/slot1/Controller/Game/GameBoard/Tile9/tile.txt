@@ -1,0 +1,3 @@
+TerrainType: DESERT
+DieNumber: 7
+HasRobber: true
