@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.HashSet;
 
 import data.GameLoader;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.game.GameType;
@@ -13,11 +14,18 @@ import domain.game.GameType;
 public class GetAdjacentPortTest {
     private static final int NUM_VERTEXES = 54;
 
+    VertexGraph vertexes;
+    RoadGraph roads;
+    
+    @BeforeEach
+    public void setup() {
+        vertexes = new VertexGraph(GameType.Beginner);
+        roads = new RoadGraph();
+        GameLoader.initializeGraphs(roads, vertexes);
+    }
+
     @Test
     public void testGetAdjacentPortToNIn0and1() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {0, 1};
 
         for (int id: ids) {
@@ -31,9 +39,6 @@ public class GetAdjacentPortTest {
 
     @Test
     public void testGetAdjacentPortToNIn3and4() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {3, 4};
 
         for (int id: ids) {
@@ -47,9 +52,6 @@ public class GetAdjacentPortTest {
 
     @Test
     public void testGetAdjacentPortToNIn14and15() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {14, 15};
 
         for (int id: ids) {
@@ -63,9 +65,6 @@ public class GetAdjacentPortTest {
 
     @Test
     public void testGetAdjacentPortToNIn26and37() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {26, 37};
 
         for (int id: ids) {
@@ -79,9 +78,6 @@ public class GetAdjacentPortTest {
 
     @Test
     public void testGetAdjacentPortToNIn46and45() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {46, 45};
 
         for (int id: ids) {
@@ -95,9 +91,6 @@ public class GetAdjacentPortTest {
 
     @Test
     public void testGetAdjacentPortToNIn51and50() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {51, 50};
 
         for (int id: ids) {
@@ -111,9 +104,6 @@ public class GetAdjacentPortTest {
 
     @Test
     public void testGetAdjacentPortToNIn48and47() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {48, 47};
 
         for (int id: ids) {
@@ -127,9 +117,6 @@ public class GetAdjacentPortTest {
 
     @Test
     public void testGetAdjacentPortToNIn38and28() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {38, 28};
 
         for (int id: ids) {
@@ -143,9 +130,6 @@ public class GetAdjacentPortTest {
 
     @Test
     public void testGetAdjacentPortToNIn17and7() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {17, 7};
 
         for (int id: ids) {
@@ -159,9 +143,6 @@ public class GetAdjacentPortTest {
 
     @Test
     public void testGetAdjacentPortToInvalidVertex() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {0, 1, 3, 4, 14, 15, 26, 37, 46, 45, 51, 50, 48, 47, 38, 28, 17, 7};
 
         HashSet<Integer> vertexesWithPorts = new HashSet<>();

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.easymock.EasyMock;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.game.Game;
@@ -15,18 +16,27 @@ import domain.player.Player;
 
 public class BuildRoadTest {
 
-    @Test
-    public void test_BuildRoad_Build_Valid_Enough() throws InvalidPlacementException, NotEnoughResourcesException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
+    Game mockedGame;
+    Player mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4;
+    Player[] players;
+    Controller controller;
+    @BeforeEach
+    public void createMocks() {
+        mockedGame = EasyMock.createStrictMock(Game.class);
         GameType gameType = GameType.Advanced;
 
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
+        mockedPlayer1 = EasyMock.createStrictMock(Player.class);
+        mockedPlayer2 = EasyMock.createStrictMock(Player.class);
+        mockedPlayer3 = EasyMock.createStrictMock(Player.class);
+        mockedPlayer4 = EasyMock.createStrictMock(Player.class);
 
-        Controller controller = new Controller(mockedGame, players, gameType);
+        players = new Player[]{mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4};
+
+        controller = new Controller(mockedGame, players, gameType);
+    }
+
+    @Test
+    public void test_BuildRoad_Build_Valid_Enough() throws InvalidPlacementException, NotEnoughResourcesException {
         int testRoadId = 0;
 
         controller.setPhase(GamePhase.REGULAR_PLAY);
@@ -62,16 +72,6 @@ public class BuildRoadTest {
 
     @Test
     public void test_BuildRoad_Build_Valid_NotEnough() throws InvalidPlacementException, NotEnoughResourcesException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testRoadId = 0;
 
         controller.setPhase(GamePhase.REGULAR_PLAY);
@@ -105,16 +105,6 @@ public class BuildRoadTest {
 
     @Test
     public void test_BuildRoad_Build_InValid_Enough() throws InvalidPlacementException, NotEnoughResourcesException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testRoadId = 0;
 
         controller.setPhase(GamePhase.REGULAR_PLAY);
@@ -148,16 +138,6 @@ public class BuildRoadTest {
 
     @Test
     public void test_BuildRoad_Default() {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testRoadId = 0;
 
         controller.setPhase(GamePhase.REGULAR_PLAY);
@@ -190,17 +170,6 @@ public class BuildRoadTest {
 
     @Test
     public void test_BuildRoad_SetupStates1() {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testRoadId = 0;
 
         controller.setPhase(GamePhase.REGULAR_PLAY);
@@ -307,17 +276,6 @@ public class BuildRoadTest {
 
     @Test
     public void test_BuildRoad_SetupStates4() {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testRoadId = 0;
 
         controller.setPhase(GamePhase.REGULAR_PLAY);
@@ -346,16 +304,6 @@ public class BuildRoadTest {
 
     @Test
     public void test_BuildRoad_Win() throws InvalidPlacementException, NotEnoughResourcesException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testRoadId = 0;
 
         controller.setPhase(GamePhase.REGULAR_PLAY);

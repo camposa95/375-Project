@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.easymock.EasyMock;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.game.Game;
@@ -14,20 +15,27 @@ import domain.player.Player;
 
 public class ClickedRoadTest {
 
-    @Test
-    void testClickedRoad_RegPlay_NoChange(){
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
+    Game mockedGame;
+    Player mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4;
+    Player[] players;
+    Controller controller;
+
+    @BeforeEach
+    public void setupMocks() {
+        mockedGame = EasyMock.createStrictMock(Game.class);
         GameType gameType = GameType.Advanced;
 
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
+        mockedPlayer1 = EasyMock.createStrictMock(Player.class);
+        mockedPlayer2 = EasyMock.createStrictMock(Player.class);
+        mockedPlayer3 = EasyMock.createStrictMock(Player.class);
+        mockedPlayer4 = EasyMock.createStrictMock(Player.class);
 
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
+        players = new Player[]{mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4};
 
-        Controller controller = new Controller(mockedGame, players, gameType);
-
+        controller = new Controller(mockedGame, players, gameType);
+    }
+    @Test
+    void testClickedRoad_RegPlay_NoChange(){
         controller.setPhase(GamePhase.REGULAR_PLAY);
         controller.setCurrentPlayer(mockedPlayer1);
 
@@ -51,18 +59,6 @@ public class ClickedRoadTest {
 
     @Test
     void testClickedRoad_Setup_FirstSettlement_NoChange(){
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
-
         controller.setPhase(GamePhase.SETUP);
         controller.setState(GameState.FIRST_SETTLEMENT);
         controller.setCurrentPlayer(mockedPlayer1);
@@ -94,18 +90,6 @@ public class ClickedRoadTest {
 
     @Test
     void testClickedRoad_Setup_SecondSettlement_NoChange(){
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
-
         controller.setPhase(GamePhase.SETUP);
         controller.setState(GameState.SECOND_SETTLEMENT);
         controller.setCurrentPlayer(mockedPlayer1);
@@ -137,17 +121,6 @@ public class ClickedRoadTest {
 
     @Test
     public void testClickedRoad_Setup_FirstRoad_Invalid_NoChange() throws InvalidPlacementException, NotEnoughResourcesException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testVertexId = 0;
         int testRoadId = 55;
         
@@ -187,17 +160,6 @@ public class ClickedRoadTest {
 
     @Test
     public void testClickedRoad_Setup_First_Successful_IncPlay() throws InvalidPlacementException, NotEnoughResourcesException{
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testVertexId = 0;
         int testRoadId = 0;
         
@@ -239,17 +201,6 @@ public class ClickedRoadTest {
 
     @Test
     public void testClickedRoad_Setup_First_Successful_NoInc() throws InvalidPlacementException, NotEnoughResourcesException{
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testVertexId = 0;
         int testRoadId = 0;
         
@@ -291,17 +242,6 @@ public class ClickedRoadTest {
 
     @Test
     public void testClickedRoad_Setup_FirstRoad_DeSync() throws InvalidPlacementException, NotEnoughResourcesException{
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testVertexId = 0;
         int testRoadId = 0;
         
@@ -334,17 +274,6 @@ public class ClickedRoadTest {
 
     @Test
     public void testClickedRoad_Setup_SecondRoad_Invalid_NoChange() throws InvalidPlacementException, NotEnoughResourcesException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testVertexId = 0;
         int testRoadId = 55;
         
@@ -384,17 +313,6 @@ public class ClickedRoadTest {
 
     @Test
     public void testClickedRoad_Setup_SecondRoad_NoChange() throws InvalidPlacementException, NotEnoughResourcesException{
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testVertexId = 0;
         int testRoadId = 0;
         
@@ -433,17 +351,6 @@ public class ClickedRoadTest {
 
     @Test
     public void testClickedRoad_Setup_SecondRoad_IncPlayer() throws InvalidPlacementException, NotEnoughResourcesException{
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testVertexId = 0;
         int testRoadId = 0;
         
@@ -485,17 +392,6 @@ public class ClickedRoadTest {
 
     @Test
     public void testClickedRoad_Setup_SecondRoad_NoInc() throws InvalidPlacementException, NotEnoughResourcesException{
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testVertexId = 0;
         int testRoadId = 0;
         
@@ -538,17 +434,6 @@ public class ClickedRoadTest {
 
     @Test
     public void testClickedRoad_Setup_SecondRoad_DeSync() throws InvalidPlacementException, NotEnoughResourcesException{
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testVertexId = 0;
         int testRoadId = 0;
         

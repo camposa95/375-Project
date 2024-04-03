@@ -11,6 +11,7 @@ import data.GameLoader;
 import domain.bank.Bank;
 import domain.player.HarvestBooster;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.controller.Controller;
@@ -45,52 +46,49 @@ public class F22Test {
         }
     }
 
-    @Test
-    public void testLargestArmyNoOneHasIt() {
-        // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Here we use beginner game to skip through to the regular gameplay
+    VertexGraph vertexes;
+    RoadGraph roads;
+    Bank bank;
+    Player player1;
+    Player player2;
+    Player player3;
+    Player player4;
+    Player[] players;
+    Controller controller;
+
+    @BeforeEach
+    public void createGameObjects() {
         GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
+        vertexes = new VertexGraph(gameType);
+        roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
+        bank = new Bank();
+        player1 = new Player(1, new HarvestBooster(), bank);
+        player2 = new Player(2, new HarvestBooster(), bank);
+        player3 = new Player(3, new HarvestBooster(), bank);
+        player4 = new Player(4, new HarvestBooster(), bank);
+        players = new Player[]{player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        
+
         // Assert that the beginner setup does not time out to kill mutant
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> {new Controller(game, players, gameType);}, "Setup while loop timed out");
+        final AtomicReference<Controller> controllerRef = new AtomicReference<>();
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
+        controller = controllerRef.get();
 
-        // Note: we assume everything about setup was correct because it was tested earlier
-
-        // Note: at this point the players would have gotten some starter resources during the 
-        // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources, so we can
-        // better test on the specific cases.
-        for (Player player: players) {
-            for (Resource resource: Resource.values()) {
-                if (resource != Resource.ANY) { // skip this one used for trading
-                    int count = player.hand.getResourceCardAmount(resource);
-                    if (count > 0) {
-                        player.hand.removeResource(resource, count);
-                    }
-                }
-            }
-            assertEquals(0, player.hand.getResourceCardCount());
+        for (Player p: players) {
+            p.hand.clearResources();
         }
+        bank.reset();
+    }
 
-        // -------------------------- Start of Actual Test Stuff ---------------------------
-
+    @Test
+    public void testLargestArmyNoOneHasIt() {
         assertFalse(player1.hasLargestArmy());
         assertFalse(player2.hasLargestArmy());
         assertFalse(player3.hasLargestArmy());
@@ -104,52 +102,6 @@ public class F22Test {
 
     @Test
     public void testLargestArmyClaimedFirst() {
-        // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Here we use beginner game to skip through to the regular gameplay
-        GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
-
-        // other things dependent on these things
-        DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(GameType.Beginner);
-        GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        
-        // Assert that the beginner setup does not time out to kill mutant
-        final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
-        Controller controller = controllerRef.get();
-
-        // Note: we assume everything about setup was correct because it was tested earlier
-
-        // Note: at this point the players would have gotten some starter resources during the 
-        // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources, so we can
-        // better test on the specific cases.
-        for (Player player: players) {
-            for (Resource resource: Resource.values()) {
-                if (resource != Resource.ANY) { // skip this one used for trading
-                    int count = player.hand.getResourceCardAmount(resource);
-                    if (count > 0) {
-                        player.hand.removeResource(resource, count);
-                    }
-                }
-            }
-            assertEquals(0, player.hand.getResourceCardCount());
-        }
-
-        // -------------------------- Start of Actual Test Stuff ---------------------------
-
         // at the beginning of the game no one has it
         assertFalse(player1.hasLargestArmy());
         assertFalse(player2.hasLargestArmy());
@@ -209,52 +161,6 @@ public class F22Test {
 
     @Test
     public void testLargestArmyTied() {
-        // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Here we use beginner game to skip through to the regular gameplay
-        GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
-
-        // other things dependent on these things
-        DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(GameType.Beginner);
-        GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        
-        // Assert that the beginner setup does not time out to kill mutant
-        final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
-        Controller controller = controllerRef.get();
-
-        // Note: we assume everything about setup was correct because it was tested earlier
-
-        // Note: at this point the players would have gotten some starter resources during the 
-        // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources, so we can
-        // better test on the specific cases.
-        for (Player player: players) {
-            for (Resource resource: Resource.values()) {
-                if (resource != Resource.ANY) { // skip this one used for trading
-                    int count = player.hand.getResourceCardAmount(resource);
-                    if (count > 0) {
-                        player.hand.removeResource(resource, count);
-                    }
-                }
-            }
-            assertEquals(0, player.hand.getResourceCardCount());
-        }
-
-        // -------------------------- Start of Actual Test Stuff ---------------------------
-
         // at the beginning of the game no one has it
         assertFalse(player1.hasLargestArmy());
         assertFalse(player2.hasLargestArmy());
@@ -363,52 +269,6 @@ public class F22Test {
 
     @Test
     public void testLargestArmyOvertaken() {
-        // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Here we use beginner game to skip through to the regular gameplay
-        GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
-
-        // other things dependent on these things
-        DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(GameType.Beginner);
-        GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        
-        // Assert that the beginner setup does not time out to kill mutant
-        final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
-        Controller controller = controllerRef.get();
-
-        // Note: we assume everything about setup was correct because it was tested earlier
-
-        // Note: at this point the players would have gotten some starter resources during the 
-        // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources, so we can
-        // better test on the specific cases.
-        for (Player player: players) {
-            for (Resource resource: Resource.values()) {
-                if (resource != Resource.ANY) { // skip this one used for trading
-                    int count = player.hand.getResourceCardAmount(resource);
-                    if (count > 0) {
-                        player.hand.removeResource(resource, count);
-                    }
-                }
-            }
-            assertEquals(0, player.hand.getResourceCardCount());
-        }
-
-        // -------------------------- Start of Actual Test Stuff ---------------------------
-
         // at the beginning of the game no one has it
         assertFalse(player1.hasLargestArmy());
         assertFalse(player2.hasLargestArmy());

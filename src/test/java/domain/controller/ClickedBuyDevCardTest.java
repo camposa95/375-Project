@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.easymock.EasyMock;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.devcarddeck.EmptyDevCardDeckException;
@@ -13,16 +14,24 @@ import domain.game.NotEnoughResourcesException;
 import domain.player.Player;
 
 public class ClickedBuyDevCardTest {
+
+
+    Game mockedGame;
+    Player mockedPlayer;
+    Player[] players;
+    Controller controller;
+    @BeforeEach
+    public void setupMocks() {
+        mockedGame = EasyMock.createStrictMock(Game.class);
+        mockedPlayer = EasyMock.createStrictMock(Player.class);
+        GameType gameType = GameType.Advanced;
+
+        players = new Player[]{mockedPlayer};
+        controller = new Controller(mockedGame, players, gameType);
+    } 
     
     @Test
     public void testClickedBuyDevCard1() throws NotEnoughResourcesException, EmptyDevCardDeckException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-        GameType gameType = GameType.Advanced;
-
-        Player[] players = {mockedPlayer};
-        Controller controller = new Controller(mockedGame, players, gameType);
-        
         controller.setPhase(GamePhase.REGULAR_PLAY);
         controller.setState(GameState.DEFAULT); // not the state doesn't matter
         controller.setCurrentPlayer(mockedPlayer);
@@ -44,13 +53,6 @@ public class ClickedBuyDevCardTest {
 
     @Test
     public void testClickedBuyDevCard2() throws NotEnoughResourcesException, EmptyDevCardDeckException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-        GameType gameType = GameType.Advanced;
-
-        Player[] players = {mockedPlayer};
-        Controller controller = new Controller(mockedGame, players, gameType);
-        
         controller.setPhase(GamePhase.REGULAR_PLAY);
         controller.setState(GameState.DEFAULT); // not the state doesn't matter
         controller.setCurrentPlayer(mockedPlayer);
@@ -70,13 +72,6 @@ public class ClickedBuyDevCardTest {
 
     @Test
     public void testClickedBuyDevCard3() throws NotEnoughResourcesException, EmptyDevCardDeckException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-        GameType gameType = GameType.Advanced;
-
-        Player[] players = {mockedPlayer};
-        Controller controller = new Controller(mockedGame, players, gameType);
-        
         controller.setPhase(GamePhase.REGULAR_PLAY);
         controller.setState(GameState.DEFAULT); // not the state doesn't matter
         controller.setCurrentPlayer(mockedPlayer);
@@ -96,13 +91,6 @@ public class ClickedBuyDevCardTest {
 
     @Test
     public void testClickedBuyDevCard4() {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-        GameType gameType = GameType.Advanced;
-
-        Player[] players = {mockedPlayer};
-        Controller controller = new Controller(mockedGame, players, gameType);
-        
         controller.setPhase(GamePhase.SETUP);
         controller.setState(GameState.DEFAULT); // not the state doesn't matter
         controller.setCurrentPlayer(mockedPlayer);
@@ -122,13 +110,6 @@ public class ClickedBuyDevCardTest {
 
     @Test
     public void testClickedBuyDevCard15_Win() throws NotEnoughResourcesException, EmptyDevCardDeckException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-        GameType gameType = GameType.Advanced;
-
-        Player[] players = {mockedPlayer};
-        Controller controller = new Controller(mockedGame, players, gameType);
-        
         controller.setPhase(GamePhase.REGULAR_PLAY);
         controller.setState(GameState.DEFAULT); // note the state doesn't matter
         controller.setCurrentPlayer(mockedPlayer);

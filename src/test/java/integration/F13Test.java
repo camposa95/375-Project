@@ -7,6 +7,7 @@ import data.GameLoader;
 import domain.bank.Bank;
 import domain.player.HarvestBooster;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.controller.Controller;
@@ -20,6 +21,7 @@ import domain.bank.Resource;
 import domain.graphs.RoadGraph;
 import domain.graphs.VertexGraph;
 
+import static domain.bank.Resource.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -28,54 +30,52 @@ import static org.junit.jupiter.api.Assertions.*;
  *      Unlock better trades with the bank for Players with settlements built on ports.
  */
 public class F13Test {
-    
-    @Test
-    public void testBuildSettlementNoPort() {
-        // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Here we use beginner game to skip through to the regular gameplay
+
+    VertexGraph vertexes;
+    RoadGraph roads;
+    Bank bank;
+    Player player1;
+    Player player2;
+    Player player3;
+    Player player4;
+    Player[] players;
+    Controller controller;
+
+    @BeforeEach
+    public void createGameObjects() {
         GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
+        vertexes = new VertexGraph(gameType);
+        roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
+        bank = new Bank();
+        player1 = new Player(1, new HarvestBooster(), bank);
+        player2 = new Player(2, new HarvestBooster(), bank);
+        player3 = new Player(3, new HarvestBooster(), bank);
+        player4 = new Player(4, new HarvestBooster(), bank);
+        players = new Player[]{player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        
+
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
         Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
-        Controller controller = controllerRef.get();
+        controller = controllerRef.get();
 
-        // -------------------------- Start of Actual Test Stuff ---------------------------
-        // Note: we assume everything about setup was correct because it was tested earlier
-
-        // Note: at this point the players would have gotten some starter resources during the 
-        // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources, so we can
-        // better test on the specific cases.
-        for (Resource resource: Resource.values()) {
-            if (resource != Resource.ANY) { // skip this one used for trading
-                int count = player1.hand.getResourceCardAmount(resource);
-                if (count > 0) {
-                    player1.hand.removeResource(resource, count);
-                }
-            }
+        for (Player p: players) {
+            p.hand.clearResources();
         }
-        assertEquals(0, player1.hand.getResourceCardCount());
+        bank.reset();
+    }
     
+    @Test
+    public void testBuildSettlementNoPort() {
         // now make sure the player has the enough resources
-        Resource[] resourcesForSettlement = {Resource.BRICK, Resource.LUMBER, Resource.WOOL, Resource.GRAIN};
+        Resource[] resourcesForSettlement = {BRICK, LUMBER, WOOL, GRAIN};
         player1.hand.addResources(resourcesForSettlement);
 
         // set up the controller for the click
@@ -107,51 +107,8 @@ public class F13Test {
 
     @Test
     public void testBuildSettlementHasSpecialPort() {
-        // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Here we use beginner game to skip through to the regular gameplay
-        GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
-
-        // other things dependent on these things
-        DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(GameType.Beginner);
-        GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        
-        // Assert that the beginner setup does not time out to kill mutant
-        final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
-        Controller controller = controllerRef.get();
-
-        // -------------------------- Start of Actual Test Stuff ---------------------------
-        // Note: we assume everything about setup was correct because it was tested earlier
-
-        // Note: at this point the players would have gotten some starter resources during the 
-        // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources, so we can
-        // better test on the specific cases.
-        for (Resource resource: Resource.values()) {
-            if (resource != Resource.ANY) { // skip this one used for trading
-                int count = player1.hand.getResourceCardAmount(resource);
-                if (count > 0) {
-                    player1.hand.removeResource(resource, count);
-                }
-            }
-        }
-        assertEquals(0, player1.hand.getResourceCardCount());
-    
         // now make sure the player has the enough resources
-        Resource[] resourcesForSettlement = {Resource.BRICK, Resource.LUMBER, Resource.WOOL, Resource.GRAIN};
+        Resource[] resourcesForSettlement = {BRICK, LUMBER, WOOL, GRAIN};
         player1.hand.addResources(resourcesForSettlement);
 
         // set up the controller for the click
@@ -175,58 +132,15 @@ public class F13Test {
         // is outside the scope of this tests
 
         // assert that the player didn't gain a boost
-        Resource[] expectedBoostsAfter = {Resource.LUMBER};
+        Resource[] expectedBoostsAfter = {LUMBER};
         Resource[] boostsAfter = player1.getTradeBoosts();
         assertArrayEquals(expectedBoostsAfter, boostsAfter);
     }
 
     @Test
     public void testBuildSettlementHasGenericPort() {
-        // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Here we use beginner game to skip through to the regular gameplay
-        GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
-
-        // other things dependent on these things
-        DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(GameType.Beginner);
-        GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        
-        // Assert that the beginner setup does not time out to kill mutant
-        final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
-        Controller controller = controllerRef.get();
-
-        // -------------------------- Start of Actual Test Stuff ---------------------------
-        // Note: we assume everything about setup was correct because it was tested earlier
-
-        // Note: at this point the players would have gotten some starter resources during the 
-        // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources, so we can
-        // better test on the specific cases.
-        for (Resource resource: Resource.values()) {
-            if (resource != Resource.ANY) { // skip this one used for trading
-                int count = player1.hand.getResourceCardAmount(resource);
-                if (count > 0) {
-                    player1.hand.removeResource(resource, count);
-                }
-            }
-        }
-        assertEquals(0, player1.hand.getResourceCardCount());
-    
         // now make sure the player has the enough resources
-        Resource[] resourcesForSettlement = {Resource.BRICK, Resource.LUMBER, Resource.WOOL, Resource.GRAIN};
+        Resource[] resourcesForSettlement = {BRICK, LUMBER, WOOL, GRAIN};
         player1.hand.addResources(resourcesForSettlement);
 
         // set up the controller for the click

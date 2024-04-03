@@ -2,7 +2,6 @@ package presentation;
 
 import domain.bank.Resource;
 import domain.devcarddeck.DevCard;
-import domain.game.Game;
 import domain.gameboard.Terrain;
 import domain.gameboard.Tile;
 import domain.graphs.*;
@@ -344,35 +343,35 @@ public class CatanGUIController {
 
         numVictoryPointsText.setText(Integer.toString(currentPlayer.hand.devCards.get(DevCard.VICTORY)));
 
-        player1wood.setText(Integer.toString(tempPlayers[0].hand.getResourceCardAmount(Resource.LUMBER)));
-        player1brick.setText(Integer.toString(tempPlayers[0].hand.getResourceCardAmount(Resource.BRICK)));
-        player1wool.setText(Integer.toString(tempPlayers[0].hand.getResourceCardAmount(Resource.WOOL)));
-        player1grain.setText(Integer.toString(tempPlayers[0].hand.getResourceCardAmount(Resource.GRAIN)));
-        player1ore.setText(Integer.toString(tempPlayers[0].hand.getResourceCardAmount(Resource.ORE)));
+        player1wood.setText(Integer.toString(tempPlayers[0].hand.getResourceCount(Resource.LUMBER)));
+        player1brick.setText(Integer.toString(tempPlayers[0].hand.getResourceCount(Resource.BRICK)));
+        player1wool.setText(Integer.toString(tempPlayers[0].hand.getResourceCount(Resource.WOOL)));
+        player1grain.setText(Integer.toString(tempPlayers[0].hand.getResourceCount(Resource.GRAIN)));
+        player1ore.setText(Integer.toString(tempPlayers[0].hand.getResourceCount(Resource.ORE)));
         player1vp.setText(Integer.toString(tempPlayers[0].victoryPoints));
 
-        player2wood.setText(Integer.toString(tempPlayers[1].hand.getResourceCardAmount(Resource.LUMBER)));
-        player2brick.setText(Integer.toString(tempPlayers[1].hand.getResourceCardAmount(Resource.BRICK)));
-        player2wool.setText(Integer.toString(tempPlayers[1].hand.getResourceCardAmount(Resource.WOOL)));
-        player2grain.setText(Integer.toString(tempPlayers[1].hand.getResourceCardAmount(Resource.GRAIN)));
-        player2ore.setText(Integer.toString(tempPlayers[1].hand.getResourceCardAmount(Resource.ORE)));
+        player2wood.setText(Integer.toString(tempPlayers[1].hand.getResourceCount(Resource.LUMBER)));
+        player2brick.setText(Integer.toString(tempPlayers[1].hand.getResourceCount(Resource.BRICK)));
+        player2wool.setText(Integer.toString(tempPlayers[1].hand.getResourceCount(Resource.WOOL)));
+        player2grain.setText(Integer.toString(tempPlayers[1].hand.getResourceCount(Resource.GRAIN)));
+        player2ore.setText(Integer.toString(tempPlayers[1].hand.getResourceCount(Resource.ORE)));
         player2vp.setText(Integer.toString(tempPlayers[1].victoryPoints));
 
         if(tempPlayers.length>=3){
-            player3wood.setText(Integer.toString(tempPlayers[2].hand.getResourceCardAmount(Resource.LUMBER)));
-            player3brick.setText(Integer.toString(tempPlayers[2].hand.getResourceCardAmount(Resource.BRICK)));
-            player3wool.setText(Integer.toString(tempPlayers[2].hand.getResourceCardAmount(Resource.WOOL)));
-            player3grain.setText(Integer.toString(tempPlayers[2].hand.getResourceCardAmount(Resource.GRAIN)));
-            player3ore.setText(Integer.toString(tempPlayers[2].hand.getResourceCardAmount(Resource.ORE)));
+            player3wood.setText(Integer.toString(tempPlayers[2].hand.getResourceCount(Resource.LUMBER)));
+            player3brick.setText(Integer.toString(tempPlayers[2].hand.getResourceCount(Resource.BRICK)));
+            player3wool.setText(Integer.toString(tempPlayers[2].hand.getResourceCount(Resource.WOOL)));
+            player3grain.setText(Integer.toString(tempPlayers[2].hand.getResourceCount(Resource.GRAIN)));
+            player3ore.setText(Integer.toString(tempPlayers[2].hand.getResourceCount(Resource.ORE)));
             player3vp.setText(Integer.toString(tempPlayers[2].victoryPoints));
         }
 
         if(tempPlayers.length==4){
-            player4wood.setText(Integer.toString(tempPlayers[3].hand.getResourceCardAmount(Resource.LUMBER)));
-            player4brick.setText(Integer.toString(tempPlayers[3].hand.getResourceCardAmount(Resource.BRICK)));
-            player4wool.setText(Integer.toString(tempPlayers[3].hand.getResourceCardAmount(Resource.WOOL)));
-            player4grain.setText(Integer.toString(tempPlayers[3].hand.getResourceCardAmount(Resource.GRAIN)));
-            player4ore.setText(Integer.toString(tempPlayers[3].hand.getResourceCardAmount(Resource.ORE)));
+            player4wood.setText(Integer.toString(tempPlayers[3].hand.getResourceCount(Resource.LUMBER)));
+            player4brick.setText(Integer.toString(tempPlayers[3].hand.getResourceCount(Resource.BRICK)));
+            player4wool.setText(Integer.toString(tempPlayers[3].hand.getResourceCount(Resource.WOOL)));
+            player4grain.setText(Integer.toString(tempPlayers[3].hand.getResourceCount(Resource.GRAIN)));
+            player4ore.setText(Integer.toString(tempPlayers[3].hand.getResourceCount(Resource.ORE)));
             player4vp.setText(Integer.toString(tempPlayers[3].victoryPoints));
         }
     }

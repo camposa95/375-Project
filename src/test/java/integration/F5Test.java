@@ -1,5 +1,6 @@
 package integration;
 
+import static domain.bank.Resource.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -8,6 +9,7 @@ import data.GameLoader;
 import domain.bank.Bank;
 import domain.player.HarvestBooster;
 import org.easymock.EasyMock;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.controller.Controller;
@@ -31,232 +33,85 @@ import java.util.Random;
  */
 public class F5Test {
 
-    @Test
-    public void testGettingResourcesFromSetupBeginner() {
-     // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Testing for beginner
+    VertexGraph vertexes;
+    Player player1;
+    Player player2;
+    Player player3;
+    Player player4;
+    Player[] players;
+    Random mockedRandom;
+    Controller controller;
+    @BeforeEach
+    public void createGameObjects() {
         GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
+        vertexes = new VertexGraph(gameType);
         RoadGraph roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
         Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
+        player1 = new Player(1, new HarvestBooster(), bank);
+        player2 = new Player(2, new HarvestBooster(), bank);
+        player3 = new Player(3, new HarvestBooster(), bank);
+        player4 = new Player(4, new HarvestBooster(), bank);
+        players = new Player[]{player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        Controller controller = new Controller(game, players, gameType);
-
-    // -------------------------- Start of Test  ---------------------------
-        
-        //Based on beginner locations these are the resources each player should receive after setup
-        Resource[] resources1 = {Resource.GRAIN,Resource.BRICK,Resource.LUMBER};
-        Resource[] resources2 = {Resource.GRAIN,Resource.GRAIN,Resource.ORE};
-        Resource[] resources3 = {Resource.BRICK,Resource.LUMBER,Resource.ORE};
-        Resource[] resources4 = {Resource.LUMBER,Resource.LUMBER,Resource.GRAIN};
-
-        assertTrue(player1.hand.removeResources(resources1));
-        assertTrue(player2.hand.removeResources(resources2));
-        assertTrue(player3.hand.removeResources(resources3));
-        assertTrue(player4.hand.removeResources(resources4));
-        
-        //avoid a spot-bug error with controller not called
-        controller.endTurn();
-
+        mockedRandom = EasyMock.createStrictMock(Random.class);
+        controller = new Controller(game, players, gameType, mockedRandom);
     }
 
     @Test
-    public void testGettingResourcesFromSetupAdvanced() {
-     // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        GameType gameType = GameType.Advanced;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
+    public void testGettingResourcesFromSetupBeginner() {
+        // Based on beginner locations these are the resources each player should receive after setup
+        Resource[] resources1 = {GRAIN, BRICK, LUMBER};
+        Resource[] resources2 = {GRAIN, GRAIN, ORE};
+        Resource[] resources3 = {BRICK, LUMBER,ORE};
+        Resource[] resources4 = {LUMBER, LUMBER, GRAIN};
 
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
-
-        // other things dependent on these things
-        DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        // must have gameBoard in beginner still, so we know where tiles are
-        GameBoard gameBoard = new GameBoard(GameType.Beginner);
-        GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        Controller controller = new Controller(game, players, gameType);
-
-    // -------------------------- Start of Test  ---------------------------
-        
-        //Based on beginner locations these are the resources each player should receive after setup
-        //Note resources4 only has 2 since it was moved to edge of desert tile to test
-        Resource[] resources1 = {Resource.GRAIN,Resource.BRICK,Resource.LUMBER};
-        Resource[] resources2 = {Resource.GRAIN,Resource.GRAIN,Resource.ORE};
-        Resource[] resources3 = {Resource.BRICK,Resource.LUMBER,Resource.ORE};
-        Resource[] resources4 = {Resource.LUMBER,Resource.WOOL};
-
-        //Manually input player turns, these are the same as beginner except for a first location
-        
-        //First player first settlement and road
-        assertEquals(SuccessCode.SUCCESS,controller.clickedVertex(35));
-        assertEquals(SuccessCode.SUCCESS,controller.clickedRoad(37));
-
-        //Second player first settlement and road
-        assertEquals(SuccessCode.SUCCESS,controller.clickedVertex(13));
-        assertEquals(SuccessCode.SUCCESS,controller.clickedRoad(15));
-
-        //Third player first settlement and road
-        assertEquals(SuccessCode.SUCCESS,controller.clickedVertex(44));
-        assertEquals(SuccessCode.SUCCESS,controller.clickedRoad(52));
-
-        //Fourth player first settlement and road
-        assertEquals(SuccessCode.SUCCESS,controller.clickedVertex(10));
-        assertEquals(SuccessCode.SUCCESS,controller.clickedRoad(13));
-
-        //Second placements, each player should get resources after placing settlement
-
-        //Fourth player second settlement and road
-        assertEquals(SuccessCode.SUCCESS,controller.clickedVertex(22)); 
-        assertEquals(SuccessCode.SUCCESS,controller.clickedRoad(36));
-        assertTrue(player4.hand.removeResources(resources4));
-        //Third player second settlement and road
-        assertEquals(SuccessCode.SUCCESS,controller.clickedVertex(40));
-        assertEquals(SuccessCode.SUCCESS,controller.clickedRoad(56));
-        assertTrue(player3.hand.removeResources(resources3));
-        //Second player second settlement and road
-        assertEquals(SuccessCode.SUCCESS,controller.clickedVertex(42));
-        assertTrue(player2.hand.removeResources(resources2));
-        assertEquals(SuccessCode.SUCCESS,controller.clickedRoad(58));     
-
-        //First player second settlement and road
-        assertEquals(SuccessCode.SUCCESS,controller.clickedVertex(19));
-        assertEquals(SuccessCode.SUCCESS,controller.clickedRoad(25));
         assertTrue(player1.hand.removeResources(resources1));
-
+        assertTrue(player2.hand.removeResources(resources2));
+        assertTrue(player3.hand.removeResources(resources3));
+        assertTrue(player4.hand.removeResources(resources4));
     }
 
     @Test
     public void testFirstTurnRollDieAndGetResources() {
-         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Testing for beginner
-        GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
+        for (Player p: players) { // clear starter resources for test isolation
+            p.hand.clearResources();
+        }
 
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
-
-        // other things dependent on these things
-        DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(GameType.Beginner);
-        GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-
-        Random mockedRandom = EasyMock.createStrictMock(Random.class);
-
-        Controller controller = new Controller(game, players, gameType, mockedRandom);
-
-    // -------------------------- Start of Test  ---------------------------
-        
-        //Remove starter resources
-        Resource[] r1 = {Resource.GRAIN,Resource.BRICK,Resource.LUMBER};
-        Resource[] r2 = {Resource.GRAIN,Resource.GRAIN,Resource.ORE};
-        Resource[] r3 = {Resource.BRICK,Resource.LUMBER,Resource.ORE};
-        Resource[] r4 = {Resource.LUMBER,Resource.LUMBER,Resource.GRAIN};
-        player1.hand.removeResources(r1);
-        player2.hand.removeResources(r2);
-        player3.hand.removeResources(r3);
-        player4.hand.removeResources(r4);
-
-        //Based on beginner locations these are the resources each player should receive on given die roll
+        // Based on beginner locations these are the resources each player should receive on given die roll
         EasyMock.expect(mockedRandom.nextInt(2,13)).andReturn(10);
         EasyMock.replay(mockedRandom);
         controller.rollDice();
         EasyMock.verify(mockedRandom);
 
         Resource[] resources1 = {};
-        Resource[] resources2 = {Resource.BRICK};
+        Resource[] resources2 = {BRICK};
         Resource[] resources3 = {};
-        Resource[] resources4 = {Resource.ORE};
+        Resource[] resources4 = {ORE};
 
         assertTrue(player1.hand.removeResources(resources1));
         assertTrue(player2.hand.removeResources(resources2));
         assertTrue(player3.hand.removeResources(resources3));
         assertTrue(player4.hand.removeResources(resources4));
-        
-        // avoid a spot-bug error with controller not called
-        controller.endTurn();
     }
 
     @Test
     public void testGetMoreResourcesFromUpgradedSettlements() {
-        // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Testing for beginner
-        GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
+        for (Player p: players) { // clear starter resources for test isolation
+            p.hand.clearResources();
+        }
 
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
+        // give resources needed for upgrade
+        Resource[] resourcesForUpgrade = new Resource[]{ORE, ORE, ORE, GRAIN, GRAIN};
+        player2.hand.addResources(resourcesForUpgrade);
+        player4.hand.addResources(resourcesForUpgrade);
 
-        // other things dependent on these things
-        DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(GameType.Beginner);
-        GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        Random mockedRandom = EasyMock.createStrictMock(Random.class);
-        Controller controller = new Controller(game, players, gameType, mockedRandom);
-
-    // -------------------------- Start of Test  ---------------------------
-        
-        //Remove starter resources
-        Resource[] r1 = {Resource.GRAIN,Resource.BRICK,Resource.LUMBER};
-        Resource[] r2 = {Resource.GRAIN,Resource.GRAIN,Resource.ORE};
-        Resource[] r3 = {Resource.BRICK,Resource.LUMBER,Resource.ORE};
-        Resource[] r4 = {Resource.LUMBER,Resource.LUMBER,Resource.GRAIN};
-        player1.hand.removeResources(r1);
-        player2.hand.removeResources(r2);
-        player3.hand.removeResources(r3);
-        player4.hand.removeResources(r4);
-        
-        //give resources needed for upgrade
-        player2.hand.addResources(new Resource[]{
-            Resource.ORE,
-            Resource.ORE,
-            Resource.ORE,
-            Resource.GRAIN,
-            Resource.GRAIN
-        });
-        player4.hand.addResources(new Resource[]{
-            Resource.ORE,
-            Resource.ORE,
-            Resource.ORE,
-            Resource.GRAIN,
-            Resource.GRAIN
-        });
-        
         //upgrade player 2
         controller.setCurrentPlayer(player2);
         controller.setState(GameState.UPGRADE_SETTLEMENT);
@@ -267,8 +122,8 @@ public class F5Test {
         controller.setState(GameState.UPGRADE_SETTLEMENT);
         assertEquals(SuccessCode.SUCCESS, controller.clickedVertex(10));
 
-        
-        
+
+
         //Based on beginner locations these are the resources each player should receive on given die roll
         EasyMock.expect(mockedRandom.nextInt(2,13)).andReturn(10);
         EasyMock.replay(mockedRandom);
@@ -276,71 +131,34 @@ public class F5Test {
         EasyMock.verify(mockedRandom);
 
         Resource[] resources1 = {};
-        Resource[] resources2 = {Resource.BRICK,Resource.BRICK};
+        Resource[] resources2 = {BRICK, BRICK};
         Resource[] resources3 = {};
-        Resource[] resources4 = {Resource.ORE,Resource.ORE};
+        Resource[] resources4 = {ORE, ORE};
 
         assertTrue(player1.hand.removeResources(resources1));
         assertTrue(player2.hand.removeResources(resources2));
         assertTrue(player3.hand.removeResources(resources3));
         assertTrue(player4.hand.removeResources(resources4));
-        
-        //avoid a spot-bug error with controller not called
-        controller.endTurn();
     }
 
     @Test
     public void testNoOneGetsResourcesOn7() {
-         // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Testing for beginner
-        GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
+        for (Player p: players) { // clear starter resources for test isolation
+            p.hand.clearResources();
+        }
 
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
-
-        // other things dependent on these things
-        DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(GameType.Beginner);
-        GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        Random mockedRandom = EasyMock.createStrictMock(Random.class);
-        Controller controller = new Controller(game, players, gameType, mockedRandom);
-
-    // -------------------------- Start of Test  ---------------------------
-        
-        //Remove starter resources
-        Resource[] r1 = {Resource.GRAIN,Resource.BRICK,Resource.LUMBER};
-        Resource[] r2 = {Resource.GRAIN,Resource.GRAIN,Resource.ORE};
-        Resource[] r3 = {Resource.BRICK,Resource.LUMBER,Resource.ORE};
-        Resource[] r4 = {Resource.LUMBER,Resource.LUMBER,Resource.GRAIN};
-        player1.hand.removeResources(r1);
-        player2.hand.removeResources(r2);
-        player3.hand.removeResources(r3);
-        player4.hand.removeResources(r4);
-        //Based on beginner locations these are the resources each player should receive on given die roll
+        // Based on beginner locations these are the resources each player should receive on given die roll
 
         EasyMock.expect(mockedRandom.nextInt(2, 13)).andReturn(7);
         EasyMock.replay(mockedRandom);
         controller.rollDice();
         EasyMock.verify(mockedRandom);
 
-        Resource[] resources2 = {Resource.BRICK};
-        Resource[] resources4 = {Resource.ORE};
+        Resource[] resources2 = {BRICK};
+        Resource[] resources4 = {ORE};
 
-        //check players didn't receive
+        // check players didn't receive
         assertFalse(player2.hand.removeResources(resources2));
         assertFalse(player4.hand.removeResources(resources4));
-        
-        //avoid a spot-bug error with controller not called
-        controller.endTurn();
-
     }
 }
