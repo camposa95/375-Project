@@ -1,6 +1,7 @@
 package domain.graphs;
 
 import data.GameLoader;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.game.GameType;
@@ -11,15 +12,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BuildVertexTest {
 
+    VertexGraph vertexes;
+    RoadGraph roads;
+    Player player;
+
+    @BeforeEach
+    public void setup() {
+        vertexes = new VertexGraph(GameType.Beginner);
+        roads = new RoadGraph();
+        GameLoader.initializeGraphs(roads, vertexes);
+        player =  new Player(1);
+    }
+
     @Test
     public void testBuildVertex1() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        // create an actual player
-        Player player =  new Player(1);
-        // get its trade boosts before the build
         Resource[] boostsBefore = player.getTradeBoosts();
         Resource[] expectedBoostsBefore = {};
         assertArrayEquals(expectedBoostsBefore, boostsBefore);
@@ -44,13 +50,6 @@ public class BuildVertexTest {
 
     @Test
     public void testBuildVertex2() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        // create an actual player
-        Player player =  new Player(1);
-        // get its trade boosts before the build
         Resource[] boostsBefore = player.getTradeBoosts();
         // assert that the player had not boosts before
         Resource[] expectedBoostsBefore = {};
@@ -75,12 +74,6 @@ public class BuildVertexTest {
 
     @Test
     public void testBuildVertex3() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        // create an actual player
-        Player player =  new Player(1);
         // get its trade boosts before the build
         Resource[] boostsBefore = player.getTradeBoosts();
         // assert that the player had not boosts before
@@ -106,12 +99,6 @@ public class BuildVertexTest {
 
     @Test
     public void testBuildVertex4() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        // create an actual player
-        Player player =  new Player(1);
         // get its trade boosts before the build
         Resource[] boostsBefore = player.getTradeBoosts();
         // assert that the player had not boosts before
@@ -137,12 +124,6 @@ public class BuildVertexTest {
 
     @Test
     public void testBuildVertex5() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        // create an actual player
-        Player player =  new Player(1);
         // get its trade boosts before the build
         Resource[] boostsBefore = player.getTradeBoosts();
         // assert that the player had not boosts before
@@ -168,12 +149,6 @@ public class BuildVertexTest {
 
     @Test
     public void testBuildVertex6() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        // create an actual player
-        Player player =  new Player(1);
         // get its trade boosts before the build
         Resource[] boostsBefore = player.getTradeBoosts();
         // assert that the player had not boosts before
@@ -199,12 +174,6 @@ public class BuildVertexTest {
 
     @Test
     public void testBuildVertex7() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        // create an actual player
-        Player player =  new Player(1);
         // get its trade boosts before the build
         Resource[] boostsBefore = player.getTradeBoosts();
         // assert that the player had not boosts before
@@ -230,12 +199,6 @@ public class BuildVertexTest {
 
     @Test
     public void testBuildVertex8() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        // create an actual player already with grain boost
-        Player player =  new Player(1);
         vertexes.getVertex(3).build(player);
         // get its trade boosts before the build
         Resource[] boostsBefore = player.getTradeBoosts();
@@ -262,12 +225,6 @@ public class BuildVertexTest {
 
     @Test
     public void testBuildVertex9() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        // create an actual player already with all boosts except lumber
-        Player player =  new Player(1);
         vertexes.getVertex(3).build(player);// grain
         vertexes.getVertex(14).build(player); // wool
         vertexes.getVertex(26).build(player); // any

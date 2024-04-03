@@ -1,6 +1,7 @@
 package domain.controller;
 
 import org.easymock.EasyMock;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.game.Game;
@@ -12,15 +13,28 @@ import domain.player.Player;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RobberMethodsTest {
+
+    Game mockedGame;
+    Player player1, player2, player3;
+    Player[] players;
+    Controller controller;
+
+    @BeforeEach
+    public void setupMocks() {
+        mockedGame = EasyMock.createStrictMock(Game.class);
+        GameType gameType = GameType.Advanced;
+
+        player1 = new Player(1);
+        player2 = new Player(2);
+        player3 = new Player(3);
+        players = new Player[]{player1, player2, player3};
+
+        controller = new Controller(mockedGame, players, gameType);
+    }
     
     @Test
     public void testGetPlayersOnTile() {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-        GameType gameType = GameType.Advanced;
-
-        Player[] expectedPlayers = {mockedPlayer}; // not players don't matter
-        Controller controller = new Controller(mockedGame, expectedPlayers, gameType);
+        Player[] expectedPlayers = {player1};
 
         int tileId = 4;
 
@@ -38,12 +52,6 @@ public class RobberMethodsTest {
 
     @Test
     public void testMoveRobberSuccess() throws InvalidPlacementException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player[] players = { mockedPlayer1};
-        GameType gameType = GameType.Advanced;
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int tileID = 3;
 
         mockedGame.moveRobber(tileID);
@@ -59,12 +67,6 @@ public class RobberMethodsTest {
 
     @Test
     public void testMoveRobberInvalidPlacement() throws InvalidPlacementException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player[] players = { mockedPlayer1};
-        GameType gameType = GameType.Advanced;
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int tileID = 3;
 
         mockedGame.moveRobber(tileID);
@@ -82,14 +84,6 @@ public class RobberMethodsTest {
 
     @Test
     public void testRobPlayerSuccess() throws NotEnoughResourcesException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player[] players = {player1, player2, player3};
-        GameType gameType = GameType.Advanced;
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int playerId = 2;
         controller.setCurrentPlayer(player1); // any player should do as long it is not the same as the robbed
 
@@ -109,14 +103,6 @@ public class RobberMethodsTest {
 
     @Test
     public void testRobPlayerNotEnoughResources() throws NotEnoughResourcesException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player[] players = {player1, player2, player3};
-        GameType gameType = GameType.Advanced;
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int playerId = 2;
         controller.setCurrentPlayer(player1); // any player should do as long it is not the same as the robbed
 
@@ -137,14 +123,6 @@ public class RobberMethodsTest {
 
     @Test
     public void testRobPlayerDNE() {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player[] players = {player1, player2, player3};
-        GameType gameType = GameType.Advanced;
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int playerId = 4;
         controller.setCurrentPlayer(player1); // any player should do as long it is not the same as the robbed
 
@@ -164,14 +142,6 @@ public class RobberMethodsTest {
 
     @Test
     public void testRobPlayerSameAsRobber() {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
-        Player player3 = new Player(3);
-        Player[] players = {player1, player2, player3};
-        GameType gameType = GameType.Advanced;
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int playerId = 1;
         controller.setCurrentPlayer(player1); // any player should do as long it is not the same as the robbed
 

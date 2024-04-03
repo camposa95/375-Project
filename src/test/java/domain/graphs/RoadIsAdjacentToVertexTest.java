@@ -4,16 +4,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import data.GameLoader;
 import domain.game.GameType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class RoadIsAdjacentToVertexTest {
 
+    VertexGraph vertexes;
+    RoadGraph roads;
+
+    @BeforeEach
+    public void setup() {
+        vertexes = new VertexGraph(GameType.Beginner);
+        roads = new RoadGraph();
+        GameLoader.initializeGraphs(roads, vertexes);
+    }
+
     @Test
     public void testIsAdjacentToIsNeighbor() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
         // get any road, it does not matter which
         Road testRoad = roads.getRoad(0);
 
@@ -27,10 +34,6 @@ public class RoadIsAdjacentToVertexTest {
 
     @Test
     public void testIsAdjacentToNotNeighbor() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
         // get any road, it does not matter which
         Road testRoad = roads.getRoad(0);
 

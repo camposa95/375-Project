@@ -144,7 +144,7 @@ public class DropCardsController implements Popup {
             int droppingPlayer = playersThatNeedToDrop.get(i);
             Resource[] getPlayerResources = this.getPlayerResources(playerResources2d[droppingPlayer]);
             resources.put(droppingPlayer+1, getPlayerResources);
-            int amountToDrop = players[droppingPlayer].hand.getResourceCardCount()/2;
+            int amountToDrop = players[droppingPlayer].hand.getResourceCount()/2;
             if(getPlayerResources.length != amountToDrop){
                 System.out.println("Player " + i + ": Not enough resources dropped");
                 return;
@@ -167,7 +167,7 @@ public class DropCardsController implements Popup {
     //returns true if at least one player needs to drop cards
     public boolean doesAnyoneNeedToDrop() {
         for(int i = 0; i < players.length; i++){
-            if(players[i].hand.getResourceCardCount() <=7 ){
+            if(players[i].hand.getResourceCount() <=7 ){
                 for(int j = 0; j < playerResources2d[i].length; j++){
                     playerResources2d[i][j].setVisible(false);
                     playerResources2d[i][j]=null;

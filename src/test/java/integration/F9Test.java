@@ -14,7 +14,10 @@ import domain.player.Player;
 import domain.graphs.RoadGraph;
 import domain.graphs.VertexGraph;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static domain.bank.Resource.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.Duration;
@@ -23,246 +26,102 @@ import java.util.concurrent.atomic.AtomicReference;
 //F9: Ability for a player to trade resources with another player during their turn
 public class F9Test {
 
-    //Test: successful trade between two players
-    @Test
-    public void testTradeCardsBetweenTwoPlayers_Successful() {
+    VertexGraph vertexes;
+    RoadGraph roads;
+    Player player1;
+    Player player2;
+    Player player3;
+    Player player4;
+    Player[] players;
+    Controller controller;
+
+    @BeforeEach
+    public void createGameObjects() {
         GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
+        vertexes = new VertexGraph(gameType);
+        roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
         Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
+        player1 = new Player(1, new HarvestBooster(), bank);
+        player2 = new Player(2, new HarvestBooster(), bank);
+        player3 = new Player(3, new HarvestBooster(), bank);
+        player4 = new Player(4, new HarvestBooster(), bank);
+        players = new Player[]{player1, player2, player3, player4};
 
+        // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        bank.reset();
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
         Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
-        Controller controller = controllerRef.get();
+        controller = controllerRef.get();
 
-        //Beginning of actual test
-        Resource[] player1Resources = {
-                Resource.LUMBER,
-                Resource.BRICK
-        };
-        Resource[] player2Resources = {
-                Resource.WOOL,
-                Resource.ORE,
-                Resource.ORE
-        };
-
-        // Note: at this point the players would have gotten some starter resources during the
-        // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources because the
-        // longest road card doesn't need resources because it is free
-        for (Resource resource: Resource.values()) {
-            if (resource != Resource.ANY) { // skip this one used for trading
-                int count = player1.hand.getResourceCardAmount(resource);
-                if (count > 0) {
-                    player1.hand.removeResource(resource, count);
-                }
-            }
+        for (Player p: players) {
+            p.hand.clearResources();
         }
-        assertEquals(0, player1.hand.getResourceCardCount());
+    }
 
-        for (Resource resource: Resource.values()) {
-            if (resource != Resource.ANY) { // skip this one used for trading
-                int count = player2.hand.getResourceCardAmount(resource);
-                if (count > 0) {
-                    player2.hand.removeResource(resource, count);
-                }
-            }
-        }
-        assertEquals(0, player2.hand.getResourceCardCount());
+    @Test
+    public void testTradeCardsBetweenTwoPlayers_Successful() {
+        Resource[] player1Resources = {LUMBER, BRICK};
+        Resource[] player2Resources = {WOOL, ORE, ORE};
 
-        int numCardsBefore1 = player1.hand.getResourceCardCount();
-        int numCardsBefore2 = player2.hand.getResourceCardCount();
+        int numCardsBefore1 = player1.hand.getResourceCount();
+        int numCardsBefore2 = player2.hand.getResourceCount();
 
         player1.hand.addResources(player1Resources);
         player2.hand.addResources(player2Resources);
 
         SuccessCode success = controller.tradeWithPlayer(player2, player1Resources, player2Resources);
         assertEquals(SuccessCode.SUCCESS, success);
-        assertEquals(numCardsBefore1+3, player1.hand.getResourceCardCount());
-        assertEquals(numCardsBefore2+2, player2.hand.getResourceCardCount());
+        assertEquals(numCardsBefore1+3, player1.hand.getResourceCount());
+        assertEquals(numCardsBefore2+2, player2.hand.getResourceCount());
     }
 
-    //Test: trade between two players where the first player does not have
-    // enough resources to complete the trade
     @Test
     public void testTradeCardsBetweenTwoPlayers_Fail_FirstPlayerNotEnoughResources() {
-        GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
-
-        DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(GameType.Beginner);
-        GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        bank.reset();
-
-        // Assert that the beginner setup does not time out to kill mutant
-        final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
-        Controller controller = controllerRef.get();
-
-        Resource[] player1HandResources = {
-                Resource.LUMBER,
-                Resource.BRICK
-        };
-        Resource[] player2HandResources = {
-                Resource.WOOL,
-                Resource.ORE,
-                Resource.ORE
-        };
-
-        // Note: at this point the players would have gotten some starter resources during the
-        // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources because the
-        // longest road card doesn't need resources because it is free
-        for (Resource resource: Resource.values()) {
-            if (resource != Resource.ANY) { // skip this one used for trading
-                int count = player1.hand.getResourceCardAmount(resource);
-                if (count > 0) {
-                    player1.hand.removeResource(resource, count);
-                }
-            }
-        }
-        assertEquals(0, player1.hand.getResourceCardCount());
-
-        for (Resource resource: Resource.values()) {
-            if (resource != Resource.ANY) { // skip this one used for trading
-                int count = player2.hand.getResourceCardAmount(resource);
-                if (count > 0) {
-                    player2.hand.removeResource(resource, count);
-                }
-            }
-        }
-        assertEquals(0, player2.hand.getResourceCardCount());
+        Resource[] player1HandResources = {LUMBER, BRICK};
+        Resource[] player2HandResources = {WOOL, ORE, ORE};
 
         player1.hand.addResources(player1HandResources);
         player2.hand.addResources(player2HandResources);
 
-        int numCardsBefore1 = player1.hand.getResourceCardCount();
-        int numCardsBefore2 = player2.hand.getResourceCardCount();
+        int numCardsBefore1 = player1.hand.getResourceCount();
+        int numCardsBefore2 = player2.hand.getResourceCount();
 
-        Resource[] player1TradeResources = {
-                Resource.LUMBER,
-                Resource.LUMBER,
-                Resource.BRICK
-        };
+        Resource[] player1TradeResources = {LUMBER, LUMBER, BRICK};
 
-        Resource[] player2TradeResources = {
-                Resource.WOOL,
-                Resource.ORE,
-                Resource.ORE
-        };
+        Resource[] player2TradeResources = {WOOL, ORE, ORE};
 
         SuccessCode success = controller.tradeWithPlayer(player2, player1TradeResources, player2TradeResources);
         assertEquals(SuccessCode.UNDEFINED, success);
-        assertEquals(numCardsBefore1, player1.hand.getResourceCardCount());
-        assertEquals(numCardsBefore2, player2.hand.getResourceCardCount());
+        assertEquals(numCardsBefore1, player1.hand.getResourceCount());
+        assertEquals(numCardsBefore2, player2.hand.getResourceCount());
     }
 
-    //Test: trade between two players where the second player does not have
-    // enough resources to complete the trade
     @Test
     public void testTradeCardsBetweenTwoPlayers_Fail_SecondPlayerNotEnoughResources() {
-        GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
 
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
-
-        DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(GameType.Beginner);
-        GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        bank.reset();
-
-        // Assert that the beginner setup does not time out to kill mutant
-        final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
-        Controller controller = controllerRef.get();
-
-        Resource[] player1HandResources = {
-                Resource.LUMBER,
-                Resource.BRICK
-        };
-        Resource[] player2HandResources = {
-                Resource.WOOL,
-                Resource.ORE,
-                Resource.ORE
-        };
-
-        // Note: at this point the players would have gotten some starter resources during the
-        // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources because the
-        // longest road card doesn't need resources because it is free
-        for (Resource resource: Resource.values()) {
-            if (resource != Resource.ANY) { // skip this one used for trading
-                int count = player1.hand.getResourceCardAmount(resource);
-                if (count > 0) {
-                    player1.hand.removeResource(resource, count);
-                }
-            }
-        }
-        assertEquals(0, player1.hand.getResourceCardCount());
-
-        for (Resource resource: Resource.values()) {
-            if (resource != Resource.ANY) { // skip this one used for trading
-                int count = player2.hand.getResourceCardAmount(resource);
-                if (count > 0) {
-                    player2.hand.removeResource(resource, count);
-                }
-            }
-        }
-        assertEquals(0, player2.hand.getResourceCardCount());
+        Resource[] player1HandResources = {LUMBER, BRICK};
+        Resource[] player2HandResources = {WOOL, ORE, ORE};
 
         player1.hand.addResources(player1HandResources);
         player2.hand.addResources(player2HandResources);
 
-        int numCardsBefore1 = player1.hand.getResourceCardCount();
-        int numCardsBefore2 = player2.hand.getResourceCardCount();
+        int numCardsBefore1 = player1.hand.getResourceCount();
+        int numCardsBefore2 = player2.hand.getResourceCount();
 
-        Resource[] player1TradeResources = {
-                Resource.LUMBER,
-                Resource.BRICK
-        };
+        Resource[] player1TradeResources = {LUMBER, BRICK};
 
-        Resource[] player2TradeResources = {
-                Resource.WOOL,
-                Resource.ORE,
-                Resource.ORE,
-                Resource.LUMBER
-        };
+        Resource[] player2TradeResources = {WOOL, ORE, ORE, LUMBER};
 
         SuccessCode success = controller.tradeWithPlayer(player2, player1TradeResources, player2TradeResources);
         assertEquals(SuccessCode.UNDEFINED, success);
-        assertEquals(numCardsBefore1, player1.hand.getResourceCardCount());
-        assertEquals(numCardsBefore2, player2.hand.getResourceCardCount());
+        assertEquals(numCardsBefore1, player1.hand.getResourceCount());
+        assertEquals(numCardsBefore2, player2.hand.getResourceCount());
     }
 }

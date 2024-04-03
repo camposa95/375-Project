@@ -7,6 +7,7 @@ import data.GameLoader;
 import domain.bank.Bank;
 import domain.player.HarvestBooster;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.controller.Controller;
@@ -30,52 +31,50 @@ import static org.junit.jupiter.api.Assertions.*;
  *      for free when they play this card during their turn.
  */
 public class F18Test {
-    
-    @Test
-    public void testRoadBuildingAllGood() {
-        // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Here we use beginner game to skip through to the regular gameplay
+
+    VertexGraph vertexes;
+    RoadGraph roads;
+    Bank bank;
+    Player player1;
+    Player player2;
+    Player player3;
+    Player player4;
+    Player[] players;
+    Controller controller;
+
+    @BeforeEach
+    public void createGameObjects() {
         GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
+        vertexes = new VertexGraph(gameType);
+        roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
+        bank = new Bank();
+        player1 = new Player(1, new HarvestBooster(), bank);
+        player2 = new Player(2, new HarvestBooster(), bank);
+        player3 = new Player(3, new HarvestBooster(), bank);
+        player4 = new Player(4, new HarvestBooster(), bank);
+        players = new Player[]{player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        
+
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
         Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
-        Controller controller = controllerRef.get();
+        controller = controllerRef.get();
 
-        // -------------------------- Start of Actual Test Stuff ---------------------------
-        // Note: we assume everything about setup was correct because it was tested earlier
-
-        // Note: at this point the players would have gotten some starter resources during the 
-        // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources because the
-        // longest road card doesn't need resources because it is free
-        for (Resource resource: Resource.values()) {
-            if (resource != Resource.ANY) { // skip this one used for trading
-                int count = player1.hand.getResourceCardAmount(resource);
-                if (count > 0) {
-                    player1.hand.removeResource(resource, count);
-                }
-            }
+        for (Player p: players) {
+            p.hand.clearResources();
         }
-        assertEquals(0, player1.hand.getResourceCardCount());
-
+        bank.reset();
+    }
+    
+    @Test
+    public void testRoadBuildingAllGood() {
         // directly add the card to the hand.
         // Note this is not the same as buying the card which would not allow us to use the card we bought during the turn
         player1.hand.addDevelopmentCard(DevCard.ROAD);
@@ -94,7 +93,7 @@ public class F18Test {
         assertEquals(GameState.ROAD_BUILDING_2, controller.getState()); // gameState should move to next road building stage
         assertEquals(12, player1.getNumRoads()); // player should have used a road
         assertEquals(player1, roads.getRoad(newRoadId1).getOwner()); // road should now be owned by the player
-        assertEquals(0, player1.hand.getResourceCardCount()); // player resources should not have changed
+        assertEquals(0, player1.hand.getResourceCount()); // player resources should not have changed
 
 
         // here is the second click which is valid and connects to the road we just built
@@ -103,54 +102,11 @@ public class F18Test {
         assertEquals(GameState.DEFAULT, controller.getState()); // we are done with the building so reset to default
         assertEquals(11, player1.getNumRoads()); // player should have used another road
         assertEquals(player1, roads.getRoad(newRoadId2).getOwner()); // road should now be owned by the player
-        assertEquals(0, player1.hand.getResourceCardCount()); // player resources should not have changed
+        assertEquals(0, player1.hand.getResourceCount()); // player resources should not have changed
     }
 
     @Test
     public void testRoadBuildingNoRoadsOnSecond() {
-        // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Here we use beginner game to skip through to the regular gameplay
-        GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
-
-        // other things dependent on these things
-        DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(GameType.Beginner);
-        GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        
-        // Assert that the beginner setup does not time out to kill mutant
-        final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
-        Controller controller = controllerRef.get();
-
-        // -------------------------- Start of Actual Test Stuff ---------------------------
-        // Note: we assume everything about setup was correct because it was tested earlier
-
-        // Note: at this point the players would have gotten some starter resources during the 
-        // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources because the
-        // longest road card doesn't need resources because it is free
-        for (Resource resource: Resource.values()) {
-            if (resource != Resource.ANY) { // skip this one used for trading
-                int count = player1.hand.getResourceCardAmount(resource);
-                if (count > 0) {
-                    player1.hand.removeResource(resource, count);
-                }
-            }
-        }
-        assertEquals(0, player1.hand.getResourceCardCount());
-
         // directly add the card to the hand.
         // Note this is not the same as buying the card which would not allow us to use the card we bought during the turn
         player1.hand.addDevelopmentCard(DevCard.ROAD);
@@ -169,7 +125,7 @@ public class F18Test {
         assertEquals(GameState.ROAD_BUILDING_2, controller.getState()); // gameState should move to next road building stage
         assertEquals(12, player1.getNumRoads()); // player should have used a road
         assertEquals(player1, roads.getRoad(newRoadId1).getOwner()); // road should now be owned by the player
-        assertEquals(0, player1.hand.getResourceCardCount()); // player resources should not have changed
+        assertEquals(0, player1.hand.getResourceCount()); // player resources should not have changed
 
 
         // here we make sure that the player has no roads left
@@ -182,54 +138,11 @@ public class F18Test {
         assertEquals(SuccessCode.INSUFFICIENT_RESOURCES, controller.clickedRoad(newRoadId2)); // click should fail because of no roads left
         assertEquals(GameState.DEFAULT, controller.getState()); // ran out of roads, so we exit the flow of logic here
         assertNull(roads.getRoad(newRoadId2).getOwner()); // road should still be unowned
-        assertEquals(0, player1.hand.getResourceCardCount()); // player resources should not have changed
+        assertEquals(0, player1.hand.getResourceCount()); // player resources should not have changed
     }
 
     @Test
     public void testRoadBuildingNoRoadsOnFirst() {
-        // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Here we use beginner game to skip through to the regular gameplay
-        GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
-
-        // other things dependent on these things
-        DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(GameType.Beginner);
-        GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        
-        // Assert that the beginner setup does not time out to kill mutant
-        final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
-        Controller controller = controllerRef.get();
-
-        // -------------------------- Start of Actual Test Stuff ---------------------------
-        // Note: we assume everything about setup was correct because it was tested earlier
-
-        // Note: at this point the players would have gotten some starter resources during the 
-        // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources because the
-        // longest road card doesn't need resources because it is free
-        for (Resource resource: Resource.values()) {
-            if (resource != Resource.ANY) { // skip this one used for trading
-                int count = player1.hand.getResourceCardAmount(resource);
-                if (count > 0) {
-                    player1.hand.removeResource(resource, count);
-                }
-            }
-        }
-        assertEquals(0, player1.hand.getResourceCardCount());
-
         // directly add the card to the hand.
         // Note this is not the same as buying the card which would not allow us to use the card we bought during the turn
         player1.hand.addDevelopmentCard(DevCard.ROAD);
@@ -251,54 +164,11 @@ public class F18Test {
         assertEquals(SuccessCode.INSUFFICIENT_RESOURCES, controller.clickedRoad(newRoadId1)); // click should fai because of lack of roads
         assertEquals(GameState.DEFAULT, controller.getState()); // gameState should reset because flow is killed off
         assertNull(roads.getRoad(newRoadId1).getOwner()); // road should still be unowned
-        assertEquals(0, player1.hand.getResourceCardCount()); // resources should not change
+        assertEquals(0, player1.hand.getResourceCount()); // resources should not change
     }
 
     @Test
     public void testRoadBuildingInvalidOnFirstThenAllGood() {
-        // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Here we use beginner game to skip through to the regular gameplay
-        GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
-
-        // other things dependent on these things
-        DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(GameType.Beginner);
-        GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        
-        // Assert that the beginner setup does not time out to kill mutant
-        final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
-        Controller controller = controllerRef.get();
-
-        // -------------------------- Start of Actual Test Stuff ---------------------------
-        // Note: we assume everything about setup was correct because it was tested earlier
-
-        // Note: at this point the players would have gotten some starter resources during the 
-        // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources because the
-        // longest road card doesn't need resources because it is free
-        for (Resource resource: Resource.values()) {
-            if (resource != Resource.ANY) { // skip this one used for trading
-                int count = player1.hand.getResourceCardAmount(resource);
-                if (count > 0) {
-                    player1.hand.removeResource(resource, count);
-                }
-            }
-        }
-        assertEquals(0, player1.hand.getResourceCardCount());
-
         // directly add the card to the hand.
         // Note this is not the same as buying the card which would not allow us to use the card we bought during the turn
         player1.hand.addDevelopmentCard(DevCard.ROAD);
@@ -317,7 +187,7 @@ public class F18Test {
         assertEquals(GameState.ROAD_BUILDING_1, controller.getState()); // gameState should stay the same
         assertEquals(13, player1.getNumRoads()); // player should still have the same amount of roads
         assertNull(roads.getRoad(newRoadId1).getOwner()); // road should be unowned by the player
-        assertEquals(0, player1.hand.getResourceCardCount()); // player resources should not have changed
+        assertEquals(0, player1.hand.getResourceCount()); // player resources should not have changed
 
 
         // here is the second first click which is valid
@@ -326,7 +196,7 @@ public class F18Test {
         assertEquals(GameState.ROAD_BUILDING_2, controller.getState()); // gameState should move to next road building stage
         assertEquals(12, player1.getNumRoads()); // player should have used a road
         assertEquals(player1, roads.getRoad(newRoadId2).getOwner()); // road should now be owned by the player
-        assertEquals(0, player1.hand.getResourceCardCount()); // player resources should not have changed
+        assertEquals(0, player1.hand.getResourceCount()); // player resources should not have changed
 
 
         // here is the second click which is valid and connects to the road we just built
@@ -335,54 +205,11 @@ public class F18Test {
         assertEquals(GameState.DEFAULT, controller.getState()); // we are done with the building so reset to default
         assertEquals(11, player1.getNumRoads()); // player should have used another road
         assertEquals(player1, roads.getRoad(newRoadId3).getOwner()); // road should now be owned by the player
-        assertEquals(0, player1.hand.getResourceCardCount()); // player resources should not have changed
+        assertEquals(0, player1.hand.getResourceCount()); // player resources should not have changed
     }
 
     @Test
     public void testRoadBuildingInvalidOnSecondThenAllGood() {
-        // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Here we use beginner game to skip through to the regular gameplay
-        GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
-
-        // other things dependent on these things
-        DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(GameType.Beginner);
-        GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        
-        // Assert that the beginner setup does not time out to kill mutant
-        final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
-        Controller controller = controllerRef.get();
-
-        // -------------------------- Start of Actual Test Stuff ---------------------------
-        // Note: we assume everything about setup was correct because it was tested earlier
-
-        // Note: at this point the players would have gotten some starter resources during the 
-        // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources because the
-        // longest road card doesn't need resources because it is free
-        for (Resource resource: Resource.values()) {
-            if (resource != Resource.ANY) { // skip this one used for trading
-                int count = player1.hand.getResourceCardAmount(resource);
-                if (count > 0) {
-                    player1.hand.removeResource(resource, count);
-                }
-            }
-        }
-        assertEquals(0, player1.hand.getResourceCardCount());
-
         // directly add the card to the hand.
         // Note this is not the same as buying the card which would not allow us to use the card we bought during the turn
         player1.hand.addDevelopmentCard(DevCard.ROAD);
@@ -402,7 +229,7 @@ public class F18Test {
         assertEquals(GameState.ROAD_BUILDING_2, controller.getState()); // gameState should move to next road building stage
         assertEquals(12, player1.getNumRoads()); // player should have used a road
         assertEquals(player1, roads.getRoad(newRoadId1).getOwner()); // road should now be owned by the player
-        assertEquals(0, player1.hand.getResourceCardCount()); // player resources should not have changed
+        assertEquals(0, player1.hand.getResourceCount()); // player resources should not have changed
 
 
         // try clicking a road that is invalid
@@ -411,7 +238,7 @@ public class F18Test {
         assertEquals(GameState.ROAD_BUILDING_2, controller.getState()); // gameState should stay the same
         assertEquals(12, player1.getNumRoads()); // player should still have the same amount of roads
         assertNull(roads.getRoad(newRoadId2).getOwner()); // road should be unowned by the player
-        assertEquals(0, player1.hand.getResourceCardCount()); // player resources should not have changed
+        assertEquals(0, player1.hand.getResourceCount()); // player resources should not have changed
 
 
         // here is the second click which is valid and connects to the road we just built
@@ -420,54 +247,11 @@ public class F18Test {
         assertEquals(GameState.DEFAULT, controller.getState()); // we are done with the building so reset to default
         assertEquals(11, player1.getNumRoads()); // player should have used another road
         assertEquals(player1, roads.getRoad(newRoadId3).getOwner()); // road should now be owned by the player
-        assertEquals(0, player1.hand.getResourceCardCount()); // player resources should not have changed
+        assertEquals(0, player1.hand.getResourceCount()); // player resources should not have changed
     }
 
     @Test
     public void testRoadBuildingNoCard() {
-        // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Here we use beginner game to skip through to the regular gameplay
-        GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
-
-        // other things dependent on these things
-        DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(GameType.Beginner);
-        GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        
-        // Assert that the beginner setup does not time out to kill mutant
-        final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
-        Controller controller = controllerRef.get();
-
-        // -------------------------- Start of Actual Test Stuff ---------------------------
-        // Note: we assume everything about setup was correct because it was tested earlier
-
-        // Note: at this point the players would have gotten some starter resources during the 
-        // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources because the
-        // longest road card doesn't need resources because it is free
-        for (Resource resource: Resource.values()) {
-            if (resource != Resource.ANY) { // skip this one used for trading
-                int count = player1.hand.getResourceCardAmount(resource);
-                if (count > 0) {
-                    player1.hand.removeResource(resource, count);
-                }
-            }
-        }
-        assertEquals(0, player1.hand.getResourceCardCount());
-
         // note here we don't give the player the card
 
 

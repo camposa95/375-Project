@@ -5,20 +5,29 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import data.GameLoader;
 import domain.game.GameType;
 import org.easymock.EasyMock;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.player.Player;
 
 public class RoadIsBuildableByTest {
 
+    VertexGraph vertexes;
+    RoadGraph roads;
+    Player mockedPlayer, mockedEnemy;
+
+    @BeforeEach
+    public void setup() {
+        vertexes = new VertexGraph(GameType.Beginner);
+        roads = new RoadGraph();
+        GameLoader.initializeGraphs(roads, vertexes);
+
+        mockedPlayer = EasyMock.createStrictMock(Player.class);
+        mockedEnemy = EasyMock.createStrictMock(Player.class);
+    }
+
     @Test
     public void test0IsBuildableBy() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-        
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-
         // get any road
         Road testRoad = roads.getRoad(0);
 
@@ -37,13 +46,6 @@ public class RoadIsBuildableByTest {
 
     @Test
     public void test1IsBuildableBy() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-        
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-        Player mockedEnemy = EasyMock.createStrictMock(Player.class);
-
         // get any road
         Road testRoad = roads.getRoad(0); 
 
@@ -62,12 +64,6 @@ public class RoadIsBuildableByTest {
 
     @Test
     public void test2IsBuildableBy() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-        
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-
         // get any road
         Road testRoad = roads.getRoad(28); 
         // not occupied
@@ -90,13 +86,6 @@ public class RoadIsBuildableByTest {
 
     @Test
     public void test3IsBuildableBy() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-        
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-        Player mockedEnemy = EasyMock.createStrictMock(Player.class);
-
         // get any road
         Road testRoad = roads.getRoad(28); 
         // not occupied
@@ -116,12 +105,6 @@ public class RoadIsBuildableByTest {
 
     @Test
     public void test4IsBuildableBy() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-        
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-
         // get any road
         Road testRoad = roads.getRoad(28); 
         // is occupied by any player
@@ -145,12 +128,6 @@ public class RoadIsBuildableByTest {
 
     @Test
     public void test5IsBuildableBy() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-        
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-
         // get any road
         Road testRoad = roads.getRoad(28); 
         // not occupied
@@ -174,13 +151,6 @@ public class RoadIsBuildableByTest {
 
     @Test
     public void test6IsBuildableBy() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-        
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-        Player mockedEnemy = EasyMock.createStrictMock(Player.class);
-
         // get any road
         Road testRoad = roads.getRoad(28); 
         // not occupied
@@ -204,13 +174,6 @@ public class RoadIsBuildableByTest {
 
     @Test
     public void test7IsBuildableBy() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-        
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-        Player mockedEnemy = EasyMock.createStrictMock(Player.class);
-
         // get any road
         Road testRoad = roads.getRoad(28); 
         // not occupied
@@ -234,13 +197,6 @@ public class RoadIsBuildableByTest {
 
     @Test
     public void test8IsBuildableBy() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-        
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-        Player mockedEnemy = EasyMock.createStrictMock(Player.class);
-
         // get any road
         Road testRoad = roads.getRoad(28); 
         // not occupied
@@ -264,13 +220,6 @@ public class RoadIsBuildableByTest {
 
     @Test
     public void test9IsBuildableBy() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-        
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-        Player mockedEnemy = EasyMock.createStrictMock(Player.class);
-
         // get any road
         Road testRoad = roads.getRoad(28); 
         // not occupied
@@ -299,13 +248,6 @@ public class RoadIsBuildableByTest {
 
     @Test
     public void test10IsBuildableBy() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-        
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-        Player mockedEnemy = EasyMock.createStrictMock(Player.class);
-
         // get any road
         Road testRoad = roads.getRoad(28); 
         // not occupied
@@ -328,13 +270,6 @@ public class RoadIsBuildableByTest {
 
     @Test
     public void test11IsBuildableBy() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-        
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-        Player mockedEnemy = EasyMock.createStrictMock(Player.class);
-
         // get any road
         Road testRoad = roads.getRoad(28); 
         // not occupied
@@ -364,13 +299,6 @@ public class RoadIsBuildableByTest {
 
     @Test
     public void test12IsBuildableBy() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-        
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-        Player mockedEnemy = EasyMock.createStrictMock(Player.class);
-
         // get any road
         Road testRoad = roads.getRoad(28); 
         // not occupied
@@ -401,12 +329,6 @@ public class RoadIsBuildableByTest {
 
     @Test
     public void test13IsBuildableBy() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-        
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-
         // get any road
         Road testRoad = roads.getRoad(0);
         // not occupied, doesn't connect to friendly road or vertex 

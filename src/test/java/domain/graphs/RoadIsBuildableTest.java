@@ -3,16 +3,22 @@ package domain.graphs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.easymock.EasyMock;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.player.Player;
 
 public class RoadIsBuildableTest {
 
+    RoadGraph roads;
+
+    @BeforeEach
+    public void setup() {
+        roads = new RoadGraph();
+    }
+
     @Test
     public void testRoadIsBuildableIsOccupied() {
-        RoadGraph roads = new RoadGraph();
-
         // get any road it doesn't matter which one
         Road testRoad = roads.getRoad(0);
 
@@ -31,8 +37,6 @@ public class RoadIsBuildableTest {
 
     @Test
     public void testRoadIsBuildableNotOccupied() {
-        RoadGraph roads = new RoadGraph();
-
         // get any road it doesn't matter which one
         Road testRoad = roads.getRoad(0); 
 

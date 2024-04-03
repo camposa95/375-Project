@@ -253,7 +253,7 @@ public class Game implements Restorable {
      */
     @SuppressFBWarnings("PREDICTABLE_RANDOM")
     public void stealFromPlayer(final Player robber, final Player robbed) throws NotEnoughResourcesException {
-        if (robbed.hand.getResourceCardCount() == 0) {
+        if (robbed.hand.getResourceCount() == 0) {
             throw new NotEnoughResourcesException();
         }
         //Get all possible resources
@@ -294,7 +294,7 @@ public class Game implements Restorable {
             throw new CardNotPlayableException();
         }
         for (Player p : playersToRob) {
-            int amount = p.hand.getResourceCardAmount(resourceToRob);
+            int amount = p.hand.getResourceCount(resourceToRob);
             if (amount != 0) {
                 p.hand.removeResource(resourceToRob, amount);
                 robber.hand.addResource(resourceToRob, amount);

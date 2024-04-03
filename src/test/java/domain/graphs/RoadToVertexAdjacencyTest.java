@@ -5,18 +5,25 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import domain.game.GameType;
 import data.GameLoader;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 public class RoadToVertexAdjacencyTest {
 
+    VertexGraph vertexes;
+    RoadGraph roads;
+
+    @BeforeEach
+    public void setup() {
+        vertexes = new VertexGraph(GameType.Beginner);
+        roads = new RoadGraph();
+        GameLoader.initializeGraphs(roads, vertexes);
+    }
+
     @Test
     public void testGetAdjacentVertexesToNIn0Though5() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
         for (int id = 0; id <= 5; id++) {
             Road road = roads.getRoad(id);
 
@@ -34,10 +41,6 @@ public class RoadToVertexAdjacencyTest {
 
     @Test
     public void testGetAdjacentVertexesToNIn6Though9() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
         int i = 0;
         for (int id = 6; id <= 9; id++) {
             Road road = roads.getRoad(id);
@@ -56,10 +59,6 @@ public class RoadToVertexAdjacencyTest {
 
     @Test
     public void testGetAdjacentVertexesToNIn10Though17() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
         for (int id = 10; id <= 17; id++) {
             Road road = roads.getRoad(id);
 
@@ -76,10 +75,6 @@ public class RoadToVertexAdjacencyTest {
 
     @Test
     public void testGetAdjacentVertexesToNIn18Though22() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
         int i = 0;
         for (int id = 18; id <= 22; id++) {
             Road road = roads.getRoad(id);
@@ -98,10 +93,6 @@ public class RoadToVertexAdjacencyTest {
 
     @Test
     public void testGetAdjacentVertexesToNIn23Though32() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
         for (int id = 23; id <= 32; id++) {
             Road road = roads.getRoad(id);
 
@@ -118,10 +109,6 @@ public class RoadToVertexAdjacencyTest {
 
     @Test
     public void testGetAdjacentVertexesToNIn33Though38() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
         int i = 0;
         for (int id = 33; id <= 38; id++) {
             Road road = roads.getRoad(id);
@@ -140,10 +127,6 @@ public class RoadToVertexAdjacencyTest {
 
     @Test
     public void testGetAdjacentVertexesToNIn39Though48() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
         for (int id = 39; id <= 48; id++) {
             Road road = roads.getRoad(id);
 
@@ -160,10 +143,6 @@ public class RoadToVertexAdjacencyTest {
 
     @Test
     public void testGetAdjacentVertexesToNIn49Though53() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
         int i = 0;
         for (int id = 49; id <= 53; id++) {
             Road road = roads.getRoad(id);
@@ -182,10 +161,6 @@ public class RoadToVertexAdjacencyTest {
 
     @Test
     public void testGetAdjacentVertexesToNIn54Though61() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
         for (int id = 54; id <= 61; id++) {
             Road road = roads.getRoad(id);
 
@@ -202,10 +177,6 @@ public class RoadToVertexAdjacencyTest {
 
     @Test
     public void testGetAdjacentVertexesToNIn62Though65() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
         int i = 0;
         for (int id = 62; id <= 65; id++) {
             Road road = roads.getRoad(id);
@@ -224,10 +195,6 @@ public class RoadToVertexAdjacencyTest {
 
     @Test
     public void testGetAdjacentVertexesToNIn66Though71() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
         for (int id = 66; id <= 71; id++) {
             Road road = roads.getRoad(id);
 

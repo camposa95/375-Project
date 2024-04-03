@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import data.GameLoader;
 import domain.game.GameType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -12,11 +13,18 @@ import java.util.List;
 
 public class RoadToRoadAdjacencyTest {
 
+    VertexGraph vertexes;
+    RoadGraph roads;
+
+    @BeforeEach
+    public void setup() {
+        vertexes = new VertexGraph(GameType.Beginner);
+        roads = new RoadGraph();
+        GameLoader.initializeGraphs(roads, vertexes);
+    }
+
     @Test
     public void testGetAdjacentRoadsTo0() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Road road = roads.getRoad(0);
 
         List<Road> expectedRoads = new ArrayList<>();
@@ -33,9 +41,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsToNIn1and3() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {1, 3};
 
         int i = 0;
@@ -61,9 +66,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsToNIn2and4() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {2, 4};
 
         int i = 0;
@@ -89,9 +91,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo5() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Road road = roads.getRoad(5);
 
         List<Road> expectedRoads = new ArrayList<>();
@@ -109,9 +108,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo6() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Road road = roads.getRoad(6);
 
         List<Road> expectedRoads = new ArrayList<>();
@@ -130,9 +126,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsToNIn7and8() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {7, 8};
 
         int i = 0;
@@ -159,9 +152,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo9() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Road road = roads.getRoad(9);
 
         List<Road> expectedRoads = new ArrayList<>();
@@ -179,9 +169,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo10() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Road road = roads.getRoad(10);
 
 
@@ -200,9 +187,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsToNIn11and13and15() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {11, 13, 15};
 
         int i = 0;
@@ -228,9 +212,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsToNIn12and14and16() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {12, 14, 16};
 
         int i = 0;
@@ -256,9 +237,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo17() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Road road = roads.getRoad(17);
 
         List<Road> expectedRoads = new ArrayList<>();
@@ -276,9 +254,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo18() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Road road = roads.getRoad(18);
 
         List<Road> expectedRoads = new ArrayList<>();
@@ -296,9 +271,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsToNIn19and20and21() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {19, 20, 21};
 
         int i = 0;
@@ -325,9 +297,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo22() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Road road = roads.getRoad(22);
 
 
@@ -346,9 +315,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo23() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Road road = roads.getRoad(23);
 
 
@@ -367,9 +333,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsToNIn24and26and28and30() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {24, 26, 28, 30};
 
         int i = 0;
@@ -396,9 +359,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsToNIn25and27and29and31() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {25, 27, 29, 31};
 
         int i = 0;
@@ -424,9 +384,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo32() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Road road = roads.getRoad(32);
 
         List<Road> expectedRoads = new ArrayList<>();
@@ -444,9 +401,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo33() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Road road = roads.getRoad(33);
 
         List<Road> expectedRoads = new ArrayList<>();
@@ -463,9 +417,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsToNIn34and35and36and37() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {34, 35, 36, 37};
 
         int i = 0;
@@ -491,9 +442,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo38() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Road road = roads.getRoad(38);
 
         List<Road> expectedRoads = new ArrayList<>();
@@ -510,9 +458,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo39() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Road road = roads.getRoad(39);
 
         List<Road> expectedRoads = new ArrayList<>();
@@ -530,9 +475,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsToNIn40and42and44and46() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {40, 42, 44, 46};
 
         int i = 0;
@@ -558,9 +500,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsToNIn41and43and45and47() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {41, 43, 45, 47};
 
         int i = 0;
@@ -586,9 +525,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo48() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Road road = roads.getRoad(48);
 
         List<Road> expectedRoads = new ArrayList<>();
@@ -606,9 +542,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo49() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Road road = roads.getRoad(49);
 
         List<Road> expectedRoads = new ArrayList<>();
@@ -626,9 +559,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsToNIn50and51and52() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {50, 51, 52};
 
         int i = 0;
@@ -654,9 +584,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo53() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Road road = roads.getRoad(53);
 
         List<Road> expectedRoads = new ArrayList<>();
@@ -674,9 +601,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo54() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Road road = roads.getRoad(54);
 
         List<Road> expectedRoads = new ArrayList<>();
@@ -694,9 +618,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsToNIn55and57and59() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {55, 57, 59};
 
         int i = 0;
@@ -722,9 +643,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsToNIn56and58and60() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {56, 58, 60};
 
         int i = 0;
@@ -750,9 +668,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo61() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Road road = roads.getRoad(61);
 
         List<Road> expectedRoads = new ArrayList<>();
@@ -770,9 +685,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo62() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Road road = roads.getRoad(62);
 
         List<Road> expectedRoads = new ArrayList<>();
@@ -790,9 +702,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsToNIn63and64() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {63, 64};
 
         int i = 0;
@@ -818,9 +727,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo65() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Road road = roads.getRoad(65);
 
         List<Road> expectedRoads = new ArrayList<>();
@@ -838,9 +744,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo66() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Road road = roads.getRoad(66);
 
         List<Road> expectedRoads = new ArrayList<>();
@@ -857,9 +760,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsToNIn67and69() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {67, 69};
 
         int i = 0;
@@ -884,9 +784,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsToNIn68and70() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         final int[] ids = {68, 70};
 
         int i = 0;
@@ -911,9 +808,6 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo71() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Road road = roads.getRoad(71);
 
         List<Road> expectedRoads = new ArrayList<>();

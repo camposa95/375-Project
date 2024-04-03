@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.easymock.EasyMock;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.game.Game;
@@ -13,18 +14,28 @@ import domain.bank.Resource;
 
 public class TradePlayerTest {
 
+    Game mockedGame;
+    Player mockedPlayer, mockedTradePartner;
+    Player[] players;
+    Controller controller;
+
+    @BeforeEach
+    public void setupMocks() {
+        mockedGame = EasyMock.createStrictMock(Game.class);
+        GameType gameType = GameType.Advanced;
+
+        mockedPlayer = EasyMock.createStrictMock(Player.class);
+        mockedTradePartner = EasyMock.createStrictMock(Player.class);
+
+        players = new Player[]{mockedPlayer, mockedTradePartner};
+
+        controller = new Controller(mockedGame, players, gameType);
+    }
+
     @Test
     public void testTradePlayer_1Each() {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-        Player mockedTradePartner = EasyMock.createStrictMock(Player.class);
-        GameType gameType = GameType.Advanced;
         Resource[] giving = {Resource.BRICK};
         Resource[] receiving = {Resource.GRAIN};
-
-        Player[] players = {mockedPlayer, mockedTradePartner};
-        Controller controller = new Controller(mockedGame, players, gameType);
-
 
         // Expect
         EasyMock.expect(mockedPlayer.tradeResources(mockedTradePartner, giving, receiving)).andReturn(true);
@@ -39,15 +50,8 @@ public class TradePlayerTest {
 
     @Test
     public void testTradePlayer_SamePlayer() {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-        GameType gameType = GameType.Advanced;
         Resource[] giving = {Resource.BRICK};
         Resource[] receiving = {Resource.GRAIN};
-
-        Player[] players = {mockedPlayer};
-        Controller controller = new Controller(mockedGame, players, gameType);
-
 
         // Expect
 
@@ -60,16 +64,8 @@ public class TradePlayerTest {
 
     @Test
     public void testTradePlayer_BothEmpty() {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-        Player mockedTradePartner = EasyMock.createStrictMock(Player.class);
-        GameType gameType = GameType.Advanced;
         Resource[] giving = new Resource[0];
         Resource[] receiving = new Resource[0];
-
-        Player[] players = {mockedPlayer, mockedTradePartner};
-        Controller controller = new Controller(mockedGame, players, gameType);
-
 
         // Expect
 
@@ -83,16 +79,8 @@ public class TradePlayerTest {
 
     @Test
     public void testTradePlayer_NoGiving() {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-        Player mockedTradePartner = EasyMock.createStrictMock(Player.class);
-        GameType gameType = GameType.Advanced;
         Resource[] giving = new Resource[0];
         Resource[] receiving = {Resource.GRAIN};
-
-        Player[] players = {mockedPlayer, mockedTradePartner};
-        Controller controller = new Controller(mockedGame, players, gameType);
-
 
         // Expect
 
@@ -106,16 +94,8 @@ public class TradePlayerTest {
 
     @Test
     public void testTradePlayer_NoReceiving() {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-        Player mockedTradePartner = EasyMock.createStrictMock(Player.class);
-        GameType gameType = GameType.Advanced;
         Resource[] receiving = new Resource[0];
         Resource[] giving = {Resource.GRAIN};
-
-        Player[] players = {mockedPlayer, mockedTradePartner};
-        Controller controller = new Controller(mockedGame, players, gameType);
-
 
         // Expect
 
@@ -129,15 +109,8 @@ public class TradePlayerTest {
 
     @Test
     public void testTradePlayer_ManyGiving_NotEnough() {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-        Player mockedTradePartner = EasyMock.createStrictMock(Player.class);
-        GameType gameType = GameType.Advanced;
         Resource[] giving = {Resource.BRICK, Resource.GRAIN, Resource.ORE};
         Resource[] receiving = {Resource.GRAIN};
-
-        Player[] players = {mockedPlayer, mockedTradePartner};
-        Controller controller = new Controller(mockedGame, players, gameType);
 
         // Expect
         EasyMock.expect(mockedPlayer.tradeResources(mockedTradePartner, giving, receiving)).andReturn(false);
@@ -152,15 +125,8 @@ public class TradePlayerTest {
 
     @Test
     public void testTradePlayer_ManyReceiving_NotEnough() {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-        Player mockedTradePartner = EasyMock.createStrictMock(Player.class);
-        GameType gameType = GameType.Advanced;
         Resource[] receiving = {Resource.BRICK, Resource.GRAIN, Resource.ORE};
         Resource[] giving = {Resource.GRAIN};
-
-        Player[] players = {mockedPlayer, mockedTradePartner};
-        Controller controller = new Controller(mockedGame, players, gameType);
 
         // Expect
         EasyMock.expect(mockedPlayer.tradeResources(mockedTradePartner, giving, receiving)).andReturn(false);

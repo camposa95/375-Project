@@ -64,7 +64,7 @@ public class Hand implements Restorable {
         return true;
     }
 
-    public int getResourceCardCount() {
+    public int getResourceCount() {
         return hand.get(Resource.LUMBER)
                 + hand.get(Resource.BRICK)
                 + hand.get(Resource.WOOL)
@@ -121,7 +121,15 @@ public class Hand implements Restorable {
         return true;
     }
 
-    public int getResourceCardAmount(final Resource resource) {
+    public void clearResources() {
+        hand.put(Resource.LUMBER, 0);
+        hand.put(Resource.BRICK, 0);
+        hand.put(Resource.WOOL, 0);
+        hand.put(Resource.GRAIN, 0);
+        hand.put(Resource.ORE, 0);
+    }
+
+    public int getResourceCount(final Resource resource) {
         return this.hand.get(resource);
     }
 

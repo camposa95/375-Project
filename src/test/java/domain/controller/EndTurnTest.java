@@ -1,6 +1,7 @@
 package domain.controller;
 
 import org.easymock.EasyMock;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.game.Game;
@@ -10,24 +11,31 @@ import domain.player.Player;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class EndTurnTest {
-    
-    @Test
-    public void testEndTurnSuccess() {
 
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
+    Game mockedGame;
+    Player mockedPlayer1, mockedPlayer2, mockedPlayer3;
+    Player[] players;
+    Controller controller;
+
+    @BeforeEach
+    public void setup() {
+        mockedGame = EasyMock.createStrictMock(Game.class);
         GameType gameType = GameType.Advanced;
 
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player[] players = {mockedPlayer1, mockedPlayer2, mockedPlayer3};
+        mockedPlayer1 = EasyMock.createStrictMock(Player.class);
+        mockedPlayer2 = EasyMock.createStrictMock(Player.class);
+        mockedPlayer3 = EasyMock.createStrictMock(Player.class);
+        players = new Player[]{mockedPlayer1, mockedPlayer2, mockedPlayer3};
 
         // setting up the controller
-        Controller controller = new Controller(mockedGame, players, gameType);
+        controller = new Controller(mockedGame, players, gameType);
         controller.setState(GameState.DEFAULT);
         controller.setCurrentPlayer(mockedPlayer1);
         controller.setDevCardsEnabled(false);
-
+    }
+    
+    @Test
+    public void testEndTurnSuccess() {
         // expect this to be called
         mockedPlayer1.addBoughtCardsToHand();
 
@@ -48,21 +56,7 @@ public class EndTurnTest {
 
     @Test
     public void testEndTurnFailure() {
-
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player[] players = {mockedPlayer1, mockedPlayer2, mockedPlayer3};
-
-        // setting up the controller
-        Controller controller = new Controller(mockedGame, players, gameType);
-        controller.setState(GameState.BUILD_ROAD);
-        controller.setCurrentPlayer(mockedPlayer1);
-        controller.setDevCardsEnabled(false);
-
+        controller.setState(GameState.BUILD_ROAD); // non default
         // method call
         SuccessCode actualCode = controller.endTurn();
 
@@ -75,21 +69,6 @@ public class EndTurnTest {
 
     @Test
     public void testEndTurnNextPlayerWin() {
-
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player[] players = {mockedPlayer1, mockedPlayer2, mockedPlayer3};
-
-        // setting up the controller
-        Controller controller = new Controller(mockedGame, players, gameType);
-        controller.setState(GameState.DEFAULT);
-        controller.setCurrentPlayer(mockedPlayer1);
-        controller.setDevCardsEnabled(false);
-
         // expect this to be called
         mockedPlayer1.addBoughtCardsToHand();
         // next player already has enough points to win

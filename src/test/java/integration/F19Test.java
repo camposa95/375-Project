@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import data.GameLoader;
 import domain.player.HarvestBooster;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.controller.Controller;
@@ -30,53 +31,50 @@ import domain.graphs.VertexGraph;
  *      from the bank for free when they play this card during their turn.
  */
 public class F19Test {
-    
-    @Test
-    public void testYearOfPlentyAllGood() {
-        // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Here we use beginner game to skip through to the regular gameplay
+
+    VertexGraph vertexes;
+    RoadGraph roads;
+    Bank bank;
+    Player player1;
+    Player player2;
+    Player player3;
+    Player player4;
+    Player[] players;
+    Controller controller;
+
+    @BeforeEach
+    public void createGameObjects() {
         GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
+        vertexes = new VertexGraph(gameType);
+        roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
+        bank = new Bank();
+        player1 = new Player(1, new HarvestBooster(), bank);
+        player2 = new Player(2, new HarvestBooster(), bank);
+        player3 = new Player(3, new HarvestBooster(), bank);
+        player4 = new Player(4, new HarvestBooster(), bank);
+        players = new Player[]{player1, player2, player3, player4};
 
         // other things dependent on these things
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
         Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        bank.reset();
-        
+
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
         Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
-        Controller controller = controllerRef.get();
+        controller = controllerRef.get();
 
-        // -------------------------- Start of Actual Test Stuff ---------------------------
-        // Note: we assume everything about setup was correct because it was tested earlier
-
-        // Note: at this point the players would have gotten some starter resources during the 
-        // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources because the
-        // longest road card doesn't need resources because it is free
-        for (Resource resource: Resource.values()) {
-            if (resource != Resource.ANY) { // skip this one used for trading
-                int count = player1.hand.getResourceCardAmount(resource);
-                if (count > 0) {
-                    player1.hand.removeResource(resource, count);
-                }
-            }
+        for (Player p: players) {
+            p.hand.clearResources();
         }
-        assertEquals(0, player1.hand.getResourceCardCount());
-
+        bank.reset();
+    }
+    
+    @Test
+    public void testYearOfPlentyAllGood() {
         // directly add the card to the hand.
         // Note this is not the same as buying the card which would not allow us to use the card we bought during the turn
         player1.hand.addDevelopmentCard(DevCard.PLENTY);
@@ -88,8 +86,8 @@ public class F19Test {
         assertEquals(SuccessCode.SUCCESS, controller.playYearOfPlenty(resource1, resource2));
 
         // assert we got the resources
-        assertEquals(1, player1.hand.getResourceCardAmount(resource1));
-        assertEquals(1, player1.hand.getResourceCardAmount(resource2));
+        assertEquals(1, player1.hand.getResourceCount(resource1));
+        assertEquals(1, player1.hand.getResourceCount(resource2));
 
         // assert we used the card
         assertEquals(0, player1.hand.devCards.get(DevCard.PLENTY));
@@ -97,49 +95,6 @@ public class F19Test {
 
     @Test
     public void testYearOfPlentyNoCard() {
-        // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Here we use beginner game to skip through to the regular gameplay
-        GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
-
-        // other things dependent on these things
-        DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(GameType.Beginner);
-        GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        
-        // Assert that the beginner setup does not time out to kill mutant
-        final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
-        Controller controller = controllerRef.get();
-
-        // -------------------------- Start of Actual Test Stuff ---------------------------
-        // Note: we assume everything about setup was correct because it was tested earlier
-
-        // Note: at this point the players would have gotten some starter resources during the 
-        // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources because the
-        // longest road card doesn't need resources because it is free
-        for (Resource resource: Resource.values()) {
-            if (resource != Resource.ANY) { // skip this one used for trading
-                int count = player1.hand.getResourceCardAmount(resource);
-                if (count > 0) {
-                    player1.hand.removeResource(resource, count);
-                }
-            }
-        }
-        assertEquals(0, player1.hand.getResourceCardCount());
-
         // don't give the player the card
         // player1.hand.addDevelopmentCard(DevCard.PLENTY);
 
@@ -150,55 +105,12 @@ public class F19Test {
         assertEquals(SuccessCode.CANNOT_PLAY_CARD, controller.playYearOfPlenty(resource1, resource2));
 
         // assert we got the
-        assertEquals(0, player1.hand.getResourceCardAmount(resource1));
-        assertEquals(0, player1.hand.getResourceCardAmount(resource2));
+        assertEquals(0, player1.hand.getResourceCount(resource1));
+        assertEquals(0, player1.hand.getResourceCount(resource2));
     }
 
     @Test
     public void testYearOfPlentyBankEmpty() {
-        // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Here we use beginner game to skip through to the regular gameplay
-        GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
-
-        // other things dependent on these things
-        DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(GameType.Beginner);
-        GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        
-        // Assert that the beginner setup does not time out to kill mutant
-        final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
-        Controller controller = controllerRef.get();
-
-        // -------------------------- Start of Actual Test Stuff ---------------------------
-        // Note: we assume everything about setup was correct because it was tested earlier
-
-        // Note: at this point the players would have gotten some starter resources during the 
-        // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources because the
-        // longest road card doesn't need resources because it is free
-        for (Resource resource: Resource.values()) {
-            if (resource != Resource.ANY) { // skip this one used for trading
-                int count = player1.hand.getResourceCardAmount(resource);
-                if (count > 0) {
-                    player1.hand.removeResource(resource, count);
-                }
-            }
-        }
-        assertEquals(0, player1.hand.getResourceCardCount());
-
         // directly add the card to the hand.
         // Note this is not the same as buying the card which would not allow us to use the card we bought during the turn
         player1.hand.addDevelopmentCard(DevCard.PLENTY);
@@ -214,8 +126,8 @@ public class F19Test {
         assertEquals(SuccessCode.INSUFFICIENT_RESOURCES, controller.playYearOfPlenty(resource1, resource2));
 
         // assert we did not get the resources
-        assertEquals(0, player1.hand.getResourceCardAmount(resource1));
-        assertEquals(0, player1.hand.getResourceCardAmount(resource2));
+        assertEquals(0, player1.hand.getResourceCount(resource1));
+        assertEquals(0, player1.hand.getResourceCount(resource2));
 
         // assert did not use the card because it failed
         assertEquals(1, player1.hand.devCards.get(DevCard.PLENTY));

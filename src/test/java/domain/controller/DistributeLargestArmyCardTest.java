@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.easymock.EasyMock;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.game.Game;
@@ -13,18 +14,27 @@ import domain.player.Player;
 
 public class DistributeLargestArmyCardTest {
 
+    Game mockedGame;
+    Player mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4;
+    Player[] players;
+    Controller controller;
+    @BeforeEach
+    public void createMocks() {
+        mockedGame = EasyMock.createMock(Game.class);
+        GameType gameType = GameType.Advanced;
+
+        mockedPlayer1 = EasyMock.createMock(Player.class);
+        mockedPlayer2 = EasyMock.createMock(Player.class);
+        mockedPlayer3 = EasyMock.createMock(Player.class);
+        mockedPlayer4 = EasyMock.createMock(Player.class);
+
+        players = new Player[]{mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4};
+
+        controller = new Controller(mockedGame, players, gameType);
+    }
+    
     @Test
     public void testLargestArmyNoOneGetsIt() {
-        Game mockedGame = EasyMock.createMock(Game.class);
-        Player mockedPlayer1 = EasyMock.createMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createMock(Player.class);
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-        Controller controller = new Controller(mockedGame, players, GameType.Advanced);
-
-        // set up our expectations
-
         // no one already has the largest army card
         EasyMock.expect(mockedPlayer1.hasLargestArmy()).andReturn(false);
         EasyMock.expect(mockedPlayer2.hasLargestArmy()).andReturn(false);
@@ -48,16 +58,6 @@ public class DistributeLargestArmyCardTest {
 
     @Test
     public void testLargestArmyFirstPlayerGetsIt() {
-        Game mockedGame = EasyMock.createMock(Game.class);
-        Player mockedPlayer1 = EasyMock.createMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createMock(Player.class);
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-        Controller controller = new Controller(mockedGame, players, GameType.Advanced);
-
-        // set up our expectations
-
         // no one already has the largest army card
         EasyMock.expect(mockedPlayer1.hasLargestArmy()).andReturn(false);
         EasyMock.expect(mockedPlayer2.hasLargestArmy()).andReturn(false);
@@ -82,16 +82,6 @@ public class DistributeLargestArmyCardTest {
 
     @Test
     public void testLargestArmyFirstPlayerGetsTied() {
-        Game mockedGame = EasyMock.createMock(Game.class);
-        Player mockedPlayer1 = EasyMock.createMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createMock(Player.class);
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-        Controller controller = new Controller(mockedGame, players, GameType.Advanced);
-
-        // set up our expectations
-
         // no one already has the largest army card
         EasyMock.expect(mockedPlayer1.hasLargestArmy()).andReturn(false);
         EasyMock.expect(mockedPlayer2.hasLargestArmy()).andReturn(false);
@@ -115,16 +105,6 @@ public class DistributeLargestArmyCardTest {
 
     @Test
     public void testLargestArmyFirstPlayerGetsOvertaken() {
-        Game mockedGame = EasyMock.createMock(Game.class);
-        Player mockedPlayer1 = EasyMock.createMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createMock(Player.class);
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-        Controller controller = new Controller(mockedGame, players, GameType.Advanced);
-
-        // set up our expectations
-
         // no one already has the largest army card
         EasyMock.expect(mockedPlayer1.hasLargestArmy()).andReturn(false);
         EasyMock.expect(mockedPlayer2.hasLargestArmy()).andReturn(false);

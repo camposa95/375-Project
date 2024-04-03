@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.Arrays;
 
 import data.GameLoader;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.game.GameType;
@@ -16,11 +17,18 @@ public class GetPortTest {
     private static final int MIN_LOCATION_ID = 0;
     private static final int MAX_LOCATION_ID = 8;
 
+    VertexGraph vertexes;
+    RoadGraph roads;
+
+    @BeforeEach
+    public void setup() {
+        vertexes = new VertexGraph(GameType.Beginner);
+        roads = new RoadGraph();
+        GameLoader.initializeGraphs(roads, vertexes);
+    }
+
     @Test
     public void getPortWithLocationId0() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Port port = vertexes.getPort(MIN_LOCATION_ID);
 
         int actualId = port.getLocationId();
@@ -34,9 +42,6 @@ public class GetPortTest {
 
     @Test
     public void getPortWithLocationId1() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Port port = vertexes.getPort(1);
 
         int expectedId = 1;
@@ -51,9 +56,6 @@ public class GetPortTest {
 
     @Test
     public void getPortWithLocationId2() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Port port = vertexes.getPort(2);
 
         int expectedId = 2;
@@ -68,9 +70,6 @@ public class GetPortTest {
 
     @Test
     public void getPortWithLocationId3() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Port port = vertexes.getPort(3);
 
         int expectedId = 3;
@@ -85,9 +84,6 @@ public class GetPortTest {
 
     @Test
     public void getPortWithLocationId4() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Port port = vertexes.getPort(4);
 
         int expectedId = 4;
@@ -99,12 +95,9 @@ public class GetPortTest {
         assertEquals(expectedId, actualId);
         assertEquals(expectedResource, actualResource);
     }
-    
+
     @Test
     public void getPortWithLocationId5() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Port port = vertexes.getPort(5);
 
         int expectedId = 5;
@@ -119,9 +112,6 @@ public class GetPortTest {
 
     @Test
     public void getPortWithLocationId6() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Port port = vertexes.getPort(6);
 
         int expectedId = 6;
@@ -136,9 +126,6 @@ public class GetPortTest {
 
     @Test
     public void getPortWithLocationId7() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Port port = vertexes.getPort(7);
 
         int expectedId = 7;
@@ -153,9 +140,6 @@ public class GetPortTest {
 
     @Test
     public void getPortWithLocationId8() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
         Port port = vertexes.getPort(8);
 
         int expectedId = 8;
@@ -192,15 +176,11 @@ public class GetPortTest {
 
     @Test
     public void test_RandomPorts() {
-        VertexGraph basicPorts = new VertexGraph(GameType.Beginner);
-        RoadGraph roads1 = new RoadGraph();
-        GameLoader.initializeGraphs(roads1, basicPorts);
-
         VertexGraph randomPorts = new VertexGraph(GameType.Advanced);
         RoadGraph roads2 = new RoadGraph();
         GameLoader.initializeGraphs(roads2, randomPorts);
 
-        assertEquals(basicPorts.getOrder().length, randomPorts.getOrder().length);
-        assertFalse(Arrays.equals(basicPorts.getOrder(), randomPorts.getOrder()));
+        assertEquals(vertexes.getOrder().length, randomPorts.getOrder().length);
+        assertFalse(Arrays.equals(vertexes.getOrder(), randomPorts.getOrder()));
     }
 }
