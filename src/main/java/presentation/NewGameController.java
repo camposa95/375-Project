@@ -34,7 +34,7 @@ public class NewGameController {
 
     @FXML
     public void startGame() throws IOException {
-        if(playersSelector.getValue() == null || gameModeSelector.getValue() == null || languageSelector.getValue() == null) {
+        if (playersSelector.getValue() == null || gameModeSelector.getValue() == null || languageSelector.getValue() == null) {
             return;
         }
 

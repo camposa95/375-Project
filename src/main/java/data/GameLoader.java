@@ -112,6 +112,11 @@ public class GameLoader {
         }
     }
 
+    public ResourceBundle setLanguage(String language) {
+        this.language = language;
+        return this.getMessageBundle();
+    }
+
     @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     public boolean saveGame() {
         // Create a File object representing the base folder
