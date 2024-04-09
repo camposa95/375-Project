@@ -1,6 +1,12 @@
-package gamedatastructures;
+package domain.game;
 
-public class Building {
+import data.*;
+import domain.bank.Resource;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import java.io.File;
+
+public class Building implements Restorable {
     private boolean isCity;
     protected DistrictType district;
 
@@ -42,5 +48,50 @@ public class Building {
 
     public boolean isCity() {
         return this.isCity;
+    }
+
+    @Override
+    public Memento createMemento() {
+        return new BuildingMemento();
+    }
+
+    public class BuildingMemento implements Memento {
+        private boolean isCity;
+        private DistrictType district;
+
+        private static final String TARGET_FILE_NAME = "building.txt";
+        private static final String IS_CITY = "IsCity";
+        private static final String DISTRICT = "District";
+
+        private BuildingMemento() {
+            this.isCity = Building.this.isCity;
+            this.district = Building.this.district;
+        }
+
+        @SuppressFBWarnings("EI_EXPOSE_REP2")
+        public BuildingMemento(final File folder) {
+            // Create a MementoReader for reading memento data
+            MementoReader reader = new MementoReader(folder, TARGET_FILE_NAME);
+
+            // Read simple fields from the file
+            this.isCity = Boolean.parseBoolean(reader.readField(IS_CITY));
+            this.district = DistrictType.valueOf(reader.readField(DISTRICT));
+        }
+
+        @Override
+        public void save(File folder) throws SaveException {
+            // Create a MementoWriter for writing memento data
+            MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
+
+            // Write simple fields to the file
+            writer.writeField(DISTRICT, district.toString());
+            writer.writeField(IS_CITY, Boolean.toString(isCity));
+        }
+
+        @Override
+        public void restore() {
+            Building.this.isCity = this.isCity;
+            Building.this.district = this.district;
+        }
     }
 }

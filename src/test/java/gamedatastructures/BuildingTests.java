@@ -1,5 +1,8 @@
 package gamedatastructures;
 
+import domain.bank.Resource;
+import domain.game.Building;
+import domain.game.DistrictType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -175,6 +178,6 @@ public class BuildingTests {
         Building building = new Building();
         building.buildDistrict(DistrictType.MINE);
 
-        Assertions.assertEquals(DistrictType.MINE, building.district);
+        Assertions.assertEquals(DistrictType.MINE, building.getDistrict());
     }
 }

@@ -2,13 +2,12 @@ package graphs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import gamedatastructures.Building;
-import gamedatastructures.DistrictType;
+import domain.game.DistrictType;
+import domain.graphs.Vertex;
+import domain.player.Player;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import gamedatastructures.Player;
 
 public class VertexUpgradesTest {
     @Test
@@ -131,13 +130,12 @@ public class VertexUpgradesTest {
         Player mockedEnemy = EasyMock.createStrictMock(Player.class);
 
         testVertex.setOwner(mockedPlayer);
-        testVertex.building = new Building();
 
         EasyMock.replay(mockedPlayer, mockedEnemy);
         testVertex.buildDistrict(mockedPlayer, DistrictType.MINE);
         EasyMock.verify(mockedPlayer, mockedEnemy);
 
-        assertEquals(DistrictType.MINE, testVertex.building.getDistrict());
+        assertEquals(DistrictType.MINE, testVertex.getBuilding().getDistrict());
     }
 
     @Test
@@ -151,7 +149,6 @@ public class VertexUpgradesTest {
         Player mockedEnemy = EasyMock.createStrictMock(Player.class);
 
         testVertex.setOwner(mockedEnemy);
-        testVertex.building = new Building();
 
         EasyMock.replay(mockedPlayer, mockedEnemy);
         Assertions.assertThrows(IllegalArgumentException.class, () -> testVertex.buildDistrict(mockedPlayer, DistrictType.MINE));

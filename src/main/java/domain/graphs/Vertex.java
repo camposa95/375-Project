@@ -1,11 +1,11 @@
 package domain.graphs;
 
 import data.*;
+import domain.bank.Resource;
+import domain.game.Building;
+import domain.game.DistrictType;
+import domain.game.Game;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import gamedatastructures.DistrictType;
-import gamedatastructures.Player;
-import gamedatastructures.Resource;
-import gamedatastructures.Building;
 import domain.player.Player;
 
 import java.io.File;
@@ -43,6 +43,7 @@ public class Vertex implements Restorable {
         this.portInitialized = false;
         this.adjacentVertexesInitialized = false;
         this.adjacentRoadsInitialized = false;
+        this.building = new Building();
     }
 
     /**
@@ -207,7 +208,6 @@ public class Vertex implements Restorable {
      */
     public void build(final Player player) {
         setOwner(player);
-        this.building = new Building();
         if (hasPort()) {
             player.addTradeBoost(getAdjacentPort().getResource());
         }
@@ -278,7 +278,7 @@ public class Vertex implements Restorable {
     }
 
     public boolean isCity() {
-        return (building == null) ? false : building.isCity();
+        return building.isCity();
     }
 
     /**
@@ -300,12 +300,6 @@ public class Vertex implements Restorable {
         }
     }
 
-    // ONLY FOR TESTING PURPOSES
-    protected void setBuildingToCity() {
-        this.building = new Building();
-        this.building.upgradeToCity();
-    }
-
     public void buildDistrict(final Player player, final DistrictType type) {
         if (canBuildDistrict(player)) {
             this.building.buildDistrict(type);
@@ -320,6 +314,7 @@ public class Vertex implements Restorable {
 
     public Building getBuilding() {
         return this.building;
+    }
 
     /**
      * Helper that tells us if this vertex is owned by an enemy of the given player
@@ -333,6 +328,11 @@ public class Vertex implements Restorable {
         return this.getOwner() != player;
     }
 
+    // ONLY FOR TESTING
+    public void setBuildingToCity() {
+        this.building.upgradeToCity();
+    }
+
     // -----------------------------------
     //
     // Restorable implementation
@@ -341,18 +341,20 @@ public class Vertex implements Restorable {
 
     public class VertexMemento implements Memento {
         private final Player owner; // terminal here
-        private final boolean isCity;
+
+        // sub memento stuff
+        String BUILDING_SUBFOLDER_NAME = "Building";
+        private final Memento buildingMemento;
 
         // Storage Constants
         private static final String TARGET_FILE_NAME = "vertex.txt";
 
         // Field Keys
         private static final String OWNER = "Owner";
-        private static final String IS_CITY = "IsCity";
 
         private VertexMemento() {
-            this.isCity = Vertex.this.isCity;
             this.owner = Vertex.this.owner;
+            this.buildingMemento = Vertex.this.building.createMemento();
         }
 
         @SuppressFBWarnings("EI_EXPOSE_REP2")
@@ -362,7 +364,9 @@ public class Vertex implements Restorable {
 
             // Read simple fields from the file
             this.owner = parseOwner(reader.readField(OWNER));
-            this.isCity = Boolean.parseBoolean(reader.readField(IS_CITY));
+
+            File buildingSubFolder = reader.getSubFolder(BUILDING_SUBFOLDER_NAME);
+            this.buildingMemento = Vertex.this.building.new BuildingMemento(buildingSubFolder);
         }
 
         private Player parseOwner(final String ownerString) {
@@ -383,13 +387,16 @@ public class Vertex implements Restorable {
 
             // Write simple fields to the file
             writer.writeField(OWNER, owner != null ? owner.toString() : "None");
-            writer.writeField(IS_CITY, Boolean.toString(isCity));
+
+            File buildingSubFolder = writer.getSubFolder(BUILDING_SUBFOLDER_NAME);
+            this.buildingMemento.save(buildingSubFolder);
         }
 
         public void restore() {
             // Restore simple fields
-            Vertex.this.isCity = this.isCity;
             Vertex.this.owner = this.owner;
+
+            buildingMemento.restore();
         }
     }
 

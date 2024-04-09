@@ -1,6 +1,6 @@
-package gamedatastructures;
+package domain.game;
 
-import gamedatastructures.Resource;
+import domain.bank.Resource;
 
 public enum DistrictType {
     EMPTY(new Resource[0], Resource.ANY),

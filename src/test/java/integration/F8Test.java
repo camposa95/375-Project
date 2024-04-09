@@ -92,7 +92,7 @@ public class F8Test {
         assertEquals(4, player1.getNumSettlements()); // player should have gained back a settlement
         assertEquals(3, player1.getNumCities()); // player should have used a city
         assertEquals(3, player1.getVictoryPoints()); // player should have gained a victory point
-        assertTrue(vertexes.getVertex(newVertexId).getIsCity()); // Vertex is now a city
+        assertTrue(vertexes.getVertex(newVertexId).getBuilding().isCity()); // Vertex is now a city
         assertEquals(0, player1.hand.getResourceCardCount()); // player should have used the resources
     }
 
@@ -223,7 +223,7 @@ public class F8Test {
         assertEquals(4, player1.getNumCities()); // player doesn't use a city
         assertEquals(2, player1.getVictoryPoints()); // player should not have gained a victory point
         assertEquals(player2, vertexes.getVertex(newVertexId).getOwner()); // Vertex is still owned by player 2
-        assertFalse(vertexes.getVertex(newVertexId).getIsCity()); // vertex is still only a settlement
+        assertFalse(vertexes.getVertex(newVertexId).getBuilding().isCity()); // vertex is still only a settlement
         assertEquals(5, player1.hand.getResourceCardCount()); // player should not have used the resources
     }
 
@@ -288,6 +288,6 @@ public class F8Test {
         assertEquals(3, player1.getNumSettlements()); // player settlements stay the same
         assertEquals(4, player1.getNumCities()); // player doesn't use a city
         assertEquals(2, player1.getVictoryPoints()); // player should not have gained a victory point
-        assertFalse(vertexes.getVertex(newVertexId).getIsCity()); // vertex is still only a settlement
+        assertFalse(vertexes.getVertex(newVertexId).getBuilding().isCity()); // vertex is still only a settlement
     }
 }
