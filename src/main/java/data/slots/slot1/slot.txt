@@ -1,3 +1,0 @@
-gameType: Beginner
-numPlayers: 4
-language: English

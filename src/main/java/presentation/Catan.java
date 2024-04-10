@@ -17,6 +17,7 @@ public class Catan extends Application {
             pageToStartAt = "start_screen.fxml";
         } else {
             pageToStartAt = "new_game.fxml";
+            GameLoader.getInstance().setSlot(1);
         }
 
         FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource(pageToStartAt));

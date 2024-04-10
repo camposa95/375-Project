@@ -10,6 +10,7 @@ import data.GameLoader;
 import domain.controller.Controller;
 import domain.controller.GameState;
 import domain.controller.SuccessCode;
+import javafx.stage.StageStyle;
 import presentation.popups.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -46,7 +47,7 @@ public class CatanGUIController {
     @FXML
     private Circle port0, port1, port2, port3, port4, port5, port6, port7, port8;
     @FXML
-    private Button rollButton, buildSettlementButton, buildRoadButton, buildCityButton, buyDevCardButton, playKnightButton, playMonopolyButton, playRoadBuildingButton, playYearOfPlentyButton, endTurnButton, cancelButton, playerTradeButton, bankTradeButton, saveButton, undoButton, redoButton;
+    private Button rollButton, buildSettlementButton, buildRoadButton, buildCityButton, buyDevCardButton, playKnightButton, playMonopolyButton, playRoadBuildingButton, playYearOfPlentyButton, endTurnButton, cancelButton, playerTradeButton, bankTradeButton, pauseButton, undoButton, redoButton;
     @FXML
     private Text number0, number1, number2, number3, number4, number5, number6, number7, number8, number9, number10, number11, number12, number13, number14, number15, number16, number17, number18;
     @FXML
@@ -58,7 +59,9 @@ public class CatanGUIController {
     @FXML
     private Rectangle recipes, woodIcon1, woodIcon2, woodIcon3, woodIcon4, brickIcon1, brickIcon2, brickIcon3, brickIcon4, woolIcon1, woolIcon2, woolIcon3, woolIcon4, grainIcon1, grainIcon2, grainIcon3, grainIcon4, oreIcon1, oreIcon2, oreIcon3, oreIcon4;
     @FXML
-    private Text playerTurnText, numVictoryPointsText, tooltipText;
+    private Text playerTurnText, numVictoryPointsText;
+    @FXML
+    Text tooltipText;
     @FXML
     private Text turnTitle1, turnTitle2, devCardsTitle, victoryPointsTitle;
     @FXML
@@ -89,6 +92,7 @@ public class CatanGUIController {
 
     public void notifyOfPopupClose(Popup popup) {
         this.popupsOpen.remove(popup);
+        this.guiState = GUIState.IDLE;
     }
 
     private void setupGUIEntityLists(){
@@ -157,7 +161,9 @@ public class CatanGUIController {
         player3name.setText(messages.getString("player3"));
         player4name.setText(messages.getString("player4"));
 
-        saveButton.setText(messages.getString("saveGameButton"));
+        undoButton.setText(messages.getString("undoButton"));
+        pauseButton.setText(messages.getString("pauseButton"));
+        redoButton.setText(messages.getString("redoButton"));
     }
 
     public Color getPlayerColor(int playerNum){
@@ -382,21 +388,26 @@ public class CatanGUIController {
     //
     // ----------------------------------------------------------------
 
-    public void saveButtonPressed() throws IOException {
-        if (this.controller.getState() == GameState.TURN_START && this.guiState == GUIState.IDLE) {
-            if (!GameLoader.getInstance().saveGame()) {
-                this.tooltipText.setText(messages.getString("saveFail"));
-            } else {
-                // switch back to the main screen
-                Stage stage = (Stage) gameboard.getScene().getWindow();
-                stage.close();
-                FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("start_screen.fxml"));
-                Scene scene = new Scene(fxmlLoader.load());
-                stage.setScene(scene);
-                stage.show();
-            }
+    public void pauseButtonPressed() throws IOException {
+        if (this.controller.getState() == GameState.TURN_START  && this.guiState == GUIState.IDLE) {
+            FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("PauseMenu.fxml"));
+            Stage stage = new Stage();
+            Scene scene = new Scene(fxmlLoader.load());
+            stage.setTitle(messages.getString("paused"));
+            stage.setScene(scene);
+            stage.initStyle(StageStyle.UNDECORATED);
+            stage.show();
+
+
+            PauseMenuController pauseMenuController = fxmlLoader.getController();
+            pauseMenuController.setControllers(this, this.gameboard);
+            pauseMenuController.setMessages(this.messages);
+            this.popupsOpen.add(pauseMenuController);
+
+            this.guiState = GUIState.BUSY;
+            this.tooltipText.setText(messages.getString("paused"));
         } else {
-            this.tooltipText.setText(messages.getString("saveNotAllowed"));
+            this.tooltipText.setText(messages.getString("pauseNotAllowed"));
         }
     }
 
@@ -470,7 +481,7 @@ public class CatanGUIController {
 
     //this method is called to disable everything on the board once a player has won the game
     private void applyGameWon() throws IOException {
-        //update the gui state
+        // update the gui state
         this.guiState = GUIState.GAME_WON;
         this.tooltipText.setText(messages.getString("gameOver"));
         //update pane so accurate victory points are shown on the left
@@ -485,7 +496,11 @@ public class CatanGUIController {
         GameWonController gwc = fxmlLoader.getController();
         gwc.setPlayerWon(this.controller.getCurrentPlayer().playerNum, this.messages);
 
-        //disable buttons to end game
+        // disable buttons to end game
+        disableActions();
+    }
+
+    private void disableActions() {
         rollButton.setDisable(true);
         endTurnButton.setDisable(true);
         cancelButton.setDisable(true);
@@ -497,6 +512,8 @@ public class CatanGUIController {
         playMonopolyButton.setDisable(true);
         playRoadBuildingButton.setDisable(true);
         playYearOfPlentyButton.setDisable(true);
+
+        pauseButton.setDisable(true);
     }
 
     //-------------------------------------------------------------------

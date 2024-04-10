@@ -20,6 +20,7 @@ public class SavingTest {
         // Load the game from the expected output folder
         GameLoader loader = GameLoader.getInstance();
         loader.setSlotsPath(EXPECTED_OUTPUT_PATH);
+        loader.setSlot(1);
         loader.loadGame();
 
         // Now switch to the actual output folder and save the game there

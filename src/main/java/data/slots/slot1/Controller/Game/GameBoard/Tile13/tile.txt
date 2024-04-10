@@ -1,3 +1,0 @@
-TerrainType: MOUNTAINS
-DieNumber: 3
-HasRobber: false
