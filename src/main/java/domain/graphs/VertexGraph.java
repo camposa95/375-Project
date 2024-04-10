@@ -1,6 +1,7 @@
 package domain.graphs;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -165,7 +166,7 @@ public class VertexGraph implements Restorable {
             return resources;
         }
 
-        public void save(final File folder) throws SaveException {
+        public void save(final File folder) throws IOException {
             // Create a MementoWriter for writing memento data
             MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 

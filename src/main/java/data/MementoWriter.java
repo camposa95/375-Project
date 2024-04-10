@@ -11,11 +11,11 @@ import java.nio.charset.StandardCharsets;
 public class MementoWriter {
     private final File targetFile;
 
-    public MementoWriter(final File folder, final String fileName) throws SaveException {
+    public MementoWriter(final File folder, final String fileName) throws IOException {
         // Ensure that the parent directory exists
         if (!folder.exists()) {
             if (!folder.mkdirs()) {
-                throw new SaveException("Failed to make folder: " + folder.getName());
+                throw new IOException("Failed to make folder: " + folder.getName());
             }
         }
 
@@ -23,32 +23,32 @@ public class MementoWriter {
         this.targetFile = new File(folder, fileName);
         if (targetFile.exists()) {
             if (!targetFile.delete()) { // Delete existing file
-                throw new SaveException("Failed to make clear existing data from: " + targetFile.getName());
+                throw new IOException("Failed to make clear existing data from: " + targetFile.getName());
             }
         }
         try {
             if (!targetFile.createNewFile()) { // Create a new empty file
-                throw new SaveException("Failed to make recreate file: " + targetFile.getName());
+                throw new IOException("Failed to make recreate file: " + targetFile.getName());
             }
         } catch (IOException e) {
-            throw new SaveException("Failed to make recreate file: " + targetFile.getName());
+            throw new IOException("Failed to make recreate file: " + targetFile.getName());
         }
     }
 
-    public void writeField(final String fieldName, final String contents) throws SaveException {
+    public void writeField(final String fieldName, final String contents) throws IOException {
         try (PrintWriter writer = new PrintWriter(new FileWriter(targetFile, StandardCharsets.UTF_8, true))) {
             writer.println(fieldName + ": " + contents);
         } catch (IOException e) {
-            throw new SaveException("Failed to write field: " + fieldName);
+            throw new IOException("Failed to write field: " + fieldName);
         }
     }
 
     @SuppressFBWarnings("PATH_TRAVERSAL_IN")
-    public File getSubFolder(final String subFolderName) throws SaveException {
+    public File getSubFolder(final String subFolderName) throws IOException {
         File subFolder = new File(targetFile.getParent(), subFolderName);
         if (!subFolder.exists()) {
             if (!subFolder.mkdirs()) {
-                throw new SaveException("Failed to make sub folder: " + subFolder.getName());
+                throw new IOException("Failed to make sub folder: " + subFolder.getName());
             }
         }
         return subFolder;

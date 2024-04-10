@@ -1,6 +1,7 @@
 package presentation;
 
 import data.GameLoader;
+import data.SaveException;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -8,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import presentation.popups.Popup;
 
@@ -16,12 +18,11 @@ import java.util.ResourceBundle;
 
 public class PauseMenuController implements Popup {
 
+    public Text title, selectorHeader;
     @FXML
-    private Button saveButton;
-
+    private Button saveButton, closeButton;
     @FXML
     public ChoiceBox<String> languageSelector;
-
     private CatanGUIController guiController;
     private ResourceBundle messages;
     private Pane gameBoard;
@@ -41,6 +42,9 @@ public class PauseMenuController implements Popup {
         this.messages = messages;
 
         saveButton.setText(messages.getString("saveGameButton"));
+        closeButton.setText(messages.getString("closeButton"));
+        title.setText(messages.getString("pauseMenuTitle"));
+        selectorHeader.setText(messages.getString("languageSelectorHeader"));
     }
 
     public void saveButtonPressed() throws IOException {
@@ -61,11 +65,12 @@ public class PauseMenuController implements Popup {
         }
     }
 
-    public void changeLanguage() {
+    public void changeLanguage() throws IOException {
         String language = this.languageSelector.getValue();
 
         this.setMessages(GameLoader.getInstance().setLanguage(language));
         guiController.internationalize(this.messages);
+        guiController.tooltipText.setText(messages.getString("paused"));
     }
 
     public void close() {

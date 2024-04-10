@@ -6,6 +6,7 @@ import data.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -239,7 +240,7 @@ public class Hand implements Restorable {
             }
         }
 
-        public void save(final File folder) throws SaveException {
+        public void save(final File folder) throws IOException {
             // Write the state of the class's attributes to separate files
             writeHashMap(folder, HAND_FILE_NAME, hand);
             writeHashMap(folder, DEV_CARDS_FILE_NAME, devCards);
@@ -247,7 +248,7 @@ public class Hand implements Restorable {
         }
 
         // Helper method to write a HashMap to a separate file
-        private void writeHashMap(final File folder, final String fileName, final HashMap<?, Integer> hashMap) throws SaveException {
+        private void writeHashMap(final File folder, final String fileName, final HashMap<?, Integer> hashMap) throws IOException {
             // Create a MementoWriter for the current map
             MementoWriter writer = new MementoWriter(folder, fileName);
 
