@@ -34,6 +34,8 @@ public class GameLoader {
     // Storage constants
     private String savedGamesPath = "src/main/java/data/slots"; // default
     private static final String SLOT_PREFIX = "slot";
+    private Integer slotNumber;
+    private static final int MAXIMUM_SLOTS = 4;
     private static final String EXTENSION = ".txt";
     private static final String GAME_TYPE = "gameType";
     private static final String NUM_PLAYERS = "numPlayers";
@@ -47,7 +49,7 @@ public class GameLoader {
     private Controller controller;
     private Player[] players;
     private GameType gameType;
-    private int numPlayers;
+    private Integer numPlayers;
     private String language;
 
     // Core Undo Redo stuff
@@ -70,7 +72,7 @@ public class GameLoader {
      * Only for testing purposes to set where to save and load from
      */
     @SuppressFBWarnings("PATH_TRAVERSAL_IN")
-    public void setSlotsPath(final String slotsPath) {
+    void setSlotsPath(final String slotsPath) {
         this.savedGamesPath = slotsPath;
     }
 
@@ -112,15 +114,51 @@ public class GameLoader {
         }
     }
 
-    public ResourceBundle setLanguage(String language) {
-        this.language = language;
+    public ResourceBundle setLanguage(final String languageSelected) {
+        this.language = languageSelected;
         return this.getMessageBundle();
     }
 
+    public void setSlot(final int slot) {
+
+        if (slot < 1 || slot > MAXIMUM_SLOTS) {
+            throw new IllegalArgumentException("Slot can only 1 - 4");
+        }
+
+        this.slotNumber = slot;
+    }
+
     @SuppressFBWarnings("PATH_TRAVERSAL_IN")
-    public boolean saveGame() {
+    public boolean isSlotEmpty(final int slotNum) {
+        return !(new File(savedGamesPath + "/" + SLOT_PREFIX + slotNum).exists());
+    }
+
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
+    public boolean deleteGame() throws IOException {
+        assertSlotSelected();
+
+        File slot = new File(savedGamesPath + "/" + SLOT_PREFIX + slotNumber);
+        return delete(slot);
+    }
+
+    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
+    public static boolean delete(final File file) {
+        if (!file.delete()) {
+            for (File subFile : Objects.requireNonNull(file.listFiles())) {
+                delete(subFile);
+            }
+        }
+
+        // Now the directory is empty, so delete it
+        return file.delete();
+    }
+
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
+    public boolean saveGame() throws IOException {
+        assertSlotSelected();
+
         // Create a File object representing the base folder
-        File baseFolder = new File(savedGamesPath + "/" + SLOT_PREFIX + 1);
+        File baseFolder = new File(savedGamesPath + "/" + SLOT_PREFIX + slotNumber);
         if (!baseFolder.exists()) {
             if (!baseFolder.mkdirs()) {
                 return false;
@@ -147,17 +185,22 @@ public class GameLoader {
 
     @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     public boolean hasSavedSlot() {
-        File folder = new File(savedGamesPath);
-        File[] files = folder.listFiles();
 
-        // Check if the folder is has files other than the .git-keep
-        return (files != null && files.length > 1);
+        for (int i = 1; i <= MAXIMUM_SLOTS; i++) {
+            if (!isSlotEmpty(i)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @SuppressFBWarnings({"PATH_TRAVERSAL_IN", "EI_EXPOSE_REP"})
-    public Controller loadGame() {
+    public Controller loadGame() throws IOException {
+        assertSlotSelected();
+
         // Create a File object representing the base folder
-        File baseFolder = new File(savedGamesPath + "/" + SLOT_PREFIX + 1);
+        File baseFolder = new File(savedGamesPath + "/" + SLOT_PREFIX + slotNumber);
 
         // Create a MementoReader for restoring the basic game info
         MementoReader reader = new MementoReader(baseFolder, SLOT_PREFIX + EXTENSION);
@@ -178,12 +221,20 @@ public class GameLoader {
     }
 
     @SuppressFBWarnings("EI_EXPOSE_REP")
-    public Controller createNewGame(final GameType gameTypeSelected, final int playerCount, final String languageSelected) {
+    public Controller createNewGame(final GameType gameTypeSelected, final int playerCount, final String languageSelected) throws IOException {
+        assertSlotSelected();
+
         this.language = languageSelected;
         this.instantiateGameObjects(gameTypeSelected, playerCount);
 
         notifyOfTurnStart();
         return this.controller;
+    }
+
+    private void assertSlotSelected() throws IOException {
+        if (slotNumber == null) {
+            throw new IOException("Slot # must be set before calling IO operations");
+        }
     }
 
     // ---------------------------------------------------------------

@@ -6,15 +6,19 @@ import domain.game.GameType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UndoRedoTest {
 
-    GameLoader loader = GameLoader.getInstance();
+    GameLoader loader;
     Controller controller;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws IOException {
+        loader = GameLoader.getInstance();
+        loader.setSlot(1);
         controller = loader.createNewGame(GameType.Beginner, 4, "English");
     }
 

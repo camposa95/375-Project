@@ -33,4 +33,13 @@
     <Match>
         <Class name="presentation.popups.GameWonController"/>
     </Match>
+    <Match>
+        <Class name="presentation.popups.Popup"/>
+    </Match>
+    <Match>
+        <Class name="presentation.StartScreenController"/>
+    </Match>
+    <Match>
+        <Class name="presentation.PauseMenuController"/>
+    </Match>
 </FindBugsFilter>
