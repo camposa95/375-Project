@@ -5,6 +5,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import domain.bank.Resource;
 
 import java.io.File;
+import java.io.IOException;
 
 public class Port implements Restorable {
 
@@ -60,7 +61,7 @@ public class Port implements Restorable {
             this.resource = Resource.valueOf(reader.readField(RESOURCE));
         }
 
-        public void save(final File folder) throws SaveException {
+        public void save(final File folder) throws IOException {
             // Create a MementoWriter for writing memento data
             MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 

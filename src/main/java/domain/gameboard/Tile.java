@@ -5,6 +5,7 @@ import data.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -139,7 +140,7 @@ public class Tile implements Restorable {
             this.hasRobber = Boolean.parseBoolean(reader.readField(HAS_ROBBER));
         }
 
-        public void save(final File folder) throws SaveException {
+        public void save(final File folder) throws IOException {
             // Create a MementoWriter for writing memento data
             MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 

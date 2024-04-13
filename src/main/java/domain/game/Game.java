@@ -1,6 +1,7 @@
 package domain.game;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.temporal.ValueRange;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -387,7 +388,7 @@ public class Game implements Restorable {
             this.bankMemento = Game.this.bank.new BankMemento(bankSubFolder);
         }
 
-        public void save(final File folder) throws SaveException {
+        public void save(final File folder) throws IOException {
             // Create a MementoWriter for writing memento data
             MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 

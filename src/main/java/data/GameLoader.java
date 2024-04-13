@@ -33,6 +33,7 @@ public class GameLoader {
 
     // Storage constants
     private String savedGamesPath = "src/main/java/data/slots"; // default
+    private static final String GLOBAL_CONFIG = "globalConfig";
     private static final String SLOT_PREFIX = "slot";
     private Integer slotNumber;
     private static final int MAXIMUM_SLOTS = 4;
@@ -40,6 +41,7 @@ public class GameLoader {
     private static final String GAME_TYPE = "gameType";
     private static final String NUM_PLAYERS = "numPlayers";
     private static final String LANGUAGE = "language";
+    private static final String MOST_RECENT_LANGUAGE = "mostRecentLanguage";
 
     private static GameLoader uniqueInstance = null;
 
@@ -106,7 +108,17 @@ public class GameLoader {
         this.redoStack = new Stack<>();
     }
 
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     public ResourceBundle getMessageBundle() {
+        if (this.language == null) {
+            // Create a File object representing the base folder
+            File baseFolder = new File(savedGamesPath);
+
+            // Create a MementoReader for reading most recently used language
+            MementoReader reader = new MementoReader(baseFolder, GLOBAL_CONFIG + EXTENSION);
+            this.language = reader.readField(MOST_RECENT_LANGUAGE);
+        }
+
         if (this.language.equals("English")) {
             return ResourceBundle.getBundle("i18n/messages");
         } else { // Must be spanish
@@ -114,8 +126,17 @@ public class GameLoader {
         }
     }
 
-    public ResourceBundle setLanguage(final String languageSelected) {
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
+    public ResourceBundle setLanguage(final String languageSelected) throws IOException {
         this.language = languageSelected;
+
+        // Create a File object representing the base folder
+        File baseFolder = new File(savedGamesPath);
+
+        // Create a MementoWriter for writing most recently used language
+        MementoWriter writer = new MementoWriter(baseFolder, GLOBAL_CONFIG + EXTENSION);
+        writer.writeField(MOST_RECENT_LANGUAGE, this.language);
+
         return this.getMessageBundle();
     }
 
@@ -176,7 +197,7 @@ public class GameLoader {
             // Save the controllerMemento memento in the Controller folder
             File controllerFolder = writer.getSubFolder("Controller");
             undoStack.peek().save(controllerFolder);
-        } catch (SaveException e) {
+        } catch (IOException e) {
             return false;
         }
 
@@ -206,7 +227,7 @@ public class GameLoader {
         MementoReader reader = new MementoReader(baseFolder, SLOT_PREFIX + EXTENSION);
         GameType restoredGameType = GameType.valueOf(reader.readField(GAME_TYPE));
         int restoredNumPlayers = Integer.parseInt(reader.readField(NUM_PLAYERS));
-        this.language = reader.readField(LANGUAGE);
+        this.setLanguage(reader.readField(LANGUAGE));
 
         // re-instantiate the game objects based on the basic game info
         this.instantiateGameObjects(restoredGameType, restoredNumPlayers);
@@ -224,7 +245,7 @@ public class GameLoader {
     public Controller createNewGame(final GameType gameTypeSelected, final int playerCount, final String languageSelected) throws IOException {
         assertSlotSelected();
 
-        this.language = languageSelected;
+        this.setLanguage(languageSelected);
         this.instantiateGameObjects(gameTypeSelected, playerCount);
 
         notifyOfTurnStart();

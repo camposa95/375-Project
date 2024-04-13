@@ -16,29 +16,49 @@ import java.util.ResourceBundle;
 
 public class StartScreenController {
 
+    public Text title, header;
+    public Button slot1, slot2, slot3, slot4;
     @FXML
     public Button createNewGameButton, resumeGameButton, deleteGameButton;
-    public Button slot1, slot2, slot3, slot4;
-    public Button exitButton;
     public Text selectedSlotText;
+    public Button exitButton;
+    private ResourceBundle messages;
 
     @FXML
     public void initialize() {
+        this.setMessages(GameLoader.getInstance().getMessageBundle());
+
         createNewGameButton.setDisable(true);
         resumeGameButton.setDisable(true);
+    }
+
+    public void setMessages(ResourceBundle messages) {
+        this.messages = messages;
+
+        title.setText(messages.getString("startScreenTitle"));
+        header.setText(messages.getString("startScreenHeader"));
 
         GameLoader loader = GameLoader.getInstance();
-        slot1.setText(loader.isSlotEmpty(1) ? "Empty" : "Slot 1");
-        slot2.setText(loader.isSlotEmpty(2) ? "Empty" : "Slot 2");
-        slot3.setText(loader.isSlotEmpty(3) ? "Empty" : "Slot 3");
-        slot4.setText(loader.isSlotEmpty(4) ? "Empty" : "Slot 4");
+        String empty = messages.getString("emptySlot");
+        String slot = messages.getString("usedSlot");
+        slot1.setText(loader.isSlotEmpty(1) ? empty : slot + " " + 1);
+        slot2.setText(loader.isSlotEmpty(2) ? empty : slot + " " + 2);
+        slot3.setText(loader.isSlotEmpty(3) ? empty : slot + " " + 3);
+        slot4.setText(loader.isSlotEmpty(4) ? empty : slot + " " + 4);
+
+        resumeGameButton.setText(messages.getString("resumeGameButton"));
+        createNewGameButton.setText(messages.getString("createNewGameButton"));
+        deleteGameButton.setText(messages.getString("deleteGameButton"));
+        exitButton.setText(messages.getString("exitButton"));
+
+        selectedSlotText.setText(messages.getString("noSlotSelected"));
     }
 
     @FXML
     public void selectSlot(ActionEvent e) {
         String slot = ((Button) e.getSource()).getId();
         int slotNumber = Integer.parseInt(slot.substring(4));
-        selectedSlotText.setText("Selected Slot " + slotNumber);
+        selectedSlotText.setText(messages.getString("selectedSlot") + " " + slotNumber);
 
         GameLoader loader = GameLoader.getInstance();
         loader.setSlot(slotNumber);
@@ -93,14 +113,11 @@ public class StartScreenController {
             this.initialize();
             resumeGameButton.setDisable(true);
             deleteGameButton.setDisable(true);
-        } else {
-            System.out.println("Failed to Delete Game");
         }
     }
 
     @FXML
     public void exit() {
-        // Close the main application window
         Platform.exit();
     }
 }

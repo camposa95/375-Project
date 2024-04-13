@@ -1,6 +1,7 @@
 package domain.gameboard;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 import domain.game.GameType;
@@ -156,7 +157,7 @@ public class GameBoard implements Restorable {
             return faces;
         }
 
-        public void save(final File folder) throws SaveException {
+        public void save(final File folder) throws IOException {
             // Create a MementoWriter for writing memento data
             MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
