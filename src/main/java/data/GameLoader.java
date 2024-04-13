@@ -108,7 +108,17 @@ public class GameLoader {
         this.redoStack = new Stack<>();
     }
 
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     public ResourceBundle getMessageBundle() {
+        if (this.language == null) {
+            // Create a File object representing the base folder
+            File baseFolder = new File(savedGamesPath);
+
+            // Create a MementoReader for reading most recently used language
+            MementoReader reader = new MementoReader(baseFolder, GLOBAL_CONFIG + EXTENSION);
+            this.language = reader.readField(MOST_RECENT_LANGUAGE);
+        }
+
         if (this.language.equals("English")) {
             return ResourceBundle.getBundle("i18n/messages");
         } else { // Must be spanish
@@ -116,6 +126,7 @@ public class GameLoader {
         }
     }
 
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     public ResourceBundle setLanguage(final String languageSelected) throws IOException {
         this.language = languageSelected;
 

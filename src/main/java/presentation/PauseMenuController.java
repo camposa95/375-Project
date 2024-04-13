@@ -1,7 +1,6 @@
 package presentation;
 
 import data.GameLoader;
-import data.SaveException;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
