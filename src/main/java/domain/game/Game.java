@@ -204,7 +204,12 @@ public class Game implements Restorable {
             throw new NotEnoughResourcesException();
         }
         Vertex vertex = vertexes.getVertex(vertexId);
-        vertex.buildDistrict(player, type);
+        try {
+            vertex.buildDistrict(player, type);
+        } catch (InvalidPlacementException e) {
+            player.hand.addResources(type.cost);
+            throw new InvalidPlacementException();
+        }
     }
 
     /**

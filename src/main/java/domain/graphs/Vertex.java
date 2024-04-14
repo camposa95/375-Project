@@ -310,7 +310,7 @@ public class Vertex implements Restorable {
     }
 
     private boolean canBuildDistrict(final Player player) {
-        return (this.getOwner() == player);
+        return (this.getOwner() == player) && this.building.getDistrict() == DistrictType.EMPTY;
     }
 
     public Building getBuilding() {
