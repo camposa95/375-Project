@@ -199,7 +199,10 @@ public class Game implements Restorable {
      * @param vertexId the vertex to build a district on
      * @param type the district type to build
      */
-    public void buildDistrictOnVertex(final Player player, final int vertexId, final DistrictType type) {
+    public void buildDistrictOnVertex(final Player player, final int vertexId, final DistrictType type) throws NotEnoughResourcesException, InvalidPlacementException {
+        if (!player.hand.removeResources(type.cost)) {
+            throw new NotEnoughResourcesException();
+        }
         Vertex vertex = vertexes.getVertex(vertexId);
         vertex.buildDistrict(player, type);
     }

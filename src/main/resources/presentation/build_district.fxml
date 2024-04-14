@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="331.0" prefWidth="489.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="presentation.popups.BuildDistrictController">
+   <children>
+      <Group layoutX="178.0" layoutY="108.0">
+         <children>
+            <RadioButton fx:id="sawmill" mnemonicParsing="false" text="Sawmill (+3 Lumber)" />
+            <RadioButton fx:id="kiln" layoutY="20.0" mnemonicParsing="false" text="Kiln (+3 Brick)" />
+            <RadioButton fx:id="barn" layoutY="40.0" mnemonicParsing="false" text="Barn (+3 Wool)" />
+            <RadioButton fx:id="garden" layoutY="60.0" mnemonicParsing="false" text="Garden (+3 Grain)" />
+            <RadioButton fx:id="mine" layoutY="80.0" mnemonicParsing="false" text="Mine (+3 Ore)" />
+         </children>
+      </Group>
+      <Text fx:id="buildDistrictText" layoutX="191.0" layoutY="80.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select District Type:" />
+      <Button fx:id="selectButton" layoutX="220.0" layoutY="260.0" mnemonicParsing="false" onMouseClicked="#submitBD" text="Select" />
+   </children>
+</AnchorPane>

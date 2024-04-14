@@ -5,6 +5,7 @@ import domain.bank.Resource;
 import domain.game.Building;
 import domain.game.DistrictType;
 import domain.game.Game;
+import domain.game.InvalidPlacementException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import domain.player.Player;
 
@@ -300,11 +301,11 @@ public class Vertex implements Restorable {
         }
     }
 
-    public void buildDistrict(final Player player, final DistrictType type) {
+    public void buildDistrict(final Player player, final DistrictType type) throws InvalidPlacementException {
         if (canBuildDistrict(player)) {
             this.building.buildDistrict(type);
         } else {
-            throw new IllegalArgumentException("Player must own the vertex to build a district");
+            throw new InvalidPlacementException();
         }
     }
 

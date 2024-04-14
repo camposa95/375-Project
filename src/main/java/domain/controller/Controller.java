@@ -763,6 +763,17 @@ public class Controller implements Restorable {
         return newArray;
     }
 
+    public SuccessCode buildDistrict(int vertexId, DistrictType type) {
+        try {
+            game.buildDistrictOnVertex(currentPlayer, vertexId, type);
+            return SuccessCode.SUCCESS;
+        } catch (NotEnoughResourcesException e) {
+            return SuccessCode.INSUFFICIENT_RESOURCES;
+        } catch (InvalidPlacementException e) {
+            return  SuccessCode.INVALID_PLACEMENT;
+        }
+    }
+
     /**
      * This method tries to play the year of plenty card.
      * Returns success if playing the card was successful

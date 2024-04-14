@@ -1,8 +1,10 @@
 package graphs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import domain.game.DistrictType;
+import domain.game.InvalidPlacementException;
 import domain.graphs.Vertex;
 import domain.player.Player;
 import org.easymock.EasyMock;
@@ -132,14 +134,18 @@ public class VertexUpgradesTest {
         testVertex.setOwner(mockedPlayer);
 
         EasyMock.replay(mockedPlayer, mockedEnemy);
-        testVertex.buildDistrict(mockedPlayer, DistrictType.MINE);
+        try {
+            testVertex.buildDistrict(mockedPlayer, DistrictType.MINE);
+        } catch (InvalidPlacementException e) {
+            fail();
+        }
         EasyMock.verify(mockedPlayer, mockedEnemy);
 
         assertEquals(DistrictType.MINE, testVertex.getBuilding().getDistrict());
     }
 
     @Test
-    public void testBuildDistrict_withVertexNotOwnedByPlayer_expectIllegalArgumentException() {
+    public void testBuildDistrict_withVertexNotOwnedByPlayer_expectInvalidPlacementException() {
         // Note: the functionality of the method under test
         // is independent of the graphs holding the vertexes
         // so we can just made a vertex by itself
@@ -151,7 +157,7 @@ public class VertexUpgradesTest {
         testVertex.setOwner(mockedEnemy);
 
         EasyMock.replay(mockedPlayer, mockedEnemy);
-        Assertions.assertThrows(IllegalArgumentException.class, () -> testVertex.buildDistrict(mockedPlayer, DistrictType.MINE));
+        Assertions.assertThrows(InvalidPlacementException.class, () -> testVertex.buildDistrict(mockedPlayer, DistrictType.MINE));
         EasyMock.verify(mockedPlayer, mockedEnemy);
     }
 }

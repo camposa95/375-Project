@@ -636,10 +636,10 @@
             <Font size="25.0" />
          </font>
       </Text>
-      <Button id="buildSettlementButton" fx:id="buildSettlementButton" layoutX="1257.0" layoutY="199.0" mnemonicParsing="false" onMouseClicked="#buildSettlementButtonPress" prefHeight="60.0" prefWidth="104.0" text="Build Settlement" textAlignment="CENTER" wrapText="true" />
-      <Button id="buildRoadButton" fx:id="buildRoadButton" layoutX="1376.0" layoutY="199.0" mnemonicParsing="false" onMouseClicked="#buildRoadButtonPress" prefHeight="60.0" prefWidth="104.0" text="Build Road" textAlignment="CENTER" wrapText="true" />
-      <Button id="buildCityButton" fx:id="buildCityButton" layoutX="1256.0" layoutY="276.0" mnemonicParsing="false" onMouseClicked="#buildCityButtonPress" prefHeight="44.0" prefWidth="104.0" text="Build City" textAlignment="CENTER" />
-      <Button id="buyDevCardButton" fx:id="buyDevCardButton" layoutX="1376.0" layoutY="276.0" mnemonicParsing="false" onMouseClicked="#buyDevCardButtonPress" prefHeight="44.0" prefWidth="104.0" text="Buy Development Card" textAlignment="CENTER" wrapText="true">
+      <Button id="buildSettlementButton" fx:id="buildSettlementButton" layoutX="1257.0" layoutY="188.0" mnemonicParsing="false" onMouseClicked="#buildSettlementButtonPress" prefHeight="60.0" prefWidth="104.0" text="Build Settlement" textAlignment="CENTER" wrapText="true" />
+      <Button id="buildRoadButton" fx:id="buildRoadButton" layoutX="1376.0" layoutY="188.0" mnemonicParsing="false" onMouseClicked="#buildRoadButtonPress" prefHeight="60.0" prefWidth="104.0" text="Build Road" textAlignment="CENTER" wrapText="true" />
+      <Button id="buildCityButton" fx:id="buildCityButton" layoutX="1257.0" layoutY="260.0" mnemonicParsing="false" onMouseClicked="#buildCityButtonPress" prefHeight="44.0" prefWidth="104.0" text="Build City" textAlignment="CENTER" />
+      <Button id="buyDevCardButton" fx:id="buyDevCardButton" layoutX="1317.0" layoutY="384.0" mnemonicParsing="false" onMouseClicked="#buyDevCardButtonPress" prefHeight="44.0" prefWidth="104.0" text="Buy Development Card" textAlignment="CENTER" wrapText="true">
          <font>
             <Font size="11.0" />
          </font>
@@ -666,21 +666,21 @@
             <Font size="18.0" />
          </font>
       </Text>
-      <Button id="playKnightButton" fx:id="playKnightButton" layoutX="1257.0" layoutY="431.0" mnemonicParsing="false" onMouseClicked="#playKnightButtonPressed" prefHeight="44.0" prefWidth="104.0" text="Play Knight" textAlignment="CENTER" />
-      <Text fx:id="devCardsTitle" layoutX="1303.0" layoutY="411.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Development Cards">
+      <Button id="playKnightButton" fx:id="playKnightButton" layoutX="1257.0" layoutY="436.0" mnemonicParsing="false" onMouseClicked="#playKnightButtonPressed" prefHeight="44.0" prefWidth="104.0" text="Play Knight" textAlignment="CENTER" />
+      <Text fx:id="devCardsTitle" layoutX="1304.0" layoutY="370.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Development Cards">
          <font>
             <Font size="15.0" />
          </font>
       </Text>
-      <Button id="playMonopolyButton" fx:id="playMonopolyButton" layoutX="1376.0" layoutY="431.0" mnemonicParsing="false" onMouseClicked="#playMonopolyButtonPressed" prefHeight="44.0" prefWidth="104.0" text="Play Monopoly" textAlignment="CENTER" wrapText="true" />
-      <Button id="playRoadBuildingButton" fx:id="playRoadBuildingButton" layoutX="1257.0" layoutY="485.0" mnemonicParsing="false" onMouseClicked="#playRoadBuildingButtonPressed" prefHeight="60.0" prefWidth="104.0" text="Play Road Building" textAlignment="CENTER" wrapText="true" />
+      <Button id="playMonopolyButton" fx:id="playMonopolyButton" layoutX="1376.0" layoutY="436.0" mnemonicParsing="false" onMouseClicked="#playMonopolyButtonPressed" prefHeight="44.0" prefWidth="104.0" text="Play Monopoly" textAlignment="CENTER" wrapText="true" />
+      <Button id="playRoadBuildingButton" fx:id="playRoadBuildingButton" layoutX="1257.0" layoutY="491.0" mnemonicParsing="false" onMouseClicked="#playRoadBuildingButtonPressed" prefHeight="60.0" prefWidth="104.0" text="Play Road Building" textAlignment="CENTER" wrapText="true" />
       <AnchorPane layoutX="1308.0" layoutY="499.0" />
       <Text id="numVictoryPointsText" fx:id="numVictoryPointsText" layoutX="1468.0" layoutY="576.0" strokeType="OUTSIDE" strokeWidth="0.0" text="X">
          <font>
             <Font size="15.0" />
          </font>
       </Text>
-      <Button id="playYearOfPlentyButton" fx:id="playYearOfPlentyButton" layoutX="1376.0" layoutY="485.0" mnemonicParsing="false" onMouseClicked="#playYearOfPlentyButtonPressed" prefHeight="60.0" prefWidth="104.0" text="Play Year Of Plenty" textAlignment="CENTER" wrapText="true" />
+      <Button id="playYearOfPlentyButton" fx:id="playYearOfPlentyButton" layoutX="1376.0" layoutY="491.0" mnemonicParsing="false" onMouseClicked="#playYearOfPlentyButtonPressed" prefHeight="60.0" prefWidth="104.0" text="Play Year Of Plenty" textAlignment="CENTER" wrapText="true" />
       <Text id="playerTurnText" fx:id="playerTurnText" layoutX="1361.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1">
          <font>
             <Font size="25.0" />
@@ -734,7 +734,7 @@
       <Button fx:id="playerTradeButton" layoutX="1259.0" layoutY="609.0" mnemonicParsing="false" onMouseClicked="#playerTradeButtonPressed" prefHeight="60.0" prefWidth="104.0" text="Player Trade" textAlignment="CENTER" wrapText="true" />
       <Button fx:id="bankTradeButton" layoutX="1376.0" layoutY="609.0" mnemonicParsing="false" onMouseClicked="#bankTradeButtonPressed" prefHeight="60.0" prefWidth="104.0" text="Bank Trade" textAlignment="CENTER" wrapText="true" />
       <Text fx:id="tooltipText" layoutX="1254.0" layoutY="162.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to Catan!" textAlignment="CENTER" wrappingWidth="228.15625" />
-      <Button fx:id="cancelButton" layoutX="1343.0" layoutY="346.0" mnemonicParsing="false" onMouseClicked="#cancelButtonPressed" text="Cancel" />
+      <Button fx:id="cancelButton" layoutX="1343.0" layoutY="313.0" mnemonicParsing="false" onMouseClicked="#cancelButtonPressed" text="Cancel" />
       <Rectangle fx:id="woodIcon1" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="25.0" layoutX="20.0" layoutY="103.0" stroke="BLACK" strokeType="INSIDE" width="25.0" />
       <Rectangle fx:id="brickIcon1" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="25.0" layoutX="45.0" layoutY="103.0" stroke="BLACK" strokeType="INSIDE" width="25.0" />
       <Rectangle fx:id="woolIcon1" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="25.0" layoutX="70.0" layoutY="103.0" stroke="BLACK" strokeType="INSIDE" width="25.0" />
@@ -755,7 +755,7 @@
       <Rectangle fx:id="woolIcon4" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="25.0" layoutX="68.0" layoutY="623.0" stroke="BLACK" strokeType="INSIDE" width="25.0" />
       <Rectangle fx:id="grainIcon4" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="25.0" layoutX="93.0" layoutY="623.0" stroke="BLACK" strokeType="INSIDE" width="25.0" />
       <Rectangle fx:id="oreIcon4" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="25.0" layoutX="118.0" layoutY="623.0" stroke="BLACK" strokeType="INSIDE" width="25.0" />
-      <Text fx:id="victoryPointsTitle" layoutX="1268.0" layoutY="565.0" lineSpacing="1.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Amount of Victory Point cards: " wrappingWidth="186.31591796875">
+      <Text fx:id="victoryPointsTitle" layoutX="1268.0" layoutY="571.0" lineSpacing="1.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Amount of Victory Point cards: " wrappingWidth="186.31591796875">
          <font>
             <Font size="15.0" />
          </font>
@@ -763,5 +763,6 @@
       <Button fx:id="saveButton" layoutX="34.0" layoutY="744.0" mnemonicParsing="false" onMouseClicked="#saveButtonPressed" prefHeight="52.0" prefWidth="104.0" text="Save &amp; Exit" />
       <Button fx:id="undoButton" layoutX="20.0" layoutY="810.0" mnemonicParsing="false" onAction="#undo" text="Undo" />
       <Button fx:id="redoButton" layoutX="104.0" layoutY="810.0" mnemonicParsing="false" onAction="#redo" text="Redo" />
+      <Button fx:id="buildDistrictButton" layoutX="1376.0" layoutY="260.0" mnemonicParsing="false" onMouseClicked="#buildDistrictButtonPress" prefHeight="44.0" prefWidth="104.0" text="Build District" />
    </children>
 </Pane>

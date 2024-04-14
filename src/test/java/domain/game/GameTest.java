@@ -725,7 +725,11 @@ public class GameTest {
         int die = 10;
 
         vertexGraph.getVertex(1).setOwner(player);
-        vertexGraph.getVertex(1).buildDistrict(player, DistrictType.MINE);
+        try {
+            vertexGraph.getVertex(1).buildDistrict(player, DistrictType.MINE);
+        } catch (InvalidPlacementException e) {
+            fail();
+        }
 
         Resource[] expected = {Resource.ORE,Resource.ORE,Resource.ORE};
         //Check hand before
@@ -1444,11 +1448,18 @@ public class GameTest {
         Game game = new Game(gameBoard, vertexGraph, mockedRoadGraph, null, null);
 
         vertexGraph.getVertex(1).setOwner(player);
+        player.hand.addResources(DistrictType.SAWMILL.cost);
 
         //Replay
         EasyMock.replay(mockedRoadGraph);
 
-        game.buildDistrictOnVertex(player, 1, DistrictType.SAWMILL);
+        try {
+            game.buildDistrictOnVertex(player, 1, DistrictType.SAWMILL);
+        } catch (NotEnoughResourcesException e) {
+            fail();
+        } catch (InvalidPlacementException e) {
+            fail();
+        }
 
         Assertions.assertEquals(DistrictType.SAWMILL, vertexGraph.getVertex(1).getBuilding().getDistrict());
 
@@ -1456,7 +1467,7 @@ public class GameTest {
     }
 
     @Test
-    public void testBuildDistrict_withVertexOwnedByOtherPlayerBuildSawmill_expectIllegalArgumentException() {
+    public void testBuildDistrict_withVertexOwnedByOtherPlayerBuildSawmill_expectInvalidPlacementException() {
         Player player = new Player(1);
         Player enemy = new Player(2);
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
@@ -1467,11 +1478,12 @@ public class GameTest {
         int die = 10;
 
         vertexGraph.getVertex(1).setOwner(enemy);
+        player.hand.addResources(DistrictType.SAWMILL.cost);
 
         //Replay
         EasyMock.replay(mockedRoadGraph);
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> game.buildDistrictOnVertex(player, 1, DistrictType.SAWMILL));
+        Assertions.assertThrows(InvalidPlacementException.class, () -> game.buildDistrictOnVertex(player, 1, DistrictType.SAWMILL));
 
         EasyMock.verify(mockedRoadGraph);
     }
