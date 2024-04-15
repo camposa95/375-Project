@@ -213,6 +213,11 @@ public class Game implements Restorable {
         }
     }
 
+    public DistrictType getDistrictTypeForVertex(int vertex) {
+        Vertex v = vertexes.getVertex(vertex);
+        return v.getBuilding().getDistrict();
+    }
+
     /**
      * Allows the player to buy a dev card if they have enough resources
      */

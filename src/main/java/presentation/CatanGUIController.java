@@ -2,6 +2,7 @@ package presentation;
 
 import domain.bank.Resource;
 import domain.devcarddeck.DevCard;
+import domain.game.DistrictType;
 import domain.gameboard.Terrain;
 import domain.gameboard.Tile;
 import domain.graphs.*;
@@ -813,7 +814,7 @@ public class CatanGUIController {
             handleUpgradeSettlement(clickedSettlement, vertex);
         } else if(this.controller.getState()==GameState.BUILD_DISTRICT) {
             try {
-                handleBuildDistrict(vertex);
+                handleBuildDistrict(vertex, clickedSettlement);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -825,7 +826,7 @@ public class CatanGUIController {
         if(success==SuccessCode.SUCCESS){
             settlementToVertexMap.remove(clickedSettlement);
             gameboardPane.getChildren().remove(clickedSettlement);
-            renderCityOnVertex(clickedSettlement.getLayoutX(), clickedSettlement.getLayoutY());
+            renderCityOnVertex(clickedSettlement.getLayoutX(), clickedSettlement.getLayoutY(), vertex);
             updateInfoPane();
             this.tooltipText.setText(messages.getString("builtCity"));
             this.guiState = GUIState.IDLE;
@@ -836,7 +837,7 @@ public class CatanGUIController {
         }else if(success == SuccessCode.GAME_WIN){
             settlementToVertexMap.remove(clickedSettlement);
             gameboardPane.getChildren().remove(clickedSettlement);
-            renderCityOnVertex(clickedSettlement.getLayoutX(), clickedSettlement.getLayoutY());
+            renderCityOnVertex(clickedSettlement.getLayoutX(), clickedSettlement.getLayoutY(), vertex);
             try {
                 applyGameWon();
             } catch (IOException e) {
@@ -845,7 +846,7 @@ public class CatanGUIController {
         }
     }
 
-    private void handleBuildDistrict(int vertex) throws IOException {
+    private void handleBuildDistrict(int vertex, Polygon building) throws IOException {
         //Triggered by Play Monopoly card pressed
         FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("build_district.fxml"));
         Stage stage = new Stage();
@@ -854,11 +855,11 @@ public class CatanGUIController {
         stage.setScene(scene);
         stage.show();
 
-
         BuildDistrictController buildDistrictController = fxmlLoader.getController();
         buildDistrictController.setControllers(this, this.controller);
         buildDistrictController.setMessages(this.messages);
         buildDistrictController.setSelectedVertex(vertex);
+        buildDistrictController.setSelectedBuilding(building);
         this.popupsOpen.add(buildDistrictController);
 
         this.guiState = GUIState.BUSY;
@@ -919,15 +920,15 @@ public class CatanGUIController {
         }
     }
 
-    private void renderCityOnVertex(double x, double y) {
+    private void renderCityOnVertex(double x, double y, int vertexId) {
         Color color = getPlayerColor(this.controller.getCurrentPlayer().playerNum);
         //Construct new settlement
         Polygon newCity = new Polygon();
         newCity.getPoints().addAll(cityTemplate.getPoints());
         newCity.setLayoutX(x);
         newCity.setLayoutY(y);
-        newCity.setStroke(Color.BLACK);
         newCity.setFill(color);
+        setDistrictColor(newCity, controller.getDistrictTypeForVertex(vertexId));
 
         //remove settlement from screen and place city
         gameboardPane.getChildren().add(newCity);
@@ -954,6 +955,7 @@ public class CatanGUIController {
 
         // Construct new settlement
         Polygon newSettlement = this.createSettlement(x, y, color);
+        this.setDistrictColor(newSettlement, controller.getDistrictTypeForVertex(vertexId));
 
         // add to board
         gameboardPane.getChildren().add(newSettlement);
@@ -972,6 +974,20 @@ public class CatanGUIController {
         newSettlement.addEventHandler(MouseEvent.MOUSE_CLICKED, this::handleSettlementClick);
 
         return newSettlement;
+    }
+
+    public void setDistrictColor(Polygon building, DistrictType type) {
+        Color c = Color.BLACK;
+        switch (type) {
+            case MINE -> c = Color.rgb(100, 100, 100);
+            case GARDEN -> c = Color.rgb(223, 197, 123);
+            case BARN -> c = Color.rgb(125, 218, 88);
+            case KILN -> c = Color.rgb(124, 22, 23, 1);
+            case SAWMILL -> c = Color.rgb(93, 67, 35, 1);
+        }
+
+        building.setStroke(c);
+        building.setStrokeWidth(2);
     }
 
     private void setAllVerticesVisibility(boolean visibility){
