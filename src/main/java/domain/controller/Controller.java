@@ -776,7 +776,7 @@ public class Controller implements Restorable {
         }
     }
 
-    public DistrictType getDistrictTypeForVertex(int vertex) {
+    public DistrictType getDistrictTypeForVertex(final int vertex) {
         return game.getDistrictTypeForVertex(vertex);
     }
 

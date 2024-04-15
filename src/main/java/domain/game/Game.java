@@ -213,7 +213,7 @@ public class Game implements Restorable {
         }
     }
 
-    public DistrictType getDistrictTypeForVertex(int vertex) {
+    public DistrictType getDistrictTypeForVertex(final int vertex) {
         Vertex v = vertexes.getVertex(vertex);
         return v.getBuilding().getDistrict();
     }

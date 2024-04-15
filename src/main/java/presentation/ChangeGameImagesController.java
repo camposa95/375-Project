@@ -1,6 +1,7 @@
 package presentation;
 
 import data.GameLoader;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -34,6 +35,7 @@ public class ChangeGameImagesController {
     }
 
     @FXML
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     private void handleNewFolderButtonClick() throws IOException {
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle("Choose Directory");
@@ -44,15 +46,22 @@ public class ChangeGameImagesController {
     }
 
     @FXML
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     private void handleExistingFolderClick() throws IOException {
         File selectedDir = new File(IMAGE_ROOT_FOLDER, (String) existingResourcesComboBox.getValue());
         close(selectedDir.getPath());
     }
 
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     private void initComboBox() {
         File root = new File(getClass().getClassLoader().getResource(IMAGE_ROOT_FOLDER).getFile());
-        for (File f : root.listFiles()) {
-            existingResourcesComboBox.getItems().add(f.getName());
+        if (root != null) {
+            File[] fs = root.listFiles();
+            if (fs != null) {
+                for (File f : fs) {
+                    existingResourcesComboBox.getItems().add(f.getName());
+                }
+            }
         }
     }
 
