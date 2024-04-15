@@ -11,6 +11,7 @@ import domain.bank.Resource;
 import domain.devcarddeck.DevCard;
 import domain.devcarddeck.EmptyDevCardDeckException;
 import domain.game.*;
+import domain.graphs.Vertex;
 import domain.player.BoostType;
 import domain.player.Player;
 import data.*;
@@ -773,6 +774,10 @@ public class Controller implements Restorable {
         } catch (InvalidPlacementException e) {
             return  SuccessCode.INVALID_PLACEMENT;
         }
+    }
+
+    public DistrictType getDistrictTypeForVertex(final int vertex) {
+        return game.getDistrictTypeForVertex(vertex);
     }
 
     /**

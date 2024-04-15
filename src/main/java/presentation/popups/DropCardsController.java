@@ -43,11 +43,11 @@ public class DropCardsController implements Popup {
 
     @FXML
     public void initialize(){
-        lumberIcon.setFill(new ImagePattern(new Image("images/card_lumber.png")));
-        brickIcon.setFill(new ImagePattern(new Image("images/card_brick.png")));
-        woolIcon.setFill(new ImagePattern(new Image("images/card_wool.png")));
-        grainIcon.setFill(new ImagePattern(new Image("images/card_wheat.png")));
-        oreIcon.setFill(new ImagePattern(new Image("images/card_ore.png")));
+        lumberIcon.setFill(new ImagePattern(new Image("images/default/card_lumber.png")));
+        brickIcon.setFill(new ImagePattern(new Image("images/default/card_brick.png")));
+        woolIcon.setFill(new ImagePattern(new Image("images/default/card_wool.png")));
+        grainIcon.setFill(new ImagePattern(new Image("images/default/card_wheat.png")));
+        oreIcon.setFill(new ImagePattern(new Image("images/default/card_ore.png")));
 
         player1 = new TextField[]{player1lumber, player1brick, player1wool, player1grain, player1ore};
         player2 = new TextField[]{player2lumber, player2brick, player2wool, player2grain, player2ore};

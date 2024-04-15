@@ -37,11 +37,11 @@ public class PlayerTradeWindowController implements Popup {
 
     @FXML
     private void initialize() {
-        lumberIcon.setFill(new ImagePattern(new Image("images/card_lumber.png")));
-        brickIcon.setFill(new ImagePattern(new Image("images/card_brick.png")));
-        woolIcon.setFill(new ImagePattern(new Image("images/card_wool.png")));
-        grainIcon.setFill(new ImagePattern(new Image("images/card_wheat.png")));
-        oreIcon.setFill(new ImagePattern(new Image("images/card_ore.png")));
+        lumberIcon.setFill(new ImagePattern(new Image("images/default/card_lumber.png")));
+        brickIcon.setFill(new ImagePattern(new Image("images/default/card_brick.png")));
+        woolIcon.setFill(new ImagePattern(new Image("images/default/card_wool.png")));
+        grainIcon.setFill(new ImagePattern(new Image("images/default/card_wheat.png")));
+        oreIcon.setFill(new ImagePattern(new Image("images/default/card_ore.png")));
 
         give = new TextField[]{giveLumber, giveBrick, giveWool, giveGrain, giveOre};
         receive = new TextField[]{receiveLumber, receiveBrick, receiveWool, receiveGrain, receiveOre};

@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.shape.Polygon;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import presentation.CatanGUIController;
@@ -18,8 +19,8 @@ import java.util.ResourceBundle;
 public class BuildDistrictController implements Popup {
     private CatanGUIController guiController;
     private Controller domainController;
-
     private int selectedVertex;
+    private Polygon selectedBuilding;
 
     @FXML
     private RadioButton sawmill, kiln, barn, garden, mine;
@@ -57,6 +58,10 @@ public class BuildDistrictController implements Popup {
     public void setSelectedVertex(int id) {
         this.selectedVertex = id;
     }
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
+    public void setSelectedBuilding(Polygon building) {
+        this.selectedBuilding = building;
+    }
 
     private void internationalize() {
         buildDistrictText.setText(messages.getString("buildDistrictPopupText"));
@@ -89,6 +94,8 @@ public class BuildDistrictController implements Popup {
         SuccessCode success = this.domainController.buildDistrict(vertexId, type);
         if(success == SuccessCode.SUCCESS){
             this.guiController.finishedMove();
+            this.guiController.setDistrictColor(selectedBuilding, this.domainController.getDistrictTypeForVertex(vertexId));
+
         }
         return success;
     }

@@ -29,6 +29,7 @@ public class GameLoader {
     private static final String VERTEX_TO_PORT_FILE = INIT_PATH + "VertexToPortLayout.txt";
     private static final String VERTEX_TO_ROAD_FILE = INIT_PATH + "VertexToRoadLayout.txt";
     private static final String TILE_LAYOUT = INIT_PATH + "TileLayout.txt";
+    public static final String DEFAULT_ICON_FOLDER_PATH = "images/default";
 
 
     // Storage constants
@@ -42,6 +43,7 @@ public class GameLoader {
     private static final String NUM_PLAYERS = "numPlayers";
     private static final String LANGUAGE = "language";
     private static final String MOST_RECENT_LANGUAGE = "mostRecentLanguage";
+    private static final String ICON_PATH = "iconPath";
 
     private static GameLoader uniqueInstance = null;
 
@@ -53,6 +55,7 @@ public class GameLoader {
     private GameType gameType;
     private Integer numPlayers;
     private String language;
+    private String iconFolderPath;
 
     // Core Undo Redo stuff
     private Stack<Memento> undoStack;
@@ -140,6 +143,14 @@ public class GameLoader {
         return this.getMessageBundle();
     }
 
+    public void setIconFolderPath(final String path) throws IOException {
+        this.iconFolderPath = path;
+    }
+
+    public String getIconFolderPath() {
+        return this.iconFolderPath;
+    }
+
     public void setSlot(final int slot) {
 
         if (slot < 1 || slot > MAXIMUM_SLOTS) {
@@ -193,6 +204,7 @@ public class GameLoader {
             writer.writeField(GAME_TYPE, String.valueOf(this.gameType));
             writer.writeField(NUM_PLAYERS, String.valueOf(this.numPlayers));
             writer.writeField(LANGUAGE, this.language);
+            writer.writeField(ICON_PATH, this.iconFolderPath);
 
             // Save the controllerMemento memento in the Controller folder
             File controllerFolder = writer.getSubFolder("Controller");
@@ -228,6 +240,9 @@ public class GameLoader {
         GameType restoredGameType = GameType.valueOf(reader.readField(GAME_TYPE));
         int restoredNumPlayers = Integer.parseInt(reader.readField(NUM_PLAYERS));
         this.setLanguage(reader.readField(LANGUAGE));
+        if (this.iconFolderPath == null) {
+            this.setIconFolderPath(reader.readField(ICON_PATH));
+        }
 
         // re-instantiate the game objects based on the basic game info
         this.instantiateGameObjects(restoredGameType, restoredNumPlayers);
