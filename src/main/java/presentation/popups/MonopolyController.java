@@ -25,11 +25,11 @@ public class MonopolyController implements Popup {
     private ResourceBundle messages;
     @FXML
     public void initialize(){
-        lumber.setGraphic(new ImageView(new Image("images/card_lumber.png")));
-        brick.setGraphic(new ImageView(new Image("images/card_brick.png")));
-        wool.setGraphic(new ImageView(new Image("images/card_wool.png")));
+        lumber.setGraphic(new ImageView(new Image("images/default/card_lumber.png")));
+        brick.setGraphic(new ImageView(new Image("images/default/card_brick.png")));
+        wool.setGraphic(new ImageView(new Image("images/default/card_wool.png")));
         grain.setGraphic(new ImageView(new Image("images/card_grain.png")));
-        ore.setGraphic(new ImageView(new Image("images/card_ore.png")));
+        ore.setGraphic(new ImageView(new Image("images/default/card_ore.png")));
     }
 
     public void setControllers(CatanGUIController guiController, Controller domainController) {
