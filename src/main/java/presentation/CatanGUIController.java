@@ -36,6 +36,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static data.GameLoader.DEFAULT_ICON_FOLDER_PATH;
+
 public class CatanGUIController {
     // FXML Entity Imports
     @FXML
@@ -82,8 +84,6 @@ public class CatanGUIController {
 
     HashMap<Polygon, Integer> settlementToVertexMap = new HashMap<>();
     ResourceBundle messages;
-
-    private static final String DEFAULT_ICON_FOLDER_PATH = "images/default";
     private String iconFolderPath = DEFAULT_ICON_FOLDER_PATH;
 
     public enum GUIState {

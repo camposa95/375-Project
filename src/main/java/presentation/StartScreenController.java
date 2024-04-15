@@ -23,7 +23,6 @@ public class StartScreenController {
     public Text selectedSlotText;
     public Button exitButton;
     private ResourceBundle messages;
-    private String imageFolder = "images/default";
 
     @FXML
     public void initialize() {
@@ -89,7 +88,7 @@ public class StartScreenController {
         // Link the Gui Controller to the Domain Controller
         CatanGUIController guiController = fxmlLoader.getController();
         guiController.setController(domainController);
-        guiController.changeIconSet(this.imageFolder);
+        guiController.changeIconSet(GameLoader.getInstance().getIconFolderPath());
 
         // initialize the game-board
         guiController.internationalize(messages);
@@ -107,6 +106,9 @@ public class StartScreenController {
         Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
         stage.show();
+
+        CatanGUIController guiController = fxmlLoader.getController();
+        guiController.changeIconSet(GameLoader.getInstance().getIconFolderPath());
     }
 
     @FXML
@@ -126,10 +128,6 @@ public class StartScreenController {
         Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
         stage.show();
-    }
-
-    public void setImageFolder(String folder) {
-        this.imageFolder = folder;
     }
 
     @FXML

@@ -66,7 +66,6 @@ public class ChangeGameImagesController {
         stage.setScene(scene);
         stage.show();
 
-        StartScreenController controller = fxmlLoader.getController();
-        controller.setImageFolder(folder);
+        GameLoader.getInstance().setIconFolderPath(folder);
     }
 }
