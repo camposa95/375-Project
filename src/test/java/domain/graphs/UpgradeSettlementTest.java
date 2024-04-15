@@ -58,7 +58,7 @@ public class UpgradeSettlementTest {
 
         EasyMock.expect(mockVertexGraph.getVertex(vertexId)).andReturn(mockVertex);
         EasyMock.expect(mockVertex.isUpgradableBy(mockPlayer)).andReturn(true);
-        EasyMock.expect(mockPlayer.upgradeSettlementToCity()).andReturn(false);
+        EasyMock.expect(mockPlayer.canUpgradeSettlementToCity()).andReturn(false);
 
         EasyMock.replay(mockPlayer,mockVertex,mockVertexGraph);
 

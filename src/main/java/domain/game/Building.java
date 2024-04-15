@@ -5,6 +5,7 @@ import domain.bank.Resource;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.io.File;
+import java.io.IOException;
 
 public class Building implements Restorable {
     private boolean isCity;
@@ -79,7 +80,7 @@ public class Building implements Restorable {
         }
 
         @Override
-        public void save(File folder) throws SaveException {
+        public void save(File folder) throws IOException {
             // Create a MementoWriter for writing memento data
             MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
