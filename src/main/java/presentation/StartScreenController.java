@@ -88,6 +88,7 @@ public class StartScreenController {
         // Link the Gui Controller to the Domain Controller
         CatanGUIController guiController = fxmlLoader.getController();
         guiController.setController(domainController);
+        //guiController.changeIconSet("images/test");
 
         // initialize the game-board
         guiController.internationalize(messages);
@@ -105,6 +106,9 @@ public class StartScreenController {
         Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
         stage.show();
+
+        CatanGUIController guiController = fxmlLoader.getController();
+        //guiController.changeIconSet("images/test");
     }
 
     @FXML

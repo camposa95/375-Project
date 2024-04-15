@@ -116,7 +116,6 @@ public class CatanGUIController {
     private void initialize() {
         setupGUIEntityLists();  //FIRST
         setAllRoadsVisibility(false);
-        setIconImages();
 
         settlementTemplate.setVisible(false);
         cityTemplate.setVisible(false);
@@ -133,10 +132,11 @@ public class CatanGUIController {
         player3name.setFill(getPlayerColor(3));
         player4name.setFill(getPlayerColor(4));
 
-        initRobberIcon();
         robber.setVisible(false);
         setAllRobberSpotsVisibility(false);
         guiState = GUIState.IDLE;
+
+        initAllImages();
     }
 
     public void internationalize(ResourceBundle bundle){
@@ -216,7 +216,6 @@ public class CatanGUIController {
         Tile[] tiles = GameLoader.getInstance().getTiles();
         for(int i = 0; i < tiles.length; i++){
             Tile current = tiles[i];
-            setHexBackground(hexagonTiles[i], current.getTerrain());
             if(current.getTerrain()!= Terrain.DESERT){
                 numbers[i].setText(Integer.toString(current.getDieNumber()));
             }else{
@@ -985,6 +984,20 @@ public class CatanGUIController {
     }
 
     // Changing resource image code
+    private void initAllImages() {
+        initHexImages();
+        setIconImages();
+        initializePorts();
+        initRobberIcon();
+    }
+
+    private void initHexImages() {
+        Tile[] tiles = GameLoader.getInstance().getTiles();
+        for(int i = 0; i < tiles.length; i++) {
+            setHexBackground(hexagonTiles[i], tiles[i].getTerrain());
+        }
+    }
+
     private void setHexBackground(Polygon location, Terrain resource){
         //used in initialization
         Image backgroundImage = null;
@@ -1069,7 +1082,7 @@ public class CatanGUIController {
 
     public void changeIconSet(final String iconFolderPath) {
         this.iconFolderPath = iconFolderPath;
-        //setIconImages();
+        initAllImages();
     }
 
     /**
