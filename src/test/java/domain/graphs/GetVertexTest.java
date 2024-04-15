@@ -3,7 +3,9 @@ package domain.graphs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import data.GameLoader;
 import domain.game.GameType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class GetVertexTest {
@@ -11,9 +13,15 @@ public class GetVertexTest {
     private static final int MIN_LOCATION_ID = 0;
     private static final int MAX_LOCATION_ID = 53;
 
+    VertexGraph vertexes;
+
+    @BeforeEach
+    public void setup() {
+        vertexes = new VertexGraph(GameType.Beginner);
+    }
+
     @Test
     public void getVertexWithLocationId0() {
-        VertexGraph vertexes =  new VertexGraph(GameType.Beginner);
         Vertex vertex = vertexes.getVertex(MIN_LOCATION_ID);
 
         int actualId = vertex.getLocationId();
@@ -23,7 +31,6 @@ public class GetVertexTest {
 
     @Test
     public void getVertexWithLocationId1() {
-        VertexGraph vertexes =  new VertexGraph(GameType.Beginner);
         Vertex vertex = vertexes.getVertex(1);
 
         int expectedId = 1;
@@ -47,7 +54,6 @@ public class GetVertexTest {
 
     @Test
     public void getVertexWithInvalidId54() {
-        VertexGraph vertexes =  new VertexGraph(GameType.Beginner);
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vertexes.getVertex(MAX_LOCATION_ID + 1));
 
         String expectedMessage = "Invalid locationId; Try[0, 53]";
@@ -58,7 +64,6 @@ public class GetVertexTest {
 
     @Test
     public void getVertexWithInvalidIdNegative1() {
-        VertexGraph vertexes =  new VertexGraph(GameType.Beginner);
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vertexes.getVertex(-1));
 
         String expectedMessage = "Invalid locationId; Try[0, 53]";

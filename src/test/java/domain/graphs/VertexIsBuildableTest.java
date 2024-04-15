@@ -5,21 +5,30 @@ import domain.game.GameType;
 import org.easymock.EasyMock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.player.Player;
 
 public class VertexIsBuildableTest {
 
-    @Test
-    public void testIsBuildableNotOccupiedNoNeighbors() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
+    VertexGraph vertexes;
+    RoadGraph roads;
+    Player mockPlayer;
+    Vertex testVertex;
+
+    @BeforeEach
+    public void setup() {
+        vertexes = new VertexGraph(GameType.Beginner);
+        roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        // grab any vertex, it doesn't matter which one
-        Vertex testVertex = vertexes.getVertex(0);
+        mockPlayer = EasyMock.createStrictMock(Player.class);
+        testVertex = vertexes.getVertex(0);
+    }
 
+    @Test
+    public void testIsBuildableNotOccupiedNoNeighbors() {
         boolean expected = true;
         boolean actual = testVertex.isBuildable();
         assertEquals(expected, actual);
@@ -27,15 +36,6 @@ public class VertexIsBuildableTest {
 
     @Test
     public void testIsBuildableIsOccupiedHasNeighbors() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        // grab any vertex, it doesn't matter which one
-        Vertex testVertex = vertexes.getVertex(0);
-
-        // make the vertex occupied
-        Player mockPlayer = EasyMock.createMock(Player.class);
         testVertex.setOwner(mockPlayer);
 
         // make the vertex have neighboring settlements
@@ -55,15 +55,6 @@ public class VertexIsBuildableTest {
 
     @Test
     public void testIsBuildableNotOccupiedHasNeighbors() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        // grab any vertex, it doesn't matter which one
-        Vertex testVertex = vertexes.getVertex(0);
-
-        // make the vertex have neighboring settlements
-        Player mockPlayer = EasyMock.createMock(Player.class);
         Vertex neighborVertex = vertexes.getVertex(1); // 1 is adjacent to 0 by the game diagram
         neighborVertex.setOwner(mockPlayer); // this simulates trying to build next to your own settlement
                                             // which has the same functionality as an opponents settlements
@@ -79,15 +70,6 @@ public class VertexIsBuildableTest {
 
     @Test
     public void testIsBuildableIsOccupiedNoNeighbors() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        // grab any vertex, it doesn't matter which one
-        Vertex testVertex = vertexes.getVertex(0);
-
-        // make the vertex occupied
-        Player mockPlayer = EasyMock.createMock(Player.class);
         testVertex.setOwner(mockPlayer);
 
         

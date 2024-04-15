@@ -7,6 +7,7 @@ import domain.player.BoostType;
 import domain.player.HarvestBooster;
 import domain.player.Player;
 import org.easymock.EasyMock;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -18,8 +19,33 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CreateWeatherEventTest {
 
+    HarvestBooster mockedPlayer1HarvestBooster, mockedPlayer2HarvestBooster, mockedPlayer3HarvestBooster, mockedPlayer4HarvestBooster;
+    Player player1, player2, player3, player4;
+    Player[] players;
+    Random mockedRandom;
+    Controller controller;
+
+    @BeforeEach
+    public void setupMocks() {
+        mockedPlayer1HarvestBooster = EasyMock.createStrictMock(HarvestBooster.class);
+        mockedPlayer2HarvestBooster = EasyMock.createStrictMock(HarvestBooster.class);
+        mockedPlayer3HarvestBooster = EasyMock.createStrictMock(HarvestBooster.class);
+        mockedPlayer4HarvestBooster = EasyMock.createStrictMock(HarvestBooster.class);
+        player1 = new Player(1, mockedPlayer1HarvestBooster);
+        player2 = new Player(2, mockedPlayer2HarvestBooster);
+        player3 = new Player(3, mockedPlayer3HarvestBooster);
+        player4 = new Player(4, mockedPlayer4HarvestBooster);
+        players = new Player[] {player1, player2, player3, player4};
+
+        GameType gameType = GameType.Advanced;
+        Game mockedGame = EasyMock.createStrictMock(Game.class); // note we don't assert on this, it is simply required for the controller constructor
+        mockedRandom = EasyMock.createStrictMock(Random.class);
+
+        controller = new Controller(mockedGame, players, gameType, mockedRandom);
+    }
+
     @Test
-    public void test_createWeatherEventSpread() {
+    public void test_createWeatherEventSpread() { // does not use basic mocks
         Game mockedGame = EasyMock.createStrictMock(Game.class);
         Player player = new Player(1, new HarvestBooster());
 
@@ -70,23 +96,6 @@ public class CreateWeatherEventTest {
 
     @Test
     public void test_createWeatherEventForEveryone() {
-        // Create the mocks and basic objects
-        HarvestBooster mockedPlayer1HarvestBooster = EasyMock.createStrictMock(HarvestBooster.class);
-        HarvestBooster mockedPlayer2HarvestBooster = EasyMock.createStrictMock(HarvestBooster.class);
-        HarvestBooster mockedPlayer3HarvestBooster = EasyMock.createStrictMock(HarvestBooster.class);
-        HarvestBooster mockedPlayer4HarvestBooster = EasyMock.createStrictMock(HarvestBooster.class);
-        Player player1 = new Player(1, mockedPlayer1HarvestBooster);
-        Player player2 = new Player(2, mockedPlayer2HarvestBooster);
-        Player player3 = new Player(3, mockedPlayer3HarvestBooster);
-        Player player4 = new Player(4, mockedPlayer4HarvestBooster);
-        Player[] players = new Player[] {player1, player2, player3, player4};
-
-        GameType gameType = GameType.Advanced;
-        Game mockedGame = EasyMock.createStrictMock(Game.class); // note we don't assert on this, it is simply required for the controller constructor
-        Random mockedRandom = EasyMock.createStrictMock(Random.class);
-
-        Controller controller = new Controller(mockedGame, players, gameType, mockedRandom);
-
         // Mocked calls expectations
         // Controlled random generation
         EasyMock.expect(mockedRandom.nextInt(5)).andReturn(0); // Call for generating the Brick resource
@@ -107,22 +116,6 @@ public class CreateWeatherEventTest {
 
     @Test
     public void test_createWeatherEventOnlyPlayer() {
-        // Create the mocks and basic objects
-        HarvestBooster mockedPlayer1HarvestBooster = EasyMock.createStrictMock(HarvestBooster.class);
-        HarvestBooster mockedPlayer2HarvestBooster = EasyMock.createStrictMock(HarvestBooster.class);
-        HarvestBooster mockedPlayer3HarvestBooster = EasyMock.createStrictMock(HarvestBooster.class);
-        HarvestBooster mockedPlayer4HarvestBooster = EasyMock.createStrictMock(HarvestBooster.class);
-        Player player1 = new Player(1, mockedPlayer1HarvestBooster);
-        Player player2 = new Player(2, mockedPlayer2HarvestBooster);
-        Player player3 = new Player(3, mockedPlayer3HarvestBooster);
-        Player player4 = new Player(4, mockedPlayer4HarvestBooster);
-        Player[] players = new Player[] {player1, player2, player3, player4};
-
-        GameType gameType = GameType.Advanced;
-        Game mockedGame = EasyMock.createStrictMock(Game.class); // note we don't assert on this, it is simply required for the controller constructor
-        Random mockedRandom = EasyMock.createStrictMock(Random.class);
-
-        Controller controller = new Controller(mockedGame, players, gameType, mockedRandom);
         controller.setCurrentPlayer(player2); // chosen arbitrarily
 
         // Mocked calls expectations

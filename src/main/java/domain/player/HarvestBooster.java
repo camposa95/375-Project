@@ -5,6 +5,7 @@ import domain.bank.Resource;
 import data.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class HarvestBooster implements Restorable {
@@ -115,14 +116,14 @@ public class HarvestBooster implements Restorable {
             }
         }
 
-        public void save(final File folder) throws SaveException {
+        public void save(final File folder) throws IOException {
             // Write the state of the class's attributes to separate files
             writeHashMap(folder, BOOSTS_FILE_NAME, this.boosts);
             writeHashMap(folder, DURATIONS_FILE_NAME, this.durations);
         }
 
         // Helper method to write a HashMap to a separate file
-        private void writeHashMap(final File folder, final String fileName, final Map<?, ?> hashMap) throws SaveException {
+        private void writeHashMap(final File folder, final String fileName, final Map<?, ?> hashMap) throws IOException {
             // Create a MementoWriter for the current map
             MementoWriter writer = new MementoWriter(folder, fileName);
 

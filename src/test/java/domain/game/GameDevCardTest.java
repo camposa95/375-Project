@@ -9,6 +9,7 @@ import domain.gameboard.GameBoard;
 import domain.player.Hand;
 import domain.player.Player;
 import org.easymock.EasyMock;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.graphs.RoadGraph;
@@ -18,16 +19,41 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class GameDevCardTest {
 
+    VertexGraph mockVertexGraph;
+    GameBoard mockGameBoard;
+    RoadGraph mockRoadGraph;
+
+    Player mockplayer, mockRobbed1, mockRobbed2;
+    Hand mockHand;
+    Player[] robbed;
+    Bank bank;
+    DevelopmentCardDeck deck;
+    Game game;
+
+    @BeforeEach
+    public void setupMocks() {
+        mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
+        mockGameBoard =  EasyMock.createMock(GameBoard.class);
+        mockRoadGraph =  EasyMock.createMock(RoadGraph.class);
+
+        mockplayer = EasyMock.createMock(Player.class);
+        mockRobbed1 = EasyMock.createMock(Player.class);
+        mockRobbed2 = EasyMock.createMock(Player.class);
+        mockHand = EasyMock.createMock(Hand.class);
+
+        mockplayer.hand = mockHand;
+        mockRobbed1.hand = mockHand;
+        mockRobbed2.hand = mockHand;
+
+        robbed = new Player[]{mockRobbed1, mockRobbed2};
+
+        bank = new Bank();
+        deck = new DevelopmentCardDeck();
+        game = new Game(mockGameBoard, mockVertexGraph, mockRoadGraph, deck, bank);
+    }
+
     @Test
     public void testBuyCard_NoResources_NoCard_ExpectError() {
-        VertexGraph mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
-        GameBoard mockGameBoard =  EasyMock.createMock(GameBoard.class);
-        RoadGraph mockRoadGraph =  EasyMock.createMock(RoadGraph.class);
-        DevelopmentCardDeck deck = new DevelopmentCardDeck();
-        Player mockplayer = EasyMock.createMock(Player.class);
-        
-        Game game = new Game(mockGameBoard, mockVertexGraph, mockRoadGraph, deck,  null);
-       
         EasyMock.replay(mockGameBoard,mockRoadGraph,mockVertexGraph,mockplayer);
        
         emptyDeck(deck);
@@ -47,14 +73,6 @@ public class GameDevCardTest {
 
     @Test
     public void testBuyCard_Resources_NoCard_ExpectError() {
-        VertexGraph mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
-        GameBoard mockGameBoard =  EasyMock.createMock(GameBoard.class);
-        RoadGraph mockRoadGraph =  EasyMock.createMock(RoadGraph.class);
-        DevelopmentCardDeck deck = new DevelopmentCardDeck();
-        Player mockplayer = EasyMock.createMock(Player.class);
-      
-        Game game = new Game(mockGameBoard, mockVertexGraph, mockRoadGraph, deck, null);
-        
         EasyMock.replay(mockGameBoard,mockRoadGraph,mockVertexGraph,mockplayer);
 
         emptyDeck(deck);
@@ -71,14 +89,6 @@ public class GameDevCardTest {
 
     @Test
     public void testBuyCard_NoResources_Card_ExpectError() {
-        VertexGraph mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
-        GameBoard mockGameBoard =  EasyMock.createMock(GameBoard.class);
-        RoadGraph mockRoadGraph =  EasyMock.createMock(RoadGraph.class);
-        DevelopmentCardDeck deck = new DevelopmentCardDeck();
-        Player mockplayer = EasyMock.createMock(Player.class);
-
-        Game game = new Game(mockGameBoard, mockVertexGraph, mockRoadGraph, deck, null);
-        
         emptyDeck(deck);
         deck.returnToDeck(DevCard.KNIGHT);
 
@@ -98,14 +108,6 @@ public class GameDevCardTest {
 
     @Test
     public void testBuyCard_Resources_Card() {
-        VertexGraph mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
-        GameBoard mockGameBoard =  EasyMock.createMock(GameBoard.class);
-        RoadGraph mockRoadGraph =  EasyMock.createMock(RoadGraph.class);
-        DevelopmentCardDeck deck = new DevelopmentCardDeck();
-        Player mockplayer = EasyMock.createMock(Player.class);
-
-        Game game = new Game(mockGameBoard, mockVertexGraph, mockRoadGraph, deck, null);
-        
         emptyDeck(deck);
         deck.returnToDeck(DevCard.KNIGHT);
 
@@ -130,31 +132,13 @@ public class GameDevCardTest {
 
     @Test
     public void testPlayMonopoly_GetCards() {
-        VertexGraph mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
-        GameBoard mockGameBoard =  EasyMock.createMock(GameBoard.class);
-        RoadGraph mockRoadGraph =  EasyMock.createMock(RoadGraph.class);
-
-        Player mockplayer = EasyMock.createMock(Player.class);
-        Player mockRobbed1 = EasyMock.createMock(Player.class);
-        Player mockRobbed2 = EasyMock.createMock(Player.class);
-        Hand mockHand = EasyMock.createMock(Hand.class);
-
-        mockplayer.hand = mockHand;
-        mockRobbed1.hand = mockHand;
-        mockRobbed2.hand = mockHand;
-
-        Player[] robbed = {mockRobbed1,mockRobbed2};
-
-        Game game = new Game(mockGameBoard, mockVertexGraph, mockRoadGraph, null, null);
-
         //Resource to take
         Resource resource = Resource.BRICK;
 
-
         //Expect
         EasyMock.expect(mockplayer.useDevCard(DevCard.MONOPOLY)).andReturn(true);
-        EasyMock.expect(mockRobbed1.hand.getResourceCardAmount(Resource.BRICK)).andReturn(5);
-        EasyMock.expect(mockRobbed2.hand.getResourceCardAmount(Resource.BRICK)).andReturn(1);
+        EasyMock.expect(mockRobbed1.hand.getResourceCount(Resource.BRICK)).andReturn(5);
+        EasyMock.expect(mockRobbed2.hand.getResourceCount(Resource.BRICK)).andReturn(1);
         EasyMock.expect(mockRobbed1.hand.removeResource(Resource.BRICK, 5)).andReturn(true);
         EasyMock.expect(mockRobbed2.hand.removeResource(Resource.BRICK, 1)).andReturn(true);
         EasyMock.expect(mockplayer.hand.addResource(resource, 5)).andReturn(true);
@@ -174,31 +158,13 @@ public class GameDevCardTest {
 
     @Test
     public void testPlayMonopoly_GetSome() {
-        VertexGraph mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
-        GameBoard mockGameBoard =  EasyMock.createMock(GameBoard.class);
-        RoadGraph mockRoadGraph =  EasyMock.createMock(RoadGraph.class);
-
-        Player mockplayer = EasyMock.createMock(Player.class);
-        Player mockRobbed1 = EasyMock.createMock(Player.class);
-        Player mockRobbed2 = EasyMock.createMock(Player.class);
-        Hand mockHand = EasyMock.createMock(Hand.class);
-
-        mockplayer.hand = mockHand;
-        mockRobbed1.hand = mockHand;
-        mockRobbed2.hand = mockHand;
-
-        Player[] robbed = {mockRobbed1,mockRobbed2};
-
-        Game game = new Game(mockGameBoard, mockVertexGraph, mockRoadGraph, null, null);
-
         //Resource to take
         Resource resource = Resource.BRICK;
 
-
         //Expect
         EasyMock.expect(mockplayer.useDevCard(DevCard.MONOPOLY)).andReturn(true);
-        EasyMock.expect(mockRobbed1.hand.getResourceCardAmount(Resource.BRICK)).andReturn(5);
-        EasyMock.expect(mockRobbed2.hand.getResourceCardAmount(Resource.BRICK)).andReturn(0);
+        EasyMock.expect(mockRobbed1.hand.getResourceCount(Resource.BRICK)).andReturn(5);
+        EasyMock.expect(mockRobbed2.hand.getResourceCount(Resource.BRICK)).andReturn(0);
         EasyMock.expect(mockRobbed1.hand.removeResource(Resource.BRICK, 5)).andReturn(true);
         EasyMock.expect(mockplayer.hand.addResource(resource, 5)).andReturn(true);
        
@@ -216,23 +182,6 @@ public class GameDevCardTest {
 
     @Test
     public void testPlayMonopoly_Error() {
-        VertexGraph mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
-        GameBoard mockGameBoard =  EasyMock.createMock(GameBoard.class);
-        RoadGraph mockRoadGraph =  EasyMock.createMock(RoadGraph.class);
-
-        Player mockplayer = EasyMock.createMock(Player.class);
-        Player mockRobbed1 = EasyMock.createMock(Player.class);
-        Player mockRobbed2 = EasyMock.createMock(Player.class);
-        Hand mockHand = EasyMock.createMock(Hand.class);
-
-        mockplayer.hand = mockHand;
-        mockRobbed1.hand = mockHand;
-        mockRobbed2.hand = mockHand;
-
-        Player[] robbed = {mockRobbed1,mockRobbed2};
-
-        Game game = new Game(mockGameBoard, mockVertexGraph, mockRoadGraph, null, null);
-
         //Resource to take
         Resource resource = Resource.BRICK;
 
@@ -250,16 +199,6 @@ public class GameDevCardTest {
 
     @Test
     public void testPlayYearOfPlenty_NoDev() {
-        VertexGraph mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
-        GameBoard mockGameBoard =  EasyMock.createMock(GameBoard.class);
-        RoadGraph mockRoadGraph =  EasyMock.createMock(RoadGraph.class);
-        Player mockplayer = EasyMock.createMock(Player.class);
-        Hand mockHand = EasyMock.createMock(Hand.class);
-
-        mockplayer.hand = mockHand;
-
-        Game game = new Game(mockGameBoard, mockVertexGraph, mockRoadGraph, null, null);
-
         //Resources to take
         Resource r1 = Resource.BRICK;
         Resource r2 = Resource.WOOL;
@@ -276,16 +215,6 @@ public class GameDevCardTest {
 
     @Test
     public void testPlayYearOfPlenty_NoResources() {
-        VertexGraph mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
-        GameBoard mockGameBoard =  EasyMock.createMock(GameBoard.class);
-        RoadGraph mockRoadGraph =  EasyMock.createMock(RoadGraph.class);
-        Player mockplayer = EasyMock.createMock(Player.class);
-        Hand mockHand = EasyMock.createMock(Hand.class);
-        Bank bank = new Bank();
-        mockplayer.hand = mockHand;
-
-        Game game = new Game(mockGameBoard, mockVertexGraph, mockRoadGraph, null, bank);
-
         //Resources to take
         Resource r1 = Resource.BRICK;
         Resource r2 = Resource.WOOL;
@@ -307,18 +236,6 @@ public class GameDevCardTest {
 
     @Test
     public void testPlayYearOfPlenty_NoR1() {
-        VertexGraph mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
-        GameBoard mockGameBoard =  EasyMock.createMock(GameBoard.class);
-        RoadGraph mockRoadGraph =  EasyMock.createMock(RoadGraph.class);
-        Player mockplayer = EasyMock.createMock(Player.class);
-        Hand mockHand = EasyMock.createMock(Hand.class);
-        
-        Bank bank = new Bank();
-
-        mockplayer.hand = mockHand;
-
-        Game game = new Game(mockGameBoard, mockVertexGraph, mockRoadGraph, null,  bank);
-
         //Resources to take
         Resource r1 = Resource.BRICK;
         Resource r2 = Resource.WOOL;
@@ -345,16 +262,6 @@ public class GameDevCardTest {
 
     @Test
     public void testPlayYearOfPlenty_NoR2() {
-        VertexGraph mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
-        GameBoard mockGameBoard =  EasyMock.createMock(GameBoard.class);
-        RoadGraph mockRoadGraph =  EasyMock.createMock(RoadGraph.class);
-        Player mockplayer = EasyMock.createMock(Player.class);
-        Hand mockHand = EasyMock.createMock(Hand.class);
-        mockplayer.hand = mockHand;
-        Bank bank = new Bank();
-
-        Game game = new Game(mockGameBoard, mockVertexGraph, mockRoadGraph, null, bank);
-
         //Resources to take
         Resource r1 = Resource.BRICK;
         Resource r2 = Resource.WOOL;
@@ -374,17 +281,6 @@ public class GameDevCardTest {
 
     @Test
     public void testPlayYearOfPlenty_GetResources() {
-        VertexGraph mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
-        GameBoard mockGameBoard =  EasyMock.createMock(GameBoard.class);
-        RoadGraph mockRoadGraph =  EasyMock.createMock(RoadGraph.class);
-        Player mockplayer = EasyMock.createMock(Player.class);
-        Hand mockHand = EasyMock.createMock(Hand.class);
-        mockplayer.hand = mockHand;
-
-        Bank bank = new Bank();
-        Game game = new Game(mockGameBoard, mockVertexGraph, mockRoadGraph, null, bank);
-        
-
         //Resources to take
         Resource r1 = Resource.BRICK;
         Resource r2 = Resource.WOOL;

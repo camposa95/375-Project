@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -21,37 +22,80 @@ public class NewGameController {
     public ChoiceBox<String> gameModeSelector;
     @FXML
     public ChoiceBox<String> languageSelector;
-
     @FXML
     public Button startGameButton;
+    public Text title, playerSelectorLabel, GameModeSelectorLabel, languageSelectorLabel;
+    private Integer numPlayers;
+    private GameType gameType;
+    private String language;
 
     @FXML
     private void initialize() {
-        gameModeSelector.setItems(FXCollections.observableArrayList("Beginner (Principiante)", "Advanced (Experto)"));
+        this.setMessages(GameLoader.getInstance().getMessageBundle());
+
         playersSelector.setItems(FXCollections.observableArrayList(2,3,4));
         languageSelector.setItems(FXCollections.observableArrayList("English", "Espanol"));
+
+        startGameButton.setDisable(true);
+    }
+
+    public void setMessages(ResourceBundle messages) {
+
+        String beginner = messages.getString("beginner");
+        String advanced = messages.getString("advanced");
+        gameModeSelector.setItems(FXCollections.observableArrayList(beginner, advanced));
+        if (gameType != null) { // have to reset the selection since it is cleared out unfortunately by the above action
+            gameModeSelector.setValue(gameType == GameType.Beginner ? beginner : advanced);
+        }
+
+        title.setText(messages.getString("newGameTitle"));
+        playerSelectorLabel.setText(messages.getString("playerSelectorLabel"));
+        GameModeSelectorLabel.setText(messages.getString("gameModeSelectorLabel"));
+        languageSelectorLabel.setText(messages.getString("languageSelectorLabel"));
+        startGameButton.setText(messages.getString("startGameButton"));
+    }
+
+    public void changeLanguage() throws IOException {
+        language = this.languageSelector.getValue();
+        this.setMessages(GameLoader.getInstance().setLanguage(language));
+
+        checkForGameParameters();
+    }
+
+    public void selectPlayers() {
+        Integer selection = playersSelector.getValue();
+        if (selection != null) {
+            numPlayers = selection;
+
+            checkForGameParameters();
+        }
+    }
+
+    public void selectGameMode() {
+        String selection = gameModeSelector.getValue();
+        if (selection != null) {
+            gameType = translateGameType(selection);
+            checkForGameParameters();
+        }
+    }
+
+    private GameType translateGameType(String selection) {
+        return switch (selection.toLowerCase()) {
+            case "beginner", "principiante" -> GameType.Beginner;
+            case "advanced", "experto" -> GameType.Advanced;
+            default -> null;
+        };
+    }
+
+    public void checkForGameParameters() {
+        this.startGameButton.setDisable(this.numPlayers == null || this.gameType == null || this.language == null);
     }
 
     @FXML
     public void startGame() throws IOException {
-        if(playersSelector.getValue() == null || gameModeSelector.getValue() == null || languageSelector.getValue() == null) {
-            return;
-        }
-
-        // get the player count from input
-        int playerCount = Integer.parseInt(playersSelector.getValue().toString());
-
-        // get the gameType from input
-        String input = gameModeSelector.getValue();
-        String result = input.substring(0, input.indexOf(' ')); // Extract the substring before the space
-        GameType gameType = GameType.valueOf(result);
-
-        // get the language from input
-        String language = languageSelector.getValue();
-
         // set up the game to start, instantiate objects
         GameLoader loader = GameLoader.getInstance();
-        Controller domainController = loader.createNewGame(gameType, playerCount, language);
+        Controller domainController = loader.createNewGame(gameType, numPlayers, this.language);
         ResourceBundle messages = loader.getMessageBundle();
 
         //close Start Screen window

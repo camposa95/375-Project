@@ -3,6 +3,7 @@ package domain.player;
 import domain.bank.Resource;
 import domain.player.BoostType;
 import domain.player.HarvestBooster;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -10,10 +11,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HarvestBoosterTest {
+
+    HarvestBooster booster;
+    
+    @BeforeEach
+    public void setup() {
+        booster = new HarvestBooster();
+    }
     @Test
     public void testSingleDoubleBoost() {
-        // Set up the boosts
-        HarvestBooster booster = new HarvestBooster();
         booster.setBoost(Resource.LUMBER, BoostType.DOUBLE);
 
         // Tests input
@@ -36,8 +42,6 @@ public class HarvestBoosterTest {
 
     @Test
     public void testSingleDisableBoost() {
-        // Set up the boosts
-        HarvestBooster booster = new HarvestBooster();
         booster.setBoost(Resource.WOOL, BoostType.ZERO);
 
         // Tests input
@@ -60,8 +64,6 @@ public class HarvestBoosterTest {
 
     @Test
     public void testSingleNoneBoost() {
-        // Set up the boosts
-        HarvestBooster booster = new HarvestBooster();
         // No boosts added
 
         // Tests input
@@ -84,8 +86,6 @@ public class HarvestBoosterTest {
 
     @Test
     public void testVarietyBoost() {
-        // Set up the boosts
-        HarvestBooster booster = new HarvestBooster();
         booster.setBoost(Resource.LUMBER, BoostType.ZERO);
         booster.setBoost(Resource.GRAIN, BoostType.DOUBLE);
         // none for wool
@@ -113,7 +113,6 @@ public class HarvestBoosterTest {
 
     @Test
     public void testDuration() {
-        HarvestBooster booster = new HarvestBooster();
         // Tests input & output declarations
         Resource[] unadjustedResources = {Resource.LUMBER, Resource.GRAIN, Resource.WOOL, Resource.ORE, Resource.BRICK};
         Map<Resource, Integer> expectedResourceCounts = new HashMap<>();

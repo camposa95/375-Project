@@ -760,7 +760,7 @@
             <Font size="15.0" />
          </font>
       </Text>
-      <Button fx:id="saveButton" layoutX="34.0" layoutY="744.0" mnemonicParsing="false" onMouseClicked="#saveButtonPressed" prefHeight="52.0" prefWidth="104.0" text="Save &amp; Exit" />
+      <Button fx:id="pauseButton" layoutX="34.0" layoutY="744.0" mnemonicParsing="false" onAction="#pauseButtonPressed" prefHeight="52.0" prefWidth="104.0" text="Pause" />
       <Button fx:id="undoButton" layoutX="20.0" layoutY="810.0" mnemonicParsing="false" onAction="#undo" text="Undo" />
       <Button fx:id="redoButton" layoutX="104.0" layoutY="810.0" mnemonicParsing="false" onAction="#redo" text="Redo" />
       <Button fx:id="buildDistrictButton" layoutX="1376.0" layoutY="260.0" mnemonicParsing="false" onMouseClicked="#buildDistrictButtonPress" prefHeight="44.0" prefWidth="104.0" text="Build District" />

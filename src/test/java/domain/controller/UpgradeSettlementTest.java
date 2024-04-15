@@ -3,6 +3,7 @@ package domain.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.easymock.EasyMock;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.game.Game;
@@ -12,23 +13,33 @@ import domain.game.NotEnoughResourcesException;
 import domain.player.Player;
 
 public class UpgradeSettlementTest {
-    @Test
-    public void testClickedVertex17() throws NotEnoughResourcesException, InvalidPlacementException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
+
+    Game mockedGame;
+    Player mockedPlayer;
+    Player[] players;
+    Controller controller;
+
+    @BeforeEach
+    public void setupMocks() {
+        mockedGame = EasyMock.createStrictMock(Game.class);
         GameType gameType = GameType.Advanced;
 
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player[] players = {mockedPlayer1};
+        mockedPlayer = EasyMock.createStrictMock(Player.class);
+        players = new Player[]{mockedPlayer};
 
-        Controller controller = new Controller(mockedGame, players, gameType);
+        controller = new Controller(mockedGame, players, gameType);
+    }
+
+    @Test
+    public void testClickedVertex17() throws NotEnoughResourcesException, InvalidPlacementException {
         int testVertexId = 22;
 
         controller.setPhase(GamePhase.REGULAR_PLAY);
         controller.setState(GameState.UPGRADE_SETTLEMENT);
-        controller.setCurrentPlayer(mockedPlayer1);
+        controller.setCurrentPlayer(mockedPlayer);
 
         // Game succeeds
-        mockedGame.upgradeSettlement(mockedPlayer1, testVertexId);
+        mockedGame.upgradeSettlement(mockedPlayer, testVertexId);
 
         // method call
         EasyMock.replay(mockedGame);
@@ -47,21 +58,14 @@ public class UpgradeSettlementTest {
 
     @Test
     public void testClickedVertex18() throws NotEnoughResourcesException, InvalidPlacementException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player[] players = {mockedPlayer1};
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testVertexId = 22;
 
         controller.setPhase(GamePhase.REGULAR_PLAY);
         controller.setState(GameState.UPGRADE_SETTLEMENT);
-        controller.setCurrentPlayer(mockedPlayer1);
+        controller.setCurrentPlayer(mockedPlayer);
 
         // Game tells us the player does not have enough resources
-        mockedGame.upgradeSettlement(mockedPlayer1, testVertexId);
+        mockedGame.upgradeSettlement(mockedPlayer, testVertexId);
         EasyMock.expectLastCall().andThrow(new NotEnoughResourcesException());
 
         // method call
@@ -81,21 +85,14 @@ public class UpgradeSettlementTest {
 
     @Test
     public void testClickedVertex19() throws NotEnoughResourcesException, InvalidPlacementException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player[] players = {mockedPlayer1};
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testVertexId = 22;
 
         controller.setPhase(GamePhase.REGULAR_PLAY);
         controller.setState(GameState.UPGRADE_SETTLEMENT);
-        controller.setCurrentPlayer(mockedPlayer1);
+        controller.setCurrentPlayer(mockedPlayer);
 
         // Game tells us the player does not have enough resources
-        mockedGame.upgradeSettlement(mockedPlayer1, testVertexId);
+        mockedGame.upgradeSettlement(mockedPlayer, testVertexId);
         EasyMock.expectLastCall().andThrow(new InvalidPlacementException());
 
         // method call

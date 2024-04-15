@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.easymock.EasyMock;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.game.Game;
@@ -13,20 +14,29 @@ import domain.game.NotEnoughResourcesException;
 import domain.player.Player;
 
 public class ClickedVertexTest {
-    @Test
-    public void testClickedVertex1() {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
+
+    Game mockedGame;
+    Player mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4;
+    Player[] players;
+    Controller controller;
+
+    @BeforeEach
+    public void setupMocks() {
+        mockedGame = EasyMock.createStrictMock(Game.class);
         GameType gameType = GameType.Advanced;
 
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
+        mockedPlayer1 = EasyMock.createStrictMock(Player.class);
+        mockedPlayer2 = EasyMock.createStrictMock(Player.class);
+        mockedPlayer3 = EasyMock.createStrictMock(Player.class);
+        mockedPlayer4 = EasyMock.createStrictMock(Player.class);
 
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
+        players = new Player[]{mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4};
 
-        Controller controller = new Controller(mockedGame, players, gameType);
-
+        controller = new Controller(mockedGame, players, gameType);
+    }
+    
+    @Test
+    public void testClickedVertex1() {
         controller.setPhase(GamePhase.SETUP);
         controller.setState(GameState.FIRST_ROAD);
         controller.setCurrentPlayer(mockedPlayer1);
@@ -58,18 +68,6 @@ public class ClickedVertexTest {
 
     @Test
     public void testClickedVertex2() {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
-
         controller.setPhase(GamePhase.SETUP);
         controller.setState(GameState.SECOND_ROAD);
         controller.setCurrentPlayer(mockedPlayer1);
@@ -101,17 +99,6 @@ public class ClickedVertexTest {
 
     @Test
     public void testClickedVertex3() throws InvalidPlacementException, NotEnoughResourcesException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testVertexId = 22;
 
         controller.setPhase(GamePhase.SETUP);
@@ -149,17 +136,6 @@ public class ClickedVertexTest {
 
     @Test
     public void testClickedVertex4() throws InvalidPlacementException, NotEnoughResourcesException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testVertexId = 22;
 
         controller.setPhase(GamePhase.SETUP);
@@ -196,17 +172,6 @@ public class ClickedVertexTest {
 
     @Test
     public void testClickedVertex5() throws InvalidPlacementException, NotEnoughResourcesException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testVertexId = 22;
 
         controller.setPhase(GamePhase.SETUP);
@@ -241,17 +206,6 @@ public class ClickedVertexTest {
 
     @Test
     public void testClickedVertex6() throws InvalidPlacementException, NotEnoughResourcesException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testVertexId = 22;
 
         controller.setPhase(GamePhase.SETUP);
@@ -289,17 +243,6 @@ public class ClickedVertexTest {
 
     @Test
     public void testClickedVertex7() throws InvalidPlacementException, NotEnoughResourcesException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testVertexId = 22;
 
         controller.setPhase(GamePhase.SETUP);
@@ -337,17 +280,6 @@ public class ClickedVertexTest {
 
     @Test
     public void testClickedVertex8() throws InvalidPlacementException, NotEnoughResourcesException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testVertexId = 22;
 
         controller.setPhase(GamePhase.SETUP);

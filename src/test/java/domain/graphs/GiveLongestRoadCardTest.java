@@ -3,6 +3,7 @@ package domain.graphs;
 import data.GameLoader;
 import domain.game.GameType;
 import org.easymock.EasyMock;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.player.Player;
@@ -11,17 +12,23 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class GiveLongestRoadCardTest {
 
-    @Test
-    public void testGiveLongestRoadCard1() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
+    VertexGraph vertexes;
+    RoadGraph roads;
+    Player mockedPlayer1, mockedPlayer2, mockedPlayer3;
+
+    @BeforeEach
+    public void setup() {
+        vertexes = new VertexGraph(GameType.Beginner);
+        roads = new RoadGraph();
         GameLoader.initializeGraphs(roads, vertexes);
 
-        // mock players
-        Player mockedPlayer1 = EasyMock.createMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createMock(Player.class);
+        mockedPlayer1 = EasyMock.createMock(Player.class);
+        mockedPlayer2 = EasyMock.createMock(Player.class);
+        mockedPlayer3 = EasyMock.createMock(Player.class);
+    }
 
+    @Test
+    public void testGiveLongestRoadCard1() {
         int player1_origin1 = 40;
         int player1_origin2 = 18;
 
@@ -76,15 +83,6 @@ public class GiveLongestRoadCardTest {
 
     @Test
     public void testGiveLongestRoadCard2() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        // mock players
-        Player mockedPlayer1 = EasyMock.createMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createMock(Player.class);
-
         int player1_origin1 = 40;
         int player1_origin2 = 18;
 
@@ -145,15 +143,6 @@ public class GiveLongestRoadCardTest {
 
     @Test
     public void testGiveLongestRoadCard3() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        // mock players
-        Player mockedPlayer1 = EasyMock.createMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createMock(Player.class);
-
         int player1_origin1 = 40;
         int player1_origin2 = 18;
 
@@ -215,15 +204,6 @@ public class GiveLongestRoadCardTest {
 
     @Test
     public void testGiveLongestRoadCard4() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        // mock players
-        Player mockedPlayer1 = EasyMock.createMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createMock(Player.class);
-
         int player1_origin1 = 40;
         int player1_origin2 = 18;
 
@@ -288,15 +268,6 @@ public class GiveLongestRoadCardTest {
 
     @Test
     public void testGiveLongestRoadCard5() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        // mock players
-        Player mockedPlayer1 = EasyMock.createMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createMock(Player.class);
-
         int player1_origin1 = 40;
         int player1_origin2 = 18;
 
@@ -362,15 +333,6 @@ public class GiveLongestRoadCardTest {
 
     @Test
     public void testGiveLongestRoadCard6() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        // mock players
-        Player mockedPlayer1 = EasyMock.createMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createMock(Player.class);
-
         int player1_origin1 = 40;
         int player1_origin2 = 18;
 
@@ -435,15 +397,6 @@ public class GiveLongestRoadCardTest {
 
     @Test
     public void testGiveLongestRoadCard7() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        // mock players
-        Player mockedPlayer1 = EasyMock.createMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createMock(Player.class);
-
         int player1_origin1 = 40;
         int player1_origin2 = 18;
 
@@ -509,15 +462,6 @@ public class GiveLongestRoadCardTest {
 
     @Test
     public void testGiveLongestRoadCard8() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        // mock players
-        Player mockedPlayer1 = EasyMock.createMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createMock(Player.class);
-
         int player1_origin1 = 40;
         int player1_origin2 = 18;
 
@@ -584,15 +528,6 @@ public class GiveLongestRoadCardTest {
 
     @Test
     public void testGiveLongestRoadCard9() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        // mock players
-        Player mockedPlayer1 = EasyMock.createMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createMock(Player.class);
-
         int player1_origin1 = 40;
         int player1_origin2 = 18;
 
@@ -654,15 +589,6 @@ public class GiveLongestRoadCardTest {
 
     @Test
     public void testGiveLongestRoadCard10() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        // mock players
-        Player mockedPlayer1 = EasyMock.createMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createMock(Player.class);
-
         int player1_origin1 = 40;
         int player1_origin2 = 18;
 

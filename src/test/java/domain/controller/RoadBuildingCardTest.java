@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.easymock.EasyMock;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.game.Game;
@@ -13,26 +14,36 @@ import domain.game.NotEnoughResourcesException;
 import domain.player.Player;
 
 public class RoadBuildingCardTest {
+
+    Game mockedGame;
+    Player player1, mockedPlayer2, mockedPlayer3, mockedPlayer4;
+    Player[] players;
+    Controller controller;
+
+    @BeforeEach
+    public void setupMocks() {
+        mockedGame = EasyMock.createStrictMock(Game.class);
+        GameType gameType = GameType.Advanced;
+
+        player1 = new Player(1);
+        mockedPlayer2 = EasyMock.createStrictMock(Player.class);
+        mockedPlayer3 = EasyMock.createStrictMock(Player.class);
+        mockedPlayer4 = EasyMock.createStrictMock(Player.class);
+
+        players = new Player[]{player1, mockedPlayer2, mockedPlayer3, mockedPlayer4};
+
+        controller = new Controller(mockedGame, players, gameType);
+    }
     
     @Test
     public void testRoadBuilding20() throws InvalidPlacementException, NotEnoughResourcesException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = new Player(1); // this needed to be an actual player to avoid null pointers on hand
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testRoadId = 0;
 
         controller.setPhase(GamePhase.REGULAR_PLAY);
         controller.setState(GameState.ROAD_BUILDING_1);
-        controller.setCurrentPlayer(mockedPlayer1);
+        controller.setCurrentPlayer(player1);
 
-        mockedGame.placeRoad(testRoadId,0, mockedPlayer1);
+        mockedGame.placeRoad(testRoadId,0, player1);
         // game runs method successfully
 
         // Assert on states before the click
@@ -58,23 +69,13 @@ public class RoadBuildingCardTest {
 
     @Test
     public void testRoadBuilding21() throws InvalidPlacementException, NotEnoughResourcesException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = new Player(1); // this needed to be an actual player to avoid null pointers on hand
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testRoadId = 0;
 
         controller.setPhase(GamePhase.REGULAR_PLAY);
         controller.setState(GameState.ROAD_BUILDING_1);
-        controller.setCurrentPlayer(mockedPlayer1);
+        controller.setCurrentPlayer(player1);
 
-        mockedGame.placeRoad(testRoadId,0, mockedPlayer1);
+        mockedGame.placeRoad(testRoadId,0, player1);
         EasyMock.expectLastCall().andThrow(new InvalidPlacementException());
         // game tells us the placement is invalid
 
@@ -101,23 +102,13 @@ public class RoadBuildingCardTest {
 
     @Test
     public void testRoadBuilding22() throws InvalidPlacementException, NotEnoughResourcesException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = new Player(1); // this needed to be an actual player to avoid null pointers on hand
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testRoadId = 0;
 
         controller.setPhase(GamePhase.REGULAR_PLAY);
         controller.setState(GameState.ROAD_BUILDING_1);
-        controller.setCurrentPlayer(mockedPlayer1);
+        controller.setCurrentPlayer(player1);
 
-        mockedGame.placeRoad(testRoadId,0, mockedPlayer1);
+        mockedGame.placeRoad(testRoadId,0, player1);
         EasyMock.expectLastCall().andThrow(new NotEnoughResourcesException());
         // game tells us the placement is invalid
 
@@ -144,23 +135,13 @@ public class RoadBuildingCardTest {
 
     @Test
     public void testRoadBuilding23() throws InvalidPlacementException, NotEnoughResourcesException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = new Player(1); // this needed to be an actual player to avoid null pointers on hand
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testRoadId = 0;
 
         controller.setPhase(GamePhase.REGULAR_PLAY);
         controller.setState(GameState.ROAD_BUILDING_2);
-        controller.setCurrentPlayer(mockedPlayer1);
+        controller.setCurrentPlayer(player1);
 
-        mockedGame.placeRoad(testRoadId,0, mockedPlayer1);
+        mockedGame.placeRoad(testRoadId,0, player1);
         // game runs method successfully
 
         // Assert on states before the click
@@ -186,23 +167,13 @@ public class RoadBuildingCardTest {
 
     @Test
     public void testRoadBuilding24() throws InvalidPlacementException, NotEnoughResourcesException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = new Player(1); // this needed to be an actual player to avoid null pointers on hand
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testRoadId = 0;
 
         controller.setPhase(GamePhase.REGULAR_PLAY);
         controller.setState(GameState.ROAD_BUILDING_2);
-        controller.setCurrentPlayer(mockedPlayer1);
+        controller.setCurrentPlayer(player1);
 
-        mockedGame.placeRoad(testRoadId,0, mockedPlayer1);
+        mockedGame.placeRoad(testRoadId,0, player1);
         EasyMock.expectLastCall().andThrow(new InvalidPlacementException());
         // game tells us the placement is invalid
 
@@ -229,23 +200,13 @@ public class RoadBuildingCardTest {
 
     @Test
     public void testRoadBuilding25() throws InvalidPlacementException, NotEnoughResourcesException {
-        Game mockedGame = EasyMock.createStrictMock(Game.class);
-        GameType gameType = GameType.Advanced;
-
-        Player mockedPlayer1 = new Player(1); // this needed to be an actual player to avoid null pointers on hand
-        Player mockedPlayer2 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createStrictMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createStrictMock(Player.class);
-        Player[] players = { mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4 };
-
-        Controller controller = new Controller(mockedGame, players, gameType);
         int testRoadId = 0;
 
         controller.setPhase(GamePhase.REGULAR_PLAY);
         controller.setState(GameState.ROAD_BUILDING_2);
-        controller.setCurrentPlayer(mockedPlayer1);
+        controller.setCurrentPlayer(player1);
 
-        mockedGame.placeRoad(testRoadId,0, mockedPlayer1);
+        mockedGame.placeRoad(testRoadId,0, player1);
         EasyMock.expectLastCall().andThrow(new NotEnoughResourcesException());
         // game tells us the placement is invalid
 
@@ -272,18 +233,9 @@ public class RoadBuildingCardTest {
 
     @Test
     public void testPlayRoadBuildingCardsDisabled() {
-        Game mockedGame = EasyMock.createMock(Game.class);
-        Player mockedPlayer1 = EasyMock.createMock(Player.class);
-        Player mockedPlayer2 = EasyMock.createMock(Player.class);
-        Player mockedPlayer3 = EasyMock.createMock(Player.class);
-        Player mockedPlayer4 = EasyMock.createMock(Player.class);
-        Player[] players = {mockedPlayer1, mockedPlayer2, mockedPlayer3, mockedPlayer4};
-        Controller controller = new Controller(mockedGame, players, GameType.Advanced);
-
-
         // set up the variables for the test
         controller.setDevCardsEnabled(false);
-        controller.setCurrentPlayer(mockedPlayer1);
+        controller.setCurrentPlayer(player1);
 
 
         // Expectations

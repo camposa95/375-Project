@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import data.GameLoader;
 import domain.player.HarvestBooster;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.controller.Controller;
@@ -22,6 +23,7 @@ import domain.bank.Resource;
 import domain.graphs.RoadGraph;
 import domain.graphs.VertexGraph;
 
+import static domain.bank.Resource.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -31,9 +33,48 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class F11Test {
 
-    private static final Resource[] RESOURCES_FOR_CARD = {Resource.WOOL, Resource.GRAIN, Resource.ORE};
+    private static final Resource[] RESOURCES_FOR_CARD = {WOOL, GRAIN, ORE};
 
     private static final int VICTORY_POINTS_FROM_SETUP = 2;
+
+    VertexGraph vertexes;
+    RoadGraph roads;
+    Player player1;
+    Player player2;
+    Player player3;
+    Player player4;
+    Player[] players;
+    Controller controller;
+
+    @BeforeEach
+    public void createGameObjects() {
+        GameType gameType = GameType.Beginner;
+        vertexes = new VertexGraph(gameType);
+        roads = new RoadGraph();
+        GameLoader.initializeGraphs(roads, vertexes);
+
+        Bank bank = new Bank();
+        player1 = new Player(1, new HarvestBooster(), bank);
+        player2 = new Player(2, new HarvestBooster(), bank);
+        player3 = new Player(3, new HarvestBooster(), bank);
+        player4 = new Player(4, new HarvestBooster(), bank);
+        players = new Player[]{player1, player2, player3, player4};
+
+        // other things dependent on these things
+        DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
+        GameBoard gameBoard = new GameBoard(GameType.Beginner);
+        GameLoader.initializeGameBoard(gameBoard);
+        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+
+        // Assert that the beginner setup does not time out to kill mutant
+        final AtomicReference<Controller> controllerRef = new AtomicReference<>();
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
+        controller = controllerRef.get();
+
+        for (Player p: players) {
+            p.hand.clearResources();
+        }
+    }
     
     // helper method that will loop the game back to the current player by ending turn a bunch
     private void loopToBeginning(final Controller controller) {
@@ -45,50 +86,6 @@ public class F11Test {
 
     @Test
     public void testPlayCardCorrectly() {
-        // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Here we use beginner game to skip through to the regular gameplay
-        GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
-
-        // other things dependent on these things
-        DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(GameType.Beginner);
-        GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        bank.reset();
-        
-        // Assert that the beginner setup does not time out to kill mutant
-        final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
-        Controller controller = controllerRef.get();
-
-        // -------------------------- Start of Actual Test Stuff ---------------------------
-        // Note: we assume everything about setup was correct because it was tested earlier
-
-        // Note: at this point the players would have gotten some starter resources during the 
-        // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources because the
-        // longest road card doesn't need resources because it is free
-        for (Resource resource: Resource.values()) {
-            if (resource != Resource.ANY) { // skip this one used for trading
-                int count = player1.hand.getResourceCardAmount(resource);
-                if (count > 0) {
-                    player1.hand.removeResource(resource, count);
-                }
-            }
-        }
-        assertEquals(0, player1.hand.getResourceCardCount());
-
         // ------------------------------------ for knight ------------------------------------------
 
         // give the player some resources to buy
@@ -121,7 +118,7 @@ public class F11Test {
         assertTrue(controller.getDevCardsEnabled());
 
         // play card
-        assertEquals(SuccessCode.SUCCESS, controller.playYearOfPlenty(Resource.WOOL, Resource.GRAIN));
+        assertEquals(SuccessCode.SUCCESS, controller.playYearOfPlenty(WOOL, GRAIN));
         assertEquals(0, player1.hand.devCards.get(DevCard.PLENTY));
         assertFalse(controller.getDevCardsEnabled());
 
@@ -139,7 +136,7 @@ public class F11Test {
         assertTrue(controller.getDevCardsEnabled());
 
         // play card
-        assertEquals(SuccessCode.SUCCESS, controller.playMonopolyCard(Resource.WOOL));
+        assertEquals(SuccessCode.SUCCESS, controller.playMonopolyCard(WOOL));
         assertEquals(0, player1.hand.devCards.get(DevCard.MONOPOLY));
         assertFalse(controller.getDevCardsEnabled());
 
@@ -202,49 +199,6 @@ public class F11Test {
 
     @Test
     public void testPlayCardTriedMoreThan1() {
-        // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Here we use beginner game to skip through to the regular gameplay
-        GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
-
-        // other things dependent on these things
-        DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(GameType.Beginner);
-        GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        
-        // Assert that the beginner setup does not time out to kill mutant
-        final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
-        Controller controller = controllerRef.get();
-
-        // -------------------------- Start of Actual Test Stuff ---------------------------
-        // Note: we assume everything about setup was correct because it was tested earlier
-
-        // Note: at this point the players would have gotten some starter resources during the 
-        // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources because the
-        // longest road card doesn't need resources because it is free
-        for (Resource resource: Resource.values()) {
-            if (resource != Resource.ANY) { // skip this one used for trading
-                int count = player1.hand.getResourceCardAmount(resource);
-                if (count > 0) {
-                    player1.hand.removeResource(resource, count);
-                }
-            }
-        }
-        assertEquals(0, player1.hand.getResourceCardCount());
-
         // give the player some resources to buy
         player1.hand.addResources(RESOURCES_FOR_CARD);
         player1.hand.addResources(RESOURCES_FOR_CARD);
@@ -268,10 +222,10 @@ public class F11Test {
         assertEquals(SuccessCode.CANNOT_PLAY_CARD, controller.playKnightCard());
 
         // play year of plenty card
-        assertEquals(SuccessCode.CANNOT_PLAY_CARD, controller.playYearOfPlenty(Resource.WOOL, Resource.GRAIN));
+        assertEquals(SuccessCode.CANNOT_PLAY_CARD, controller.playYearOfPlenty(WOOL, GRAIN));
 
         // play monopoly card
-        assertEquals(SuccessCode.CANNOT_PLAY_CARD, controller.playMonopolyCard(Resource.WOOL));
+        assertEquals(SuccessCode.CANNOT_PLAY_CARD, controller.playMonopolyCard(WOOL));
 
         // play road card
         assertEquals(SuccessCode.CANNOT_PLAY_CARD, controller.useRoadBuildingCard());
@@ -279,49 +233,6 @@ public class F11Test {
 
     @Test
     public void testPlayCardTriedToPlayBoughtSameTurn() {
-        // ---------------------- Here are some basic wiring needed that would be done by main ------------------------------
-        
-        // Here we use beginner game to skip through to the regular gameplay
-        GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        Bank bank = new Bank();
-        Player player1 = new Player(1, new HarvestBooster(), bank);
-        Player player2 = new Player(2, new HarvestBooster(), bank);
-        Player player3 = new Player(3, new HarvestBooster(), bank);
-        Player player4 = new Player(4, new HarvestBooster(), bank);
-        Player[] players = {player1, player2, player3, player4};
-
-        // other things dependent on these things
-        DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        GameBoard gameBoard = new GameBoard(GameType.Beginner);
-        GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
-        
-        // Assert that the beginner setup does not time out to kill mutant
-        final AtomicReference<Controller> controllerRef = new AtomicReference<>();
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1), () -> controllerRef.set(new Controller(game, players, gameType)), "Setup while loop timed out");
-        Controller controller = controllerRef.get();
-
-        // -------------------------- Start of Actual Test Stuff ---------------------------
-        // Note: we assume everything about setup was correct because it was tested earlier
-
-        // Note: at this point the players would have gotten some starter resources during the 
-        // automated setup phase. These are kind of unknown at this point but so we will
-        // clear out the player1's hand and assert that the player has zero resources because the
-        // longest road card doesn't need resources because it is free
-        for (Resource resource: Resource.values()) {
-            if (resource != Resource.ANY) { // skip this one used for trading
-                int count = player1.hand.getResourceCardAmount(resource);
-                if (count > 0) {
-                    player1.hand.removeResource(resource, count);
-                }
-            }
-        }
-        assertEquals(0, player1.hand.getResourceCardCount());
-
         // give the player some resources to buy
         player1.hand.addResources(RESOURCES_FOR_CARD);
         player1.hand.addResources(RESOURCES_FOR_CARD);
@@ -344,12 +255,12 @@ public class F11Test {
         assertTrue(controller.getDevCardsEnabled());
 
         // play year of plenty card
-        assertEquals(SuccessCode.CANNOT_PLAY_CARD, controller.playYearOfPlenty(Resource.WOOL, Resource.GRAIN));
+        assertEquals(SuccessCode.CANNOT_PLAY_CARD, controller.playYearOfPlenty(WOOL, GRAIN));
         // since the cards wasn't played we don't disable other cards from trying to be played
         assertTrue(controller.getDevCardsEnabled());
 
         // play monopoly card
-        assertEquals(SuccessCode.CANNOT_PLAY_CARD, controller.playMonopolyCard(Resource.WOOL));
+        assertEquals(SuccessCode.CANNOT_PLAY_CARD, controller.playMonopolyCard(WOOL));
         // since the cards wasn't played we don't disable other cards from trying to be played
         assertTrue(controller.getDevCardsEnabled());
 

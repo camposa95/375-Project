@@ -6,11 +6,16 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="presentation.StartScreenController">
    <children>
-      <Button fx:id="createNewGameButton" layoutX="218.0" layoutY="258.0" mnemonicParsing="false" onAction="#createNewGame" prefHeight="52.0" prefWidth="147.0" text="Create New Game" />
-      <Text layoutX="242.0" layoutY="58.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome To Catan" />
-      <Text layoutX="241.0" layoutY="101.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select Saved Game" />
-      <Text layoutX="285.0" layoutY="228.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Or" />
-      <Button fx:id="resumeButton" layoutX="218.0" layoutY="137.0" mnemonicParsing="false" onAction="#resumeGame" prefHeight="52.0" prefWidth="147.0" text="Resume" />
-      <Button layoutX="274.0" layoutY="342.0" mnemonicParsing="false" onAction="#exit" text="Exit" />
+      <Text fx:id="title" layoutX="250.0" layoutY="61.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome To Catan" />
+      <Text fx:id="header" layoutX="221.0" layoutY="107.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select Slot to Save or Resume" />
+      <Button fx:id="exitButton" layoutX="282.0" layoutY="335.0" mnemonicParsing="false" onAction="#exit" text="Exit" />
+      <Button fx:id="slot3" layoutX="317.0" layoutY="155.0" mnemonicParsing="false" onAction="#selectSlot" prefHeight="52.0" prefWidth="100.0" text="Empty" />
+      <Button fx:id="slot4" layoutX="449.0" layoutY="155.0" mnemonicParsing="false" onAction="#selectSlot" prefHeight="52.0" prefWidth="100.0" text="Empty" />
+      <Button fx:id="slot2" layoutX="182.0" layoutY="155.0" mnemonicParsing="false" onAction="#selectSlot" prefHeight="52.0" prefWidth="100.0" text="Empty" />
+      <Button fx:id="slot1" layoutX="51.0" layoutY="155.0" mnemonicParsing="false" onAction="#selectSlot" prefHeight="52.0" prefWidth="100.0" text="Empty" />
+      <Button fx:id="resumeGameButton" layoutX="148.0" layoutY="254.0" mnemonicParsing="false" onAction="#resumeGame" text="Resume" />
+      <Button fx:id="createNewGameButton" layoutX="378.0" layoutY="254.0" mnemonicParsing="false" onAction="#createNewGame" text="New Game" />
+      <Text fx:id="selectedSlotText" layoutX="250.0" layoutY="271.0" strokeType="OUTSIDE" strokeWidth="0.0" text="No Slot Selected" textAlignment="CENTER" />
+      <Button fx:id="deleteGameButton" layoutX="275.0" layoutY="293.0" mnemonicParsing="false" onAction="#deleteGame" text="Delete" />
    </children>
 </Pane>

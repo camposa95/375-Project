@@ -1,6 +1,7 @@
 package domain.game;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.temporal.ValueRange;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -273,7 +274,7 @@ public class Game implements Restorable {
      */
     @SuppressFBWarnings("PREDICTABLE_RANDOM")
     public void stealFromPlayer(final Player robber, final Player robbed) throws NotEnoughResourcesException {
-        if (robbed.hand.getResourceCardCount() == 0) {
+        if (robbed.hand.getResourceCount() == 0) {
             throw new NotEnoughResourcesException();
         }
         //Get all possible resources
@@ -314,7 +315,7 @@ public class Game implements Restorable {
             throw new CardNotPlayableException();
         }
         for (Player p : playersToRob) {
-            int amount = p.hand.getResourceCardAmount(resourceToRob);
+            int amount = p.hand.getResourceCount(resourceToRob);
             if (amount != 0) {
                 p.hand.removeResource(resourceToRob, amount);
                 robber.hand.addResource(resourceToRob, amount);
@@ -407,7 +408,7 @@ public class Game implements Restorable {
             this.bankMemento = Game.this.bank.new BankMemento(bankSubFolder);
         }
 
-        public void save(final File folder) throws SaveException {
+        public void save(final File folder) throws IOException {
             // Create a MementoWriter for writing memento data
             MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 

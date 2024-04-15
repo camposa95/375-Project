@@ -10,21 +10,29 @@ import java.util.List;
 import data.GameLoader;
 import domain.game.GameType;
 import org.easymock.EasyMock;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.player.Player;
 
 public class GetLongestPathTest {
 
+    VertexGraph vertexes;
+    RoadGraph roads;
+    Player mockedPlayer;
+
+    @BeforeEach
+    public void setup() {
+        vertexes = new VertexGraph(GameType.Beginner);
+        roads = new RoadGraph();
+        GameLoader.initializeGraphs(roads, vertexes);
+
+        mockedPlayer = EasyMock.createStrictMock(Player.class);
+    }
+
     @Test public void testGetLongestPathInvalid() {
-        RoadGraph roads =  new RoadGraph();
-
-        // note we do not need to initialize adjacent because all
-        // we are testing here is compatability between the road and
-        // player passed in
-
-        // here the test road has no owner so by default they are 
-        // incompatible 
+        // here the test road has no owner so by default they are
+        // incompatible
         Player mockedEnemy = EasyMock.createStrictMock(Player.class);
         Road testRoad = roads.getRoad(0);
         Vertex mockedVertex = EasyMock.createNiceMock(Vertex.class);
@@ -40,13 +48,6 @@ public class GetLongestPathTest {
     }
 
     @Test public void testGetLongestPathContinuous() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-        
-
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-
         // create a continuous path of length 5
         Road testStartingRoad = roads.getRoad(13); // start at beginning of path
         roads.getRoad(13).setOwner(mockedPlayer);
@@ -69,12 +70,6 @@ public class GetLongestPathTest {
     }
 
     @Test public void testGetLongestPathForked() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-
         // create a forked path where one is 5 and the other is 4 long
         Road testStartingRoad = roads.getRoad(13); // start at beginning of path
         roads.getRoad(13).setOwner(mockedPlayer);
@@ -99,12 +94,6 @@ public class GetLongestPathTest {
     }
 
     @Test public void testGetLongestPathLoop() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-
         // create a forked path where one is 5 and the other is 4 long
         Road testStartingRoad = roads.getRoad(13); // start at beginning of path
         roads.getRoad(13).setOwner(mockedPlayer);
@@ -130,12 +119,6 @@ public class GetLongestPathTest {
     }
 
     @Test public void testGetLongestForkThenMerge() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-
         // create a forked path where one is 5 and the other is 4 long
         Road testStartingRoad = roads.getRoad(13); // start at beginning of path
         roads.getRoad(13).setOwner(mockedPlayer);
@@ -165,11 +148,6 @@ public class GetLongestPathTest {
     }
 
     @Test public void testGetLongestBrokenPath() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
         Player mockedEnemy = EasyMock.createStrictMock(Player.class);
 
         // create a forked path where one is 5 and the other is 4 long
@@ -202,12 +180,6 @@ public class GetLongestPathTest {
     }
 
     @Test public void testGetLongestBrokenPathFriendly() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
-
         // create a forked path where one is 5 and the other is 4 long
         Road testStartingRoad = roads.getRoad(13); // start at beginning of path
         roads.getRoad(13).setOwner(mockedPlayer);
@@ -238,11 +210,6 @@ public class GetLongestPathTest {
     }
 
     @Test public void testGetLongestBadOrigin() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
-
-        Player mockedPlayer = EasyMock.createStrictMock(Player.class);
         Player mockedEnemy = EasyMock.createStrictMock(Player.class);
 
         // create a forked path where one is 5 and the other is 4 long
@@ -274,7 +241,6 @@ public class GetLongestPathTest {
     }
 
     @Test public void testGetTailException() {
-
         Road testRoad =  new Road(0);
         Vertex testVertex = new Vertex(0);
 
