@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class UpgradeSettlementTest {
 
     GameBoard gameBoard;
@@ -56,7 +58,7 @@ public class UpgradeSettlementTest {
 
         EasyMock.expect(mockVertexGraph.getVertex(vertexId)).andReturn(mockVertex);
         EasyMock.expect(mockVertex.isUpgradableBy(mockPlayer)).andReturn(true);
-        EasyMock.expect(mockPlayer.upgradeSettlementToCity()).andReturn(false);
+        EasyMock.expect(mockPlayer.canUpgradeSettlementToCity()).andReturn(false);
 
         EasyMock.replay(mockPlayer,mockVertex,mockVertexGraph);
 
@@ -73,15 +75,15 @@ public class UpgradeSettlementTest {
 
         EasyMock.expect(mockVertexGraph.getVertex(vertexId)).andReturn(mockVertex);
         EasyMock.expect(mockVertex.isUpgradableBy(mockPlayer)).andReturn(true);
-        EasyMock.expect(mockPlayer.upgradeSettlementToCity()).andReturn(true);
+        EasyMock.expect(mockPlayer.canUpgradeSettlementToCity()).andReturn(true);
 
-        mockVertex.setIsCity(true);
+        mockVertex.upgradeToCity(mockPlayer);
         EasyMock.expectLastCall();
         
         EasyMock.replay(mockPlayer,mockVertex,mockVertexGraph);
  
-        
-        try{
+
+        try {
             game.upgradeSettlement(mockPlayer,vertexId);
         } catch (Exception e) {
             fail();

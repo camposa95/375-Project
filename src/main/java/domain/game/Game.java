@@ -167,10 +167,9 @@ public class Game implements Restorable {
                 for (int i = 0; i < tile.getVertexIDs().size(); i++) {
                     Vertex curVertex = vertexes.getVertex(tileVertexes.get(i));
                     if (curVertex.getOwner() == player) {
-                        if (curVertex.getIsCity()) {
+                        for (int numResources = 0; numResources < curVertex.getYield(tile.getResource()); numResources++) {
                             resources.add(tile.getResource());
                         }
-                        resources.add(tile.getResource());
                     }
                 }
             }
@@ -187,10 +186,31 @@ public class Game implements Restorable {
         if (!vertex.isUpgradableBy(player)) {
             throw new InvalidPlacementException();
         }
-        if (!player.upgradeSettlementToCity()) {
+        if (!player.canUpgradeSettlementToCity()) {
             throw new NotEnoughResourcesException();
         }
-        vertex.setIsCity(true);
+        vertex.upgradeToCity(player);
+    }
+
+    /**
+     * Builds a district on an established building on the given vertex if the player owns the building
+     * and a district doesn't already exist. Each district provides its own unique +3 resource bonus
+     * to resource yields
+     * @param player the player building the district. Must already own a building on the vertex
+     * @param vertexId the vertex to build a district on
+     * @param type the district type to build
+     */
+    public void buildDistrictOnVertex(final Player player, final int vertexId, final DistrictType type) throws NotEnoughResourcesException, InvalidPlacementException {
+        if (!player.hand.removeResources(type.districtCost)) {
+            throw new NotEnoughResourcesException();
+        }
+        Vertex vertex = vertexes.getVertex(vertexId);
+        try {
+            vertex.buildDistrict(player, type);
+        } catch (InvalidPlacementException e) {
+            player.hand.addResources(type.districtCost);
+            throw new InvalidPlacementException();
+        }
     }
 
     /**

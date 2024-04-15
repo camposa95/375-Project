@@ -47,7 +47,7 @@ public class CatanGUIController {
     @FXML
     private Circle port0, port1, port2, port3, port4, port5, port6, port7, port8;
     @FXML
-    private Button rollButton, buildSettlementButton, buildRoadButton, buildCityButton, buyDevCardButton, playKnightButton, playMonopolyButton, playRoadBuildingButton, playYearOfPlentyButton, endTurnButton, cancelButton, playerTradeButton, bankTradeButton, pauseButton, undoButton, redoButton;
+    private Button rollButton, buildSettlementButton, buildRoadButton, buildCityButton, buyDevCardButton, playKnightButton, playMonopolyButton, playRoadBuildingButton, playYearOfPlentyButton, endTurnButton, cancelButton, playerTradeButton, bankTradeButton, pauseButton, undoButton, redoButton, buildDistrictButton;
     @FXML
     private Text number0, number1, number2, number3, number4, number5, number6, number7, number8, number9, number10, number11, number12, number13, number14, number15, number16, number17, number18;
     @FXML
@@ -146,6 +146,7 @@ public class CatanGUIController {
         buildSettlementButton.setText(messages.getString("buildSettlementText"));
         buildRoadButton.setText(messages.getString("buildRoadText"));
         buildCityButton.setText(messages.getString("buildCityText"));
+        buildDistrictButton.setText(messages.getString("buildDistrictText"));
         buyDevCardButton.setText(messages.getString("buyDevCardText"));
         playKnightButton.setText(messages.getString("playKnightText"));
         playMonopolyButton.setText(messages.getString("playMonopolyText"));
@@ -507,6 +508,7 @@ public class CatanGUIController {
         buildSettlementButton.setDisable(true);
         buildRoadButton.setDisable(true);
         buildCityButton.setDisable(true);
+        buildDistrictButton.setDisable(true);
         buyDevCardButton.setDisable(true);
         playKnightButton.setDisable(true);
         playMonopolyButton.setDisable(true);
@@ -547,7 +549,6 @@ public class CatanGUIController {
             this.renderSettlementOnVertex(vertices[vertexId], getPlayerColor(currentPlayer));
             applyGameWon();
         }
-
     }
 
     //ROBBER METHODS
@@ -649,6 +650,14 @@ public class CatanGUIController {
             this.guiState = GUIState.BUSY;
             this.tooltipText.setText(messages.getString("selectSettlementToUpgrade"));
             this.controller.setState(GameState.UPGRADE_SETTLEMENT);
+        }
+    }
+
+    public void buildDistrictButtonPress(){
+        //Triggered by Build Settlement button pressed
+        if(this.controller.getState()==GameState.DEFAULT){
+            this.guiState = GUIState.BUSY;
+            this.controller.setState(GameState.BUILD_DISTRICT);
         }
     }
 
@@ -840,32 +849,66 @@ public class CatanGUIController {
     }
 
     public void handleSettlementClick(MouseEvent event) {
-        if(this.controller.getState()==GameState.UPGRADE_SETTLEMENT){
-            Polygon clickedSettlement = (Polygon) event.getSource();
-            int vertex = settlementToVertexMap.get(clickedSettlement);
-            SuccessCode success = this.controller.clickedVertex(vertex);
-            if(success==SuccessCode.SUCCESS){
-                settlementToVertexMap.remove(clickedSettlement);
-                gameboardPane.getChildren().remove(clickedSettlement);
-                renderCityOnVertex(clickedSettlement.getLayoutX(), clickedSettlement.getLayoutY());
-                updateInfoPane();
-                this.tooltipText.setText(messages.getString("builtCity"));
-                this.guiState = GUIState.IDLE;
-            }else if(success == SuccessCode.INVALID_PLACEMENT){
-                this.tooltipText.setText(messages.getString("cannotPlaceCity"));
-            }else if(success==SuccessCode.INSUFFICIENT_RESOURCES){
-                this.tooltipText.setText(messages.getString("notEnoughResourcesCity"));
-            }else if(success == SuccessCode.GAME_WIN){
-                settlementToVertexMap.remove(clickedSettlement);
-                gameboardPane.getChildren().remove(clickedSettlement);
-                renderCityOnVertex(clickedSettlement.getLayoutX(), clickedSettlement.getLayoutY());
-                try {
-                    applyGameWon();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+        Polygon clickedSettlement = (Polygon) event.getSource();
+        int vertex = settlementToVertexMap.get(clickedSettlement);
+        if(this.controller.getState()==GameState.UPGRADE_SETTLEMENT) {
+            handleUpgradeSettlement(clickedSettlement, vertex);
+        } else if(this.controller.getState()==GameState.BUILD_DISTRICT) {
+            try {
+                handleBuildDistrict(vertex);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
+    }
+
+    private void handleUpgradeSettlement(Polygon clickedSettlement, int vertex) {
+        SuccessCode success = this.controller.clickedVertex(vertex);
+        if(success==SuccessCode.SUCCESS){
+            settlementToVertexMap.remove(clickedSettlement);
+            gameboardPane.getChildren().remove(clickedSettlement);
+            renderCityOnVertex(clickedSettlement.getLayoutX(), clickedSettlement.getLayoutY());
+            updateInfoPane();
+            this.tooltipText.setText(messages.getString("builtCity"));
+            this.guiState = GUIState.IDLE;
+        }else if(success == SuccessCode.INVALID_PLACEMENT){
+            this.tooltipText.setText(messages.getString("cannotPlaceCity"));
+        }else if(success==SuccessCode.INSUFFICIENT_RESOURCES){
+            this.tooltipText.setText(messages.getString("notEnoughResourcesCity"));
+        }else if(success == SuccessCode.GAME_WIN){
+            settlementToVertexMap.remove(clickedSettlement);
+            gameboardPane.getChildren().remove(clickedSettlement);
+            renderCityOnVertex(clickedSettlement.getLayoutX(), clickedSettlement.getLayoutY());
+            try {
+                applyGameWon();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private void handleBuildDistrict(int vertex) throws IOException {
+        //Triggered by Play Monopoly card pressed
+        FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("build_district.fxml"));
+        Stage stage = new Stage();
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setTitle(messages.getString("buildDistrictTitle"));
+        stage.setScene(scene);
+        stage.show();
+
+
+        BuildDistrictController buildDistrictController = fxmlLoader.getController();
+        buildDistrictController.setControllers(this, this.controller);
+        buildDistrictController.setMessages(this.messages);
+        buildDistrictController.setSelectedVertex(vertex);
+        this.popupsOpen.add(buildDistrictController);
+
+        this.guiState = GUIState.BUSY;
+        this.tooltipText.setText(messages.getString("buildingDistrict"));
+    }
+
+    public void setTooltipText(String text) {
+        this.tooltipText.setText(text);
     }
 
     // -----------------------------------------------------------------------

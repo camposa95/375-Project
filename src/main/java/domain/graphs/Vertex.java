@@ -1,6 +1,11 @@
 package domain.graphs;
 
 import data.*;
+import domain.bank.Resource;
+import domain.game.Building;
+import domain.game.DistrictType;
+import domain.game.Game;
+import domain.game.InvalidPlacementException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import domain.player.Player;
 
@@ -19,7 +24,7 @@ public class Vertex implements Restorable {
     private List<Road> adjacentRoads;
     private Port adjacentPort;
     private Player owner;
-    private boolean isCity;
+    protected Building building;
 
     // initialization flags:
     private boolean portInitialized;
@@ -39,6 +44,7 @@ public class Vertex implements Restorable {
         this.portInitialized = false;
         this.adjacentVertexesInitialized = false;
         this.adjacentRoadsInitialized = false;
+        this.building = new Building();
     }
 
     /**
@@ -208,6 +214,10 @@ public class Vertex implements Restorable {
         }
     }
 
+    public int getYield(final Resource resource) {
+        return (building == null) ? 0 : building.getYield(resource);
+    }
+
     /**
      * Sets the owner of this vertex to the given player
      */
@@ -268,6 +278,10 @@ public class Vertex implements Restorable {
         return false;
     }
 
+    public boolean isCity() {
+        return building.isCity();
+    }
+
     /**
      * Tells this if this Vertex is upgradable by the given player.
      * This is true if the player already owns the vertex, and the vertex is not already a city.
@@ -275,26 +289,32 @@ public class Vertex implements Restorable {
      * @return true if the vertex is upgradable by the player, false otherwise
      */
     public boolean isUpgradableBy(final Player player) {
-        if (this.isCity) {
+        if (this.isCity()) {
             return false;
         }
         return this.getOwner() == player;
     }
 
-    /**
-     * Simple setter to set the isCity flag of this vertex
-     *
-     * @param b, the value to set for the flag
-     */
-    public void setIsCity(final boolean b) {
-        this.isCity = b;
+    public void upgradeToCity(final Player player) {
+        if (isUpgradableBy(player)) {
+            this.building.upgradeToCity();
+        }
     }
 
-    /**
-     * Simple getter to tell is this vertex is a city or not
-     */
-    public boolean getIsCity() {
-        return this.isCity;
+    public void buildDistrict(final Player player, final DistrictType type) throws InvalidPlacementException {
+        if (canBuildDistrict(player)) {
+            this.building.buildDistrict(type);
+        } else {
+            throw new InvalidPlacementException();
+        }
+    }
+
+    private boolean canBuildDistrict(final Player player) {
+        return (this.getOwner() == player) && this.building.getDistrict() == DistrictType.EMPTY;
+    }
+
+    public Building getBuilding() {
+        return this.building;
     }
 
     /**
@@ -309,6 +329,11 @@ public class Vertex implements Restorable {
         return this.getOwner() != player;
     }
 
+    // ONLY FOR TESTING
+    public void setBuildingToCity() {
+        this.building.upgradeToCity();
+    }
+
     // -----------------------------------
     //
     // Restorable implementation
@@ -317,18 +342,20 @@ public class Vertex implements Restorable {
 
     public class VertexMemento implements Memento {
         private final Player owner; // terminal here
-        private final boolean isCity;
+
+        // sub memento stuff
+        private static final String BUILDING_SUBFOLDER_NAME = "Building";
+        private final Memento buildingMemento;
 
         // Storage Constants
         private static final String TARGET_FILE_NAME = "vertex.txt";
 
         // Field Keys
         private static final String OWNER = "Owner";
-        private static final String IS_CITY = "IsCity";
 
         private VertexMemento() {
-            this.isCity = Vertex.this.isCity;
             this.owner = Vertex.this.owner;
+            this.buildingMemento = Vertex.this.building.createMemento();
         }
 
         @SuppressFBWarnings("EI_EXPOSE_REP2")
@@ -338,7 +365,9 @@ public class Vertex implements Restorable {
 
             // Read simple fields from the file
             this.owner = parseOwner(reader.readField(OWNER));
-            this.isCity = Boolean.parseBoolean(reader.readField(IS_CITY));
+
+            File buildingSubFolder = reader.getSubFolder(BUILDING_SUBFOLDER_NAME);
+            this.buildingMemento = Vertex.this.building.new BuildingMemento(buildingSubFolder);
         }
 
         private Player parseOwner(final String ownerString) {
@@ -359,13 +388,16 @@ public class Vertex implements Restorable {
 
             // Write simple fields to the file
             writer.writeField(OWNER, owner != null ? owner.toString() : "None");
-            writer.writeField(IS_CITY, Boolean.toString(isCity));
+
+            File buildingSubFolder = writer.getSubFolder(BUILDING_SUBFOLDER_NAME);
+            this.buildingMemento.save(buildingSubFolder);
         }
 
         public void restore() {
             // Restore simple fields
-            Vertex.this.isCity = this.isCity;
             Vertex.this.owner = this.owner;
+
+            buildingMemento.restore();
         }
     }
 
