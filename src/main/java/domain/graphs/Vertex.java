@@ -24,7 +24,6 @@ public class Vertex implements Restorable {
     private List<Road> adjacentRoads;
     private Port adjacentPort;
     private Player owner;
-    private boolean portsInitialized;
     protected Building building;
 
     // initialization flags:

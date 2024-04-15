@@ -4,6 +4,7 @@ import domain.controller.Controller;
 import domain.controller.GameState;
 import domain.controller.SuccessCode;
 import domain.game.DistrictType;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
@@ -40,16 +41,19 @@ public class BuildDistrictController implements Popup {
         mine.setToggleGroup(types);
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public void setControllers(CatanGUIController guiController, Controller domainController) {
         this.guiController = guiController;
         this.domainController = domainController;
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public void setMessages(ResourceBundle messages) {
         this.messages=messages;
         internationalize();
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public void setSelectedVertex(int id) {
         this.selectedVertex = id;
     }
