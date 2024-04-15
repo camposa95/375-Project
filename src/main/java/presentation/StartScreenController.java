@@ -19,10 +19,11 @@ public class StartScreenController {
     public Text title, header;
     public Button slot1, slot2, slot3, slot4;
     @FXML
-    public Button createNewGameButton, resumeGameButton, deleteGameButton;
+    public Button createNewGameButton, resumeGameButton, deleteGameButton, changeGameImagesButton;
     public Text selectedSlotText;
     public Button exitButton;
     private ResourceBundle messages;
+    private String imageFolder = "images/default";
 
     @FXML
     public void initialize() {
@@ -88,7 +89,7 @@ public class StartScreenController {
         // Link the Gui Controller to the Domain Controller
         CatanGUIController guiController = fxmlLoader.getController();
         guiController.setController(domainController);
-        guiController.changeIconSet("images/testing");
+        guiController.changeIconSet(this.imageFolder);
 
         // initialize the game-board
         guiController.internationalize(messages);
@@ -106,9 +107,6 @@ public class StartScreenController {
         Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
         stage.show();
-
-        CatanGUIController guiController = fxmlLoader.getController();
-        guiController.changeIconSet("images/testing");
     }
 
     @FXML
@@ -118,6 +116,20 @@ public class StartScreenController {
             resumeGameButton.setDisable(true);
             deleteGameButton.setDisable(true);
         }
+    }
+
+    @FXML
+    public void changeGameImages() throws IOException {
+        //Open up game board window
+        Stage stage = (Stage) changeGameImagesButton.getScene().getWindow();
+        FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("change_game_images_screen.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void setImageFolder(String folder) {
+        this.imageFolder = folder;
     }
 
     @FXML
