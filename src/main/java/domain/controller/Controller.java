@@ -764,7 +764,7 @@ public class Controller implements Restorable {
         return newArray;
     }
 
-    public SuccessCode buildDistrict(int vertexId, DistrictType type) {
+    public SuccessCode buildDistrict(final int vertexId, final DistrictType type) {
         try {
             game.buildDistrictOnVertex(currentPlayer, vertexId, type);
             return SuccessCode.SUCCESS;

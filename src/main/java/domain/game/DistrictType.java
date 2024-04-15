@@ -10,15 +10,15 @@ public enum DistrictType {
     GARDEN(new Resource[]{Resource.GRAIN, Resource.GRAIN, Resource.ORE}, Resource.GRAIN),
     BARN(new Resource[]{Resource.WOOL, Resource.WOOL, Resource.LUMBER}, Resource.WOOL);
 
-    private final int BONUS_NUMBER = 3;
-    Resource[] cost;
-    Resource bonusType;
-    DistrictType(Resource[] cost, Resource bonusType) {
-        this.cost = cost;
-        this.bonusType = bonusType;
+    private final int bonusNumber = 3;
+    Resource[] districtCost;
+    Resource type;
+    DistrictType(final Resource[] cost, final Resource bonusType) {
+        this.districtCost = cost;
+        this.type = bonusType;
     }
 
-    public int getYield(Resource resource) {
-        return (resource == bonusType) ? BONUS_NUMBER : 0;
+    public int getYield(final Resource resource) {
+        return (resource == type) ? bonusNumber : 0;
     }
 }

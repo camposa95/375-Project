@@ -215,7 +215,7 @@ public class Vertex implements Restorable {
         }
     }
 
-    public int getYield(Resource resource) {
+    public int getYield(final Resource resource) {
         return (building == null) ? 0 : building.getYield(resource);
     }
 
@@ -345,7 +345,7 @@ public class Vertex implements Restorable {
         private final Player owner; // terminal here
 
         // sub memento stuff
-        String BUILDING_SUBFOLDER_NAME = "Building";
+        private static final String BUILDING_SUBFOLDER_NAME = "Building";
         private final Memento buildingMemento;
 
         // Storage Constants

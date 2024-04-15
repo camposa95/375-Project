@@ -22,7 +22,7 @@ public class Building implements Restorable {
      * @param resource the type of resource to be acquired
      * @return the number of resources of the given type that should be acquired
      */
-    public int getYield(Resource resource) {
+    public int getYield(final Resource resource) {
         int baseYield = isCity ? 2 : 1;
         return Math.max(baseYield, district.getYield(resource));
     }
@@ -31,7 +31,7 @@ public class Building implements Restorable {
         this.isCity = true;
     }
 
-    public void buildDistrict(DistrictType type) {
+    public void buildDistrict(final DistrictType type) {
         if (canBuildDistrict()) {
             this.district = type;
         } else {
@@ -80,7 +80,7 @@ public class Building implements Restorable {
         }
 
         @Override
-        public void save(File folder) throws IOException {
+        public void save(final File folder) throws IOException {
             // Create a MementoWriter for writing memento data
             MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
