@@ -5,10 +5,11 @@ import domain.bank.Bank;
 import domain.bank.Resource;
 import domain.gameboard.GameBoard;
 import domain.graphs.Road;
-import domain.graphs.RoadGraph;
-import domain.graphs.VertexGraph;
+import domain.graphs.GameboardGraph;
+import domain.graphs.Vertex;
 import domain.player.Player;
 import org.easymock.EasyMock;
+import org.easymock.MockType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,9 +19,9 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 public class PlaceRoadTest {
 
     GameBoard gb;
-    VertexGraph vg;
-    RoadGraph mockRoadGraph;
+    GameboardGraph gameboardGraph;
     Road mockRoad;
+    Vertex mockVertex;
     Player mockPlayer;
     Game game;
 
@@ -28,11 +29,23 @@ public class PlaceRoadTest {
     public void setup() {
         gb = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gb);
-        vg = new VertexGraph(GameType.Beginner);
-        mockRoadGraph =  EasyMock.createMock(RoadGraph.class);
+
+        gameboardGraph = EasyMock.partialMockBuilder(GameboardGraph.class)
+                .addMockedMethod("getRoad", Integer.class)
+                .addMockedMethod("getVertex", Integer.class)
+                .addMockedMethod("giveLongestRoadCard")
+                .createMock(MockType.NICE);
         mockRoad = EasyMock.createNiceMock(Road.class);
         mockPlayer = EasyMock.createMock(Player.class);
-        game = new Game(gb, vg, mockRoadGraph, null, null);
+        game = new Game(gb, gameboardGraph, null, null);
+    }
+
+    private void replayMocks() {
+        EasyMock.replay(mockPlayer,mockRoad, gameboardGraph);
+    }
+
+    private void verifyMocks() {
+        EasyMock.verify(mockPlayer,mockRoad);
     }
 
     @Test
@@ -40,14 +53,14 @@ public class PlaceRoadTest {
         int vertexId = 0;
         int roadId = 0;
 
-        EasyMock.expect(mockRoadGraph.getRoad(roadId)).andReturn(mockRoad);
-        EasyMock.expect(mockRoad.isAdjacentTo(vg.getVertex(vertexId))).andReturn(true);
+        EasyMock.expect(gameboardGraph.getRoad(roadId)).andReturn(mockRoad);
+        EasyMock.expect(gameboardGraph.getVertex(vertexId)).andReturn(mockVertex);
+        EasyMock.expect(mockRoad.isAdjacentTo(mockVertex)).andReturn(true);
         EasyMock.expect(mockRoad.isBuildable()).andReturn(true);
         EasyMock.expect(mockRoad.getOwner()).andReturn(mockPlayer);
         mockPlayer.placeRoadSetup();
-        mockRoadGraph.giveLongestRoadCard();
-        EasyMock.replay(mockPlayer,mockRoad,mockRoadGraph);
-
+        gameboardGraph.giveLongestRoadCard();
+        replayMocks();
         try{
             game.placeRoad(roadId,vertexId,mockPlayer);
         }
@@ -55,7 +68,7 @@ public class PlaceRoadTest {
             fail();
         }
         assertEquals(mockRoad.getOwner(),mockPlayer);
-        EasyMock.verify(mockPlayer,mockRoad,mockRoadGraph);
+        verifyMocks();
     }
 
     @Test
@@ -65,16 +78,16 @@ public class PlaceRoadTest {
 
         game.endSetup();
 
-        EasyMock.expect(mockRoadGraph.getRoad(roadId)).andReturn(mockRoad);
+        EasyMock.expect(gameboardGraph.getRoad(roadId)).andReturn(mockRoad);
         EasyMock.expect(mockRoad.isBuildableBy(mockPlayer)).andReturn(true);
         EasyMock.expect(mockPlayer.purchaseRoad()).andReturn(false);
         EasyMock.expect(mockRoad.getOwner()).andReturn(null);
 
-        EasyMock.replay(mockPlayer,mockRoad,mockRoadGraph);
+        replayMocks();
 
         assertThrows(NotEnoughResourcesException.class,()-> game.placeRoad(roadId,vertexId,mockPlayer));
         assertNotEquals(mockRoad.getOwner(),mockPlayer);
-        EasyMock.verify(mockPlayer,mockRoad,mockRoadGraph);
+        verifyMocks();
     }
 
     @Test
@@ -82,16 +95,17 @@ public class PlaceRoadTest {
         int vertexId = 10;
         int roadId = 0;
 
-        EasyMock.expect(mockRoadGraph.getRoad(roadId)).andReturn(mockRoad);
-        EasyMock.expect(mockRoad.isAdjacentTo(vg.getVertex(vertexId))).andReturn(false);
+        EasyMock.expect(gameboardGraph.getRoad(roadId)).andReturn(mockRoad);
+        EasyMock.expect(gameboardGraph.getVertex(vertexId)).andReturn(mockVertex);
+        EasyMock.expect(mockRoad.isAdjacentTo(mockVertex)).andReturn(false);
         EasyMock.expect(mockRoad.isBuildable()).andReturn(true);
         EasyMock.expect(mockRoad.getOwner()).andReturn(null);
 
-        EasyMock.replay(mockPlayer,mockRoad,mockRoadGraph);
+        replayMocks();
 
         assertThrows(InvalidPlacementException.class,()-> game.placeRoad(roadId,vertexId,mockPlayer));
         assertNotEquals(mockRoad.getOwner(),mockPlayer);
-        EasyMock.verify(mockPlayer,mockRoad,mockRoadGraph);
+        verifyMocks();
     }
 
     @Test
@@ -99,15 +113,15 @@ public class PlaceRoadTest {
         int vertexId = 10;
         int roadId = 0;
 
-        EasyMock.expect(mockRoadGraph.getRoad(roadId)).andReturn(mockRoad);
+        EasyMock.expect(gameboardGraph.getRoad(roadId)).andReturn(mockRoad);
         EasyMock.expect(mockRoad.isBuildable()).andReturn(false);
         EasyMock.expect(mockRoad.getOwner()).andReturn(null);
 
-        EasyMock.replay(mockPlayer,mockRoad,mockRoadGraph);
+        replayMocks();
 
         assertThrows(InvalidPlacementException.class,()-> game.placeRoad(roadId,vertexId,mockPlayer));
         assertNotEquals(mockRoad.getOwner(),mockPlayer);
-        EasyMock.verify(mockPlayer,mockRoad,mockRoadGraph);
+        verifyMocks();
     }
 
     @Test
@@ -115,15 +129,15 @@ public class PlaceRoadTest {
         int vertexId = 0;
         int roadId = 0;
 
-        EasyMock.expect(mockRoadGraph.getRoad(roadId)).andReturn(mockRoad);
+        EasyMock.expect(gameboardGraph.getRoad(roadId)).andReturn(mockRoad);
         EasyMock.expect(mockRoad.isBuildable()).andReturn(false);
         EasyMock.expect(mockRoad.getOwner()).andReturn(null);
 
-        EasyMock.replay(mockPlayer,mockRoad,mockRoadGraph);
+        replayMocks();
 
         assertThrows(InvalidPlacementException.class,()-> game.placeRoad(roadId,vertexId,mockPlayer));
         assertNotEquals(mockRoad.getOwner(),mockPlayer);
-        EasyMock.verify(mockPlayer,mockRoad,mockRoadGraph);
+        verifyMocks();
     }
 
     @Test
@@ -133,16 +147,16 @@ public class PlaceRoadTest {
 
         game.endSetup();
 
-        EasyMock.expect(mockRoadGraph.getRoad(roadId)).andReturn(mockRoad);
+        EasyMock.expect(gameboardGraph.getRoad(roadId)).andReturn(mockRoad);
         EasyMock.expect(mockRoad.isBuildableBy(mockPlayer)).andReturn(false);
         EasyMock.expect(mockRoad.getOwner()).andReturn(null);
 
-        EasyMock.replay(mockPlayer,mockRoad,mockRoadGraph);
+        replayMocks();
 
 
         assertThrows(InvalidPlacementException.class,()-> game.placeRoad(roadId,vertexId,mockPlayer));
         assertNotEquals(mockRoad.getOwner(),mockPlayer);
-        EasyMock.verify(mockPlayer,mockRoad,mockRoadGraph);
+        verifyMocks();
     }
 
     @Test
@@ -152,15 +166,15 @@ public class PlaceRoadTest {
 
         game.endSetup();
 
-        EasyMock.expect(mockRoadGraph.getRoad(roadId)).andReturn(mockRoad);
+        EasyMock.expect(gameboardGraph.getRoad(roadId)).andReturn(mockRoad);
         EasyMock.expect(mockRoad.isBuildableBy(mockPlayer)).andReturn(false);
         EasyMock.expect(mockRoad.getOwner()).andReturn(null);
 
-        EasyMock.replay(mockPlayer,mockRoad,mockRoadGraph);
+        replayMocks();
 
         assertThrows(InvalidPlacementException.class,()-> game.placeRoad(roadId,vertexId,mockPlayer));
         assertNotEquals(mockRoad.getOwner(),mockPlayer);
-        EasyMock.verify(mockPlayer,mockRoad,mockRoadGraph);
+        verifyMocks();
     }
 
     @Test
@@ -172,15 +186,15 @@ public class PlaceRoadTest {
 
         game.endSetup();
 
-        EasyMock.expect(mockRoadGraph.getRoad(roadId)).andReturn(mockRoad);
+        EasyMock.expect(gameboardGraph.getRoad(roadId)).andReturn(mockRoad);
         EasyMock.expect(mockRoad.isBuildableBy(player)).andReturn(true);
         EasyMock.expect(mockRoad.getOwner()).andReturn(null);
 
-        EasyMock.replay(mockRoad,mockRoadGraph);
+        replayMocks();
 
         assertThrows(NotEnoughResourcesException.class,()-> game.placeRoad(roadId,vertexId,player));
         assertNotEquals(mockRoad.getOwner(),player);
-        EasyMock.verify(mockRoad,mockRoadGraph);
+        verifyMocks();
     }
 
     @Test
@@ -190,13 +204,12 @@ public class PlaceRoadTest {
         int vertexId = 0;
         int roadID = 0;
 
-        VertexGraph vertexGraph = new VertexGraph(GameType.Beginner);
-        RoadGraph roadgraph = new RoadGraph();
-        GameLoader.initializeGraphs(roadgraph, vertexGraph);
+        GameboardGraph gameboardGraph = new GameboardGraph(GameType.Beginner);
+        GameLoader.initializeGraphs(gameboardGraph);
         Bank bank = new Bank();
         Player player = new Player(1, bank);
 
-        Game game = new Game(gb, vertexGraph, roadgraph, null, bank);
+        Game game = new Game(gb, gameboardGraph, null, bank);
 
         //setup
         try{
@@ -205,12 +218,12 @@ public class PlaceRoadTest {
         catch(InvalidPlacementException | NotEnoughResourcesException e){
             fail();
         }
-        assertEquals(roadgraph.getRoad(roadID).getOwner(),player);
+        assertEquals(gameboardGraph.getRoad(roadID).getOwner(),player);
 
         //regular
         game.endSetup();
         player.hand.addResources(new Resource[] {Resource.BRICK, Resource.LUMBER});
-        vertexGraph.getVertex(vertexId).setOwner(player);
+        gameboardGraph.getVertex(vertexId).setOwner(player);
         roadID = 6;
         try{
             game.placeRoad(roadID,vertexId,player);
@@ -218,6 +231,6 @@ public class PlaceRoadTest {
         catch(InvalidPlacementException | NotEnoughResourcesException e){
             fail();
         }
-        assertEquals(roadgraph.getRoad(roadID).getOwner(),player);
+        assertEquals(gameboardGraph.getRoad(roadID).getOwner(),player);
     }
 }

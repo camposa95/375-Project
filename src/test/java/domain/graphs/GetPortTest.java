@@ -17,14 +17,12 @@ public class GetPortTest {
     private static final int MIN_LOCATION_ID = 0;
     private static final int MAX_LOCATION_ID = 8;
 
-    VertexGraph vertexes;
-    RoadGraph roads;
+    GameboardGraph vertexes;
 
     @BeforeEach
     public void setup() {
-        vertexes = new VertexGraph(GameType.Beginner);
-        roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
+        vertexes = new GameboardGraph(GameType.Beginner);
+        GameLoader.initializeGraphs(vertexes);
     }
 
     @Test
@@ -154,7 +152,7 @@ public class GetPortTest {
 
     @Test
     public void getPortWithInvalidId9() {
-        VertexGraph vertexes =  new VertexGraph(GameType.Beginner);
+        GameboardGraph vertexes =  new GameboardGraph(GameType.Beginner);
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vertexes.getPort(MAX_LOCATION_ID + 1));
 
         String expectedMessage = "Invalid locationId; Try[0, 8]";
@@ -165,7 +163,7 @@ public class GetPortTest {
 
     @Test
     public void getPortWithInvalidIdNegative1() {
-        VertexGraph vertexes =  new VertexGraph(GameType.Beginner);
+        GameboardGraph vertexes =  new GameboardGraph(GameType.Beginner);
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> vertexes.getPort(-1));
 
         String expectedMessage = "Invalid locationId; Try[0, 8]";
@@ -176,9 +174,8 @@ public class GetPortTest {
 
     @Test
     public void test_RandomPorts() {
-        VertexGraph randomPorts = new VertexGraph(GameType.Advanced);
-        RoadGraph roads2 = new RoadGraph();
-        GameLoader.initializeGraphs(roads2, randomPorts);
+        GameboardGraph randomPorts = new GameboardGraph(GameType.Advanced);
+        GameLoader.initializeGraphs(randomPorts);
 
         assertEquals(vertexes.getOrder().length, randomPorts.getOrder().length);
         assertFalse(Arrays.equals(vertexes.getOrder(), randomPorts.getOrder()));

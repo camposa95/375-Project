@@ -13,23 +13,21 @@ import java.util.List;
 
 public class RoadToRoadAdjacencyTest {
 
-    VertexGraph vertexes;
-    RoadGraph roads;
+    GameboardGraph gameboardGraph;
 
     @BeforeEach
     public void setup() {
-        vertexes = new VertexGraph(GameType.Beginner);
-        roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
+        gameboardGraph = new GameboardGraph(GameType.Beginner);
+        GameLoader.initializeGraphs(gameboardGraph);
     }
 
     @Test
     public void testGetAdjacentRoadsTo0() {
-        Road road = roads.getRoad(0);
+        Road road = gameboardGraph.getRoad(0);
 
         List<Road> expectedRoads = new ArrayList<>();
-        expectedRoads.add(roads.getRoad(1));
-        expectedRoads.add(roads.getRoad(6));
+        expectedRoads.add(gameboardGraph.getRoad(1));
+        expectedRoads.add(gameboardGraph.getRoad(6));
 
         List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -45,12 +43,12 @@ public class RoadToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Road road = roads.getRoad(id);
+            Road road = gameboardGraph.getRoad(id);
 
             List<Road> expectedRoads = new ArrayList<>();
-            expectedRoads.add(roads.getRoad(id - 1));
-            expectedRoads.add(roads.getRoad(id + 1));
-            expectedRoads.add(roads.getRoad(id + (6 - i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - 1));
+            expectedRoads.add(gameboardGraph.getRoad(id + 1));
+            expectedRoads.add(gameboardGraph.getRoad(id + (6 - i)));
 
 
             List<Road> actualRoads = road.getAdjacentRoads();
@@ -70,12 +68,12 @@ public class RoadToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Road road = roads.getRoad(id);
+            Road road = gameboardGraph.getRoad(id);
 
             List<Road> expectedRoads = new ArrayList<>();
-            expectedRoads.add(roads.getRoad(id - 1));
-            expectedRoads.add(roads.getRoad(id + 1));
-            expectedRoads.add(roads.getRoad(id + (5 - i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - 1));
+            expectedRoads.add(gameboardGraph.getRoad(id + 1));
+            expectedRoads.add(gameboardGraph.getRoad(id + (5 - i)));
 
 
             List<Road> actualRoads = road.getAdjacentRoads();
@@ -91,11 +89,11 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo5() {
-        Road road = roads.getRoad(5);
+        Road road = gameboardGraph.getRoad(5);
 
         List<Road> expectedRoads = new ArrayList<>();
-        expectedRoads.add(roads.getRoad(4));
-        expectedRoads.add(roads.getRoad(9));
+        expectedRoads.add(gameboardGraph.getRoad(4));
+        expectedRoads.add(gameboardGraph.getRoad(9));
 
 
         List<Road> actualRoads = road.getAdjacentRoads();
@@ -108,12 +106,12 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo6() {
-        Road road = roads.getRoad(6);
+        Road road = gameboardGraph.getRoad(6);
 
         List<Road> expectedRoads = new ArrayList<>();
-        expectedRoads.add(roads.getRoad(0));
-        expectedRoads.add(roads.getRoad(10));
-        expectedRoads.add(roads.getRoad(11));
+        expectedRoads.add(gameboardGraph.getRoad(0));
+        expectedRoads.add(gameboardGraph.getRoad(10));
+        expectedRoads.add(gameboardGraph.getRoad(11));
 
 
         List<Road> actualRoads = road.getAdjacentRoads();
@@ -130,13 +128,13 @@ public class RoadToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Road road = roads.getRoad(id);
+            Road road = gameboardGraph.getRoad(id);
 
             List<Road> expectedRoads = new ArrayList<>();
-            expectedRoads.add(roads.getRoad(id - (6 - i)));
-            expectedRoads.add(roads.getRoad(id - (5 - i)));
-            expectedRoads.add(roads.getRoad(id + (5 + i)));
-            expectedRoads.add(roads.getRoad(id + (6 + i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - (6 - i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - (5 - i)));
+            expectedRoads.add(gameboardGraph.getRoad(id + (5 + i)));
+            expectedRoads.add(gameboardGraph.getRoad(id + (6 + i)));
 
 
             List<Road> actualRoads = road.getAdjacentRoads();
@@ -152,12 +150,12 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo9() {
-        Road road = roads.getRoad(9);
+        Road road = gameboardGraph.getRoad(9);
 
         List<Road> expectedRoads = new ArrayList<>();
-        expectedRoads.add(roads.getRoad(5));
-        expectedRoads.add(roads.getRoad(16));
-        expectedRoads.add(roads.getRoad(17));
+        expectedRoads.add(gameboardGraph.getRoad(5));
+        expectedRoads.add(gameboardGraph.getRoad(16));
+        expectedRoads.add(gameboardGraph.getRoad(17));
 
         List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -169,13 +167,13 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo10() {
-        Road road = roads.getRoad(10);
+        Road road = gameboardGraph.getRoad(10);
 
 
         List<Road> expectedRoads = new ArrayList<>();
-        expectedRoads.add(roads.getRoad(6));
-        expectedRoads.add(roads.getRoad(11));
-        expectedRoads.add(roads.getRoad(18));
+        expectedRoads.add(gameboardGraph.getRoad(6));
+        expectedRoads.add(gameboardGraph.getRoad(11));
+        expectedRoads.add(gameboardGraph.getRoad(18));
 
         List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -191,13 +189,13 @@ public class RoadToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Road road = roads.getRoad(id);
+            Road road = gameboardGraph.getRoad(id);
 
             List<Road> expectedRoads = new ArrayList<>();
-            expectedRoads.add(roads.getRoad(id - (5 + i)));
-            expectedRoads.add(roads.getRoad(id - 1));
-            expectedRoads.add(roads.getRoad(id + 1));
-            expectedRoads.add(roads.getRoad(id + (8 - i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - (5 + i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - 1));
+            expectedRoads.add(gameboardGraph.getRoad(id + 1));
+            expectedRoads.add(gameboardGraph.getRoad(id + (8 - i)));
 
             List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -216,13 +214,13 @@ public class RoadToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Road road = roads.getRoad(id);
+            Road road = gameboardGraph.getRoad(id);
 
             List<Road> expectedRoads = new ArrayList<>();
-            expectedRoads.add(roads.getRoad(id - (5 + i)));
-            expectedRoads.add(roads.getRoad(id - 1));
-            expectedRoads.add(roads.getRoad(id + 1));
-            expectedRoads.add(roads.getRoad(id + (7 - i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - (5 + i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - 1));
+            expectedRoads.add(gameboardGraph.getRoad(id + 1));
+            expectedRoads.add(gameboardGraph.getRoad(id + (7 - i)));
 
             List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -237,12 +235,12 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo17() {
-        Road road = roads.getRoad(17);
+        Road road = gameboardGraph.getRoad(17);
 
         List<Road> expectedRoads = new ArrayList<>();
-        expectedRoads.add(roads.getRoad(9));
-        expectedRoads.add(roads.getRoad(16));
-        expectedRoads.add(roads.getRoad(22));
+        expectedRoads.add(gameboardGraph.getRoad(9));
+        expectedRoads.add(gameboardGraph.getRoad(16));
+        expectedRoads.add(gameboardGraph.getRoad(22));
 
         List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -254,12 +252,12 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo18() {
-        Road road = roads.getRoad(18);
+        Road road = gameboardGraph.getRoad(18);
 
         List<Road> expectedRoads = new ArrayList<>();
-        expectedRoads.add(roads.getRoad(10));
-        expectedRoads.add(roads.getRoad(23));
-        expectedRoads.add(roads.getRoad(24));
+        expectedRoads.add(gameboardGraph.getRoad(10));
+        expectedRoads.add(gameboardGraph.getRoad(23));
+        expectedRoads.add(gameboardGraph.getRoad(24));
 
         List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -275,13 +273,13 @@ public class RoadToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Road road = roads.getRoad(id);
+            Road road = gameboardGraph.getRoad(id);
 
             List<Road> expectedRoads = new ArrayList<>();
-            expectedRoads.add(roads.getRoad(id - (8 - i)));
-            expectedRoads.add(roads.getRoad(id - (7 - i)));
-            expectedRoads.add(roads.getRoad(id + (6 + i)));
-            expectedRoads.add(roads.getRoad(id + (7 + i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - (8 - i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - (7 - i)));
+            expectedRoads.add(gameboardGraph.getRoad(id + (6 + i)));
+            expectedRoads.add(gameboardGraph.getRoad(id + (7 + i)));
 
 
             List<Road> actualRoads = road.getAdjacentRoads();
@@ -297,13 +295,13 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo22() {
-        Road road = roads.getRoad(22);
+        Road road = gameboardGraph.getRoad(22);
 
 
         List<Road> expectedRoads = new ArrayList<>();
-        expectedRoads.add(roads.getRoad(17));
-        expectedRoads.add(roads.getRoad(31));
-        expectedRoads.add(roads.getRoad(32));
+        expectedRoads.add(gameboardGraph.getRoad(17));
+        expectedRoads.add(gameboardGraph.getRoad(31));
+        expectedRoads.add(gameboardGraph.getRoad(32));
 
         List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -315,13 +313,13 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo23() {
-        Road road = roads.getRoad(23);
+        Road road = gameboardGraph.getRoad(23);
 
 
         List<Road> expectedRoads = new ArrayList<>();
-        expectedRoads.add(roads.getRoad(18));
-        expectedRoads.add(roads.getRoad(24));
-        expectedRoads.add(roads.getRoad(33));
+        expectedRoads.add(gameboardGraph.getRoad(18));
+        expectedRoads.add(gameboardGraph.getRoad(24));
+        expectedRoads.add(gameboardGraph.getRoad(33));
 
         List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -337,13 +335,13 @@ public class RoadToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Road road = roads.getRoad(id);
+            Road road = gameboardGraph.getRoad(id);
 
             List<Road> expectedRoads = new ArrayList<>();
-            expectedRoads.add(roads.getRoad(id - (6 + i)));
-            expectedRoads.add(roads.getRoad(id - 1));
-            expectedRoads.add(roads.getRoad(id + 1));
-            expectedRoads.add(roads.getRoad(id + (10 - i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - (6 + i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - 1));
+            expectedRoads.add(gameboardGraph.getRoad(id + 1));
+            expectedRoads.add(gameboardGraph.getRoad(id + (10 - i)));
 
 
             List<Road> actualRoads = road.getAdjacentRoads();
@@ -363,13 +361,13 @@ public class RoadToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Road road = roads.getRoad(id);
+            Road road = gameboardGraph.getRoad(id);
 
             List<Road> expectedRoads = new ArrayList<>();
-            expectedRoads.add(roads.getRoad(id - (6 + i)));
-            expectedRoads.add(roads.getRoad(id - 1));
-            expectedRoads.add(roads.getRoad(id + 1));
-            expectedRoads.add(roads.getRoad(id + (9 - i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - (6 + i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - 1));
+            expectedRoads.add(gameboardGraph.getRoad(id + 1));
+            expectedRoads.add(gameboardGraph.getRoad(id + (9 - i)));
 
             List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -384,12 +382,12 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo32() {
-        Road road = roads.getRoad(32);
+        Road road = gameboardGraph.getRoad(32);
 
         List<Road> expectedRoads = new ArrayList<>();
-        expectedRoads.add(roads.getRoad(22));
-        expectedRoads.add(roads.getRoad(31));
-        expectedRoads.add(roads.getRoad(38));
+        expectedRoads.add(gameboardGraph.getRoad(22));
+        expectedRoads.add(gameboardGraph.getRoad(31));
+        expectedRoads.add(gameboardGraph.getRoad(38));
 
         List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -401,11 +399,11 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo33() {
-        Road road = roads.getRoad(33);
+        Road road = gameboardGraph.getRoad(33);
 
         List<Road> expectedRoads = new ArrayList<>();
-        expectedRoads.add(roads.getRoad(23));
-        expectedRoads.add(roads.getRoad(39));
+        expectedRoads.add(gameboardGraph.getRoad(23));
+        expectedRoads.add(gameboardGraph.getRoad(39));
 
         List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -421,13 +419,13 @@ public class RoadToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Road road = roads.getRoad(id);
+            Road road = gameboardGraph.getRoad(id);
 
             List<Road> expectedRoads = new ArrayList<>();
-            expectedRoads.add(roads.getRoad(id - (10 - i)));
-            expectedRoads.add(roads.getRoad(id - (9 - i)));
-            expectedRoads.add(roads.getRoad(id + (6 + i)));
-            expectedRoads.add(roads.getRoad(id + (7 + i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - (10 - i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - (9 - i)));
+            expectedRoads.add(gameboardGraph.getRoad(id + (6 + i)));
+            expectedRoads.add(gameboardGraph.getRoad(id + (7 + i)));
 
             List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -442,11 +440,11 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo38() {
-        Road road = roads.getRoad(38);
+        Road road = gameboardGraph.getRoad(38);
 
         List<Road> expectedRoads = new ArrayList<>();
-        expectedRoads.add(roads.getRoad(32));
-        expectedRoads.add(roads.getRoad(48));
+        expectedRoads.add(gameboardGraph.getRoad(32));
+        expectedRoads.add(gameboardGraph.getRoad(48));
 
         List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -458,12 +456,12 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo39() {
-        Road road = roads.getRoad(39);
+        Road road = gameboardGraph.getRoad(39);
 
         List<Road> expectedRoads = new ArrayList<>();
-        expectedRoads.add(roads.getRoad(33));
-        expectedRoads.add(roads.getRoad(40));
-        expectedRoads.add(roads.getRoad(49));
+        expectedRoads.add(gameboardGraph.getRoad(33));
+        expectedRoads.add(gameboardGraph.getRoad(40));
+        expectedRoads.add(gameboardGraph.getRoad(49));
 
         List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -479,13 +477,13 @@ public class RoadToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Road road = roads.getRoad(id);
+            Road road = gameboardGraph.getRoad(id);
 
             List<Road> expectedRoads = new ArrayList<>();
-            expectedRoads.add(roads.getRoad(id - (6 + i)));
-            expectedRoads.add(roads.getRoad(id - 1));
-            expectedRoads.add(roads.getRoad(id + 1));
-            expectedRoads.add(roads.getRoad(id + (9 - i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - (6 + i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - 1));
+            expectedRoads.add(gameboardGraph.getRoad(id + 1));
+            expectedRoads.add(gameboardGraph.getRoad(id + (9 - i)));
 
             List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -504,13 +502,13 @@ public class RoadToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Road road = roads.getRoad(id);
+            Road road = gameboardGraph.getRoad(id);
 
             List<Road> expectedRoads = new ArrayList<>();
-            expectedRoads.add(roads.getRoad(id - (7 + i)));
-            expectedRoads.add(roads.getRoad(id - 1));
-            expectedRoads.add(roads.getRoad(id + 1));
-            expectedRoads.add(roads.getRoad(id + (9 - i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - (7 + i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - 1));
+            expectedRoads.add(gameboardGraph.getRoad(id + 1));
+            expectedRoads.add(gameboardGraph.getRoad(id + (9 - i)));
 
             List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -525,12 +523,12 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo48() {
-        Road road = roads.getRoad(48);
+        Road road = gameboardGraph.getRoad(48);
 
         List<Road> expectedRoads = new ArrayList<>();
-        expectedRoads.add(roads.getRoad(38));
-        expectedRoads.add(roads.getRoad(47));
-        expectedRoads.add(roads.getRoad(53));
+        expectedRoads.add(gameboardGraph.getRoad(38));
+        expectedRoads.add(gameboardGraph.getRoad(47));
+        expectedRoads.add(gameboardGraph.getRoad(53));
 
         List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -542,12 +540,12 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo49() {
-        Road road = roads.getRoad(49);
+        Road road = gameboardGraph.getRoad(49);
 
         List<Road> expectedRoads = new ArrayList<>();
-        expectedRoads.add(roads.getRoad(39));
-        expectedRoads.add(roads.getRoad(40));
-        expectedRoads.add(roads.getRoad(54));
+        expectedRoads.add(gameboardGraph.getRoad(39));
+        expectedRoads.add(gameboardGraph.getRoad(40));
+        expectedRoads.add(gameboardGraph.getRoad(54));
 
         List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -563,13 +561,13 @@ public class RoadToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Road road = roads.getRoad(id);
+            Road road = gameboardGraph.getRoad(id);
 
             List<Road> expectedRoads = new ArrayList<>();
-            expectedRoads.add(roads.getRoad(id - (9 - i)));
-            expectedRoads.add(roads.getRoad(id - (8 - i)));
-            expectedRoads.add(roads.getRoad(id + (5 + i)));
-            expectedRoads.add(roads.getRoad(id + (6 + i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - (9 - i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - (8 - i)));
+            expectedRoads.add(gameboardGraph.getRoad(id + (5 + i)));
+            expectedRoads.add(gameboardGraph.getRoad(id + (6 + i)));
 
             List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -584,12 +582,12 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo53() {
-        Road road = roads.getRoad(53);
+        Road road = gameboardGraph.getRoad(53);
 
         List<Road> expectedRoads = new ArrayList<>();
-        expectedRoads.add(roads.getRoad(47));
-        expectedRoads.add(roads.getRoad(48));
-        expectedRoads.add(roads.getRoad(61));
+        expectedRoads.add(gameboardGraph.getRoad(47));
+        expectedRoads.add(gameboardGraph.getRoad(48));
+        expectedRoads.add(gameboardGraph.getRoad(61));
 
         List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -601,12 +599,12 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo54() {
-        Road road = roads.getRoad(54);
+        Road road = gameboardGraph.getRoad(54);
 
         List<Road> expectedRoads = new ArrayList<>();
-        expectedRoads.add(roads.getRoad(49));
-        expectedRoads.add(roads.getRoad(55));
-        expectedRoads.add(roads.getRoad(62));
+        expectedRoads.add(gameboardGraph.getRoad(49));
+        expectedRoads.add(gameboardGraph.getRoad(55));
+        expectedRoads.add(gameboardGraph.getRoad(62));
 
         List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -622,13 +620,13 @@ public class RoadToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Road road = roads.getRoad(id);
+            Road road = gameboardGraph.getRoad(id);
 
             List<Road> expectedRoads = new ArrayList<>();
-            expectedRoads.add(roads.getRoad(id - (5 + i)));
-            expectedRoads.add(roads.getRoad(id - 1));
-            expectedRoads.add(roads.getRoad(id + 1));
-            expectedRoads.add(roads.getRoad(id + (7 - i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - (5 + i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - 1));
+            expectedRoads.add(gameboardGraph.getRoad(id + 1));
+            expectedRoads.add(gameboardGraph.getRoad(id + (7 - i)));
 
             List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -647,13 +645,13 @@ public class RoadToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Road road = roads.getRoad(id);
+            Road road = gameboardGraph.getRoad(id);
 
             List<Road> expectedRoads = new ArrayList<>();
-            expectedRoads.add(roads.getRoad(id - (6 + i)));
-            expectedRoads.add(roads.getRoad(id - 1));
-            expectedRoads.add(roads.getRoad(id + 1));
-            expectedRoads.add(roads.getRoad(id + (7 - i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - (6 + i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - 1));
+            expectedRoads.add(gameboardGraph.getRoad(id + 1));
+            expectedRoads.add(gameboardGraph.getRoad(id + (7 - i)));
 
             List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -668,12 +666,12 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo61() {
-        Road road = roads.getRoad(61);
+        Road road = gameboardGraph.getRoad(61);
 
         List<Road> expectedRoads = new ArrayList<>();
-        expectedRoads.add(roads.getRoad(53));
-        expectedRoads.add(roads.getRoad(60));
-        expectedRoads.add(roads.getRoad(65));
+        expectedRoads.add(gameboardGraph.getRoad(53));
+        expectedRoads.add(gameboardGraph.getRoad(60));
+        expectedRoads.add(gameboardGraph.getRoad(65));
 
         List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -685,12 +683,12 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo62() {
-        Road road = roads.getRoad(62);
+        Road road = gameboardGraph.getRoad(62);
 
         List<Road> expectedRoads = new ArrayList<>();
-        expectedRoads.add(roads.getRoad(54));
-        expectedRoads.add(roads.getRoad(55));
-        expectedRoads.add(roads.getRoad(66));
+        expectedRoads.add(gameboardGraph.getRoad(54));
+        expectedRoads.add(gameboardGraph.getRoad(55));
+        expectedRoads.add(gameboardGraph.getRoad(66));
 
         List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -706,13 +704,13 @@ public class RoadToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Road road = roads.getRoad(id);
+            Road road = gameboardGraph.getRoad(id);
 
             List<Road> expectedRoads = new ArrayList<>();
-            expectedRoads.add(roads.getRoad(id - (7 - i)));
-            expectedRoads.add(roads.getRoad(id - (6 - i)));
-            expectedRoads.add(roads.getRoad(id + (4 + i)));
-            expectedRoads.add(roads.getRoad(id + (5 + i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - (7 - i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - (6 - i)));
+            expectedRoads.add(gameboardGraph.getRoad(id + (4 + i)));
+            expectedRoads.add(gameboardGraph.getRoad(id + (5 + i)));
 
             List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -727,12 +725,12 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo65() {
-        Road road = roads.getRoad(65);
+        Road road = gameboardGraph.getRoad(65);
 
         List<Road> expectedRoads = new ArrayList<>();
-        expectedRoads.add(roads.getRoad(60));
-        expectedRoads.add(roads.getRoad(61));
-        expectedRoads.add(roads.getRoad(71));
+        expectedRoads.add(gameboardGraph.getRoad(60));
+        expectedRoads.add(gameboardGraph.getRoad(61));
+        expectedRoads.add(gameboardGraph.getRoad(71));
 
         List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -744,11 +742,11 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo66() {
-        Road road = roads.getRoad(66);
+        Road road = gameboardGraph.getRoad(66);
 
         List<Road> expectedRoads = new ArrayList<>();
-        expectedRoads.add(roads.getRoad(62));
-        expectedRoads.add(roads.getRoad(67));
+        expectedRoads.add(gameboardGraph.getRoad(62));
+        expectedRoads.add(gameboardGraph.getRoad(67));
 
         List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -764,12 +762,12 @@ public class RoadToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Road road = roads.getRoad(id);
+            Road road = gameboardGraph.getRoad(id);
 
             List<Road> expectedRoads = new ArrayList<>();
-            expectedRoads.add(roads.getRoad(id - (4 + i)));
-            expectedRoads.add(roads.getRoad(id - 1));
-            expectedRoads.add(roads.getRoad(id + 1));
+            expectedRoads.add(gameboardGraph.getRoad(id - (4 + i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - 1));
+            expectedRoads.add(gameboardGraph.getRoad(id + 1));
 
             List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -788,12 +786,12 @@ public class RoadToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Road road = roads.getRoad(id);
+            Road road = gameboardGraph.getRoad(id);
 
             List<Road> expectedRoads = new ArrayList<>();
-            expectedRoads.add(roads.getRoad(id - (5 + i)));
-            expectedRoads.add(roads.getRoad(id - 1));
-            expectedRoads.add(roads.getRoad(id + 1));
+            expectedRoads.add(gameboardGraph.getRoad(id - (5 + i)));
+            expectedRoads.add(gameboardGraph.getRoad(id - 1));
+            expectedRoads.add(gameboardGraph.getRoad(id + 1));
 
             List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -808,11 +806,11 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo71() {
-        Road road = roads.getRoad(71);
+        Road road = gameboardGraph.getRoad(71);
 
         List<Road> expectedRoads = new ArrayList<>();
-        expectedRoads.add(roads.getRoad(65));
-        expectedRoads.add(roads.getRoad(70));
+        expectedRoads.add(gameboardGraph.getRoad(65));
+        expectedRoads.add(gameboardGraph.getRoad(70));
 
         List<Road> actualRoads = road.getAdjacentRoads();
 
@@ -824,8 +822,8 @@ public class RoadToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsNotInitialized() {
-        RoadGraph roads = new RoadGraph();
-        Road testRoad = roads.getRoad(0); // get any road
+        gameboardGraph = new GameboardGraph(GameType.Beginner);
+        Road testRoad = gameboardGraph.getRoad(0); // get any road
 
         RuntimeException exception = assertThrows(RuntimeException.class, testRoad::getAdjacentRoads);
 

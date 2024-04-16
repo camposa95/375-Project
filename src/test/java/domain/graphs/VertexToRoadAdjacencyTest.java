@@ -12,22 +12,20 @@ import java.util.List;
 
 public class VertexToRoadAdjacencyTest {
 
-    VertexGraph vertexes;
-    RoadGraph roads;
+    GameboardGraph gameboardGraph;
 
     @BeforeEach
     public void setup() {
-        vertexes = new VertexGraph(GameType.Beginner);
-        roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
+        gameboardGraph = new GameboardGraph(GameType.Beginner);
+        GameLoader.initializeGraphs(gameboardGraph);
     }
 
     @Test
     public void testGetAdjacentRoadsTo0() {
-        Vertex vertex = vertexes.getVertex(0);
+        Vertex vertex = gameboardGraph.getVertex(0);
 
-        Road[] expectedRoads = {roads.getRoad(0),
-                                roads.getRoad(6)};
+        Road[] expectedRoads = {gameboardGraph.getRoad(0),
+                                gameboardGraph.getRoad(6)};
         
         List<Road> actualRoads = vertex.getAdjacentRoads();
 
@@ -42,10 +40,10 @@ public class VertexToRoadAdjacencyTest {
         final int[] ids = {1, 3, 5};
 
         for (int id: ids) {
-            Vertex vertex = vertexes.getVertex(id);
+            Vertex vertex = gameboardGraph.getVertex(id);
 
-            Road[] expectedRoads = {roads.getRoad(id - 1),
-                                    roads.getRoad(id)};
+            Road[] expectedRoads = {gameboardGraph.getRoad(id - 1),
+                                    gameboardGraph.getRoad(id)};
 
             List<Road> actualRoads = vertex.getAdjacentRoads();
 
@@ -62,11 +60,11 @@ public class VertexToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Vertex vertex = vertexes.getVertex(id);
+            Vertex vertex = gameboardGraph.getVertex(id);
 
-            Road[] expectedRoads = {roads.getRoad(id - 1),
-                                    roads.getRoad(id),
-                                    roads.getRoad(id + (5 - i))};
+            Road[] expectedRoads = {gameboardGraph.getRoad(id - 1),
+                                    gameboardGraph.getRoad(id),
+                                    gameboardGraph.getRoad(id + (5 - i))};
 
             List<Road> actualRoads = vertex.getAdjacentRoads();
 
@@ -81,10 +79,10 @@ public class VertexToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo6() {
-        Vertex vertex = vertexes.getVertex(6);
+        Vertex vertex = gameboardGraph.getVertex(6);
 
-        Road[] expectedRoads = {roads.getRoad(5),
-                                roads.getRoad(9)};
+        Road[] expectedRoads = {gameboardGraph.getRoad(5),
+                                gameboardGraph.getRoad(9)};
 
         List<Road> actualRoads = vertex.getAdjacentRoads();
 
@@ -96,10 +94,10 @@ public class VertexToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo7() {
-        Vertex vertex = vertexes.getVertex(7);
+        Vertex vertex = gameboardGraph.getVertex(7);
 
-        Road[] expectedRoads = {roads.getRoad(10),
-                                roads.getRoad(18)};
+        Road[] expectedRoads = {gameboardGraph.getRoad(10),
+                                gameboardGraph.getRoad(18)};
 
         List<Road> actualRoads = vertex.getAdjacentRoads();
 
@@ -115,11 +113,11 @@ public class VertexToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Vertex vertex = vertexes.getVertex(id);
+            Vertex vertex = gameboardGraph.getVertex(id);
 
-            Road[] expectedRoads = {roads.getRoad(id - (2 + i)),
-                                    roads.getRoad(id + 2),
-                                    roads.getRoad(id + 3)};
+            Road[] expectedRoads = {gameboardGraph.getRoad(id - (2 + i)),
+                                    gameboardGraph.getRoad(id + 2),
+                                    gameboardGraph.getRoad(id + 3)};
 
             List<Road> actualRoads = vertex.getAdjacentRoads();
 
@@ -138,11 +136,11 @@ public class VertexToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Vertex vertex = vertexes.getVertex(id);
+            Vertex vertex = gameboardGraph.getVertex(id);
 
-            Road[] expectedRoads = {roads.getRoad(id + 2),
-                                    roads.getRoad(id + 3),
-                                    roads.getRoad(id + (10 - i))};
+            Road[] expectedRoads = {gameboardGraph.getRoad(id + 2),
+                                    gameboardGraph.getRoad(id + 3),
+                                    gameboardGraph.getRoad(id + (10 - i))};
 
             List<Road> actualRoads = vertex.getAdjacentRoads();
 
@@ -157,10 +155,10 @@ public class VertexToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo15() {
-        Vertex vertex = vertexes.getVertex(15);
+        Vertex vertex = gameboardGraph.getVertex(15);
 
-        Road[] expectedRoads = {roads.getRoad(17),
-                                roads.getRoad(22)};
+        Road[] expectedRoads = {gameboardGraph.getRoad(17),
+                                gameboardGraph.getRoad(22)};
 
         List<Road> actualRoads = vertex.getAdjacentRoads();
 
@@ -172,10 +170,10 @@ public class VertexToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo16() {
-        Vertex vertex = vertexes.getVertex(16);
+        Vertex vertex = gameboardGraph.getVertex(16);
 
-        Road[] expectedRoads = {roads.getRoad(23),
-                                roads.getRoad(33)};
+        Road[] expectedRoads = {gameboardGraph.getRoad(23),
+                                gameboardGraph.getRoad(33)};
 
         List<Road> actualRoads = vertex.getAdjacentRoads();
 
@@ -191,11 +189,11 @@ public class VertexToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Vertex vertex = vertexes.getVertex(id);
+            Vertex vertex = gameboardGraph.getVertex(id);
 
-            Road[] expectedRoads = {roads.getRoad(id + (1 - i)),
-                                    roads.getRoad(id + 6),
-                                    roads.getRoad(id + 7)};
+            Road[] expectedRoads = {gameboardGraph.getRoad(id + (1 - i)),
+                                    gameboardGraph.getRoad(id + 6),
+                                    gameboardGraph.getRoad(id + 7)};
 
             List<Road> actualRoads = vertex.getAdjacentRoads();
 
@@ -214,11 +212,11 @@ public class VertexToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Vertex vertex = vertexes.getVertex(id);
+            Vertex vertex = gameboardGraph.getVertex(id);
 
-            Road[] expectedRoads = {roads.getRoad(id + 6),
-                                    roads.getRoad(id + 7),
-                                    roads.getRoad(id + (16 - i))};
+            Road[] expectedRoads = {gameboardGraph.getRoad(id + 6),
+                                    gameboardGraph.getRoad(id + 7),
+                                    gameboardGraph.getRoad(id + (16 - i))};
 
             List<Road> actualRoads = vertex.getAdjacentRoads();
 
@@ -233,10 +231,10 @@ public class VertexToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo26() {
-        Vertex vertex = vertexes.getVertex(26);
+        Vertex vertex = gameboardGraph.getVertex(26);
 
-        Road[] expectedRoads = {roads.getRoad(32),
-                                roads.getRoad(38)};
+        Road[] expectedRoads = {gameboardGraph.getRoad(32),
+                                gameboardGraph.getRoad(38)};
 
         List<Road> actualRoads = vertex.getAdjacentRoads();
 
@@ -248,10 +246,10 @@ public class VertexToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo27() {
-        Vertex vertex = vertexes.getVertex(27);
+        Vertex vertex = gameboardGraph.getVertex(27);
 
-        Road[] expectedRoads = {roads.getRoad(33),
-                                roads.getRoad(39)};
+        Road[] expectedRoads = {gameboardGraph.getRoad(33),
+                                gameboardGraph.getRoad(39)};
 
         List<Road> actualRoads = vertex.getAdjacentRoads();
 
@@ -267,11 +265,11 @@ public class VertexToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Vertex vertex = vertexes.getVertex(id);
+            Vertex vertex = gameboardGraph.getVertex(id);
 
-            Road[] expectedRoads = {roads.getRoad(id + 11),
-                                    roads.getRoad(id + 12),
-                                    roads.getRoad(id + (21 - i))};
+            Road[] expectedRoads = {gameboardGraph.getRoad(id + 11),
+                                    gameboardGraph.getRoad(id + 12),
+                                    gameboardGraph.getRoad(id + (21 - i))};
 
             List<Road> actualRoads = vertex.getAdjacentRoads();
 
@@ -290,11 +288,11 @@ public class VertexToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Vertex vertex = vertexes.getVertex(id);
+            Vertex vertex = gameboardGraph.getVertex(id);
 
-            Road[] expectedRoads = {roads.getRoad(id + (5 - i)),
-                                    roads.getRoad(id + 11),
-                                    roads.getRoad(id + 12)};
+            Road[] expectedRoads = {gameboardGraph.getRoad(id + (5 - i)),
+                                    gameboardGraph.getRoad(id + 11),
+                                    gameboardGraph.getRoad(id + 12)};
 
             List<Road> actualRoads = vertex.getAdjacentRoads();
 
@@ -309,10 +307,10 @@ public class VertexToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo37() {
-        Vertex vertex = vertexes.getVertex(37);
+        Vertex vertex = gameboardGraph.getVertex(37);
 
-        Road[] expectedRoads = {roads.getRoad(38),
-                                roads.getRoad(48)};
+        Road[] expectedRoads = {gameboardGraph.getRoad(38),
+                                gameboardGraph.getRoad(48)};
 
         List<Road> actualRoads = vertex.getAdjacentRoads();
 
@@ -324,10 +322,10 @@ public class VertexToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo38() {
-        Vertex vertex = vertexes.getVertex(38);
+        Vertex vertex = gameboardGraph.getVertex(38);
 
-        Road[] expectedRoads = {roads.getRoad(49),
-                                roads.getRoad(54)};
+        Road[] expectedRoads = {gameboardGraph.getRoad(49),
+                                gameboardGraph.getRoad(54)};
 
         List<Road> actualRoads = vertex.getAdjacentRoads();
 
@@ -343,11 +341,11 @@ public class VertexToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Vertex vertex = vertexes.getVertex(id);
+            Vertex vertex = gameboardGraph.getVertex(id);
 
-            Road[] expectedRoads = {roads.getRoad(id + 15),
-                                    roads.getRoad(id + 16),
-                                    roads.getRoad(id + (23 - i))};
+            Road[] expectedRoads = {gameboardGraph.getRoad(id + 15),
+                                    gameboardGraph.getRoad(id + 16),
+                                    gameboardGraph.getRoad(id + (23 - i))};
 
             List<Road> actualRoads = vertex.getAdjacentRoads();
 
@@ -366,11 +364,11 @@ public class VertexToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Vertex vertex = vertexes.getVertex(id);
+            Vertex vertex = gameboardGraph.getVertex(id);
 
-            Road[] expectedRoads = {roads.getRoad(id + (10 - i)),
-                                    roads.getRoad(id + 15),
-                                    roads.getRoad(id + 16)};
+            Road[] expectedRoads = {gameboardGraph.getRoad(id + (10 - i)),
+                                    gameboardGraph.getRoad(id + 15),
+                                    gameboardGraph.getRoad(id + 16)};
 
             List<Road> actualRoads = vertex.getAdjacentRoads();
 
@@ -385,10 +383,10 @@ public class VertexToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo46() {
-        Vertex vertex = vertexes.getVertex(46);
+        Vertex vertex = gameboardGraph.getVertex(46);
 
-        Road[] expectedRoads = {roads.getRoad(53),
-                                roads.getRoad(61)};
+        Road[] expectedRoads = {gameboardGraph.getRoad(53),
+                                gameboardGraph.getRoad(61)};
 
         List<Road> actualRoads = vertex.getAdjacentRoads();
 
@@ -400,10 +398,10 @@ public class VertexToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo47() {
-        Vertex vertex = vertexes.getVertex(47);
+        Vertex vertex = gameboardGraph.getVertex(47);
 
-        Road[] expectedRoads = {roads.getRoad(62),
-                                roads.getRoad(66)};
+        Road[] expectedRoads = {gameboardGraph.getRoad(62),
+                                gameboardGraph.getRoad(66)};
 
         List<Road> actualRoads = vertex.getAdjacentRoads();
 
@@ -418,10 +416,10 @@ public class VertexToRoadAdjacencyTest {
         final int[] ids = {48, 50, 52};
 
         for (int id: ids) {
-            Vertex vertex = vertexes.getVertex(id);
+            Vertex vertex = gameboardGraph.getVertex(id);
 
-            Road[] expectedRoads = {roads.getRoad(id + 18),
-                                    roads.getRoad(id + 19)};
+            Road[] expectedRoads = {gameboardGraph.getRoad(id + 18),
+                                    gameboardGraph.getRoad(id + 19)};
 
             List<Road> actualRoads = vertex.getAdjacentRoads();
 
@@ -438,11 +436,11 @@ public class VertexToRoadAdjacencyTest {
 
         int i = 0;
         for (int id: ids) {
-            Vertex vertex = vertexes.getVertex(id);
+            Vertex vertex = gameboardGraph.getVertex(id);
 
-            Road[] expectedRoads = {roads.getRoad(id + (14 - i)),
-                                    roads.getRoad(id + 18),
-                                    roads.getRoad(id + 19)};
+            Road[] expectedRoads = {gameboardGraph.getRoad(id + (14 - i)),
+                                    gameboardGraph.getRoad(id + 18),
+                                    gameboardGraph.getRoad(id + 19)};
 
             List<Road> actualRoads = vertex.getAdjacentRoads();
 
@@ -457,10 +455,10 @@ public class VertexToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsTo53() {
-        Vertex vertex = vertexes.getVertex(53);
+        Vertex vertex = gameboardGraph.getVertex(53);
 
-        Road[] expectedRoads = {roads.getRoad(65),
-                                roads.getRoad(71)};
+        Road[] expectedRoads = {gameboardGraph.getRoad(65),
+                                gameboardGraph.getRoad(71)};
 
         List<Road> actualRoads = vertex.getAdjacentRoads();
 
@@ -472,7 +470,7 @@ public class VertexToRoadAdjacencyTest {
 
     @Test
     public void testGetAdjacentRoadsNotInitialized() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner); // note not initialized
+        GameboardGraph vertexes = new GameboardGraph(GameType.Beginner); // note not initialized
         Vertex testVertex = vertexes.getVertex(0); // get any road
 
         RuntimeException exception = assertThrows(RuntimeException.class, testVertex::getAdjacentRoads);

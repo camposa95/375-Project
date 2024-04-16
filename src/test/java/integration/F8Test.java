@@ -19,8 +19,7 @@ import domain.gameboard.GameBoard;
 import domain.game.GameType;
 import domain.player.Player;
 import domain.bank.Resource;
-import domain.graphs.RoadGraph;
-import domain.graphs.VertexGraph;
+import domain.graphs.GameboardGraph;
 
 import static domain.bank.Resource.GRAIN;
 import static domain.bank.Resource.ORE;
@@ -34,8 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class F8Test {
 
-    VertexGraph vertexes;
-    RoadGraph roads;
+    GameboardGraph gameboardGraph;
     Player player1;
     Player player2;
     Player player3;
@@ -46,9 +44,8 @@ public class F8Test {
     @BeforeEach
     public void createGameObjects() {
         GameType gameType = GameType.Beginner;
-        vertexes = new VertexGraph(gameType);
-        roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
+        gameboardGraph = new GameboardGraph(gameType);
+        GameLoader.initializeGraphs(gameboardGraph);
 
         Bank bank = new Bank();
         player1 = new Player(1, new HarvestBooster(), bank);
@@ -61,7 +58,7 @@ public class F8Test {
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        Game game = new Game(gameBoard, gameboardGraph, devCardDeck, bank);
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
@@ -91,7 +88,7 @@ public class F8Test {
         assertEquals(4, player1.getNumSettlements()); // player should have gained back a settlement
         assertEquals(3, player1.getNumCities()); // player should have used a city
         assertEquals(3, player1.getVictoryPoints()); // player should have gained a victory point
-        assertTrue(vertexes.getVertex(newVertexId).getBuilding().isCity()); // Vertex is now a city
+        assertTrue(gameboardGraph.getVertex(newVertexId).getBuilding().isCity()); // Vertex is now a city
         assertEquals(0, player1.hand.getResourceCount()); // player should have used the resources
     }
 
@@ -113,7 +110,7 @@ public class F8Test {
         assertEquals(3, player1.getNumSettlements()); // player settlements stay the same
         assertEquals(4, player1.getNumCities()); // player doesn't use a city
         assertEquals(2, player1.getVictoryPoints()); // player should not have gained a victory point
-        assertNull(vertexes.getVertex(newVertexId).getOwner()); // Vertex is still unowned
+        assertNull(gameboardGraph.getVertex(newVertexId).getOwner()); // Vertex is still unowned
         assertEquals(5, player1.hand.getResourceCount()); // player should not have used the resources
     }
 
@@ -135,8 +132,8 @@ public class F8Test {
         assertEquals(3, player1.getNumSettlements()); // player settlements stay the same
         assertEquals(4, player1.getNumCities()); // player doesn't use a city
         assertEquals(2, player1.getVictoryPoints()); // player should not have gained a victory point
-        assertEquals(player2, vertexes.getVertex(newVertexId).getOwner()); // Vertex is still owned by player 2
-        assertFalse(vertexes.getVertex(newVertexId).getBuilding().isCity()); // vertex is still only a settlement
+        assertEquals(player2, gameboardGraph.getVertex(newVertexId).getOwner()); // Vertex is still owned by player 2
+        assertFalse(gameboardGraph.getVertex(newVertexId).getBuilding().isCity()); // vertex is still only a settlement
         assertEquals(5, player1.hand.getResourceCount()); // player should not have used the resources
     }
 
@@ -158,6 +155,6 @@ public class F8Test {
         assertEquals(3, player1.getNumSettlements()); // player settlements stay the same
         assertEquals(4, player1.getNumCities()); // player doesn't use a city
         assertEquals(2, player1.getVictoryPoints()); // player should not have gained a victory point
-        assertFalse(vertexes.getVertex(newVertexId).getBuilding().isCity()); // vertex is still only a settlement
+        assertFalse(gameboardGraph.getVertex(newVertexId).getBuilding().isCity()); // vertex is still only a settlement
     }
 }

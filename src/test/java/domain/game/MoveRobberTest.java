@@ -21,7 +21,7 @@ public class MoveRobberTest {
         gameBoard =  EasyMock.createStrictMock(GameBoard.class);
         tile1 = EasyMock.createStrictMock(Tile.class);
         tile2 = EasyMock.createStrictMock(Tile.class);
-        game = new Game(gameBoard, null, null , null, null);
+        game = new Game(gameBoard, null, null, null);
     }
 
     @Test

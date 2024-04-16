@@ -13,13 +13,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class UpgradeSettlementTest {
 
     GameBoard gameBoard;
-    RoadGraph rg;
-    VertexGraph mockVertexGraph;
+    GameboardGraph mockGameboardGraph;
     Vertex mockVertex;
     Player mockPlayer;
     Game game;
@@ -28,59 +25,58 @@ public class UpgradeSettlementTest {
     public void setup() {
         gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        rg = new RoadGraph();
 
-        mockVertexGraph =  EasyMock.createMock(VertexGraph.class);
+        mockGameboardGraph =  EasyMock.createMock(GameboardGraph.class);
         mockVertex = EasyMock.createNiceMock(Vertex.class);
         mockPlayer = EasyMock.createMock(Player.class);
 
-        game = new Game(gameBoard, mockVertexGraph, rg, null, null);
+        game = new Game(gameBoard, mockGameboardGraph, null, null);
     }
 
     @Test
     public void test_UpgradeSettlement_Invalid() {
         int vertexId = 0;
-        EasyMock.expect(mockVertexGraph.getVertex(vertexId)).andReturn(mockVertex);
+        EasyMock.expect(mockGameboardGraph.getVertex(vertexId)).andReturn(mockVertex);
         EasyMock.expect(mockVertex.isUpgradableBy(mockPlayer)).andReturn(false);
 
-        EasyMock.replay(mockPlayer,mockVertex,mockVertexGraph);
+        EasyMock.replay(mockPlayer,mockVertex, mockGameboardGraph);
 
 
         assertThrows(InvalidPlacementException.class, ()-> game.upgradeSettlement(mockPlayer,vertexId));
 
 
-        EasyMock.verify(mockPlayer,mockVertex,mockVertexGraph);
+        EasyMock.verify(mockPlayer,mockVertex, mockGameboardGraph);
     }
 
     @Test
     public void test_UpgradeSettlement_NotEnough() {
         int vertexId = 0;
 
-        EasyMock.expect(mockVertexGraph.getVertex(vertexId)).andReturn(mockVertex);
+        EasyMock.expect(mockGameboardGraph.getVertex(vertexId)).andReturn(mockVertex);
         EasyMock.expect(mockVertex.isUpgradableBy(mockPlayer)).andReturn(true);
         EasyMock.expect(mockPlayer.canUpgradeSettlementToCity()).andReturn(false);
 
-        EasyMock.replay(mockPlayer,mockVertex,mockVertexGraph);
+        EasyMock.replay(mockPlayer,mockVertex, mockGameboardGraph);
 
 
         assertThrows(NotEnoughResourcesException.class, ()-> game.upgradeSettlement(mockPlayer,vertexId));
 
 
-        EasyMock.verify(mockPlayer,mockVertex,mockVertexGraph);
+        EasyMock.verify(mockPlayer,mockVertex, mockGameboardGraph);
     }
 
     @Test
     public void test_UpgradeSettlement_ToCity() {
         int vertexId = 0;
 
-        EasyMock.expect(mockVertexGraph.getVertex(vertexId)).andReturn(mockVertex);
+        EasyMock.expect(mockGameboardGraph.getVertex(vertexId)).andReturn(mockVertex);
         EasyMock.expect(mockVertex.isUpgradableBy(mockPlayer)).andReturn(true);
         EasyMock.expect(mockPlayer.canUpgradeSettlementToCity()).andReturn(true);
 
         mockVertex.upgradeToCity(mockPlayer);
         EasyMock.expectLastCall();
         
-        EasyMock.replay(mockPlayer,mockVertex,mockVertexGraph);
+        EasyMock.replay(mockPlayer,mockVertex, mockGameboardGraph);
  
 
         try {
@@ -89,6 +85,6 @@ public class UpgradeSettlementTest {
             fail();
         }
                
-        EasyMock.verify(mockPlayer,mockVertex,mockVertexGraph);
+        EasyMock.verify(mockPlayer,mockVertex, mockGameboardGraph);
     }
 }

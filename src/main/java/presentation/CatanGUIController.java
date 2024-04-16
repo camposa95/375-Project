@@ -227,9 +227,9 @@ public class CatanGUIController {
     }
 
     private void initializePorts() {
-        VertexGraph vertexGraph = GameLoader.getInstance().getVertexGraph();
-        for(int p = 0; p < VertexGraph.NUM_PORTS; p++){
-            Port cur = vertexGraph.getPort(p);
+        GameboardGraph gameboardGraph = GameLoader.getInstance().getGameboardGraph();
+        for(int p = 0; p < GameboardGraph.NUM_PORTS; p++){
+            Port cur = gameboardGraph.getPort(p);
             setPortTrade(ports[p], cur.getResource());
         }
     }
@@ -269,8 +269,8 @@ public class CatanGUIController {
     // State Specific Rendering
 
     private void updateVertexes() {
-        VertexGraph vertexes = GameLoader.getInstance().getVertexGraph();
-        for (int i = 0; i < VertexGraph.NUM_VERTICES; i++) {
+        GameboardGraph vertexes = GameLoader.getInstance().getGameboardGraph();
+        for (int i = 0; i < GameboardGraph.NUM_VERTICES; i++) {
             Vertex vertex = vertexes.getVertex(i);
             if (vertex.isOccupied()) {
                 renderSettlementOnVertex(vertices[i], getPlayerColor(vertex.getOwner().getPlayerNum()));
@@ -279,8 +279,8 @@ public class CatanGUIController {
     }
 
     private void updateRoads() {
-        RoadGraph roads = GameLoader.getInstance().getRoadGraph();
-        for (int i = 0; i < RoadGraph.NUM_ROADS; i++) {
+        GameboardGraph roads = GameLoader.getInstance().getGameboardGraph();
+        for (int i = 0; i < GameboardGraph.NUM_ROADS; i++) {
             Road road = roads.getRoad(i);
             if (road.isOccupied()) {
                 renderRoad(i, road.getOwner().getPlayerNum());

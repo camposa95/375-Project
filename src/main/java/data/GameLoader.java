@@ -47,8 +47,7 @@ public class GameLoader {
 
     private static GameLoader uniqueInstance = null;
 
-    private VertexGraph vertexGraph;
-    private RoadGraph roadGraph;
+    private GameboardGraph gameboardGraph;
     private GameBoard gameBoard;
     private Controller controller;
     private Player[] players;
@@ -86,9 +85,8 @@ public class GameLoader {
         this.gameType = gameMode;
         this.numPlayers = playerCount;
 
-        roadGraph = new RoadGraph();
-        vertexGraph = new VertexGraph(gameMode);
-        initializeGraphs(roadGraph, vertexGraph);
+        gameboardGraph = new GameboardGraph(gameMode);
+        initializeGraphs(gameboardGraph);
 
         gameBoard = new GameBoard(gameMode);
         initializeGameBoard(gameBoard);
@@ -96,7 +94,7 @@ public class GameLoader {
         Bank bank = new Bank();
 
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
-        Game game = new Game(gameBoard, vertexGraph, roadGraph, devCardDeck, bank);
+        Game game = new Game(gameBoard, gameboardGraph, devCardDeck, bank);
 
         this.players = new Player[this.numPlayers];
         for (int i = 0; i < this.numPlayers; i++) {
@@ -279,8 +277,8 @@ public class GameLoader {
     //
     // ----------------------------------------------------------------
 
-    public VertexGraph getVertexGraph() {
-        return vertexGraph;
+    public GameboardGraph getGameboardGraph() {
+        return gameboardGraph;
     }
 
     public Tile[] getTiles() {
@@ -300,22 +298,18 @@ public class GameLoader {
         return this.numPlayers;
     }
 
-    public RoadGraph getRoadGraph() {
-        return roadGraph;
-    }
-
     // --------------------------------------------------------
     //
     // Static Initialization
     //
     // --------------------------------------------------------
 
-    public static void initializeGraphs(final RoadGraph roadGraph, final VertexGraph vertexGraph) {
-        initializeRoadToRoadAdjacency(roadGraph);
-        initializeVertexToVertexAdjacency(vertexGraph);
-        initializeRoadToVertexAdjacency(roadGraph, vertexGraph);
-        initializeVertexToRoadAdjacency(vertexGraph, roadGraph);
-        initializeVertexToPortAdjacency(vertexGraph);
+    public static void initializeGraphs(final GameboardGraph gameboardGraph) {
+        initializeRoadToRoadAdjacency(gameboardGraph);
+        initializeVertexToVertexAdjacency(gameboardGraph);
+        initializeRoadToVertexAdjacency(gameboardGraph);
+        initializeVertexToRoadAdjacency(gameboardGraph);
+        initializeVertexToPortAdjacency(gameboardGraph);
     }
 
     public static void initializeGameBoard(final GameBoard gameBoard) {
@@ -323,7 +317,7 @@ public class GameLoader {
     }
 
     // Initialization of VertexGraph
-    private static void initializeVertexToVertexAdjacency(final VertexGraph vertexGraph) {
+    private static void initializeVertexToVertexAdjacency(final GameboardGraph gameboardGraph) {
         File vertexLayout = new File(GameLoader.VERTEX_TO_VERTEX_FILE);
         try (Scanner scanner = new Scanner(vertexLayout, StandardCharsets.UTF_8)) {
             int vertexToInitializeId = 0;
@@ -335,10 +329,10 @@ public class GameLoader {
 
                 for (String value : values) {
                     int vertexId = Integer.parseInt(value);
-                    adjacentVertexes.add(vertexGraph.getVertex(vertexId));
+                    adjacentVertexes.add(gameboardGraph.getVertex(vertexId));
                 }
 
-                vertexToInitialize = vertexGraph.getVertex(vertexToInitializeId);
+                vertexToInitialize = gameboardGraph.getVertex(vertexToInitializeId);
                 vertexToInitialize.setAdjacentVertexes(adjacentVertexes);
                 vertexToInitializeId++;
             }
@@ -349,7 +343,7 @@ public class GameLoader {
         }
     }
 
-    private static void initializeVertexToRoadAdjacency(final VertexGraph vertexGraph, final RoadGraph roadGraph) {
+    private static void initializeVertexToRoadAdjacency(final GameboardGraph gameboardGraph) {
         File vertexToRoadLayout = new File(GameLoader.VERTEX_TO_ROAD_FILE);
         try (Scanner scanner = new Scanner(vertexToRoadLayout, StandardCharsets.UTF_8)) {
             int vertexToInitializeId = 0;
@@ -361,10 +355,10 @@ public class GameLoader {
 
                 for (String value : values) {
                     int roadId = Integer.parseInt(value);
-                    adjacentRoads.add(roadGraph.getRoad(roadId));
+                    adjacentRoads.add(gameboardGraph.getRoad(roadId));
                 }
 
-                vertexToInitialize = vertexGraph.getVertex(vertexToInitializeId);
+                vertexToInitialize = gameboardGraph.getVertex(vertexToInitializeId);
                 vertexToInitialize.setAdjacentRoads(adjacentRoads);
                 vertexToInitializeId++;
             }
@@ -375,7 +369,7 @@ public class GameLoader {
         }
     }
 
-    private static void initializeVertexToPortAdjacency(final VertexGraph vertexGraph) {
+    private static void initializeVertexToPortAdjacency(final GameboardGraph gameboardGraph) {
         File vertexToRoadLayout = new File(GameLoader.VERTEX_TO_PORT_FILE);
         try (Scanner scanner = new Scanner(vertexToRoadLayout, StandardCharsets.UTF_8)) {
             int vertexToInitializeId = 0;
@@ -383,13 +377,13 @@ public class GameLoader {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 String[] values = line.split(" ");
-                vertexToInitialize = vertexGraph.getVertex(vertexToInitializeId);
+                vertexToInitialize = gameboardGraph.getVertex(vertexToInitializeId);
 
                 // Parse the port id into an actual port
                 Port adjacentPort = null;
                 try {
                     int portId = Integer.parseInt(values[0]);
-                    adjacentPort = vertexGraph.getPort(portId);
+                    adjacentPort = gameboardGraph.getPort(portId);
                 } catch (NumberFormatException e) {
                     // else no port indicated so we leave it null
                 }
@@ -405,7 +399,7 @@ public class GameLoader {
     }
 
     // Initialization of RoadGraph
-    private static void initializeRoadToRoadAdjacency(final RoadGraph roadGraph) {
+    private static void initializeRoadToRoadAdjacency(final GameboardGraph gameboardGraph) {
         File roadLayout = new File(GameLoader.ROAD_TO_ROAD_FILE);
         try (Scanner scanner = new Scanner(roadLayout, StandardCharsets.UTF_8)) {
             int roadToInitializeId = 0;
@@ -417,10 +411,10 @@ public class GameLoader {
 
                 for (String value : values) {
                     int roadId = Integer.parseInt(value);
-                    adjacentRoads.add(roadGraph.getRoad(roadId));
+                    adjacentRoads.add(gameboardGraph.getRoad(roadId));
                 }
 
-                roadToInitialize = roadGraph.getRoad(roadToInitializeId);
+                roadToInitialize = gameboardGraph.getRoad(roadToInitializeId);
                 roadToInitialize.setAdjacentRoads(adjacentRoads);
                 roadToInitializeId++;
             }
@@ -431,7 +425,7 @@ public class GameLoader {
         }
     }
 
-    private static void initializeRoadToVertexAdjacency(final RoadGraph roadGraph, final VertexGraph vertexGraph) {
+    private static void initializeRoadToVertexAdjacency(final GameboardGraph gameboardGraph) {
         File roadToVertexLayout = new File(GameLoader.ROAD_TO_VERTEX_FILE);
         try (Scanner scanner = new Scanner(roadToVertexLayout, StandardCharsets.UTF_8)) {
             int roadToInitializeId = 0;
@@ -443,10 +437,10 @@ public class GameLoader {
 
                 for (String value : values) {
                     int vertexId = Integer.parseInt(value);
-                    adjacentVertexesBuffer.add(vertexGraph.getVertex(vertexId));
+                    adjacentVertexesBuffer.add(gameboardGraph.getVertex(vertexId));
                 }
 
-                roadToInitialize = roadGraph.getRoad(roadToInitializeId);
+                roadToInitialize = gameboardGraph.getRoad(roadToInitializeId);
                 roadToInitialize.setAdjacentVertexes(adjacentVertexesBuffer);
                 roadToInitializeId++;
             }

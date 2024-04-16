@@ -24,8 +24,7 @@ import domain.gameboard.GameBoard;
 import domain.game.GameType;
 import domain.player.Player;
 import domain.bank.Resource;
-import domain.graphs.RoadGraph;
-import domain.graphs.VertexGraph;
+import domain.graphs.GameboardGraph;
 
 
 /**
@@ -37,8 +36,7 @@ import domain.graphs.VertexGraph;
  */
 public class F7Test {
 
-    VertexGraph vertexes;
-    RoadGraph roads;
+    GameboardGraph gameboardGraph;
     Player player1;
     Player player2;
     Player player3;
@@ -49,9 +47,8 @@ public class F7Test {
     @BeforeEach
     public void createGameObjects() {
         GameType gameType = GameType.Beginner;
-        vertexes = new VertexGraph(gameType);
-        roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
+        gameboardGraph = new GameboardGraph(gameType);
+        GameLoader.initializeGraphs(gameboardGraph);
 
         Bank bank = new Bank();
         player1 = new Player(1, new HarvestBooster(), bank);
@@ -64,7 +61,7 @@ public class F7Test {
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        Game game = new Game(gameBoard, gameboardGraph, devCardDeck, bank);
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
@@ -92,7 +89,7 @@ public class F7Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(newRoadId)); // click should succeed
         assertEquals(GameState.DEFAULT, controller.getState()); // gameState should now be reverted on success
         assertEquals(12, player1.getNumRoads()); // player should have used a road
-        assertEquals(player1, roads.getRoad(newRoadId).getOwner()); // road should now be owned by the player
+        assertEquals(player1, gameboardGraph.getRoad(newRoadId).getOwner()); // road should now be owned by the player
         assertEquals(0, player1.hand.getResourceCount()); // player should have used the resources
     }
 
@@ -112,7 +109,7 @@ public class F7Test {
         assertEquals(SuccessCode.INVALID_PLACEMENT, controller.clickedRoad(newRoadId)); // click should succeed
         assertEquals(GameState.BUILD_ROAD, controller.getState()); // gameState should now be reverted on success
         assertEquals(13, player1.getNumRoads()); // player should have used a road
-        assertNull(roads.getRoad(newRoadId).getOwner()); // road should be unowned
+        assertNull(gameboardGraph.getRoad(newRoadId).getOwner()); // road should be unowned
         assertEquals(2, player1.hand.getResourceCount()); // player should not have used the resources
     }
 
@@ -132,6 +129,6 @@ public class F7Test {
         assertEquals(SuccessCode.INSUFFICIENT_RESOURCES, controller.clickedRoad(newRoadId)); // click should succeed
         assertEquals(GameState.BUILD_ROAD, controller.getState()); // gameState should now be reverted on success
         assertEquals(13, player1.getNumRoads()); // player should have used a road
-        assertNull(roads.getRoad(newRoadId).getOwner()); // road should be unowned
+        assertNull(gameboardGraph.getRoad(newRoadId).getOwner()); // road should be unowned
     }
 }

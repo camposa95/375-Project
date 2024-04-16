@@ -2,6 +2,7 @@ package domain.graphs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import domain.game.GameType;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,17 +11,17 @@ import domain.player.Player;
 
 public class RoadIsBuildableTest {
 
-    RoadGraph roads;
+    GameboardGraph gameboardGraph;
 
     @BeforeEach
     public void setup() {
-        roads = new RoadGraph();
+        gameboardGraph = new GameboardGraph(GameType.Beginner);
     }
 
     @Test
     public void testRoadIsBuildableIsOccupied() {
         // get any road it doesn't matter which one
-        Road testRoad = roads.getRoad(0);
+        Road testRoad = gameboardGraph.getRoad(0);
 
         // make it occupied
         Player mockPlayer = EasyMock.createMock(Player.class);
@@ -38,7 +39,7 @@ public class RoadIsBuildableTest {
     @Test
     public void testRoadIsBuildableNotOccupied() {
         // get any road it doesn't matter which one
-        Road testRoad = roads.getRoad(0); 
+        Road testRoad = gameboardGraph.getRoad(0);
 
         // Note the default state of a Road is to be unoccupied
 

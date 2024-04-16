@@ -12,15 +12,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BuildVertexTest {
 
-    VertexGraph vertexes;
-    RoadGraph roads;
+    GameboardGraph vertexes;
     Player player;
 
     @BeforeEach
     public void setup() {
-        vertexes = new VertexGraph(GameType.Beginner);
-        roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
+        vertexes = new GameboardGraph(GameType.Beginner);
+        GameLoader.initializeGraphs(vertexes);
         player =  new Player(1);
     }
 

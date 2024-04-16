@@ -10,16 +10,15 @@ import org.junit.jupiter.api.Test;
 public class GetRoadTest {
 
     private static final int NUM_ROADS = 72;
-    
-    RoadGraph roads;
+    GameboardGraph gameboardGraph;
 
     @BeforeEach
     public void setup() {
-        roads = new RoadGraph();
+        gameboardGraph = new GameboardGraph(GameType.Beginner);
     }
     @Test
     public void testGetRoadWithLocationId0() {
-        Road road = roads.getRoad(0);
+        Road road = gameboardGraph.getRoad(0);
         int expectedId = 0;
         int actualId = road.getLocationId();
 
@@ -28,7 +27,7 @@ public class GetRoadTest {
 
     @Test
     public void testGetRoadWithLocationId1() {
-        Road road = roads.getRoad(1);
+        Road road = gameboardGraph.getRoad(1);
         int expectedId = 1;
         int actualId = road.getLocationId();
 
@@ -37,7 +36,7 @@ public class GetRoadTest {
 
     @Test void testGetRoadWithN_2to71() {
         for (int i = 2; i < NUM_ROADS; i++) {
-            Road road = roads.getRoad(i);
+            Road road = gameboardGraph.getRoad(i);
             int actualId = road.getLocationId();
 
             assertEquals(i, actualId);
@@ -46,7 +45,7 @@ public class GetRoadTest {
 
     @Test
     public void testGetRoadWithInvalidLocationId72() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> roads.getRoad(NUM_ROADS));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> gameboardGraph.getRoad(NUM_ROADS));
         String expectedMessage = "LocationId out of bounds: Try [0, 72]";
         String actualMessage = exception.getMessage();
         assertEquals(expectedMessage, actualMessage);
@@ -54,7 +53,7 @@ public class GetRoadTest {
 
     @Test
     public void testGetRoadWithInvalidLocationIdNegative1() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> roads.getRoad(-1));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> gameboardGraph.getRoad(-1));
         String expectedMessage = "LocationId out of bounds: Try [0, 72]";
         String actualMessage = exception.getMessage();
         assertEquals(expectedMessage, actualMessage);

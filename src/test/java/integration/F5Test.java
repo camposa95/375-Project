@@ -21,8 +21,7 @@ import domain.gameboard.GameBoard;
 import domain.game.GameType;
 import domain.player.Player;
 import domain.bank.Resource;
-import domain.graphs.RoadGraph;
-import domain.graphs.VertexGraph;
+import domain.graphs.GameboardGraph;
 
 import java.util.Random;
 
@@ -33,7 +32,7 @@ import java.util.Random;
  */
 public class F5Test {
 
-    VertexGraph vertexes;
+    GameboardGraph vertexes;
     Player player1;
     Player player2;
     Player player3;
@@ -44,9 +43,8 @@ public class F5Test {
     @BeforeEach
     public void createGameObjects() {
         GameType gameType = GameType.Beginner;
-        vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
+        vertexes = new GameboardGraph(gameType);
+        GameLoader.initializeGraphs(vertexes);
 
         Bank bank = new Bank();
         player1 = new Player(1, new HarvestBooster(), bank);
@@ -59,7 +57,7 @@ public class F5Test {
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        Game game = new Game(gameBoard, vertexes, devCardDeck, bank);
         mockedRandom = EasyMock.createStrictMock(Random.class);
         controller = new Controller(game, players, gameType, mockedRandom);
     }
