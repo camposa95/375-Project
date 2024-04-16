@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.time.Duration;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 
 import data.GameLoader;
@@ -24,8 +23,7 @@ import domain.gameboard.GameBoard;
 import domain.game.GameType;
 import domain.player.Player;
 import domain.bank.Resource;
-import domain.graphs.RoadGraph;
-import domain.graphs.VertexGraph;
+import domain.graphs.GameboardGraph;
 
 /**
  * The purpose of this test class is to test feature 6 (F6):
@@ -36,8 +34,7 @@ import domain.graphs.VertexGraph;
  */
 public class F6Test {
 
-    VertexGraph vertexes;
-    RoadGraph roads;
+    GameboardGraph gameboardGraph;
     Player player1;
     Player player2;
     Player player3;
@@ -48,9 +45,8 @@ public class F6Test {
     @BeforeEach
     public void createGameObjects() {
         GameType gameType = GameType.Beginner;
-        vertexes = new VertexGraph(gameType);
-        roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
+        gameboardGraph = new GameboardGraph(gameType);
+        GameLoader.initializeGraphs(gameboardGraph);
 
         Bank bank = new Bank();
         player1 = new Player(1, new HarvestBooster(), bank);
@@ -63,7 +59,7 @@ public class F6Test {
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        Game game = new Game(gameBoard, gameboardGraph, devCardDeck, bank);
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
@@ -86,7 +82,7 @@ public class F6Test {
 
 
         // give the player another road, so we can follow the distance rule
-        roads.getRoad(24).setOwner(player1);
+        gameboardGraph.getRoad(24).setOwner(player1);
 
 
         // here is the actual click
@@ -95,7 +91,7 @@ public class F6Test {
         assertEquals(GameState.DEFAULT, controller.getState()); // gameState should now be reverted on success
         assertEquals(2, player1.getNumSettlements()); // player should have used a settlement
         assertEquals(3, player1.getVictoryPoints()); // player should have gained a victory point
-        assertEquals(player1, vertexes.getVertex(newVertexId).getOwner()); // vertex should now be owned by the player
+        assertEquals(player1, gameboardGraph.getVertex(newVertexId).getOwner()); // vertex should now be owned by the player
         assertEquals(0, player1.hand.getResourceCount()); // player should have used the resources
     }
 
@@ -119,7 +115,7 @@ public class F6Test {
         assertEquals(GameState.BUILD_SETTLEMENT, controller.getState()); // gameState should not change to allow for re-click
         assertEquals(3, player1.getNumSettlements()); // player settlements should be the same
         assertEquals(2, player1.getVictoryPoints()); // player victory points should be the same
-        assertNull(vertexes.getVertex(newVertexId).getOwner()); // vertex should still be unowned
+        assertNull(gameboardGraph.getVertex(newVertexId).getOwner()); // vertex should still be unowned
         assertEquals(4, player1.hand.getResourceCount()); // player should not have used the resources
     }
 
@@ -139,7 +135,7 @@ public class F6Test {
         assertEquals(GameState.BUILD_SETTLEMENT, controller.getState()); // gameState should not change to allow for re-click
         assertEquals(3, player1.getNumSettlements()); // player settlements should be the same
         assertEquals(2, player1.getVictoryPoints()); // player victory points should be the same
-        assertNull(vertexes.getVertex(newVertexId).getOwner()); // vertex should still be unowned
+        assertNull(gameboardGraph.getVertex(newVertexId).getOwner()); // vertex should still be unowned
         assertEquals(4, player1.hand.getResourceCount()); // player should not have used the resources
     }
 
@@ -158,7 +154,7 @@ public class F6Test {
         assertEquals(GameState.BUILD_SETTLEMENT, controller.getState()); // gameState should not change to allow for re-click
         assertEquals(3, player1.getNumSettlements()); // player settlements should be the same
         assertEquals(2, player1.getVictoryPoints()); // player victory points should be the same
-        assertEquals(player2, vertexes.getVertex(newVertexId).getOwner()); // vertex should still be owned by the enemy
+        assertEquals(player2, gameboardGraph.getVertex(newVertexId).getOwner()); // vertex should still be owned by the enemy
         assertEquals(4, player1.hand.getResourceCount()); // player should not have used the resources
     }
 
@@ -167,7 +163,7 @@ public class F6Test {
         controller.setState(GameState.BUILD_SETTLEMENT);
 
         // give the player another road, so we can follow the distance rule
-        roads.getRoad(24).setOwner(player1);
+        gameboardGraph.getRoad(24).setOwner(player1);
 
         // here is the actual click
         int newVertexId = 17; // use a valid id
@@ -175,6 +171,6 @@ public class F6Test {
         assertEquals(GameState.BUILD_SETTLEMENT, controller.getState()); // gameState stays the same
         assertEquals(3, player1.getNumSettlements()); // player has same num settlements
         assertEquals(2, player1.getVictoryPoints()); // player has same num victory points
-        assertNull(vertexes.getVertex(newVertexId).getOwner()); // vertex should still be unowned
+        assertNull(gameboardGraph.getVertex(newVertexId).getOwner()); // vertex should still be unowned
     }
 }

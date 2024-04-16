@@ -17,8 +17,7 @@ import domain.game.Game;
 import domain.gameboard.GameBoard;
 import domain.game.GameType;
 import domain.player.Player;
-import domain.graphs.RoadGraph;
-import domain.graphs.VertexGraph;
+import domain.graphs.GameboardGraph;
 
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicReference;
@@ -32,8 +31,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class F15Test {
 
-    VertexGraph vertexes;
-    RoadGraph roads;
+    GameboardGraph gameboardGraph;
     Bank bank;
     GameBoard gameBoard;
     Player player1;
@@ -46,9 +44,8 @@ public class F15Test {
     @BeforeEach
     public void createGameObjects() {
         GameType gameType = GameType.Beginner;
-        vertexes = new VertexGraph(gameType);
-        roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
+        gameboardGraph = new GameboardGraph(gameType);
+        GameLoader.initializeGraphs(gameboardGraph);
 
         bank = new Bank();
         player1 = new Player(1, new HarvestBooster(), bank);
@@ -61,7 +58,7 @@ public class F15Test {
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        Game game = new Game(gameBoard, gameboardGraph, devCardDeck, bank);
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();

@@ -25,8 +25,7 @@ import domain.gameboard.GameBoard;
 import domain.game.GameType;
 import domain.player.Player;
 import domain.bank.Resource;
-import domain.graphs.RoadGraph;
-import domain.graphs.VertexGraph;
+import domain.graphs.GameboardGraph;
 
 /**
  * The purpose of this test class is to test feature 24 (F24):
@@ -47,8 +46,7 @@ public class F24Test {
         }
     }
 
-    VertexGraph vertexes;
-    RoadGraph roads;
+    GameboardGraph gameboardGraph;
     Bank bank;
     Player player1;
     Player player2;
@@ -60,9 +58,8 @@ public class F24Test {
     @BeforeEach
     public void createGameObjects() {
         GameType gameType = GameType.Beginner;
-        vertexes = new VertexGraph(gameType);
-        roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
+        gameboardGraph = new GameboardGraph(gameType);
+        GameLoader.initializeGraphs(gameboardGraph);
 
         bank = new Bank();
         player1 = new Player(1, new HarvestBooster(), bank);
@@ -75,7 +72,7 @@ public class F24Test {
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        Game game = new Game(gameBoard, gameboardGraph, devCardDeck, bank);
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
@@ -135,7 +132,7 @@ public class F24Test {
 
 
         // give the player another road, so we can follow the distance rule
-        roads.getRoad(24).setOwner(player1);
+        gameboardGraph.getRoad(24).setOwner(player1);
 
         // up to this point we haven't gained any points other that setup so assert on that
         assertEquals(POINTS_FROM_SETUP, player1.getVictoryPoints());

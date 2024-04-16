@@ -18,8 +18,7 @@ import domain.game.Game;
 import domain.gameboard.GameBoard;
 import domain.game.GameType;
 import domain.player.Player;
-import domain.graphs.RoadGraph;
-import domain.graphs.VertexGraph;
+import domain.graphs.GameboardGraph;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,9 +36,8 @@ public class F4Test {
         // Here are some basic wiring needed that would be done by main
         // declare some constants up here
         GameType gameType = GameType.Advanced;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
+        GameboardGraph vertexes = new GameboardGraph(gameType);
+        GameLoader.initializeGraphs(vertexes);
 
         Bank bank = new Bank();
         // 3 players important
@@ -52,7 +50,7 @@ public class F4Test {
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        Game game = new Game(gameBoard, vertexes, devCardDeck, bank);
         Controller controller = new Controller(game, players, gameType);
 
 
@@ -108,7 +106,7 @@ public class F4Test {
         // after
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(player1FirstRoad)); // the method succeeds
         assertEquals(14, player1.getNumRoads()); // player used a Road
-        assertEquals(player1, roads.getRoad(player1FirstRoad).getOwner()); // correct Road is owned by the player
+        assertEquals(player1, vertexes.getRoad(player1FirstRoad).getOwner()); // correct Road is owned by the player
 
         assertTrue(game.getIsSetup()); // game is also in setup
         assertEquals(GamePhase.SETUP, controller.getPhase()); // still in setup
@@ -141,7 +139,7 @@ public class F4Test {
         // after
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(player2FirstRoad)); // the method succeeds
         assertEquals(14, player2.getNumRoads()); // player used a Road
-        assertEquals(player2, roads.getRoad(player2FirstRoad).getOwner()); // correct Road is owned by the player
+        assertEquals(player2, vertexes.getRoad(player2FirstRoad).getOwner()); // correct Road is owned by the player
 
         assertTrue(game.getIsSetup()); // game is also in setup
         assertEquals(GamePhase.SETUP, controller.getPhase()); // still in setup
@@ -174,7 +172,7 @@ public class F4Test {
         // after
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(player3FirstRoad)); // the method succeeds
         assertEquals(14, player3.getNumRoads()); // player used a Road
-        assertEquals(player3, roads.getRoad(player3FirstRoad).getOwner()); // correct Road is owned by the player
+        assertEquals(player3, vertexes.getRoad(player3FirstRoad).getOwner()); // correct Road is owned by the player
 
         assertTrue(game.getIsSetup()); // game is also in setup
         assertEquals(GamePhase.SETUP, controller.getPhase()); // still in setup
@@ -206,7 +204,7 @@ public class F4Test {
         // after
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(player3SecondRoad)); // the method succeeds
         assertEquals(13, player3.getNumRoads()); // player used a Road
-        assertEquals(player3, roads.getRoad(player3SecondRoad).getOwner()); // correct Road is owned by the player
+        assertEquals(player3, vertexes.getRoad(player3SecondRoad).getOwner()); // correct Road is owned by the player
 
         assertTrue(game.getIsSetup()); // game is also in setup
         assertEquals(GamePhase.SETUP, controller.getPhase()); // still in setup
@@ -238,7 +236,7 @@ public class F4Test {
         // after
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(player2SecondRoad)); // the method succeeds
         assertEquals(13, player2.getNumRoads()); // player used a Road
-        assertEquals(player2, roads.getRoad(player2SecondRoad).getOwner()); // correct Road is owned by the player
+        assertEquals(player2, vertexes.getRoad(player2SecondRoad).getOwner()); // correct Road is owned by the player
 
         assertTrue(game.getIsSetup()); // game is also in setup
         assertEquals(GamePhase.SETUP, controller.getPhase()); // still in setup
@@ -270,7 +268,7 @@ public class F4Test {
         // after
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(player1SecondRoad)); // the method succeeds
         assertEquals(13, player1.getNumRoads()); // player used a Road
-        assertEquals(player1, roads.getRoad(player1SecondRoad).getOwner()); // correct Road is owned by the player
+        assertEquals(player1, vertexes.getRoad(player1SecondRoad).getOwner()); // correct Road is owned by the player
 
         assertFalse(game.getIsSetup()); // game has also moved away from setup
         assertEquals(GamePhase.REGULAR_PLAY, controller.getPhase()); // Moved to regularPlay
@@ -284,9 +282,8 @@ public class F4Test {
         // Here are some basic wiring needed that would be done by main
         // declare some constants up here
         GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
+        GameboardGraph vertexes = new GameboardGraph(gameType);
+        GameLoader.initializeGraphs(vertexes);
 
         Bank bank = new Bank();
         Player player1 = new Player(1, new HarvestBooster(), bank);
@@ -299,7 +296,7 @@ public class F4Test {
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        Game game = new Game(gameBoard, vertexes, devCardDeck, bank);
         
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
@@ -340,9 +337,9 @@ public class F4Test {
 
         // assert player has correct locations
         assertEquals(player1, vertexes.getVertex(player1FirstSettlement).getOwner());
-        assertEquals(player1, roads.getRoad(player1FirstRoad).getOwner());
+        assertEquals(player1, vertexes.getRoad(player1FirstRoad).getOwner());
         assertEquals(player1, vertexes.getVertex(player1SecondSettlement).getOwner());
-        assertEquals(player1, roads.getRoad(player1SecondRoad).getOwner());
+        assertEquals(player1, vertexes.getRoad(player1SecondRoad).getOwner());
 
 
         // --------------------------------- Player 2 stuff -------------------------------------------------------
@@ -353,9 +350,9 @@ public class F4Test {
 
         // assert player has correct locations
         assertEquals(player2, vertexes.getVertex(player2FirstSettlement).getOwner());
-        assertEquals(player2, roads.getRoad(player2FirstRoad).getOwner());
+        assertEquals(player2, vertexes.getRoad(player2FirstRoad).getOwner());
         assertEquals(player2, vertexes.getVertex(player2SecondSettlement).getOwner());
-        assertEquals(player2, roads.getRoad(player2SecondRoad).getOwner());
+        assertEquals(player2, vertexes.getRoad(player2SecondRoad).getOwner());
 
 
         // --------------------------------- Player 3 stuff -------------------------------------------------------
@@ -366,9 +363,9 @@ public class F4Test {
 
         // assert player has correct locations
         assertEquals(player3, vertexes.getVertex(player3FirstSettlement).getOwner());
-        assertEquals(player3, roads.getRoad(player3FirstRoad).getOwner());
+        assertEquals(player3, vertexes.getRoad(player3FirstRoad).getOwner());
         assertEquals(player3, vertexes.getVertex(player3SecondSettlement).getOwner());
-        assertEquals(player3, roads.getRoad(player3SecondRoad).getOwner());
+        assertEquals(player3, vertexes.getRoad(player3SecondRoad).getOwner());
 
 
         // --------------------------------- Player 4 stuff -------------------------------------------------------
@@ -379,9 +376,9 @@ public class F4Test {
 
         // assert player has correct locations
         assertEquals(player4, vertexes.getVertex(player4FirstSettlement).getOwner());
-        assertEquals(player4, roads.getRoad(player4FirstRoad).getOwner());
+        assertEquals(player4, vertexes.getRoad(player4FirstRoad).getOwner());
         assertEquals(player4, vertexes.getVertex(player4SecondSettlement).getOwner());
-        assertEquals(player4, roads.getRoad(player4SecondRoad).getOwner());
+        assertEquals(player4, vertexes.getRoad(player4SecondRoad).getOwner());
 
 
         // Assert that game phase and state are correct on start up
@@ -396,9 +393,8 @@ public class F4Test {
         // Here are some basic wiring needed that would be done by main
         // declare some constants up here
         GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
+        GameboardGraph vertexes = new GameboardGraph(gameType);
+        GameLoader.initializeGraphs(vertexes);
 
         Bank bank = new Bank();
         // two player important
@@ -410,7 +406,7 @@ public class F4Test {
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        Game game = new Game(gameBoard, vertexes, devCardDeck, bank);
         
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
@@ -451,9 +447,9 @@ public class F4Test {
 
         // assert player has correct locations
         assertEquals(player1, vertexes.getVertex(player1FirstSettlement).getOwner());
-        assertEquals(player1, roads.getRoad(player1FirstRoad).getOwner());
+        assertEquals(player1, vertexes.getRoad(player1FirstRoad).getOwner());
         assertEquals(player1, vertexes.getVertex(player1SecondSettlement).getOwner());
-        assertEquals(player1, roads.getRoad(player1SecondRoad).getOwner());
+        assertEquals(player1, vertexes.getRoad(player1SecondRoad).getOwner());
 
 
         // --------------------------------- Player 2 stuff -------------------------------------------------------
@@ -464,24 +460,24 @@ public class F4Test {
 
         // assert player has correct locations
         assertEquals(player2, vertexes.getVertex(player2FirstSettlement).getOwner());
-        assertEquals(player2, roads.getRoad(player2FirstRoad).getOwner());
+        assertEquals(player2, vertexes.getRoad(player2FirstRoad).getOwner());
         assertEquals(player2, vertexes.getVertex(player2SecondSettlement).getOwner());
-        assertEquals(player2, roads.getRoad(player2SecondRoad).getOwner());
+        assertEquals(player2, vertexes.getRoad(player2SecondRoad).getOwner());
 
 
         // ------------------- Assert that starter locations of Non-existent players are untouched ----------------
 
         // player 3
         assertNull(vertexes.getVertex(player3FirstSettlement).getOwner());
-        assertNull(roads.getRoad(player3FirstRoad).getOwner());
+        assertNull(vertexes.getRoad(player3FirstRoad).getOwner());
         assertNull(vertexes.getVertex(player3SecondSettlement).getOwner());
-        assertNull(roads.getRoad(player3SecondRoad).getOwner());
+        assertNull(vertexes.getRoad(player3SecondRoad).getOwner());
 
         // player 4
         assertNull(vertexes.getVertex(player4FirstSettlement).getOwner());
-        assertNull(roads.getRoad(player4FirstRoad).getOwner());
+        assertNull(vertexes.getRoad(player4FirstRoad).getOwner());
         assertNull(vertexes.getVertex(player4SecondSettlement).getOwner());
-        assertNull(roads.getRoad(player4SecondRoad).getOwner());
+        assertNull(vertexes.getRoad(player4SecondRoad).getOwner());
 
 
         // Assert that game phase and state are correct on start up

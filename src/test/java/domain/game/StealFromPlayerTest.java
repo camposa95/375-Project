@@ -23,7 +23,7 @@ public class StealFromPlayerTest {
         gameBoard =  EasyMock.createStrictMock(GameBoard.class);
         robber = new Player(1);
         robbed = new Player(2);
-        game = new Game(gameBoard, null, null , null, null);
+        game = new Game(gameBoard, null, null, null);
     }
 
     @Test
@@ -32,7 +32,7 @@ public class StealFromPlayerTest {
         Player mockedRobber = EasyMock.createStrictMock(Player.class);
         Player mockedVictim = EasyMock.createStrictMock(Player.class);
         mockedVictim.hand = EasyMock.createStrictMock(Hand.class);
-        Game game = new Game(gameBoard, null, null , null, null);
+        Game game = new Game(gameBoard, null, null , null);
 
         //Expect
         EasyMock.expect(mockedVictim.hand.getResourceCount()).andReturn(0);

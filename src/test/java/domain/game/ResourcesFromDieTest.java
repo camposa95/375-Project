@@ -3,8 +3,7 @@ package domain.game;
 import data.GameLoader;
 import domain.bank.Resource;
 import domain.gameboard.GameBoard;
-import domain.graphs.RoadGraph;
-import domain.graphs.VertexGraph;
+import domain.graphs.GameboardGraph;
 import domain.player.Player;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,8 +15,7 @@ public class ResourcesFromDieTest {
 
     Player player;
     GameBoard gameBoard;
-    VertexGraph vertexGraph;
-    RoadGraph mockedRoadGraph;
+    GameboardGraph gameboardGraph;
     Game game;
 
     @BeforeEach
@@ -25,9 +23,8 @@ public class ResourcesFromDieTest {
         player = new Player(1);
         gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        vertexGraph = new VertexGraph(GameType.Beginner);
-        mockedRoadGraph = EasyMock.createStrictMock(RoadGraph.class);
-        game = new Game(gameBoard, vertexGraph, mockedRoadGraph, null, null);
+        gameboardGraph = new GameboardGraph(GameType.Beginner);
+        game = new Game(gameBoard, gameboardGraph, null, null);
     }
 
     @Test
@@ -48,7 +45,7 @@ public class ResourcesFromDieTest {
     public void testResourcesFromDie_1_Die() {
         int die = 10;
 
-        vertexGraph.getVertex(0).setOwner(player);
+        gameboardGraph.getVertex(0).setOwner(player);
         Resource[] expected = {Resource.ORE};
         //Check hand before
         int before = player.hand.getResourceCount();
@@ -68,7 +65,7 @@ public class ResourcesFromDieTest {
     public void testResourcesFromDie_1_NoDie() {
         int die = 5;
 
-        vertexGraph.getVertex(0).setOwner(player);
+        gameboardGraph.getVertex(0).setOwner(player);
 
         //Check hand before
         int before = player.hand.getResourceCount();
@@ -88,12 +85,12 @@ public class ResourcesFromDieTest {
     public void testResourcesFromDie_Many_One_Die() {
         int die = 10;
 
-        vertexGraph.getVertex(0).setOwner(player);
-        vertexGraph.getVertex(1).setOwner(player);
-        vertexGraph.getVertex(2).setOwner(player);
-        vertexGraph.getVertex(8).setOwner(player);
-        vertexGraph.getVertex(9).setOwner(player);
-        vertexGraph.getVertex(10).setOwner(player);
+        gameboardGraph.getVertex(0).setOwner(player);
+        gameboardGraph.getVertex(1).setOwner(player);
+        gameboardGraph.getVertex(2).setOwner(player);
+        gameboardGraph.getVertex(8).setOwner(player);
+        gameboardGraph.getVertex(9).setOwner(player);
+        gameboardGraph.getVertex(10).setOwner(player);
 
         Resource[] expected = {Resource.ORE,Resource.ORE,Resource.ORE,Resource.ORE,Resource.ORE,Resource.ORE};
         //Check hand before
@@ -116,12 +113,12 @@ public class ResourcesFromDieTest {
     public void testResourcesFromDie_Many_One_NoDie() {
         int die = 5;
 
-        vertexGraph.getVertex(0).setOwner(player);
-        vertexGraph.getVertex(1).setOwner(player);
-        vertexGraph.getVertex(2).setOwner(player);
-        vertexGraph.getVertex(8).setOwner(player);
-        vertexGraph.getVertex(9).setOwner(player);
-        vertexGraph.getVertex(10).setOwner(player);
+        gameboardGraph.getVertex(0).setOwner(player);
+        gameboardGraph.getVertex(1).setOwner(player);
+        gameboardGraph.getVertex(2).setOwner(player);
+        gameboardGraph.getVertex(8).setOwner(player);
+        gameboardGraph.getVertex(9).setOwner(player);
+        gameboardGraph.getVertex(10).setOwner(player);
 
 
         //Check hand before
@@ -142,10 +139,10 @@ public class ResourcesFromDieTest {
     public void testResourcesFromDie_Many_Many_Die() {
         int die = 10;
 
-        vertexGraph.getVertex(1).setOwner(player);
-        vertexGraph.getVertex(9).setOwner(player);
-        vertexGraph.getVertex(14).setOwner(player);
-        vertexGraph.getVertex(24).setOwner(player);
+        gameboardGraph.getVertex(1).setOwner(player);
+        gameboardGraph.getVertex(9).setOwner(player);
+        gameboardGraph.getVertex(14).setOwner(player);
+        gameboardGraph.getVertex(24).setOwner(player);
 
         Resource[] expected = {Resource.ORE,Resource.ORE,Resource.BRICK,Resource.BRICK};
         //Check hand before
@@ -168,10 +165,10 @@ public class ResourcesFromDieTest {
     public void testResourcesFromDie_Many_Many_NoDie() {
         int die = 5;
 
-        vertexGraph.getVertex(1).setOwner(player);
-        vertexGraph.getVertex(9).setOwner(player);
-        vertexGraph.getVertex(14).setOwner(player);
-        vertexGraph.getVertex(24).setOwner(player);
+        gameboardGraph.getVertex(1).setOwner(player);
+        gameboardGraph.getVertex(9).setOwner(player);
+        gameboardGraph.getVertex(14).setOwner(player);
+        gameboardGraph.getVertex(24).setOwner(player);
 
 
         //Check hand before
@@ -189,7 +186,7 @@ public class ResourcesFromDieTest {
 
     @Test
     public void testResourcesFromDie_Die7() {
-        Game game = new Game(null, null, null,null, null);
+        Game game = new Game(null, null, null,null);
         int die = 7; // robber
 
         //Call method

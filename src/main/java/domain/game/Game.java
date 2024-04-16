@@ -21,14 +21,12 @@ import data.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import domain.graphs.Road;
-import domain.graphs.RoadGraph;
 import domain.graphs.Vertex;
-import domain.graphs.VertexGraph;
+import domain.graphs.GameboardGraph;
 
 public class Game implements Restorable {
     private final GameBoard gameBoard;
-    private final VertexGraph vertexes;
-    private final RoadGraph roads;
+    private final GameboardGraph gameboardGraph;
     private final DevelopmentCardDeck deck;
     private final Bank bank;
     private boolean setup = true;
@@ -39,14 +37,12 @@ public class Game implements Restorable {
      * Creates a new game object
      * @param gb the gameBoard
      * @param vg the vertexGraph
-     * @param rg the roadGraph
      * @param devDeck the development card deck
      */
     @SuppressFBWarnings("EI_EXPOSE_REP2")
-    public Game(final GameBoard gb, final VertexGraph vg, final RoadGraph rg, final DevelopmentCardDeck devDeck, final Bank resourceBank) {
+    public Game(final GameBoard gb, final GameboardGraph vg, final DevelopmentCardDeck devDeck, final Bank resourceBank) {
         this.gameBoard = gb;
-        this.vertexes = vg;
-        this.roads = rg;
+        this.gameboardGraph = vg;
         this.deck = devDeck;
         this.bank = resourceBank;
     }
@@ -59,7 +55,7 @@ public class Game implements Restorable {
      * @throws NotEnoughResourcesException if it is not setup and the player cant afford the settlement
      */
     public void placeSettlement(final int vertex, final Player player) throws InvalidPlacementException, NotEnoughResourcesException {
-        Vertex v = vertexes.getVertex(vertex);
+        Vertex v = gameboardGraph.getVertex(vertex);
         if (!v.isBuildable()) {
             throw new InvalidPlacementException();
         }
@@ -79,7 +75,7 @@ public class Game implements Restorable {
         v.build(player);
 
         // tell the road to figure out who needs he card, we'll test this later
-        this.roads.giveLongestRoadCard();
+        this.gameboardGraph.giveLongestRoadCard();
     }
 
     /**
@@ -91,8 +87,8 @@ public class Game implements Restorable {
      * @throws NotEnoughResourcesException if it is not setup and the player cant afford the road
      */
     public void placeRoad(final int road, final int vertex, final Player player) throws InvalidPlacementException, NotEnoughResourcesException {
-        Vertex v =  vertexes.getVertex(vertex);
-        Road r = roads.getRoad(road);
+        Vertex v =  gameboardGraph.getVertex(vertex);
+        Road r = gameboardGraph.getRoad(road);
         if (setup) {
             if (!r.isBuildable() || !r.isAdjacentTo(v)) {
                 throw new InvalidPlacementException();
@@ -110,7 +106,7 @@ public class Game implements Restorable {
         }
 
         // tell the road to figure out who needs he card, we'll test this later
-        this.roads.giveLongestRoadCard();
+        this.gameboardGraph.giveLongestRoadCard();
     }
 
     /**
@@ -141,7 +137,7 @@ public class Game implements Restorable {
             List<Integer> tileVertexes = tile.getVertexIDs();
             if (tile.getTerrain() != Terrain.DESERT) {
                 for (int i = 0; i < tile.getVertexIDs().size(); i++) {
-                    if (vertex == tileVertexes.get(i) && vertexes.getVertex(tileVertexes.get(i)).getOwner() == player) {
+                    if (vertex == tileVertexes.get(i) && gameboardGraph.getVertex(tileVertexes.get(i)).getOwner() == player) {
                         resources.add(tile.getResource());
                     }
                 }
@@ -165,7 +161,7 @@ public class Game implements Restorable {
             List<Integer> tileVertexes = tile.getVertexIDs();
             if (tile.getTerrain() != Terrain.DESERT && tile.getDieNumber() == die) {
                 for (int i = 0; i < tile.getVertexIDs().size(); i++) {
-                    Vertex curVertex = vertexes.getVertex(tileVertexes.get(i));
+                    Vertex curVertex = gameboardGraph.getVertex(tileVertexes.get(i));
                     if (curVertex.getOwner() == player) {
                         for (int numResources = 0; numResources < curVertex.getYield(tile.getResource()); numResources++) {
                             resources.add(tile.getResource());
@@ -182,7 +178,7 @@ public class Game implements Restorable {
      * Tries to Upgrade a settlement from a player and a vertexID
      */
     public void upgradeSettlement(final Player player, final int vertexId) throws InvalidPlacementException, NotEnoughResourcesException {
-        Vertex vertex = vertexes.getVertex(vertexId);
+        Vertex vertex = gameboardGraph.getVertex(vertexId);
         if (!vertex.isUpgradableBy(player)) {
             throw new InvalidPlacementException();
         }
@@ -204,7 +200,7 @@ public class Game implements Restorable {
         if (!player.hand.removeResources(type.districtCost)) {
             throw new NotEnoughResourcesException();
         }
-        Vertex vertex = vertexes.getVertex(vertexId);
+        Vertex vertex = gameboardGraph.getVertex(vertexId);
         try {
             vertex.buildDistrict(player, type);
         } catch (InvalidPlacementException e) {
@@ -214,7 +210,7 @@ public class Game implements Restorable {
     }
 
     public DistrictType getDistrictTypeForVertex(final int vertex) {
-        Vertex v = vertexes.getVertex(vertex);
+        Vertex v = gameboardGraph.getVertex(vertex);
         return v.getBuilding().getDistrict();
     }
 
@@ -301,7 +297,7 @@ public class Game implements Restorable {
         }
         ArrayList<Player> pList = new ArrayList<>();
         for (int vertex : gameBoard.getTileVertexIDs(tileID)) {
-            Vertex location = vertexes.getVertex(vertex);
+            Vertex location = gameboardGraph.getVertex(vertex);
             if (location.isOccupied()) {
                 Player owner = location.getOwner();
                 if (!pList.contains(owner)) {
@@ -360,16 +356,14 @@ public class Game implements Restorable {
 
         // sub mementos
         private final Memento gameBoardMemento;
-        private final Memento vertexesMemento;
-        private final Memento roadsMemento;
+        private final Memento gameboardGraphMemento;
         private final Memento deckMemento;
         private final Memento bankMemento;
 
         // Storage Constants
         private static final String TARGET_FILE_NAME = "game.txt";
         private static final String GAME_BOARD_SUBFOLDER_NAME = "GameBoard";
-        private static final String VERTEXES_SUBFOLDER_NAME = "Vertexes";
-        private static final String ROADS_SUBFOLDER_NAME = "Roads";
+        private static final String GAMEBOARD_GRAPH_SUBFOLDER_NAME = "Graphs";
         private static final String DECK_SUBFOLDER_NAME = "Deck";
         private static final String BANK_SUBFOLDER_NAME = "Bank";
 
@@ -382,8 +376,7 @@ public class Game implements Restorable {
 
             // sub mementos
             this.gameBoardMemento = Game.this.gameBoard.createMemento();
-            this.vertexesMemento = Game.this.vertexes.createMemento();
-            this.roadsMemento = Game.this.roads.createMemento();
+            this.gameboardGraphMemento = Game.this.gameboardGraph.createMemento();
             this.deckMemento = Game.this.deck.createMemento();
             this.bankMemento = Game.this.bank.createMemento();
         }
@@ -400,11 +393,8 @@ public class Game implements Restorable {
             File gameBoardSubFolder = reader.getSubFolder(GAME_BOARD_SUBFOLDER_NAME);
             this.gameBoardMemento = Game.this.gameBoard.new GameBoardMemento(gameBoardSubFolder);
 
-            File vertexesSubFolder = reader.getSubFolder(VERTEXES_SUBFOLDER_NAME);
-            this.vertexesMemento = Game.this.vertexes.new VertexGraphMemento(vertexesSubFolder);
-
-            File roadsSubFolder = reader.getSubFolder(ROADS_SUBFOLDER_NAME);
-            this.roadsMemento = Game.this.roads.new RoadGraphMemento(roadsSubFolder);
+            File gameboardGraphSubFolder = reader.getSubFolder(GAMEBOARD_GRAPH_SUBFOLDER_NAME);
+            this.gameboardGraphMemento = Game.this.gameboardGraph.new GameboardGraphMemento(gameboardGraphSubFolder);
 
             File deckSubFolder = reader.getSubFolder(DECK_SUBFOLDER_NAME);
             this.deckMemento = Game.this.deck.new DevCardDeckMemento(deckSubFolder);
@@ -424,11 +414,8 @@ public class Game implements Restorable {
             File gameBoardSubFolder = writer.getSubFolder(GAME_BOARD_SUBFOLDER_NAME);
             gameBoardMemento.save(gameBoardSubFolder);
 
-            File vertexesSubFolder = writer.getSubFolder(VERTEXES_SUBFOLDER_NAME);
-            vertexesMemento.save(vertexesSubFolder);
-
-            File roadsSubFolder = writer.getSubFolder(ROADS_SUBFOLDER_NAME);
-            roadsMemento.save(roadsSubFolder);
+            File gameboardGraphSubFolder = writer.getSubFolder(GAMEBOARD_GRAPH_SUBFOLDER_NAME);
+            gameboardGraphMemento.save(gameboardGraphSubFolder);
 
             File deckSubFolder = writer.getSubFolder(DECK_SUBFOLDER_NAME);
             deckMemento.save(deckSubFolder);
@@ -443,8 +430,7 @@ public class Game implements Restorable {
 
             // Restore sub mementos
             gameBoardMemento.restore();
-            vertexesMemento.restore();
-            roadsMemento.restore();
+            gameboardGraphMemento.restore();
             deckMemento.restore();
             bankMemento.restore();
         }

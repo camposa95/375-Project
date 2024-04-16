@@ -3,7 +3,6 @@ package domain.graphs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import data.GameLoader;
 import domain.game.GameType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,11 +12,11 @@ public class GetVertexTest {
     private static final int MIN_LOCATION_ID = 0;
     private static final int MAX_LOCATION_ID = 53;
 
-    VertexGraph vertexes;
+    GameboardGraph vertexes;
 
     @BeforeEach
     public void setup() {
-        vertexes = new VertexGraph(GameType.Beginner);
+        vertexes = new GameboardGraph(GameType.Beginner);
     }
 
     @Test
@@ -41,7 +40,7 @@ public class GetVertexTest {
 
     @Test
     public void getVertexNWithN_2to53() {
-        VertexGraph vertexes =  new VertexGraph(GameType.Beginner);
+        GameboardGraph vertexes =  new GameboardGraph(GameType.Beginner);
 
         for (int i = 2; i <= MAX_LOCATION_ID; i++) {
             Vertex vertex = vertexes.getVertex(i);

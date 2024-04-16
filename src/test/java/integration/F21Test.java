@@ -24,8 +24,7 @@ import domain.gameboard.GameBoard;
 import domain.game.GameType;
 import domain.player.Player;
 import domain.bank.Resource;
-import domain.graphs.RoadGraph;
-import domain.graphs.VertexGraph;
+import domain.graphs.GameboardGraph;
 
 /**
  * The purpose of this test class is to test feature 21 (F21):
@@ -41,8 +40,7 @@ public class F21Test {
     private static final int POINTS_FOR_SETTLEMENT = 1;
     private static final int POINTS_FOR_LONGEST_ROAD = 2;
 
-    VertexGraph vertexes;
-    RoadGraph roads;
+    GameboardGraph gameboardGraph;
     Bank bank;
     Player player1;
     Player player2;
@@ -54,9 +52,8 @@ public class F21Test {
     @BeforeEach
     public void createGameObjects() {
         GameType gameType = GameType.Beginner;
-        vertexes = new VertexGraph(gameType);
-        roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
+        gameboardGraph = new GameboardGraph(gameType);
+        GameLoader.initializeGraphs(gameboardGraph);
 
         bank = new Bank();
         player1 = new Player(1, new HarvestBooster(), bank);
@@ -69,7 +66,7 @@ public class F21Test {
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        Game game = new Game(gameBoard, gameboardGraph, devCardDeck, bank);
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
@@ -305,9 +302,8 @@ public class F21Test {
         
         // Here we use beginner game to skip through to the regular gameplay
         GameType gameType = GameType.Beginner;
-        VertexGraph vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
+        GameboardGraph vertexes = new GameboardGraph(gameType);
+        GameLoader.initializeGraphs(vertexes);
 
         Bank bank = new Bank();
         Player player1 = new Player(1, new HarvestBooster(), bank);
@@ -320,7 +316,7 @@ public class F21Test {
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        Game game = new Game(gameBoard, vertexes, devCardDeck, bank);
         
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
@@ -380,8 +376,8 @@ public class F21Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(23));
 
         // at this point player 1 should have the longest path of 9
-        assertEquals(9, roads.getLongestPath(
-                            roads.getRoad(23),
+        assertEquals(9, vertexes.getLongestPath(
+                            vertexes.getRoad(23),
                             player1,
                 new HashSet<>(),
                 new HashSet<>(),
@@ -423,24 +419,24 @@ public class F21Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedVertex(22));
 
         // at this point player 2 should have the longest path of 5
-        assertEquals(5, roads.getLongestPath(
-                            roads.getRoad(64),
+        assertEquals(5, vertexes.getLongestPath(
+                vertexes.getRoad(64),
                             player2,
                 new HashSet<>(),
                 new HashSet<>(),
                             vertexes.getVertex(51)));
 
         // at this point player 1 should have the longest path of 6
-        assertEquals(6, roads.getLongestPath(
-                            roads.getRoad(23),
+        assertEquals(6, vertexes.getLongestPath(
+                vertexes.getRoad(23),
                             player1,
                 new HashSet<>(),
                 new HashSet<>(),
                             vertexes.getVertex(16)));
 
         // at this point player 1 should have another path of 3
-        assertEquals(3, roads.getLongestPath(
-                            roads.getRoad(37),
+        assertEquals(3, vertexes.getLongestPath(
+                vertexes.getRoad(37),
                             player1,
                 new HashSet<>(),
                 new HashSet<>(),
@@ -491,12 +487,12 @@ public class F21Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(30));
 
         // at this point player 1 should have the longest path of 7
-        assertEquals(7, roads.getLongestPath(
-                            roads.getRoad(25),
+        assertEquals(7, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(25),
                             player1,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(18)));
+                            gameboardGraph.getVertex(18)));
 
         // player 1 should have the longest road card
         assertTrue(player1.hasLongestRoad());
@@ -534,28 +530,28 @@ public class F21Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedVertex(22));
 
         // at this point player 2 should have the longest path of 5
-        assertEquals(5, roads.getLongestPath(
-                            roads.getRoad(64),
+        assertEquals(5, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(64),
                             player2,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(51)));
+                            gameboardGraph.getVertex(51)));
 
         // at this point player 1 should have the longest path of 4
-        assertEquals(4, roads.getLongestPath(
-                            roads.getRoad(25),
+        assertEquals(4, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(25),
                             player1,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(18)));
+                            gameboardGraph.getVertex(18)));
 
         // at this point player 1 should have another path of 3
-        assertEquals(3, roads.getLongestPath(
-                            roads.getRoad(37),
+        assertEquals(3, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(37),
                             player1,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(35)));
+                            gameboardGraph.getVertex(35)));
 
 
         // player 2 should have the card now
@@ -604,12 +600,12 @@ public class F21Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(24));
 
         // at this point player 1 should have the longest path of 8
-        assertEquals(8, roads.getLongestPath(
-                            roads.getRoad(24),
+        assertEquals(8, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(24),
                             player1,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(17)));
+                            gameboardGraph.getVertex(17)));
 
         // player 1 should have the longest road card
         assertTrue(player1.hasLongestRoad());
@@ -647,28 +643,28 @@ public class F21Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedVertex(22));
 
         // at this point player 2 should have the longest path of 5
-        assertEquals(5, roads.getLongestPath(
-                            roads.getRoad(64),
+        assertEquals(5, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(64),
                             player2,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(51)));
+                            gameboardGraph.getVertex(51)));
 
         // at this point player 1 should have the longest path of 6
-        assertEquals(5, roads.getLongestPath(
-                            roads.getRoad(24),
+        assertEquals(5, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(24),
                             player1,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(17)));
+                            gameboardGraph.getVertex(17)));
 
         // at this point player 1 should have another path of 3
-        assertEquals(3, roads.getLongestPath(
-                            roads.getRoad(37),
+        assertEquals(3, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(37),
                             player1,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(35)));
+                            gameboardGraph.getVertex(35)));
 
 
         // player 1 should still have the longest road card
@@ -715,12 +711,12 @@ public class F21Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(30));
 
         // at this point player 1 should have the longest path of 7
-        assertEquals(7, roads.getLongestPath(
-                            roads.getRoad(25),
+        assertEquals(7, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(25),
                             player1,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(18)));
+                            gameboardGraph.getVertex(18)));
 
         // player 1 should have the longest road card
         assertTrue(player1.hasLongestRoad());
@@ -753,12 +749,12 @@ public class F21Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(64));
 
         // at this point player 2 should have the longest path of 5
-        assertEquals(5, roads.getLongestPath(
-                            roads.getRoad(64),
+        assertEquals(5, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(64),
                             player2,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(51)));
+                            gameboardGraph.getVertex(51)));
 
 
         // player 1 should have the card still
@@ -795,12 +791,12 @@ public class F21Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(18));
 
         // at this point player 4 should have the longest path of 5
-        assertEquals(5, roads.getLongestPath(
-                            roads.getRoad(18),
+        assertEquals(5, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(18),
                             player4,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(17)));
+                            gameboardGraph.getVertex(17)));
 
         // player 1 should have the card still
         assertTrue(player1.hasLongestRoad());
@@ -828,36 +824,36 @@ public class F21Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedVertex(22));
 
         // at this point player 2 should have the longest path of 5
-        assertEquals(5, roads.getLongestPath(
-                            roads.getRoad(64),
+        assertEquals(5, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(64),
                             player2,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(51)));
+                            gameboardGraph.getVertex(51)));
 
         // at this point player 4 should have the longest path of 5
-        assertEquals(5, roads.getLongestPath(
-                            roads.getRoad(18),
+        assertEquals(5, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(18),
                             player4,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(17)));
+                            gameboardGraph.getVertex(17)));
 
         // at this point player 1 should have the longest path of 4
-        assertEquals(4, roads.getLongestPath(
-                            roads.getRoad(25),
+        assertEquals(4, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(25),
                             player1,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(18)));
+                            gameboardGraph.getVertex(18)));
 
         // at this point player 1 should have another path of 3
-        assertEquals(3, roads.getLongestPath(
-                            roads.getRoad(37),
+        assertEquals(3, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(37),
                             player1,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(35)));
+                            gameboardGraph.getVertex(35)));
 
         
         // since player 1 lost the longest road card because they were
@@ -906,12 +902,12 @@ public class F21Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(30));
 
         // at this point player 1 should have the longest path of 7
-        assertEquals(7, roads.getLongestPath(
-                            roads.getRoad(25),
+        assertEquals(7, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(25),
                             player1,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(18)));
+                            gameboardGraph.getVertex(18)));
 
         // player 1 should have the longest road card
         assertTrue(player1.hasLongestRoad());
@@ -947,28 +943,28 @@ public class F21Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedVertex(22));
 
         // at this point player 2 should have the longest path of 5
-        assertEquals(4, roads.getLongestPath(
-                            roads.getRoad(58),
+        assertEquals(4, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(58),
                             player2,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(43)));
+                            gameboardGraph.getVertex(43)));
 
         // at this point player 1 should have the longest path of 4
-        assertEquals(4, roads.getLongestPath(
-                            roads.getRoad(25),
+        assertEquals(4, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(25),
                             player1,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(18)));
+                            gameboardGraph.getVertex(18)));
 
         // at this point player 1 should have another path of 3
-        assertEquals(3, roads.getLongestPath(
-                            roads.getRoad(37),
+        assertEquals(3, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(37),
                             player1,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(35)));
+                            gameboardGraph.getVertex(35)));
 
 
         // nobody should have the card now
@@ -1015,12 +1011,12 @@ public class F21Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(30));
 
         // at this point player 1 should have the longest path of 7
-        assertEquals(7, roads.getLongestPath(
-                            roads.getRoad(25),
+        assertEquals(7, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(25),
                             player1,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(18)));
+                            gameboardGraph.getVertex(18)));
 
         // player 1 should have the longest road card
         assertTrue(player1.hasLongestRoad());
@@ -1053,12 +1049,12 @@ public class F21Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(64));
 
         // at this point player 2 should have the longest path of 5
-        assertEquals(5, roads.getLongestPath(
-                            roads.getRoad(64),
+        assertEquals(5, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(64),
                             player2,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(51)));
+                            gameboardGraph.getVertex(51)));
 
 
         // player 1 should have the card still
@@ -1095,12 +1091,12 @@ public class F21Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(18));
 
         // at this point player 4 should have the longest path of 5
-        assertEquals(5, roads.getLongestPath(
-                            roads.getRoad(18),
+        assertEquals(5, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(18),
                             player4,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(17)));
+                            gameboardGraph.getVertex(17)));
 
         // player 1 should have the card still
         assertTrue(player1.hasLongestRoad());
@@ -1128,36 +1124,36 @@ public class F21Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedVertex(22));
 
         // at this point player 2 should have the longest path of 5
-        assertEquals(5, roads.getLongestPath(
-                            roads.getRoad(64),
+        assertEquals(5, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(64),
                             player2,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(51)));
+                            gameboardGraph.getVertex(51)));
 
         // at this point player 4 should have the longest path of 5
-        assertEquals(5, roads.getLongestPath(
-                            roads.getRoad(18),
+        assertEquals(5, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(18),
                             player4,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(17)));
+                            gameboardGraph.getVertex(17)));
 
         // at this point player 1 should have the longest path of 4
-        assertEquals(4, roads.getLongestPath(
-                            roads.getRoad(25),
+        assertEquals(4, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(25),
                             player1,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(18)));
+                            gameboardGraph.getVertex(18)));
 
         // at this point player 1 should have another path of 3
-        assertEquals(3, roads.getLongestPath(
-                            roads.getRoad(37),
+        assertEquals(3, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(37),
                             player1,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(35)));
+                            gameboardGraph.getVertex(35)));
 
         
         // since player 1 lost the longest road card because they were
@@ -1188,36 +1184,36 @@ public class F21Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(23));
 
         // at this point player 4 should have the longest path of 6
-        assertEquals(6, roads.getLongestPath(
-                            roads.getRoad(23),
+        assertEquals(6, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(23),
                             player4,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(16)));
+                            gameboardGraph.getVertex(16)));
 
         // at this point player 2 should have the longest path of 5
-        assertEquals(5, roads.getLongestPath(
-                            roads.getRoad(64),
+        assertEquals(5, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(64),
                             player2,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(51)));
+                            gameboardGraph.getVertex(51)));
 
         // at this point player 1 should have the longest path of 4
-        assertEquals(4, roads.getLongestPath(
-                            roads.getRoad(25),
+        assertEquals(4, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(25),
                             player1,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(18)));
+                            gameboardGraph.getVertex(18)));
 
         // at this point player 1 should have another path of 3
-        assertEquals(3, roads.getLongestPath(
-                            roads.getRoad(37),
+        assertEquals(3, gameboardGraph.getLongestPath(
+                            gameboardGraph.getRoad(37),
                             player1,
                 new HashSet<>(),
                 new HashSet<>(),
-                            vertexes.getVertex(35)));
+                            gameboardGraph.getVertex(35)));
 
 
         // player 4 should have the card now

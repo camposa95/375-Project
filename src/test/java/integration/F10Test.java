@@ -11,8 +11,7 @@ import domain.game.GameType;
 import domain.gameboard.GameBoard;
 import domain.player.HarvestBooster;
 import domain.player.Player;
-import domain.graphs.RoadGraph;
-import domain.graphs.VertexGraph;
+import domain.graphs.GameboardGraph;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,8 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * F10: Ability for a player to purchase a development card during their turn. Requires a sheep, and wheat, and an ore to purchase
  */
 public class F10Test {
-    VertexGraph vertexes;
-    RoadGraph roads;
+    GameboardGraph gameboardGraph;
     Player player1;
     Player player2;
     Player player3;
@@ -39,9 +37,8 @@ public class F10Test {
     @BeforeEach
     public void createGameObjects() {
         GameType gameType = GameType.Beginner;
-        vertexes = new VertexGraph(gameType);
-        roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
+        gameboardGraph = new GameboardGraph(gameType);
+        GameLoader.initializeGraphs(gameboardGraph);
 
         Bank bank = new Bank();
         player1 = new Player(1, new HarvestBooster(), bank);
@@ -54,7 +51,7 @@ public class F10Test {
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        Game game = new Game(gameBoard, gameboardGraph, devCardDeck, bank);
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();

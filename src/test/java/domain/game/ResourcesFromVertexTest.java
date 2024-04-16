@@ -4,8 +4,7 @@ import data.GameLoader;
 import domain.bank.Bank;
 import domain.bank.Resource;
 import domain.gameboard.GameBoard;
-import domain.graphs.RoadGraph;
-import domain.graphs.VertexGraph;
+import domain.graphs.GameboardGraph;
 import domain.player.HarvestBooster;
 import domain.player.Player;
 import org.easymock.EasyMock;
@@ -18,8 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ResourcesFromVertexTest {
 
     GameBoard gb;
-    VertexGraph vg;
-    RoadGraph rg;
+    GameboardGraph vg;
     Player mockPlayer;
     Bank bank;
     Game game;
@@ -29,14 +27,13 @@ public class ResourcesFromVertexTest {
         gb = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gb);
 
-        vg = new VertexGraph(GameType.Beginner);
-        rg = new RoadGraph();
-        GameLoader.initializeGraphs(rg, vg);
+        vg = new GameboardGraph(GameType.Beginner);
+        GameLoader.initializeGraphs(vg);
 
         mockPlayer = EasyMock.createMock(Player.class);
 
         bank = new Bank();
-        game = new Game(gb, vg, rg, null, bank);
+        game = new Game(gb, vg, null, bank);
     }
 
     @Test

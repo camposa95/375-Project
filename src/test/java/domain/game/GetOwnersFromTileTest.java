@@ -2,7 +2,7 @@ package domain.game;
 
 import domain.gameboard.GameBoard;
 import domain.graphs.Vertex;
-import domain.graphs.VertexGraph;
+import domain.graphs.GameboardGraph;
 import domain.player.Player;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class GetOwnersFromTileTest {
 
     GameBoard gameBoard;
-    VertexGraph mockVertexGraph;
+    GameboardGraph mockGameboardGraph;
     Vertex mockVertex;
     Game game;
     Player mockPlayer1, mockPlayer2;
@@ -26,9 +26,9 @@ public class GetOwnersFromTileTest {
     @BeforeEach
     public void setupMocks() {
         gameBoard =  EasyMock.createStrictMock(GameBoard.class);
-        mockVertexGraph = EasyMock.createStrictMock(VertexGraph.class);
+        mockGameboardGraph = EasyMock.createStrictMock(GameboardGraph.class);
         mockVertex = EasyMock.createStrictMock(Vertex.class);
-        game = new Game(gameBoard, mockVertexGraph, null, null, null);
+        game = new Game(gameBoard, mockGameboardGraph, null, null);
 
         mockPlayer1 = EasyMock.createStrictMock(Player.class);
         mockPlayer2 = EasyMock.createStrictMock(Player.class);
@@ -46,10 +46,10 @@ public class GetOwnersFromTileTest {
         List<Integer> expect = new ArrayList<>();
         expect.add(0);
         EasyMock.expect(gameBoard.getTileVertexIDs(tileId)).andReturn(expect);
-        EasyMock.expect(mockVertexGraph.getVertex(0)).andReturn(mockVertex);
+        EasyMock.expect(mockGameboardGraph.getVertex(0)).andReturn(mockVertex);
         EasyMock.expect(mockVertex.isOccupied()).andReturn(false);
         //Replay
-        EasyMock.replay(gameBoard, mockVertexGraph, mockVertex);
+        EasyMock.replay(gameBoard, mockGameboardGraph, mockVertex);
 
         Player[] actual = null;
         //Call method
@@ -62,7 +62,7 @@ public class GetOwnersFromTileTest {
         }
 
         assertEquals(actual.length, 0);
-        EasyMock.verify(gameBoard, mockVertexGraph, mockVertex);
+        EasyMock.verify(gameBoard, mockGameboardGraph, mockVertex);
     }
 
     @Test
@@ -73,12 +73,12 @@ public class GetOwnersFromTileTest {
         List<Integer> expect = new ArrayList<>();
         expect.add(0);
         EasyMock.expect(gameBoard.getTileVertexIDs(tileId)).andReturn(expect);
-        EasyMock.expect(mockVertexGraph.getVertex(0)).andReturn(mockVertex);
+        EasyMock.expect(mockGameboardGraph.getVertex(0)).andReturn(mockVertex);
         EasyMock.expect(mockVertex.isOccupied()).andReturn(true);
         EasyMock.expect(mockVertex.getOwner()).andReturn(mockPlayer1);
 
         //Replay
-        EasyMock.replay(gameBoard, mockVertexGraph, mockVertex, mockPlayer1);
+        EasyMock.replay(gameBoard, mockGameboardGraph, mockVertex, mockPlayer1);
 
 
         Player[] actual = null;
@@ -91,7 +91,7 @@ public class GetOwnersFromTileTest {
 
         assertEquals(actual.length, 1);
         assertEquals(actual[0], mockPlayer1);
-        EasyMock.verify(gameBoard, mockVertexGraph, mockVertex, mockPlayer1);
+        EasyMock.verify(gameBoard, mockGameboardGraph, mockVertex, mockPlayer1);
     }
 
     @Test
@@ -105,20 +105,20 @@ public class GetOwnersFromTileTest {
         expected.add(2);
 
         EasyMock.expect(gameBoard.getTileVertexIDs(tileId)).andReturn(expected);
-        EasyMock.expect(mockVertexGraph.getVertex(0)).andReturn(mockVertex1);
+        EasyMock.expect(mockGameboardGraph.getVertex(0)).andReturn(mockVertex1);
         EasyMock.expect(mockVertex1.isOccupied()).andReturn(true);
         EasyMock.expect(mockVertex1.getOwner()).andReturn(mockPlayer1);
 
-        EasyMock.expect(mockVertexGraph.getVertex(1)).andReturn(mockVertex2);
+        EasyMock.expect(mockGameboardGraph.getVertex(1)).andReturn(mockVertex2);
         EasyMock.expect(mockVertex2.isOccupied()).andReturn(true);
         EasyMock.expect(mockVertex2.getOwner()).andReturn(mockPlayer1);
 
-        EasyMock.expect(mockVertexGraph.getVertex(2)).andReturn(mockVertex3);
+        EasyMock.expect(mockGameboardGraph.getVertex(2)).andReturn(mockVertex3);
         EasyMock.expect(mockVertex3.isOccupied()).andReturn(true);
         EasyMock.expect(mockVertex3.getOwner()).andReturn(mockPlayer1);
 
         //Replay
-        EasyMock.replay(gameBoard, mockVertexGraph, mockVertex1,mockVertex2,mockVertex3, mockPlayer1);
+        EasyMock.replay(gameBoard, mockGameboardGraph, mockVertex1,mockVertex2,mockVertex3, mockPlayer1);
 
 
         Player[] actual = null;
@@ -131,7 +131,7 @@ public class GetOwnersFromTileTest {
 
         assertEquals(actual.length, 1);
         assertEquals(actual[0], mockPlayer1);
-        EasyMock.verify(gameBoard, mockVertexGraph, mockVertex1,mockVertex2,mockVertex3, mockPlayer1);
+        EasyMock.verify(gameBoard, mockGameboardGraph, mockVertex1,mockVertex2,mockVertex3, mockPlayer1);
     }
 
     @Test
@@ -143,16 +143,16 @@ public class GetOwnersFromTileTest {
         expected.add(0);
         expected.add(1);
         EasyMock.expect(gameBoard.getTileVertexIDs(tileId)).andReturn(expected);
-        EasyMock.expect(mockVertexGraph.getVertex(0)).andReturn(mockVertex1);
+        EasyMock.expect(mockGameboardGraph.getVertex(0)).andReturn(mockVertex1);
         EasyMock.expect(mockVertex1.isOccupied()).andReturn(true);
         EasyMock.expect(mockVertex1.getOwner()).andReturn(mockPlayer1);
 
-        EasyMock.expect(mockVertexGraph.getVertex(1)).andReturn(mockVertex2);
+        EasyMock.expect(mockGameboardGraph.getVertex(1)).andReturn(mockVertex2);
         EasyMock.expect(mockVertex2.isOccupied()).andReturn(true);
         EasyMock.expect(mockVertex2.getOwner()).andReturn(mockPlayer2);
 
         //Replay
-        EasyMock.replay(gameBoard, mockVertexGraph, mockVertex1,mockVertex2,mockPlayer1, mockPlayer2);
+        EasyMock.replay(gameBoard, mockGameboardGraph, mockVertex1,mockVertex2,mockPlayer1, mockPlayer2);
 
 
         Player[] actual = null;
@@ -166,19 +166,19 @@ public class GetOwnersFromTileTest {
         assertEquals(actual.length, 2);
         assertEquals(actual[0], mockPlayer1);
         assertEquals(actual[1], mockPlayer2);
-        EasyMock.verify(gameBoard, mockVertexGraph, mockVertex1,mockVertex2,mockPlayer1, mockPlayer2);
+        EasyMock.verify(gameBoard, mockGameboardGraph, mockVertex1,mockVertex2,mockPlayer1, mockPlayer2);
     }
 
     @Test
     void test_GetPlayersFromTile_Error() {
 
         //Replay
-        EasyMock.replay(gameBoard, mockVertexGraph, mockVertex);
+        EasyMock.replay(gameBoard, mockGameboardGraph, mockVertex);
 
         //Call method
         assertThrows(IllegalArgumentException.class,()-> game.getPlayersFromTile(-1));
         assertThrows(IllegalArgumentException.class,()-> game.getPlayersFromTile(19));
 
-        EasyMock.verify(gameBoard,mockVertexGraph, mockVertex);
+        EasyMock.verify(gameBoard, mockGameboardGraph, mockVertex);
     }
 }

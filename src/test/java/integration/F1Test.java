@@ -13,20 +13,18 @@ import domain.gameboard.GameBoard;
 import domain.game.GameType;
 import domain.gameboard.Terrain;
 import domain.gameboard.Tile;
-import domain.graphs.RoadGraph;
-import domain.graphs.VertexGraph;
+import domain.graphs.GameboardGraph;
 
 public class F1Test {
 
-    VertexGraph vertexes;
+    GameboardGraph vertexes;
     GameBoard gameBoard;
 
     @BeforeEach
     public void setUpGameObjects() {
         GameType gameType = GameType.Beginner;
-        vertexes = new VertexGraph(gameType);
-        RoadGraph roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
+        vertexes = new GameboardGraph(gameType);
+        GameLoader.initializeGraphs(vertexes);
 
         gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);

@@ -19,9 +19,7 @@ import domain.game.Game;
 import domain.gameboard.GameBoard;
 import domain.game.GameType;
 import domain.player.Player;
-import domain.bank.Resource;
-import domain.graphs.RoadGraph;
-import domain.graphs.VertexGraph;
+import domain.graphs.GameboardGraph;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,8 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class F18Test {
 
-    VertexGraph vertexes;
-    RoadGraph roads;
+    GameboardGraph gameboardGraph;
     Bank bank;
     Player player1;
     Player player2;
@@ -45,9 +42,8 @@ public class F18Test {
     @BeforeEach
     public void createGameObjects() {
         GameType gameType = GameType.Beginner;
-        vertexes = new VertexGraph(gameType);
-        roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
+        gameboardGraph = new GameboardGraph(gameType);
+        GameLoader.initializeGraphs(gameboardGraph);
 
         bank = new Bank();
         player1 = new Player(1, new HarvestBooster(), bank);
@@ -60,7 +56,7 @@ public class F18Test {
         DevelopmentCardDeck devCardDeck = new DevelopmentCardDeck();
         GameBoard gameBoard = new GameBoard(GameType.Beginner);
         GameLoader.initializeGameBoard(gameBoard);
-        Game game = new Game(gameBoard, vertexes, roads, devCardDeck, bank);
+        Game game = new Game(gameBoard, gameboardGraph, devCardDeck, bank);
 
         // Assert that the beginner setup does not time out to kill mutant
         final AtomicReference<Controller> controllerRef = new AtomicReference<>();
@@ -92,7 +88,7 @@ public class F18Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(newRoadId1)); // click should succeed
         assertEquals(GameState.ROAD_BUILDING_2, controller.getState()); // gameState should move to next road building stage
         assertEquals(12, player1.getNumRoads()); // player should have used a road
-        assertEquals(player1, roads.getRoad(newRoadId1).getOwner()); // road should now be owned by the player
+        assertEquals(player1, gameboardGraph.getRoad(newRoadId1).getOwner()); // road should now be owned by the player
         assertEquals(0, player1.hand.getResourceCount()); // player resources should not have changed
 
 
@@ -101,7 +97,7 @@ public class F18Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(newRoadId2)); // click should succeed
         assertEquals(GameState.DEFAULT, controller.getState()); // we are done with the building so reset to default
         assertEquals(11, player1.getNumRoads()); // player should have used another road
-        assertEquals(player1, roads.getRoad(newRoadId2).getOwner()); // road should now be owned by the player
+        assertEquals(player1, gameboardGraph.getRoad(newRoadId2).getOwner()); // road should now be owned by the player
         assertEquals(0, player1.hand.getResourceCount()); // player resources should not have changed
     }
 
@@ -124,7 +120,7 @@ public class F18Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(newRoadId1)); // click should succeed
         assertEquals(GameState.ROAD_BUILDING_2, controller.getState()); // gameState should move to next road building stage
         assertEquals(12, player1.getNumRoads()); // player should have used a road
-        assertEquals(player1, roads.getRoad(newRoadId1).getOwner()); // road should now be owned by the player
+        assertEquals(player1, gameboardGraph.getRoad(newRoadId1).getOwner()); // road should now be owned by the player
         assertEquals(0, player1.hand.getResourceCount()); // player resources should not have changed
 
 
@@ -137,7 +133,7 @@ public class F18Test {
         int newRoadId2 = 23; // use a valid id
         assertEquals(SuccessCode.INSUFFICIENT_RESOURCES, controller.clickedRoad(newRoadId2)); // click should fail because of no roads left
         assertEquals(GameState.DEFAULT, controller.getState()); // ran out of roads, so we exit the flow of logic here
-        assertNull(roads.getRoad(newRoadId2).getOwner()); // road should still be unowned
+        assertNull(gameboardGraph.getRoad(newRoadId2).getOwner()); // road should still be unowned
         assertEquals(0, player1.hand.getResourceCount()); // player resources should not have changed
     }
 
@@ -163,7 +159,7 @@ public class F18Test {
         int newRoadId1 = 24; // use a valid id
         assertEquals(SuccessCode.INSUFFICIENT_RESOURCES, controller.clickedRoad(newRoadId1)); // click should fai because of lack of roads
         assertEquals(GameState.DEFAULT, controller.getState()); // gameState should reset because flow is killed off
-        assertNull(roads.getRoad(newRoadId1).getOwner()); // road should still be unowned
+        assertNull(gameboardGraph.getRoad(newRoadId1).getOwner()); // road should still be unowned
         assertEquals(0, player1.hand.getResourceCount()); // resources should not change
     }
 
@@ -186,7 +182,7 @@ public class F18Test {
         assertEquals(SuccessCode.INVALID_PLACEMENT, controller.clickedRoad(newRoadId1)); // click should succeed
         assertEquals(GameState.ROAD_BUILDING_1, controller.getState()); // gameState should stay the same
         assertEquals(13, player1.getNumRoads()); // player should still have the same amount of roads
-        assertNull(roads.getRoad(newRoadId1).getOwner()); // road should be unowned by the player
+        assertNull(gameboardGraph.getRoad(newRoadId1).getOwner()); // road should be unowned by the player
         assertEquals(0, player1.hand.getResourceCount()); // player resources should not have changed
 
 
@@ -195,7 +191,7 @@ public class F18Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(newRoadId2)); // click should succeed
         assertEquals(GameState.ROAD_BUILDING_2, controller.getState()); // gameState should move to next road building stage
         assertEquals(12, player1.getNumRoads()); // player should have used a road
-        assertEquals(player1, roads.getRoad(newRoadId2).getOwner()); // road should now be owned by the player
+        assertEquals(player1, gameboardGraph.getRoad(newRoadId2).getOwner()); // road should now be owned by the player
         assertEquals(0, player1.hand.getResourceCount()); // player resources should not have changed
 
 
@@ -204,7 +200,7 @@ public class F18Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(newRoadId3)); // click should succeed
         assertEquals(GameState.DEFAULT, controller.getState()); // we are done with the building so reset to default
         assertEquals(11, player1.getNumRoads()); // player should have used another road
-        assertEquals(player1, roads.getRoad(newRoadId3).getOwner()); // road should now be owned by the player
+        assertEquals(player1, gameboardGraph.getRoad(newRoadId3).getOwner()); // road should now be owned by the player
         assertEquals(0, player1.hand.getResourceCount()); // player resources should not have changed
     }
 
@@ -228,7 +224,7 @@ public class F18Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(newRoadId1)); // click should succeed
         assertEquals(GameState.ROAD_BUILDING_2, controller.getState()); // gameState should move to next road building stage
         assertEquals(12, player1.getNumRoads()); // player should have used a road
-        assertEquals(player1, roads.getRoad(newRoadId1).getOwner()); // road should now be owned by the player
+        assertEquals(player1, gameboardGraph.getRoad(newRoadId1).getOwner()); // road should now be owned by the player
         assertEquals(0, player1.hand.getResourceCount()); // player resources should not have changed
 
 
@@ -237,7 +233,7 @@ public class F18Test {
         assertEquals(SuccessCode.INVALID_PLACEMENT, controller.clickedRoad(newRoadId2)); // click should succeed
         assertEquals(GameState.ROAD_BUILDING_2, controller.getState()); // gameState should stay the same
         assertEquals(12, player1.getNumRoads()); // player should still have the same amount of roads
-        assertNull(roads.getRoad(newRoadId2).getOwner()); // road should be unowned by the player
+        assertNull(gameboardGraph.getRoad(newRoadId2).getOwner()); // road should be unowned by the player
         assertEquals(0, player1.hand.getResourceCount()); // player resources should not have changed
 
 
@@ -246,7 +242,7 @@ public class F18Test {
         assertEquals(SuccessCode.SUCCESS, controller.clickedRoad(newRoadId3)); // click should succeed
         assertEquals(GameState.DEFAULT, controller.getState()); // we are done with the building so reset to default
         assertEquals(11, player1.getNumRoads()); // player should have used another road
-        assertEquals(player1, roads.getRoad(newRoadId3).getOwner()); // road should now be owned by the player
+        assertEquals(player1, gameboardGraph.getRoad(newRoadId3).getOwner()); // road should now be owned by the player
         assertEquals(0, player1.hand.getResourceCount()); // player resources should not have changed
     }
 

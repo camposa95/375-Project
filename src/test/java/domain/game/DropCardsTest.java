@@ -2,8 +2,7 @@ package domain.game;
 
 import domain.bank.Resource;
 import domain.gameboard.GameBoard;
-import domain.graphs.RoadGraph;
-import domain.graphs.VertexGraph;
+import domain.graphs.GameboardGraph;
 import domain.player.Hand;
 import domain.player.Player;
 import org.easymock.EasyMock;
@@ -18,8 +17,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class DropCardsTest {
 
     GameBoard gameBoard;
-    VertexGraph vertexGraph;
-    RoadGraph mockedRoadGraph;
+    GameboardGraph gameboardGraph;
     Player mockedPlayer1, mockedPlayer2, mockedPlayer3;
     Hand mockedHand1, mockedHand2, mockedHand3;
     Game game;
@@ -27,8 +25,7 @@ public class DropCardsTest {
     @BeforeEach
     public void setup() {
         gameBoard =  EasyMock.createStrictMock(GameBoard.class);
-        vertexGraph = EasyMock.createStrictMock(VertexGraph.class);
-        mockedRoadGraph = EasyMock.createStrictMock(RoadGraph.class);
+        gameboardGraph = EasyMock.createStrictMock(GameboardGraph.class);
 
         mockedPlayer1 = EasyMock.createStrictMock(Player.class);
         mockedPlayer2 = EasyMock.createStrictMock(Player.class);
@@ -42,7 +39,15 @@ public class DropCardsTest {
         mockedPlayer2.hand = mockedHand2;
         mockedPlayer3.hand = mockedHand3;
 
-        game = new Game(gameBoard, vertexGraph, mockedRoadGraph, null, null);
+        game = new Game(gameBoard, gameboardGraph, null, null);
+    }
+
+    private void replayMocks() {
+        EasyMock.replay(gameBoard, gameboardGraph,mockedPlayer1,mockedHand1,mockedPlayer2,mockedHand2,mockedPlayer3,mockedHand3);
+    }
+
+    private void verifyMocks() {
+        EasyMock.verify(gameBoard, gameboardGraph,mockedPlayer1,mockedHand1,mockedPlayer2,mockedHand2,mockedPlayer3,mockedHand3);
     }
 
     @Test
@@ -52,8 +57,7 @@ public class DropCardsTest {
         HashMap<Player, Resource[]> testHash = new HashMap<>();
 
         //Replay
-        EasyMock.replay(gameBoard, vertexGraph, mockedRoadGraph);
-
+        replayMocks();
         //Call method
         try{
             game.dropCards(testHash);
@@ -62,14 +66,14 @@ public class DropCardsTest {
         }
 
         //Verify
-        EasyMock.verify(gameBoard, vertexGraph, mockedRoadGraph);
+        verifyMocks();
     }
 
     @Test
     public void testDropCards_1player_nothing() {
 
         //Replay
-        EasyMock.replay(gameBoard, vertexGraph, mockedRoadGraph,mockedPlayer1);
+        replayMocks();
 
         //Create Hashmap
 
@@ -88,7 +92,7 @@ public class DropCardsTest {
         }
 
         //Verify
-        EasyMock.verify(gameBoard, vertexGraph, mockedRoadGraph,mockedPlayer1);
+        verifyMocks();
     }
 
     @Test
@@ -97,7 +101,7 @@ public class DropCardsTest {
         Resource[] resources = {Resource.WOOL};
         EasyMock.expect(mockedPlayer1.hand.removeResources(resources)).andReturn(true);
         //Replay
-        EasyMock.replay(gameBoard, vertexGraph, mockedRoadGraph,mockedPlayer1,mockedHand1);
+        replayMocks();
 
         //Create Hashmap
         HashMap<Player,Resource[]> testHash = new HashMap<>();
@@ -113,7 +117,7 @@ public class DropCardsTest {
         }
 
         //Verify
-        EasyMock.verify(gameBoard, vertexGraph, mockedRoadGraph,mockedPlayer1,mockedHand1);
+        verifyMocks();
     }
 
     @Test
@@ -133,7 +137,7 @@ public class DropCardsTest {
         EasyMock.expect(mockedPlayer2.hand.removeResources(resources2)).andReturn(true);
         EasyMock.expect(mockedPlayer3.hand.removeResources(resources3)).andReturn(true);
         //Replay
-        EasyMock.replay(gameBoard, vertexGraph, mockedRoadGraph,mockedPlayer1,mockedHand1,mockedPlayer2,mockedHand2,mockedPlayer3,mockedHand3);
+        replayMocks();
 
         //Create Hashmap
         HashMap<Player,Resource[]> testHash = new HashMap<>();
@@ -151,7 +155,7 @@ public class DropCardsTest {
         }
 
         //Verify
-        EasyMock.verify(gameBoard, vertexGraph, mockedRoadGraph,mockedPlayer1,mockedHand1,mockedPlayer2,mockedHand2,mockedPlayer3,mockedHand3);
+        verifyMocks();
     }
 
     @Test
@@ -161,7 +165,7 @@ public class DropCardsTest {
         Resource[] resources = {Resource.WOOL};
         EasyMock.expect(mockedPlayer1.hand.removeResources(resources)).andReturn(false);
         //Replay
-        EasyMock.replay(gameBoard, vertexGraph, mockedRoadGraph,mockedPlayer1,mockedHand1);
+        replayMocks();
 
         //Create Hashmap
         HashMap<Player,Resource[]> testHash = new HashMap<>();
@@ -171,6 +175,6 @@ public class DropCardsTest {
         assertThrows(IllegalArgumentException.class, ()-> game.dropCards(testHash),"DropCards was called on player with not enough cards - synchronization issue");
 
         //Verify
-        EasyMock.verify(gameBoard, vertexGraph, mockedRoadGraph,mockedPlayer1,mockedHand1);
+        verifyMocks();
     }
 }

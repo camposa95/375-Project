@@ -14,14 +14,12 @@ import domain.game.GameType;
 public class GetAdjacentPortTest {
     private static final int NUM_VERTEXES = 54;
 
-    VertexGraph vertexes;
-    RoadGraph roads;
-    
+    GameboardGraph vertexes;
+
     @BeforeEach
     public void setup() {
-        vertexes = new VertexGraph(GameType.Beginner);
-        roads = new RoadGraph();
-        GameLoader.initializeGraphs(roads, vertexes);
+        vertexes = new GameboardGraph(GameType.Beginner);
+        GameLoader.initializeGraphs(vertexes);
     }
 
     @Test
@@ -164,7 +162,7 @@ public class GetAdjacentPortTest {
 
     @Test
     public void testGetAdjacentPortNotInitialized() {
-        VertexGraph vertexes = new VertexGraph(GameType.Beginner);
+        GameboardGraph vertexes = new GameboardGraph(GameType.Beginner);
         Vertex testVertex = vertexes.getVertex(0); // get any vertex
 
         RuntimeException exception = assertThrows(RuntimeException.class, testVertex::getAdjacentPort);
