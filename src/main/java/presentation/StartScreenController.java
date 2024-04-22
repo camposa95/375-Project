@@ -106,9 +106,6 @@ public class StartScreenController {
         Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
         stage.show();
-
-        CatanGUIController guiController = fxmlLoader.getController();
-        guiController.changeIconSet(GameLoader.getInstance().getIconFolderPath());
     }
 
     @FXML
@@ -118,16 +115,6 @@ public class StartScreenController {
             resumeGameButton.setDisable(true);
             deleteGameButton.setDisable(true);
         }
-    }
-
-    @FXML
-    public void changeGameImages() throws IOException {
-        //Open up game board window
-        Stage stage = (Stage) changeGameImagesButton.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("change_game_images_screen.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
-        stage.setScene(scene);
-        stage.show();
     }
 
     @FXML

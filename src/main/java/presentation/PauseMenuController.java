@@ -19,7 +19,7 @@ public class PauseMenuController implements Popup {
 
     public Text title, selectorHeader;
     @FXML
-    private Button saveButton, closeButton;
+    private Button saveButton, closeButton, changeGameImagesButton;
     @FXML
     public ChoiceBox<String> languageSelector;
     private CatanGUIController guiController;
@@ -72,9 +72,20 @@ public class PauseMenuController implements Popup {
         guiController.tooltipText.setText(messages.getString("paused"));
     }
 
+    @FXML
+    public void changeGameImages() throws IOException {
+        // Open up game board window
+        Stage stage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("change_game_images_screen.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setScene(scene);
+        stage.show();
+    }
+
     public void close() {
         this.guiController.notifyOfPopupClose(this);
         Stage stage = (Stage) saveButton.getScene().getWindow();
         stage.close();
+        this.guiController.changeIconSet(GameLoader.getInstance().getIconFolderPath());
     }
 }

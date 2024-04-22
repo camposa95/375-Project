@@ -421,6 +421,7 @@ public class CatanGUIController {
         // Link the Gui Controller to the Domain Controller
         CatanGUIController guiController = fxmlLoader.getController();
         guiController.setController(controller);
+        changeIconSet(this.iconFolderPath);
 
         // initialize the game-board
         guiController.internationalize(messages);

@@ -238,9 +238,7 @@ public class GameLoader {
         GameType restoredGameType = GameType.valueOf(reader.readField(GAME_TYPE));
         int restoredNumPlayers = Integer.parseInt(reader.readField(NUM_PLAYERS));
         this.setLanguage(reader.readField(LANGUAGE));
-        if (this.iconFolderPath == null) {
-            this.setIconFolderPath(reader.readField(ICON_PATH));
-        }
+        this.setIconFolderPath(reader.readField(ICON_PATH));
 
         // re-instantiate the game objects based on the basic game info
         this.instantiateGameObjects(restoredGameType, restoredNumPlayers);

@@ -1,5 +1,5 @@
 GamePhase: REGULAR_PLAY
 GameState: TURN_START
-CurrentPlayerNum: 3
+CurrentPlayerNum: 2
 LastPlacedVertex: 19
 DevCardsEnabled: true
