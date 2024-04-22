@@ -12,6 +12,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.io.FileUtils;
+import presentation.popups.Popup;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -22,7 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
-public class ChangeGameImagesController {
+public class ChangeGameImagesController implements Popup {
     private static final String IMAGE_ROOT_FOLDER = "images";
     @FXML
     ComboBox existingResourcesComboBox;
@@ -42,14 +43,14 @@ public class ChangeGameImagesController {
         File selectedDirectory = chooser.showDialog(selectNewFolderButton.getScene().getWindow());
         File newDir = new File(getClass().getClassLoader().getResource(IMAGE_ROOT_FOLDER).getPath(), selectedDirectory.getName());
         FileUtils.copyDirectory(selectedDirectory, newDir);
-        close(Path.of(IMAGE_ROOT_FOLDER, selectedDirectory.getName()).toString());
+        GameLoader.getInstance().setIconFolderPath(Path.of(IMAGE_ROOT_FOLDER, selectedDirectory.getName()).toString());
     }
 
     @FXML
     @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     private void handleExistingFolderClick() throws IOException {
         File selectedDir = new File(IMAGE_ROOT_FOLDER, (String) existingResourcesComboBox.getValue());
-        close(selectedDir.getPath());
+        GameLoader.getInstance().setIconFolderPath(selectedDir.getPath());
     }
 
     @SuppressFBWarnings("PATH_TRAVERSAL_IN")
@@ -65,16 +66,9 @@ public class ChangeGameImagesController {
         }
     }
 
-    private void close(String folder) throws IOException {
+    @Override
+    public void close() {
         Stage stage = (Stage) existingResourcesComboBox.getScene().getWindow();
         stage.close();
-
-        //Open up start window again
-        FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("start_screen.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
-        stage.setScene(scene);
-        stage.show();
-
-        GameLoader.getInstance().setIconFolderPath(folder);
     }
 }

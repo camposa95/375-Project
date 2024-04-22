@@ -1,4 +1,4 @@
 gameType: Beginner
 numPlayers: 2
 language: English
-iconPath: null
+iconPath: images\testing

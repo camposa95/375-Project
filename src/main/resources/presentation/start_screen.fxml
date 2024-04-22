@@ -17,6 +17,5 @@
       <Button fx:id="createNewGameButton" layoutX="378.0" layoutY="254.0" mnemonicParsing="false" onAction="#createNewGame" text="New Game" />
       <Text fx:id="selectedSlotText" layoutX="250.0" layoutY="271.0" strokeType="OUTSIDE" strokeWidth="0.0" text="No Slot Selected" textAlignment="CENTER" />
       <Button fx:id="deleteGameButton" layoutX="275.0" layoutY="293.0" mnemonicParsing="false" onAction="#deleteGame" text="Delete" />
-      <Button fx:id="changeGameImagesButton" layoutX="444.0" layoutY="360.0" mnemonicParsing="false" onMouseClicked="#changeGameImages" prefHeight="25.0" prefWidth="142.0" text="Change Game Images" />
    </children>
 </Pane>
