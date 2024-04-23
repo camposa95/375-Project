@@ -6,12 +6,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import data.*;
+import domain.game.NotEnoughResourcesException;
+import domain.player.Player;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class Bank implements Restorable {
 
     private static final int MAX_RESOURCES = 19;
     private final HashMap<Resource, Integer> bank = new HashMap<>();
+    private final HashMap<Player, Loan> loans = new HashMap<>();
 
     public Bank() {
         bank.put(Resource.LUMBER, MAX_RESOURCES);
@@ -79,6 +82,42 @@ public class Bank implements Restorable {
             this.removeResource(resources[i], 1);
         }
         return true;
+    }
+
+    public void takeOutLoan(final Player player, final Resource[] resources) throws NotEnoughResourcesException {
+        if (this.loans.containsKey(player)) {
+            throw new IllegalStateException("Cannot take out a new loan when one already exists for this player");
+        }
+
+        if (!Loan.loanIsValid(resources)) {
+            throw new IllegalArgumentException("Loan resources are invalid");
+        }
+
+        Loan l = new Loan(resources);
+        l.giveLoan(this, player);
+        this.loans.put(player, l);
+    }
+
+    protected Map<Player, Loan> getLoans() {
+        return this.loans;
+    }
+
+    public void updateLoanDueTimes(final Player currentPlayer) {
+        Loan l = this.loans.get(currentPlayer);
+        if (l != null) {
+            l.decrementLoanTime();
+        }
+    }
+
+    public void payLoanIfDue(final Player currentPlayer) {
+        Loan l = this.loans.get(currentPlayer);
+        if (l != null) {
+            if (!l.loanIsPaid()) {
+                l.payLoan(this, currentPlayer);
+            } else {
+                this.loans.remove(currentPlayer);
+            }
+        }
     }
 
     // -----------------------------------

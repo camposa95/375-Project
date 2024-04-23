@@ -122,6 +122,18 @@ public class Hand implements Restorable {
         return true;
     }
 
+    public Resource[] removeExistingResources(Resource[] resources) {
+        ArrayList<Resource> removedResources = new ArrayList<>();
+        for (Resource r : resources) {
+            if (getResourceCount(r) != 0) {
+                removeResource(r, 1);
+                removedResources.add(r);
+            }
+        }
+
+        return (Resource[]) removedResources.toArray();
+    }
+
     public void clearResources() {
         hand.put(Resource.LUMBER, 0);
         hand.put(Resource.BRICK, 0);
