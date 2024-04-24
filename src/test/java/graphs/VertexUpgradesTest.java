@@ -3,7 +3,7 @@ package graphs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import domain.game.DistrictType;
+import domain.building.DistrictType;
 import domain.game.InvalidPlacementException;
 import domain.graphs.Vertex;
 import domain.player.Player;

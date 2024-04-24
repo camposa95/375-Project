@@ -1,4 +1,4 @@
-package domain.game;
+package domain.building;
 
 import data.*;
 import domain.bank.Resource;

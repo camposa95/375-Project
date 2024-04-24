@@ -1,6 +1,8 @@
-package domain.game;
+package domain.building;
 
 import domain.bank.Resource;
+
+import java.util.Arrays;
 
 public enum DistrictType {
     EMPTY(new Resource[0], Resource.ANY),
@@ -20,5 +22,9 @@ public enum DistrictType {
 
     public int getYield(final Resource resource) {
         return (resource == type) ? bonusNumber : 0;
+    }
+
+    public Resource[] getDistrictCost() {
+        return Arrays.copyOf(this.districtCost, this.districtCost.length);
     }
 }

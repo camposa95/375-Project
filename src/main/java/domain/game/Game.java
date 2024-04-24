@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import domain.bank.Bank;
 import domain.bank.Resource;
+import domain.building.DistrictType;
 import domain.devcarddeck.DevCard;
 import domain.devcarddeck.DevelopmentCardDeck;
 import domain.devcarddeck.EmptyDevCardDeckException;
@@ -197,14 +198,14 @@ public class Game implements Restorable {
      * @param type the district type to build
      */
     public void buildDistrictOnVertex(final Player player, final int vertexId, final DistrictType type) throws NotEnoughResourcesException, InvalidPlacementException {
-        if (!player.hand.removeResources(type.districtCost)) {
+        if (!player.hand.removeResources(type.getDistrictCost())) {
             throw new NotEnoughResourcesException();
         }
         Vertex vertex = gameboardGraph.getVertex(vertexId);
         try {
             vertex.buildDistrict(player, type);
         } catch (InvalidPlacementException e) {
-            player.hand.addResources(type.districtCost);
+            player.hand.addResources(type.getDistrictCost());
             throw new InvalidPlacementException();
         }
     }

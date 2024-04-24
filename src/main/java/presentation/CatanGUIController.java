@@ -2,7 +2,7 @@ package presentation;
 
 import domain.bank.Resource;
 import domain.devcarddeck.DevCard;
-import domain.game.DistrictType;
+import domain.building.DistrictType;
 import domain.gameboard.Terrain;
 import domain.gameboard.Tile;
 import domain.graphs.*;
