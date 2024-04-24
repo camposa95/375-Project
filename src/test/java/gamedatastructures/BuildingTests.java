@@ -1,8 +1,8 @@
 package gamedatastructures;
 
 import domain.bank.Resource;
-import domain.game.Building;
-import domain.game.DistrictType;
+import domain.building.Building;
+import domain.building.DistrictType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

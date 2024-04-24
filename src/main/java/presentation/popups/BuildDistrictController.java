@@ -3,7 +3,7 @@ package presentation.popups;
 import domain.controller.Controller;
 import domain.controller.GameState;
 import domain.controller.SuccessCode;
-import domain.game.DistrictType;
+import domain.building.DistrictType;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;

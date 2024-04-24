@@ -2,9 +2,8 @@ package domain.graphs;
 
 import data.*;
 import domain.bank.Resource;
-import domain.game.Building;
-import domain.game.DistrictType;
-import domain.game.Game;
+import domain.building.Building;
+import domain.building.DistrictType;
 import domain.game.InvalidPlacementException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import domain.player.Player;

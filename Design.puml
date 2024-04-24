@@ -1,0 +1,1072 @@
+@startuml
+
+skinparam package<<Layout>> {
+  borderColor Transparent
+  backgroundColor Transparent
+  fontColor Transparent
+  stereotypeFontColor Transparent
+}
+
+package presentation {
+    +class RunGame {
+        +{static} main(args: String[]): void
+    }
+
+    +class Catan {
+        +{static} startGame(): void
+        +start(Stage: stage): void
+    }
+
+    +class StartScreenController {
+        +initialize(): void
+        +setMessages(messages: ResourceBundle): void
+
+        +selectSlot(): void
+        +resumeGame(): void
+        +deleteGame(): void
+        +exit(): void
+    }
+
+    +class NewGameController {
+        +initialize(): void
+        +setMessages(messages: ResourceBundle): void
+
+        +changeLanguage(): void
+        +selectPlayers(): void
+        +selectGameMode(): void
+        +startGame(): void
+    }
+
+    +class CatanGuiController {
+        -controller: Controller
+        -popupsOpen: List<Popup>
+        -messages: ResourceBundle
+        +guiState: GUIState
+
+        -initialize(): void
+        +internationalize(): void
+        +setController(controller: Controller): void
+        +initializeGameBoard(): void
+
+        +notifyOfPopupClose(): void
+
+        +pauseButtonPressed(): void
+        +endTurnButtonPressed(): void
+        +undo(): void
+        +redo(): void
+        +finishedMove(): void
+
+        +handleVertexClick(): void
+        +handleRoadClick(): void
+        +handleRobberClick(): void
+
+        +buildSettlementButtonPressed(): void
+        +buildRoadButtonPressed(): void
+        +buildCityButtonPressed(): void
+        +buildDistrictButtonPressed(): void
+        +buyDevCardButtonPressed(): void
+        +rollButtonPressed(): void
+        +cancelButtonPressed(): void
+
+        +playKnightButtonPressed(): void
+        +playMonopolyButtonPressed(): void
+        +playRoadBuildingButtonPressed(): void
+        +playYearOfPlentyButtonPressed(): void
+
+        +playerTradeButtonPressed(): void
+        +bankTradeButtonPressed(): void
+
+        +handleSettlementClick(): void
+
+        +setTooltipText(String text): void
+
+        +setAllRobberSpotsVisibility(boolean visibility): void
+        +changeIconSet(iconFolderPath: String): void
+    }
+
+    +enum GUIState {
+        BUSY
+        IDLE
+        GAME_WON
+    }
+
+    Catan ..down> StartScreenController
+    Catan ..down> NewGameController
+
+    StartScreenController ..down> CatanGuiController
+    NewGameController ..down> CatanGuiController
+
+    CatanGuiController +..right>"inner" GUIState
+    CatanGuiController --right> GUIState
+
+    package popups {
+        +interface Popup {
+            +close(): void
+        }
+
+        +class BankTradeWindowController {
+            -guiController: CatanGuiController
+            -domainController: Controller
+            -messages: ResourceBundle
+
+            +initialize(): void
+            +setMessages(messages: ResourceBundle): void
+            +setControllers(CatanGUIController guiController, Controller domainController): void
+
+            +tradeButtonPressed(): void
+
+            +close(): void
+        }
+
+        +class BuildDistrictController {
+            -guiController: CatanGuiController
+            -domainController: Controller
+            -messages: ResourceBundle
+
+            +initialize(): void
+            +setMessages(messages: ResourceBundle): void
+            +setControllers(CatanGUIController guiController, Controller domainController): void
+
+            +setSelectedVertex(id: int): void
+            +setSelectedBuilding(building: Polygon): void
+            +submitBuildDistrict(): void
+
+            +close(): void
+        }
+
+        +class ChangeGameImagesController {
+            +initialize(): void
+
+            +handleNewFolderButtonClick(): void
+            +handleExistingFolderClick(): void
+
+            +close(): void
+        }
+
+        +class DropCardsController {
+            -guiController: CatanGuiController
+            -domainController: Controller
+            -messages: ResourceBundle
+
+            +initialize(): void
+            +setMessages(messages: ResourceBundle): void
+            +setControllers(CatanGUIController guiController, Controller domainController): void
+
+            +doesAnyoneNeedToDrop(): boolean
+            +submitDropResource(): void
+
+            +close(): void
+        }
+
+        +class GameWonController {
+            -messages: ResourceBundle
+
+            +setMessages(messages: ResourceBundle): void
+
+            +setPlayerWon(playerWon: int): void
+
+            +close(): void
+        }
+
+        +class MonopolyController {
+            -guiController: CatanGuiController
+            -domainController: Controller
+            -messages: ResourceBundle
+
+            +initialize(): void
+            +setMessages(messages: ResourceBundle): void
+            +setControllers(CatanGUIController guiController, Controller domainController): void
+
+            +executeMonopoly(resource: Resource): void
+
+            +close(): void
+        }
+
+        +class PauseMenuController {
+            -guiController: CatanGuiController
+            -domainController: Controller
+            -messages: ResourceBundle
+
+            +initialize(): void
+            +setMessages(messages: ResourceBundle): void
+            +setControllers(CatanGUIController guiController, Controller domainController): void
+
+            +saveButtonPressed(): void
+            +changeLanguage(): void
+            +changeGameImages(): void
+
+            +close(): void
+        }
+
+        +class PlayerTradeWindowController {
+            -guiController: CatanGuiController
+            -domainController: Controller
+            -messages: ResourceBundle
+
+            +initialize(): void
+            +setMessages(messages: ResourceBundle): void
+            +setControllers(CatanGUIController guiController, Controller domainController): void
+
+            +executeTrade(otherPlayer: Player, giving: Resource[], receiving: Resource[]): SuccessCode
+
+            +close(): void
+        }
+
+        +class RobPlayerController {
+            -guiController: CatanGuiController
+            -domainController: Controller
+            -messages: ResourceBundle
+
+            +initialize(): void
+            +setMessages(messages: ResourceBundle): void
+            +setControllers(CatanGUIController guiController, Controller domainController): void
+
+            +robPlayer(): void
+
+            +close(): void
+        }
+
+        +class YearOfPlentyController {
+            -guiController: CatanGuiController
+            -domainController: Controller
+            -messages: ResourceBundle
+
+            +initialize(): void
+            +setMessages(messages: ResourceBundle): void
+            +setControllers(CatanGUIController guiController, Controller domainController): void
+
+            +submitYOP(): void
+
+            +close(): void
+        }
+
+        BankTradeWindowController ..up..|> Popup
+        BuildDistrictController ..up..|> Popup
+        ChangeGameImagesController ..up|> Popup
+        DropCardsController ..up..|> Popup
+        GameWonController ..up|> Popup
+        MonopolyController ..up..|> Popup
+        PauseMenuController ..up|> Popup
+        PlayerTradeWindowController ..up..|> Popup
+        RobPlayerController ..up..|> Popup
+        YearOfPlentyController ..up..|> Popup
+    }
+
+    CatanGuiController --down>"*" Popup
+    CatanGuiController ..down> PauseMenuController
+    CatanGuiController ..down...> BankTradeWindowController
+    CatanGuiController ..down...> BuildDistrictController
+    CatanGuiController ..down...> DropCardsController
+    CatanGuiController ..down> GameWonController
+    CatanGuiController ..down...> MonopolyController
+    CatanGuiController ..down...> PlayerTradeWindowController
+    CatanGuiController ..down...> RobPlayerController
+    CatanGuiController ..down...> YearOfPlentyController
+
+    BankTradeWindowController --up> CatanGuiController
+    BuildDistrictController --up> CatanGuiController
+    DropCardsController --up> CatanGuiController
+    MonopolyController --up> CatanGuiController
+    PauseMenuController --up> CatanGuiController
+    PlayerTradeWindowController --up> CatanGuiController
+    RobPlayerController --up> CatanGuiController
+    YearOfPlentyController --up> CatanGuiController
+
+    PauseMenuController ..down> ChangeGameImagesController
+    PauseMenuController ..up> StartScreenController
+
+    RunGame ..down> Catan
+}
+
+package domain {
+    package controller {
+        +class Controller {
+            -game: Game
+            -currentPlayer: Player
+            -currentPlayerNum: int
+            -gamePhase: GamePhase
+            -gameState: GameState
+            -players: Player[]
+            -lastPlacedVertex: int
+            -devCardsEnabled: boolean
+            -random: Random
+
+            +Controller(game: Game, players: Player[], gameType: GameType)
+            -doBeginnerSetup(): void
+
+            +setState(state: GameState): void
+            +getState(): GameState
+
+            +clickedVertex(vertexId: int): SuccessCode
+            +clickedRoad(roadId: int): SuccessCode
+            +endTurn(): SuccessCode
+            +rollDice(): int
+            +dropResources(playerIdToResourceMap: Map<Integer, Resource>): void
+            +moveRobber(): SuccessCode
+            +robPlayer(playerId: int): SuccessCode
+            +tradeWithPlayer(tradePartner: Player, giving: Resource[], receiving: Resource[]): SuccessCode
+            +tradeWithBank(giving: Resource[], receiving: Resource[]): SuccessCode
+            +clickedBuyDevCard(): SuccessCode
+            +playMonopolyCard(resourceToRob: Resource): SuccessCode
+            +playYearOfPlenty(resource1: Resource, resource2: Resource): SuccessCode
+            +playKnightCard(): SuccessCode
+            +useRoadBuildingCard(): SuccessCode
+
+            +createMemento(): Memento
+        }
+
+        +class ControllerMemento {
+            -{final} gamePhase: GamePhase
+            -{final} gameState: GameState
+            -{final} currentPlayerNum: int
+            -{final} currentPlayer: Player
+            -{final} lastPlacedVertex: int
+            -{final} devCardsEnabled: boolean
+
+            -{final} gameMemento: Memento
+            -{final} playerMementos: Memento[]
+
+            -ControllerMemento()
+            +ControllerMemento(folder: File)
+            +save(folder: File): void
+            +restore(): void
+        }
+
+        +enum GamePhase {
+            REGULAR_PLAY
+            SETUP
+        }
+
+        +enum GameState {
+            TURN_START
+            DEFAULT
+            BUILD_ROAD
+            UPGRADE_SETTLEMENT
+            ...
+        }
+
+        +enum SuccessCode {
+            SUCCESS
+            UNDEFINED
+            GAME_WIN
+            INVALID_PLACEMENT
+            INSUFFICIENT_RESOURCES
+            ...
+        }
+
+        Controller .> SuccessCode
+
+        Controller +..>"inner" ControllerMemento
+
+        Controller -> GamePhase
+        Controller -> GameState
+        ControllerMemento -> GamePhase
+        ControllerMemento -> GameState
+    }
+
+    package level1 <<Layout>> {
+
+        package player {
+            +class Player {
+                +playerNum: int
+                +hand: Hand
+                +harvestBooster: HarvestBooster
+                +victoryPoints: int
+                +hasPlayedDevCard: boolean
+                +numKnightsPlayed: int
+                ~numSettlements: int
+                ~numRoads: int
+                ~numCities: int
+                -tradeBoosts: Resource[]
+                -numTradeBoosts: int
+                -hasLongestRoadCard: boolean
+                -hasLargestArmy: boolean
+
+                +Player(num: int, booster: HarvestBooster, resourceBank: Bank)
+
+                +purchaseSettlement(): boolean
+                +purchaseRoad(): boolean
+                +addTradeBoost(resource: Resource): void
+                +tradeResources(otherPlayer: Player, resourcesGiven: Resource[], resourcesReceived: Resource[]): boolean
+                +tradeWithBank(resourceGiven: Resource, resourceTaken: Resource): boolean
+                +canUpgradeSettlementToCity(): boolean
+                +purchaseDevCard(card: DevCard): boolean
+                +useDevCard(card: DevCard): boolean
+
+                +giveLongestRoadCard(): void
+                +removeLongestRoadCard(): void
+                +hasLongestRoad(): boolean
+                +incrementNumKnights(): void
+                +hasLargestArmy(): boolean
+                +giveLargestArmyCard(): void
+                +removeLargestArmyCard(): void
+
+                +toString(): String
+                +createMemento(): Memento
+            }
+
+            +class PlayerMemento {
+                -{final} victoryPoints: int
+                -{final} hasPlayedDevCard: boolean
+                -{final} numKnightsPlayed: int
+                -{final} numSettlements: int
+                -{final} numRoads: int
+                -{final} numCities: int
+                -{final} tradeBoosts: Resource[]
+                -{final} numTradeBoosts: int
+                -{final} hasLongestRoadCard: boolean
+                -{final} hasLargestArmy: boolean
+
+                -{final} handMemento: Memento
+                -{final} harvestBoosterMemento: Memento
+
+                -PlayerMemento()
+                +PlayerMemento(folder: File)
+                +save(folder: File): void
+                +restore(): void
+            }
+
+            +class HarvestBooster {
+                -boosts: Map<Resource, BoostType>
+                -durations: Map<Resource, Integer>
+
+                +HarvestBooster()
+
+                +getAdjustedHarvest(resources: Resource[]): Resource[]
+                +setBoost(resource: Resource: boostType: BoostType): void
+
+                +createMemento(): Memento
+            }
+
+            +class HarvestBoosterMemento {
+                -{final} boosts: Map<Resource, BoostType>
+                -{final} durations: Map<Resource, Integer>
+
+                -HarvestBoosterMemento()
+                +HarvestBoosterMemento(folder: File)
+                +save(folder: File): void
+                +restore(): void
+            }
+
+            +class Hand {
+                -hand: Map<Resource, Integer>
+                -devCards: Map<DevCard, Integer>
+                -devCardsBoughtThisTurn: Map<DevCard, Integer>
+
+                +Hand()
+
+                +addResource(type: Resource, amount: int): boolean
+                +addResources(resource: Resource[]): boolean
+                +removeResource(type: Resource, amount: int): boolean
+                +removeResources(resource: Resource[]): boolean
+                +getResourceCount(): int
+                +getResourceCount(resource: Resource): int
+                +getResourceTypes(): Resource[]
+                +clearResources(): void
+
+                +addDevelopmentCard(card: DevCard): boolean
+                +removeDevelopmentCard(card: DevCard): boolean
+
+                +createMemento(): Memento
+            }
+
+            +class HandMemento {
+                -{final} hand: Map<Resource, Integer>
+                -{final} devCards: Map<DevCard, Integer>
+                -{final} devCardsBoughtThisTurn: Map<DevCard, Integer>
+
+                -HandMemento()
+                +HandMemento(folder: File)
+                +save(folder: File): void
+                +restore(): void
+            }
+
+            +enum BoostType {
+                ZERO
+                DOUBLE
+                NONE
+            }
+
+            Player +..right>"inner" PlayerMemento
+            Player --down>"1" Hand
+            Player --down>"1" HarvestBooster
+
+            HarvestBooster +..>"inner" HarvestBoosterMemento
+            HarvestBooster --down>"*" BoostType
+            HarvestBoosterMemento --down>"*" BoostType
+
+            Hand +..>"inner" HandMemento
+        }
+
+        package game {
+            +class Game {
+                -gameBoard: Gameboard
+                -gameBoardGraph: GameboardGraph
+                -deck: DevelopmentCardDeck
+                -bank: Bank
+                -setup: boolean
+
+                +Game(gb: GameBoard, vg: VertexGraph, rg: RoadGraph, devDeck: DevelopmentCardDeck, bank: Bank)
+
+                +placeSettlement(vertex: int, player: Player) throws InvalidPlacementException, NotEnoughResourcesException
+                +placeRoad(road: int, vertex: int, player: Player) throws InvalidPlacementException, NotEnoughResourcesException
+                +distributeResource(player: Player, condition: int): void
+                +upgradeSettlement(player: Player, vertexId: int): void, throws InvalidPlacementException, NotEnoughResourcesException
+                +buildDistrictOnVertex(player: Player, vertexId: int, type: DistrictType): void, throws NotEnoughResourcesException, InvalidPlacementException
+                +buyDevCard(Player: player): throws NotEnoughResourcesException, EmptyDevCardDeckException
+
+                +endSetup(): void
+
+                +dropCards(resources: Map<Player, Resource[]>): throws IllegalArgumentException
+                +moveRobber(tileId: int): throws InvalidPlacementException
+                +stealFromPlayer(robber: Player, robbed: Player): throws NotEnoughResourcesException
+
+                +playMonopoly(robber: Player, playersToRob Player[], resourceToRob: Resource): throws CardNotPlayableException
+                +playYearOfPlenty(player: Player, resource1: Resource, resource2: Resource): throws NotEnoughResourcesException, CardNotPlayableException
+
+                +createMemento(): Memento
+            }
+
+            +class GameMemento {
+                -{final} setup: boolean
+
+                -{final} gameBoardMemento: Memento
+                -{final} gameboardGraphMemento: Memento
+                -{final} deckMemento: Memento
+                -{final} bankMemento: Memento
+
+                -GameMemento()
+                +GameMemento(folder: File)
+                +save(folder: File): void
+                +restore(): void
+            }
+
+            +enum GameType {
+                BEGINNER
+                ADVANCED
+            }
+
+            +exception CardNotPlayableException {
+            }
+
+            +exception InvalidPlacementException {
+            }
+
+            +exception NotEnoughResourcesException {
+            }
+
+            Game ..up> GameType
+            Game ..up> CardNotPlayableException
+            Game ..up> InvalidPlacementException
+            Game ..up> NotEnoughResourcesException
+
+            Game +..>"inner" GameMemento
+        }
+    }
+
+    package level2 <<Layout>> {
+        package bank {
+            +class Bank {
+                -bank: Map<Resource, Integer>
+                +Bank()
+
+                +removeResource(type: Resource, amount: int): boolean
+                +addResource(type: Resource, amount: int): boolean
+                +getResourceAmount(type: Resource): int
+
+                +createMemento(): Memento
+            }
+
+            +class BankMemento {
+                -{final} bank: Map<Resource, Integer>
+                -BankMemento()
+                +BankMemento(folder: File)
+                +save(folder: File): void
+                +restore(): void
+            }
+
+            +enum Resource {
+                BRICK
+                LUMBER
+                ORE
+                GRAIN
+                WOOL
+                ANY
+            }
+
+            Bank ->"*" Resource
+            BankMemento ->"*" Resource
+
+            Bank +..>"inner" BankMemento
+        }
+
+        package devcarddeck {
+            +class DevelopmentCardDeck {
+                -{static} DEFAULT_DECK: DevCard[]
+                -deck: List<DevCard>
+                +DevelopmentCardDeck()
+
+                +draw(): DevCard, throws EmptyDevCardDeckException
+                +returnToDeck(card: DevCard): void
+
+                +createMemento(): Memento
+            }
+
+            +class DevCardDeckMemento {
+                -{final} deck: List<DevCard>
+                -DevCardDeckMemento()
+                +DevCardDeckMemento(folder: File)
+                +save(folder: File): void
+                +restore(): void
+            }
+
+            +enum DevCard {
+                KNIGHT
+                VICTORY
+                BUILD_ROAD
+                PLENTY
+                MONOPOLY
+            }
+
+            +exception EmptyDevCardDeckException {
+            }
+
+            DevelopmentCardDeck ..up> EmptyDevCardDeckException
+
+            DevelopmentCardDeck +..>"inner" DevCardDeckMemento
+
+            DevelopmentCardDeck ->"*" DevCard
+            DevCardDeckMemento ->"*" DevCard
+        }
+
+        package gameboard {
+            +class GameBoard {
+                -terrainOrder: Terrain[]
+                -dieOrder: Integer[]
+                -robberTile: Tile
+                -tiles: Tile[]
+
+                +GameBoard(type: GameType)
+
+                +getTileVertexIDs(tileNum: int): List<Integer>
+                +getTile(locationId: int): Tile
+                +getTiles(): Tile[]
+                +getRobberTile(): Tile
+                +setRobberTile(): Tile
+
+                +createMemento(): Memento
+            }
+
+            +class GameBoardMemento {
+                -{final} terrainOrder: Terrain[]
+                -{final} dieOrder: Integer[]
+                -{final} robberTileNum: int
+
+                -{final} tileMementos: Memento[]
+
+                -GameBoardMemento()
+                +GameBoardMemento(folder: File)
+                +save(folder: File): void
+                +restore(): void
+            }
+
+            +class Tile {
+                -terrainType: Terrain
+                -dieNumber: int
+                -tileNumber: int
+                -hasRobber: boolean
+                -vertexIDs: List<Integer>
+                -vertexIDsInitialized: boolean
+
+                +Tile(terrain: Terrain, dieNum: int, tileNum: int, robber: boolean)
+                +setAdjacentVertexes(vertexIds: List<Integer>): void
+
+                +getVertexIDs(): List<Integer>
+                +getTerrain(): Terrain
+                +getResource(): Resource
+                +getDieNumber(): int
+                +getTileNumber(): int
+                +getHasRobber(): boolean
+                +setRobber(has: boolean): void
+
+                +createMemento(): Memento
+            }
+
+            +class TileMemento {
+                -{final} terrainType: Terrain
+                -{final} dieNumber: int
+                -{final} hasRobber: boolean
+
+                -TileMemento()
+                +TileMemento(folder: File)
+                +save(folder: File): void
+                +restore(): void
+            }
+
+            +enum Terrain {
+                HILLS
+                FORREST
+                MOUNTAINS
+                FIELDS
+                PASTURE
+                DESERT
+            }
+
+            GameBoard --down>"*" Tile
+
+            GameBoard +..>"inner" GameBoardMemento
+            Tile +..>"inner" TileMemento
+
+            GameBoard ->"*" Terrain
+            GameBoardMemento ->"*" Terrain
+            Tile ->"1" Terrain
+            TileMemento ->"1" Terrain
+        }
+
+        package graphs {
+            +class GameboardGraph {
+                -portResources: Resource[]
+                -vertexes: Vertex[]
+                -ports: Port[]
+                -roads: Road[]
+
+                +GameboardGraph(gameType: GameType)
+
+                +getVertex(locationId: int): Vertex
+                +getPort(locationId: int): Port
+                +getRoad(locationId: int): Road
+
+                +giveLongestRoadCard(): void
+            }
+
+            +class GameboardGraphMemento {
+                -{final} portResources: Resource[]
+
+                -{final} vertexMementos: Memento[]
+                -{final} portMementos: Memento[]
+                -{final} roadMementos: Memento[]
+
+                -GameboardGraphMemento()
+                +GameboardGraphMemento(folder: File)
+                +save(folder: File): void
+                +restore(): void
+            }
+
+            +class Port {
+                -locationId: int
+                -resource: Resource
+
+                +Port(id: int, resourceType: Resource)
+
+                +getLocationId(): int
+                +getResource(): Resource
+
+                +createMemento(): Memento
+            }
+
+            +class PortMemento {
+                -{final} resource: Resource
+                -PortMemento()
+                +PortMemento(folder: File)
+                +save(folder: File): void
+                +restore(): void
+            }
+
+            +class Road {
+                -locationId: int
+                -adjacentRoads: List<Road>
+                -adjacentVertexes: List<Vertex>
+                -owner: Player
+
+                -adjacentRoadsInitialized: boolean
+                -adjacentVertexesInitialized: boolean
+
+                +Road(id: int)
+                +setAdjacentRoads(roads: List<Road>): void
+                +setAdjacentVertexes(vertexes: List<Vertex>): void
+
+                +getLocationId(): int
+                +getAdjacentRoads(): List<Road>
+                +getAdjacentVertexes(): List<Vertex>
+
+                +setOwner(player: Player): void
+                +setOwner(player: Player): void
+                +isOccupied(): boolean
+                +isBuildable(): boolean
+                +isAdjacentTo(vertex: Vertex): boolean
+                +isBuildableBy(player: Player): boolean
+                +getTail(origin: Vertex): Vertex
+
+                +createMemento(): Memento
+            }
+
+            +class RoadMemento {
+                -{final} owner: Player
+
+                -RoadMemento()
+                +RoadMemento(folder: File)
+                +save(folder: File): void
+                +restore(): void
+            }
+
+            +class Vertex {
+                -locationId: int
+                -adjacentRoads: List<Road>
+                -adjacentVertexes: List<Vertex>
+                -adjacentPort: Port
+                -owner: Player
+                -building: Building
+
+                -adjacentRoadsInitialized: boolean
+                -adjacentVertexesInitialized: boolean
+                -portInitialized: boolean
+
+                +Vertex(id: int)
+                +setAdjacentPort(port: Port): void
+                +setAdjacentRoads(roads: List<Road>): void
+                +setAdjacentVertexes(vertexes: List<Vertex>): void
+
+                +getLocationId(): int
+                +getAdjacentRoads(): List<Road>
+                +getAdjacentVertexes(): List<Vertex>
+                +hasPort(): boolean
+                +getAdjacentPort(): Port
+
+                +isBuildable(): boolean
+                +isAdjacentToSettlement(): boolean
+                +isOccupied(): boolean
+                +build(player: Player): void
+                +getYield(resource: Resource): int
+                +setOwner(player: Player): void
+                +setOwner(player: Player): void
+                +isBuildableBy(player: Player): boolean
+                +isAdjacentToFriendlyRoad(player: Player): boolean
+                +isCity(): boolean
+                +isUpgradableBy(player: Player): boolean
+                +upgradeToCity(player: Player): void
+                +buildDistrict(player: Player, type: DistrictType): void, throws InvalidPlacementException
+                +getBuilding(): Building
+                +ownedByEnemyOf(player: Player): boolean
+
+                +createMemento(): Memento
+            }
+
+            +class VertexMemento {
+                -{final} owner: Player
+
+                -{final} buildingMemento: Memento
+
+                -VertexMemento()
+                +VertexMemento(folder: File)
+                +save(folder: File): void
+                +restore(): void
+            }
+
+            GameboardGraph --down>"*" Vertex
+            GameboardGraph --down>"*" Port
+            GameboardGraph --down>"*" Road
+
+            GameboardGraph +..right>"inner" GameboardGraphMemento
+            Vertex +..down>"inner" VertexMemento
+            Port +..down>"inner" PortMemento
+            Road +..down>"inner" RoadMemento
+
+            Road -->"*" Road
+            Road -->"*" Vertex
+
+            Vertex -->"*" Vertex
+            Vertex --left>"*" Road
+            Vertex --right>"1" Port
+        }
+    }
+
+    package building {
+        +class Building {
+            -isCity: boolean
+            ~district: DistrictType
+            +Building()
+
+            +getYield(resource: Resource): int
+            +upgradeToCity(): void
+            +buildDistrict(type: DistrictType): void
+            +getDistrict(): DistrictType
+            +isCity(): boolean
+
+            +createMemento(): Memento
+        }
+
+        +class BuildingMemento {
+            -{final} isCity: boolean
+            -{final} district: DistrictType
+
+            -BuildingMemento()
+            +BuildingMemento(folder: File)
+            +save(folder: File): void
+            +restore(): void
+        }
+
+        +enum DistrictType {
+            EMPTY
+            MINE
+            KILN
+            SAWMILL
+            GARDEN
+            BARN
+            ~districtCost: Resource[]
+            ~type: Resource
+
+            ~DistrictType(cost: Resource[], bonusType: Resource)
+            +getYield(resource: Resource): int
+        }
+
+        Building ->"1" DistrictType
+        BuildingMemento ->"1" DistrictType
+
+        Building +..>"inner" BuildingMemento
+    }
+
+    Controller --down->"*" Player
+    Controller --down->"1" Game
+
+
+    Game --down-->"1" GameBoard
+    Game --down-->"1" GameboardGraph
+    Game --down-->"1" DevelopmentCardDeck
+    Game --down-->"1" Bank
+
+    Vertex --down>"1" Building
+}
+
+package data {
+    +class GameLoader << (S,#FF7700) Singleton >> {
+        -{static} uniqueInstance: GameLoader
+        -slotNumber: int
+        -undoStack: Stack<Memento>
+        -redoStack: Stack<Memento>
+        -root: Controller
+
+        +getInstance(): GameLoader
+
+        +setLanguage(language: String): ResourceBundle
+
+        +setSlot(slot: int): void
+        +isSlotEmpty(slot: int): boolean
+        +hasSavedSlot(): boolean
+
+        +deleteGame(): boolean
+        +saveGame(): boolean
+        +loadGame(): Controller
+        +createNewGame(): Controller
+
+        +notifyOfTurnStart(): void
+        +undo(): boolean
+        +redo(): boolean
+    }
+
+    +interface Memento {
+        +save(folder: File): void
+        +restore(): void
+    }
+
+    +interface Restorable {
+        +createMemento(): Memento
+    }
+
+    +class MementoReader {
+        -sourceFile: File
+        +MementoReader(folder: File, fileName: String)
+        +readField(fieldName: String): String
+        +readAllFields(): Map<String, String>
+        +getSubFolder(subFolderName: String) : File
+    }
+
+    +class MementoWriter {
+        -targetFile: File
+        +MementoWriter(folder: File, fileName: String)
+        +writeField(fieldName: String, contents: String): void
+        +getSubFolder(subFolderName: String) : File
+    }
+
+    GameLoader --down>"*" Memento
+    GameLoader ..down> MementoReader
+    GameLoader ..down> MementoWriter
+
+    Memento ..up> MementoReader
+    Memento ..up> MementoWriter
+
+    Restorable ..right> Memento
+}
+
+Bank ..up|> Restorable
+BankMemento ..up|> Memento
+
+Controller ..up|> Restorable
+ControllerMemento ..up|> Memento
+ControllerMemento --up>"*" Memento
+
+DevelopmentCardDeck ..up|> Restorable
+DevCardDeckMemento ..up|> Memento
+
+Game ..up|> Restorable
+GameMemento ..up|> Memento
+GameMemento --up>"*" Memento
+
+Building ..up|> Restorable
+BuildingMemento ..up|> Memento
+
+GameBoard ..up|> Restorable
+GameBoardMemento ..up|> Memento
+GameBoardMemento --up>"*" Memento
+
+Tile ..up|> Restorable
+TileMemento ..up|> Memento
+
+GameboardGraph ..up|> Restorable
+GameboardGraphMemento ..up|> Memento
+GameboardGraphMemento --up>"*" Memento
+
+Vertex ..up|> Restorable
+VertexMemento ..up|> Memento
+VertexMemento --up>"1" Memento
+
+Port ..up|> Restorable
+PortMemento ..up|> Memento
+
+Road ..up|> Restorable
+RoadMemento ..up|> Memento
+
+Player ..up|> Restorable
+HarvestBooster ..up|> Restorable
+Hand ..up|> Restorable
+PlayerMemento ..up|> Memento
+HarvestBoosterMemento ..up|> Memento
+HandMemento ..up|> Memento
+
+GameLoader --down>"1" Controller
+
+
+
+Catan ..down....> GameLoader
+StartScreenController ..down..> GameLoader
+NewGameController ..down..> GameLoader
+CatanGuiController ..down..> GameLoader
+PauseMenuController  ..down..> GameLoader
+ChangeGameImagesController ..down..> GameLoader
+
+
+StartScreenController ..down...> Controller
+NewGameController ..down...> Controller
+
+BankTradeWindowController ..down> Controller
+BuildDistrictController ..down> Controller
+DropCardsController ..down> Controller
+MonopolyController ..down> Controller
+PlayerTradeWindowController ..down> Controller
+RobPlayerController ..down> Controller
+YearOfPlentyController ..down> Controller
+
+
+CatanGuiController --down--> Controller
+
+
+@enduml
