@@ -1,4 +1,4 @@
-package presentation;
+package presentation.popups;
 
 import data.GameLoader;
 import javafx.collections.FXCollections;
@@ -7,39 +7,26 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import presentation.popups.Popup;
+import presentation.Catan;
 
 import java.io.IOException;
-import java.util.ResourceBundle;
 
-public class PauseMenuController implements Popup {
+public class PauseMenuController extends Popup {
 
     public Text title, selectorHeader;
     @FXML
     private Button saveButton, closeButton, changeGameImagesButton;
     @FXML
     public ChoiceBox<String> languageSelector;
-    private CatanGUIController guiController;
-    private ResourceBundle messages;
-    private Pane gameBoard;
-
 
     @FXML
     private void initialize() {
         languageSelector.setItems(FXCollections.observableArrayList("English", "Espanol"));
     }
 
-    public void setControllers(CatanGUIController guiController, Pane gameBoard) {
-        this.guiController = guiController;
-        this.gameBoard = gameBoard;
-    }
-
-    public void setMessages(ResourceBundle messages) {
-        this.messages = messages;
-
+    protected void internationalize() {
         saveButton.setText(messages.getString("saveGameButton"));
         closeButton.setText(messages.getString("closeButton"));
         title.setText(messages.getString("pauseMenuTitle"));
@@ -51,7 +38,7 @@ public class PauseMenuController implements Popup {
             guiController.tooltipText.setText(messages.getString("saveFail"));
         } else {
             // switch back to the main screen
-            Stage stage = (Stage) gameBoard.getScene().getWindow();
+            Stage stage = (Stage) saveButton.getScene().getWindow();
             stage.close();
             stage = (Stage) saveButton.getScene().getWindow();
             stage.close();
@@ -67,12 +54,11 @@ public class PauseMenuController implements Popup {
     public void changeLanguage() throws IOException {
         String language = this.languageSelector.getValue();
 
-        this.setMessages(GameLoader.getInstance().setLanguage(language));
+        setMessages(GameLoader.getInstance().setLanguage(language));
         guiController.internationalize(this.messages);
         guiController.tooltipText.setText(messages.getString("paused"));
     }
 
-    @FXML
     public void changeGameImages() throws IOException {
         // Open up game board window
         Stage stage = new Stage();
@@ -82,10 +68,9 @@ public class PauseMenuController implements Popup {
         stage.show();
     }
 
-    public void close() {
-        this.guiController.notifyOfPopupClose(this);
+    protected void closeStage() {
         Stage stage = (Stage) saveButton.getScene().getWindow();
         stage.close();
-        this.guiController.changeIconSet(GameLoader.getInstance().getIconFolderPath());
+        guiController.changeIconSet(GameLoader.getInstance().getIconFolderPath());
     }
 }

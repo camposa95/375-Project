@@ -40,6 +40,6 @@
         <Class name="presentation.StartScreenController"/>
     </Match>
     <Match>
-        <Class name="presentation.PauseMenuController"/>
+        <Class name="presentation.popups.PauseMenuController"/>
     </Match>
 </FindBugsFilter>

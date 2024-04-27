@@ -1,9 +1,7 @@
 package presentation.popups;
 
-import domain.controller.Controller;
 import domain.controller.SuccessCode;
 import domain.bank.Resource;
-import presentation.CatanGUIController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
@@ -11,17 +9,11 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.util.ResourceBundle;
-
-public class YearOfPlentyController implements Popup {
-    private CatanGUIController guiController;
-    private Controller domainController;
-
+public class YearOfPlentyController extends Popup {
     @FXML
     private RadioButton lumber1, brick1, wool1, grain1, ore1, lumber2, brick2, wool2, grain2, ore2;
     @FXML
     private ToggleGroup resource1, resource2;
-    ResourceBundle messages;
     @FXML
     private Button selectButton;
     @FXML
@@ -44,18 +36,7 @@ public class YearOfPlentyController implements Popup {
         ore2.setToggleGroup(resource2);
     }
 
-    public void setControllers(CatanGUIController guiController, Controller domainController) {
-        this.guiController = guiController;
-        this.domainController = domainController;
-    }
-
-    public void setMessages(ResourceBundle messages) {
-        this.messages=messages;
-        internationalize();
-    }
-
-
-    private void internationalize() {
+    protected void internationalize() {
         yearOfPlentyTitleText.setText(messages.getString("yearOfPlentyTitleText"));
         firstResourceText.setText(messages.getString("yearOfPlentyFirstResourceText"));
         secondResourceText.setText(messages.getString("yearOfPlentySecondResourceText"));
@@ -111,8 +92,7 @@ public class YearOfPlentyController implements Popup {
         }
     }
 
-    public void close() {
-        this.guiController.notifyOfPopupClose(this);
+    protected void closeStage() {
         Stage stage = (Stage) lumber1.getScene().getWindow();
         stage.close();
     }

@@ -1,29 +1,18 @@
-package presentation;
+package presentation.popups;
 
 import data.GameLoader;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.io.FileUtils;
-import presentation.popups.Popup;
-
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.CopyOption;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ResourceBundle;
 
-public class ChangeGameImagesController implements Popup {
+public class ChangeGameImagesController extends Popup {
     private static final String IMAGE_ROOT_FOLDER = "images";
     @FXML
     ComboBox existingResourcesComboBox;
@@ -33,6 +22,11 @@ public class ChangeGameImagesController implements Popup {
     @FXML
     public void initialize() {
         initComboBox();
+    }
+
+    @Override
+    protected void internationalize() {
+        // TODO: should do some internationalization here
     }
 
     @FXML
@@ -66,8 +60,7 @@ public class ChangeGameImagesController implements Popup {
         }
     }
 
-    @Override
-    public void close() {
+    protected void closeStage() {
         Stage stage = (Stage) existingResourcesComboBox.getScene().getWindow();
         stage.close();
     }
