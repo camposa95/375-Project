@@ -66,6 +66,7 @@ public class CatanGUIController {
     @FXML
     private Text playerTurnText, numVictoryPointsText;
     @FXML
+    public
     Text tooltipText;
     @FXML
     private Text turnTitle1, turnTitle2, devCardsTitle, victoryPointsTitle;
@@ -86,6 +87,7 @@ public class CatanGUIController {
     HashMap<Polygon, Integer> settlementToVertexMap = new HashMap<>();
     ResourceBundle messages;
     private String iconFolderPath = DEFAULT_ICON_FOLDER_PATH;
+    public int robberId;
 
     public enum GUIState {
         BUSY, IDLE, GAME_WON
@@ -94,7 +96,7 @@ public class CatanGUIController {
 
     private Controller controller; // facade to main game stuff
 
-    private List<Popup> popupsOpen = new ArrayList<>();
+    private final List<Popup> popupsOpen = new ArrayList<>();
 
     public void notifyOfPopupClose(Popup popup) {
         this.popupsOpen.remove(popup);
@@ -360,7 +362,7 @@ public class CatanGUIController {
 
 
             PauseMenuController pauseMenuController = fxmlLoader.getController();
-            pauseMenuController.setControllers(this, this.gameboard);
+            pauseMenuController.setControllers(this, this.controller);
             pauseMenuController.setMessages(this.messages);
             this.popupsOpen.add(pauseMenuController);
 
@@ -447,6 +449,7 @@ public class CatanGUIController {
         this.tooltipText.setText(messages.getString("gameOver"));
         //update pane so accurate victory points are shown on the left
         this.updateInfoPane();
+
         //show a simple game won pane
         FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("game_won.fxml"));
         Stage stage = new Stage();
@@ -454,8 +457,10 @@ public class CatanGUIController {
         stage.setTitle(messages.getString("gameOverTitle"));
         stage.setScene(scene);
         stage.show();
+
         GameWonController gwc = fxmlLoader.getController();
-        gwc.setPlayerWon(this.controller.getCurrentPlayer().playerNum, this.messages);
+        gwc.setControllers(this, this.controller);
+        gwc.setMessages(this.messages);
 
         // disable buttons to end game
         disableActions();
@@ -511,9 +516,9 @@ public class CatanGUIController {
         }
     }
 
-    //ROBBER METHODS
+    // ROBBER METHODS
     public void handleRobberClick(MouseEvent event) throws IOException {
-        int robberId = Integer.parseInt(((Circle) event.getSource()).getId().substring("robber".length()));
+        this.robberId = Integer.parseInt(((Circle) event.getSource()).getId().substring("robber".length()));
         SuccessCode success = this.controller.moveRobber(robberId);
         if(success == SuccessCode.SUCCESS){
             renderRobberOnHex(((Circle) event.getSource()).getLayoutX(), ((Circle) event.getSource()).getLayoutY());
@@ -527,11 +532,12 @@ public class CatanGUIController {
             stage.show();
 
             RobPlayerController robPlayerController = fxmlLoader.getController();
-            robPlayerController.setPlayerData(this.controller.getCurrentPlayer(), this.controller.getPlayersOnTile(robberId), this, this.messages, this.controller);
+            robPlayerController.setControllers(this, this.controller);
+            robPlayerController.setMessages(this.messages);
             this.popupsOpen.add(robPlayerController);
 
             this.guiState = GUIState.IDLE;
-        }else{
+        } else {
             this.tooltipText.setText(messages.getString("cannotMoveRobberHere"));
         }
     }
@@ -674,7 +680,8 @@ public class CatanGUIController {
         stage.show();
 
         DropCardsController dropCardsController = fxmlLoader.getController();
-        dropCardsController.setPlayerData(this.controller.getPlayerArr(), this, this.messages, this.controller);
+        dropCardsController.setControllers(this, this.controller);
+        dropCardsController.setMessages(this.messages);
         this.popupsOpen.add(dropCardsController);
 
         this.tooltipText.setText(messages.getString("sevenRolled"));
@@ -769,7 +776,7 @@ public class CatanGUIController {
 
     public void playerTradeButtonPressed() throws IOException {
         //Triggered by Player Trade button pressed
-        if(this.controller.getState() == GameState.DEFAULT && this.guiState == GUIState.IDLE){
+        if (this.controller.getState() == GameState.DEFAULT && this.guiState == GUIState.IDLE) {
             FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("PlayerTradeWindow.fxml"));
             Stage stage = new Stage();
             Scene scene = new Scene(fxmlLoader.load());
@@ -778,8 +785,8 @@ public class CatanGUIController {
             stage.show();
 
             PlayerTradeWindowController playerTradeController = fxmlLoader.getController();
-            playerTradeController.setPlayersData(this.controller.getCurrentPlayer(), this.controller.getPlayerArr(), this.messages);
             playerTradeController.setControllers(this, this.controller);
+            playerTradeController.setMessages(this.messages);
             this.popupsOpen.add(playerTradeController);
 
             this.tooltipText.setText(messages.getString("playerTrade"));
