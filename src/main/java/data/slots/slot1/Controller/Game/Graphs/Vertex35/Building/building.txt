@@ -1,2 +1,2 @@
-District: EMPTY
+District: MINE
 IsCity: false

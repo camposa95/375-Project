@@ -286,7 +286,7 @@ public class Controller implements Restorable {
         try {
             // here we add resources to the player to give the appearance of free road building
             // note these are not coming from the bank
-            player.hand.addResources(resourcesForRoad);
+            player.addResources(resourcesForRoad);
 
 
             game.placeRoad(roadId, this.lastPlacedVertex, player);
@@ -309,7 +309,7 @@ public class Controller implements Restorable {
         try {
             // here we add resources to the player to give the appearance of free road building
             // note these are not coming from the bank
-            player.hand.addResources(resourcesForRoad);
+            player.addResources(resourcesForRoad);
 
 
             game.placeRoad(roadId, this.lastPlacedVertex, player);
@@ -510,6 +510,7 @@ public class Controller implements Restorable {
     public SuccessCode endTurn() {
         if (this.gameState == GameState.DEFAULT) {
             this.currentPlayer.addBoughtCardsToHand();
+            this.game.updateLoanDueTimes(this.currentPlayer);
             this.incrementPlayer();
             this.setState(GameState.TURN_START);
             this.setDevCardsEnabled(true);
@@ -674,6 +675,10 @@ public class Controller implements Restorable {
             return SuccessCode.SUCCESS;
         }
         return SuccessCode.INSUFFICIENT_RESOURCES;
+    }
+
+    public void takeOutLoan(final Resource[] resources) throws NotEnoughResourcesException {
+        this.game.takeOutLoan(this.currentPlayer, resources);
     }
 
     // -------------------------------------------------------------------------------

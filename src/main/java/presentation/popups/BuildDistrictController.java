@@ -28,9 +28,9 @@ public class BuildDistrictController implements Popup {
     private ToggleGroup types;
     ResourceBundle messages;
     @FXML
-    private Button selectButton;
+    private Button selectButton, cancelButton;
     @FXML
-    private Text buildDistrictText;
+    private Text buildDistrictText, tooltip;
     @FXML
     public void initialize() {
         types = new ToggleGroup();
@@ -65,6 +65,7 @@ public class BuildDistrictController implements Popup {
 
     private void internationalize() {
         buildDistrictText.setText(messages.getString("buildDistrictPopupText"));
+        tooltip.setText(messages.getString("buildDistrictDefaultTooltip"));
 
         sawmill.setText(messages.getString("buildDistrictSawmill"));
         kiln.setText(messages.getString("buildDistrictKiln"));
@@ -73,6 +74,7 @@ public class BuildDistrictController implements Popup {
         mine.setText(messages.getString("buildDistrictMine"));
 
         selectButton.setText(messages.getString("buildDistrictSelectButton"));
+        cancelButton.setText(messages.getString("cancelText"));
     }
 
     public void submitBD() {
@@ -80,14 +82,12 @@ public class BuildDistrictController implements Popup {
 
         SuccessCode code = this.submitBuildDistrict(this.selectedVertex, type);
         if(code == SuccessCode.INSUFFICIENT_RESOURCES){
-            guiController.setTooltipText(messages.getString("buildDistrictInsufficientResources"));
+            tooltip.setText(messages.getString("buildDistrictInsufficientResources"));
         } else if (code == SuccessCode.INVALID_PLACEMENT){
-            guiController.setTooltipText(messages.getString("buildDistrictInnvalidPlacement"));
+            tooltip.setText(messages.getString("buildDistrictInnvalidPlacement"));
+        } else {
+            close();
         }
-
-        domainController.setState(GameState.DEFAULT);
-        guiController.guiState = CatanGUIController.GUIState.IDLE;
-        this.close();
     }
 
     private SuccessCode submitBuildDistrict(int vertexId, DistrictType type) {
@@ -116,7 +116,10 @@ public class BuildDistrictController implements Popup {
         }
     }
 
+    @FXML
     public void close() {
+        domainController.setState(GameState.DEFAULT);
+        guiController.guiState = CatanGUIController.GUIState.IDLE;
         this.guiController.notifyOfPopupClose(this);
         Stage stage = (Stage) sawmill.getScene().getWindow();
         stage.close();

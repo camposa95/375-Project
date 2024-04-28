@@ -368,7 +368,7 @@ public class BankTest {
 
         bank.takeOutLoan(player, borrow);
 
-        Assert.assertEquals(1, bank.getLoans().size());
+        Assert.assertEquals(1, bank.getLoans().length);
     }
 
     @Test
@@ -379,7 +379,7 @@ public class BankTest {
 
         Assert.assertThrows(IllegalArgumentException.class, () -> bank.takeOutLoan(player, borrow));
 
-        Assert.assertEquals(0, bank.getLoans().size());
+        Assert.assertEquals(0, bank.getLoans().length);
     }
 
     @Test
@@ -391,7 +391,7 @@ public class BankTest {
 
         Assert.assertThrows(NotEnoughResourcesException.class, () -> bank.takeOutLoan(player, borrow));
 
-        Assert.assertEquals(0, bank.getLoans().size());
+        Assert.assertEquals(0, bank.getLoans().length);
     }
 
     @Test
@@ -401,7 +401,7 @@ public class BankTest {
         Bank bank = new Bank();
 
         bank.takeOutLoan(player, borrow);
-        Assert.assertEquals(1, bank.getLoans().size());
+        Assert.assertEquals(1, bank.getLoans().length);
 
         Assert.assertThrows(IllegalStateException.class, () -> bank.takeOutLoan(player, borrow));
     }

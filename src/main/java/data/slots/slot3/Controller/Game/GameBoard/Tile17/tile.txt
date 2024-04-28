@@ -1,3 +1,0 @@
-TerrainType: FIELDS
-DieNumber: 6
-HasRobber: false

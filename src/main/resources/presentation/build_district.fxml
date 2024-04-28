@@ -7,16 +7,18 @@
 
 <AnchorPane prefHeight="331.0" prefWidth="489.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="presentation.popups.BuildDistrictController">
    <children>
-      <Group layoutX="178.0" layoutY="108.0">
+      <Group layoutX="119.0" layoutY="108.0">
          <children>
-            <RadioButton fx:id="sawmill" mnemonicParsing="false" text="Sawmill (+3 Lumber)" />
-            <RadioButton fx:id="kiln" layoutY="20.0" mnemonicParsing="false" text="Kiln (+3 Brick)" />
-            <RadioButton fx:id="barn" layoutY="40.0" mnemonicParsing="false" text="Barn (+3 Wool)" />
-            <RadioButton fx:id="garden" layoutY="60.0" mnemonicParsing="false" text="Garden (+3 Grain)" />
-            <RadioButton fx:id="mine" layoutY="80.0" mnemonicParsing="false" text="Mine (+3 Ore)" />
+            <RadioButton fx:id="sawmill" mnemonicParsing="false" text="Sawmill (+3 Lumber, costs 2 Lumber, 1 Ore)" />
+            <RadioButton fx:id="kiln" layoutY="20.0" mnemonicParsing="false" text="Kiln (+3 Brick, costs 2 Brick, 1 Ore)" />
+            <RadioButton fx:id="barn" layoutY="40.0" mnemonicParsing="false" text="Barn (+3 Wool, costs 2 Wool, 1 Lumber)" />
+            <RadioButton fx:id="garden" layoutY="60.0" mnemonicParsing="false" text="Garden (+3 Grain, costs 2 Grain, 1 Ore)" />
+            <RadioButton fx:id="mine" layoutY="80.0" mnemonicParsing="false" text="Mine (+3 Ore, costs 2 Ore, 1 Lumber)" />
          </children>
       </Group>
       <Text fx:id="buildDistrictText" layoutX="191.0" layoutY="80.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select District Type:" />
-      <Button fx:id="selectButton" layoutX="220.0" layoutY="260.0" mnemonicParsing="false" onMouseClicked="#submitBD" text="Select" />
+      <Button fx:id="selectButton" layoutX="164.0" layoutY="269.0" mnemonicParsing="false" onMouseClicked="#submitBD" text="Submit" />
+      <Button fx:id="cancelButton" layoutX="268.0" layoutY="269.0" mnemonicParsing="false" onMouseClicked="#close" text="Cancel" />
+      <Text fx:id="tooltip" layoutX="7.0" layoutY="243.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Click Submit to build district" textAlignment="CENTER" wrappingWidth="474.068359375" />
    </children>
 </AnchorPane>

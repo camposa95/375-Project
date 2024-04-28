@@ -114,6 +114,12 @@ public class Player implements Restorable {
         return true;
     }
 
+    public boolean addResources(Resource[] resourcesToAdd) {
+        boolean ret = this.hand.addResources(resourcesToAdd);
+        this.bank.payLoanIfDue(this);
+        return ret;
+    }
+
     /**
      * Gets the array of trade boosts this player has
      * Note: ANY type means that is 3:1 for any resource type.
@@ -151,12 +157,12 @@ public class Player implements Restorable {
         }
         boolean p2CanTrade = otherPlayer.hand.removeResources(resourcesReceived);
         if (!p2CanTrade) {
-            this.hand.addResources(resourcesGiven);
+            this.addResources(resourcesGiven);
             return false;
         }
 
-        otherPlayer.hand.addResources(resourcesGiven);
-        this.hand.addResources(resourcesReceived);
+        otherPlayer.addResources(resourcesGiven);
+        this.addResources(resourcesReceived);
 
         return true;
     }
@@ -234,7 +240,7 @@ public class Player implements Restorable {
         });
         boolean purchasedDevelopmentCard = this.hand.addDevelopmentCard(card);
         if (!purchasedDevelopmentCard) {
-            this.hand.addResources(new Resource[]{
+            this.addResources(new Resource[]{
                     Resource.WOOL, Resource.GRAIN, Resource.ORE
             });
             bank.removeResources(new Resource[]{

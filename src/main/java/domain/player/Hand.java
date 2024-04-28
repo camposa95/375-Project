@@ -131,7 +131,7 @@ public class Hand implements Restorable {
             }
         }
 
-        return (Resource[]) removedResources.toArray();
+        return removedResources.toArray(new Resource[removedResources.size()]);
     }
 
     public void clearResources() {

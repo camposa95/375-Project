@@ -1,12 +1,16 @@
 package domain.bank;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import data.*;
 import domain.game.NotEnoughResourcesException;
+import domain.graphs.Vertex;
 import domain.player.Player;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -14,7 +18,8 @@ public class Bank implements Restorable {
 
     private static final int MAX_RESOURCES = 19;
     private final HashMap<Resource, Integer> bank = new HashMap<>();
-    private final HashMap<Player, Loan> loans = new HashMap<>();
+    private static final int MAX_NUM_LOANS = 4;
+    private final Loan[] loans = new Loan[MAX_NUM_LOANS];
 
     public Bank() {
         bank.put(Resource.LUMBER, MAX_RESOURCES);
@@ -85,7 +90,8 @@ public class Bank implements Restorable {
     }
 
     public void takeOutLoan(final Player player, final Resource[] resources) throws NotEnoughResourcesException {
-        if (this.loans.containsKey(player)) {
+        Loan l = this.loans[getLoanIdxForPlayer(player)];
+        if (!l.isEmptyLoan()) {
             throw new IllegalStateException("Cannot take out a new loan when one already exists for this player");
         }
 
@@ -93,32 +99,37 @@ public class Bank implements Restorable {
             throw new IllegalArgumentException("Loan resources are invalid");
         }
 
-        Loan l = new Loan(resources);
+        l = new Loan(player, resources);
         l.giveLoan(this, player);
-        this.loans.put(player, l);
+        this.loans[getLoanIdxForPlayer(player)] = l;
     }
 
-    protected Map<Player, Loan> getLoans() {
+    protected Loan[] getLoans() {
         return this.loans;
     }
 
     public void updateLoanDueTimes(final Player currentPlayer) {
-        Loan l = this.loans.get(currentPlayer);
-        if (l != null) {
+        Loan l = this.loans[getLoanIdxForPlayer(currentPlayer)];
+        if (!l.isEmptyLoan()) {
             l.decrementLoanTime();
         }
     }
 
     public void payLoanIfDue(final Player currentPlayer) {
-        Loan l = this.loans.get(currentPlayer);
-        if (l != null) {
+        Loan l = this.loans[getLoanIdxForPlayer(currentPlayer)];
+        if (l != null && !l.isEmptyLoan()) {
             if (!l.loanIsPaid()) {
                 l.payLoan(this, currentPlayer);
             } else {
-                this.loans.remove(currentPlayer);
+                this.loans[currentPlayer.playerNum - 1] = null;
             }
         }
     }
+
+    private int getLoanIdxForPlayer(final Player player) {
+        return player.playerNum - 1;
+    }
+
 
     // -----------------------------------
     //
@@ -129,13 +140,26 @@ public class Bank implements Restorable {
     public class BankMemento implements Memento {
 
         private final HashMap<Resource, Integer> bank;
+        private Loan[] loans = new Loan[MAX_NUM_LOANS];
 
         // Storage Constants
         private static final String TARGET_FILE_NAME = "bank.txt";
+        private static final String LOAN_SUBFOLDER_PREFIX = "Loan";
+        private Memento[] loanMementos = new Memento[MAX_NUM_LOANS];
 
         private BankMemento() {
             this.bank = new HashMap<>();
             this.bank.putAll(Bank.this.bank);
+
+            this.loanMementos = new Memento[MAX_NUM_LOANS];
+            for (int i = 0; i < MAX_NUM_LOANS; i++) {
+                Loan l = Bank.this.loans[i];
+                if (l != null) {
+                    this.loanMementos[i] = l.createMemento();
+                } else {
+                    Bank.this.loans[i] = new Loan();
+                }
+            }
         }
 
         @SuppressFBWarnings("EI_EXPOSE_REP2")
@@ -147,6 +171,17 @@ public class Bank implements Restorable {
                 this.bank.put(Resource.valueOf(entry.getKey()),
                         Integer.parseInt(entry.getValue()));
             }
+
+            for (int i = 0; i < MAX_NUM_LOANS; i++) {
+                try {
+                    File loanSubFolder = reader.getSubFolder(LOAN_SUBFOLDER_PREFIX + i);
+                    Bank.this.loans[i] = new Loan();
+                    this.loanMementos[i] = Bank.this.loans[i].new LoanMemento(loanSubFolder);
+                } catch (IllegalArgumentException e) {
+                    // The loan is empty so just go to the next one
+                }
+
+            }
         }
 
         public void save(final File folder) throws IOException {
@@ -157,12 +192,26 @@ public class Bank implements Restorable {
             for (Map.Entry<Resource, Integer> entry : bank.entrySet()) {
                 writer.writeField(entry.getKey().toString(), entry.getValue().toString());
             }
+
+            for (int i = 0; i < MAX_NUM_LOANS; i++) {
+                File loanSubFolder = writer.getSubFolder(LOAN_SUBFOLDER_PREFIX + i);
+                Memento m = this.loanMementos[i];
+                if (m != null) {
+                    m.save(loanSubFolder);
+                }
+            }
         }
 
         public void restore() {
             // Restore the bank state from the memento
             Bank.this.bank.clear();
             Bank.this.bank.putAll(this.bank);
+
+            for (Memento m : this.loanMementos) {
+                if (m != null) {
+                    m.restore();
+                }
+            }
         }
     }
 

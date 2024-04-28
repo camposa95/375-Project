@@ -119,7 +119,7 @@ public class Game implements Restorable {
        Resource[] unadjustedHarvest = (setup) ? resourcesFromVertex(player, condition) : resourcesFromDie(player, condition);
        Resource[] adjustedHarvest = player.harvestBooster.getAdjustedHarvest(unadjustedHarvest);
 
-       if (player.hand.addResources(adjustedHarvest)) {
+       if (player.addResources(adjustedHarvest)) {
            bank.removeResources(adjustedHarvest);
        }
     }
@@ -174,6 +174,14 @@ public class Game implements Restorable {
         return resources.toArray(new Resource[0]);
     }
 
+    public void updateLoanDueTimes(final Player currentPlayer) {
+        this.bank.updateLoanDueTimes(currentPlayer);
+    }
+
+    public void takeOutLoan(final Player currentPlayer, final Resource[] resources) throws NotEnoughResourcesException {
+        this.bank.takeOutLoan(currentPlayer, resources);
+    }
+
     /**
      * Tries to Upgrade a settlement from a player and a vertexID
      */
@@ -204,7 +212,7 @@ public class Game implements Restorable {
         try {
             vertex.buildDistrict(player, type);
         } catch (InvalidPlacementException e) {
-            player.hand.addResources(type.districtCost);
+            player.addResources(type.districtCost);
             throw new InvalidPlacementException();
         }
     }
@@ -339,7 +347,7 @@ public class Game implements Restorable {
         }
         Resource[] resources = {resource1, resource2};
         bank.removeResources(resources);
-        player.hand.addResources(resources);
+        player.addResources(resources);
 
     }
 

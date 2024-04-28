@@ -52,7 +52,7 @@ public class CatanGUIController {
     @FXML
     private Circle port0, port1, port2, port3, port4, port5, port6, port7, port8;
     @FXML
-    private Button rollButton, buildSettlementButton, buildRoadButton, buildCityButton, buyDevCardButton, playKnightButton, playMonopolyButton, playRoadBuildingButton, playYearOfPlentyButton, endTurnButton, cancelButton, playerTradeButton, bankTradeButton, pauseButton, undoButton, redoButton, buildDistrictButton;
+    private Button rollButton, buildSettlementButton, buildRoadButton, buildCityButton, buyDevCardButton, playKnightButton, playMonopolyButton, playRoadBuildingButton, playYearOfPlentyButton, endTurnButton, cancelButton, playerTradeButton, bankTradeButton, pauseButton, undoButton, redoButton, buildDistrictButton, bankLoanButton;
     @FXML
     private Text number0, number1, number2, number3, number4, number5, number6, number7, number8, number9, number10, number11, number12, number13, number14, number15, number16, number17, number18;
     @FXML
@@ -99,6 +99,7 @@ public class CatanGUIController {
     public void notifyOfPopupClose(Popup popup) {
         this.popupsOpen.remove(popup);
         this.guiState = GUIState.IDLE;
+        updateInfoPane();
     }
 
     private void setupGUIEntityLists(){
@@ -160,6 +161,7 @@ public class CatanGUIController {
         playYearOfPlentyButton.setText(messages.getString("playYearOfPlentyText"));
         playerTradeButton.setText(messages.getString("playerTradeText"));
         bankTradeButton.setText(messages.getString("bankTradeText"));
+        bankLoanButton.setText(messages.getString("bankLoanText"));
         endTurnButton.setText(messages.getString("endTurnText"));
         cancelButton.setText(messages.getString("cancelText"));
 
@@ -808,6 +810,25 @@ public class CatanGUIController {
         }
     }
 
+    public void bankLoanButtonPressed() throws IOException {
+        if(this.controller.getState() == GameState.DEFAULT && this.guiState == GUIState.IDLE) {
+            FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("BankLoanWindow.fxml"));
+            Stage stage = new Stage();
+            Scene scene = new Scene(fxmlLoader.load());
+            stage.setTitle(messages.getString("bankTradeTitle"));
+            stage.setScene(scene);
+            stage.show();
+
+            BankLoanWindowController bankLoanController = fxmlLoader.getController();
+            bankLoanController.setControllers(this, this.controller);
+            bankLoanController.setMessages(this.messages);
+            this.popupsOpen.add(bankLoanController);
+
+            this.tooltipText.setText(messages.getString("bankTrade"));
+            this.guiState = GUIState.BUSY;
+        }
+    }
+
     public void handleSettlementClick(MouseEvent event) {
         Polygon clickedSettlement = (Polygon) event.getSource();
         int vertex = settlementToVertexMap.get(clickedSettlement);
@@ -980,7 +1001,7 @@ public class CatanGUIController {
     public void setDistrictColor(Polygon building, DistrictType type) {
         Color c = Color.BLACK;
         switch (type) {
-            case MINE -> c = Color.rgb(100, 100, 100);
+            case MINE -> c = Color.rgb(140, 140, 140);
             case GARDEN -> c = Color.rgb(223, 197, 123);
             case BARN -> c = Color.rgb(125, 218, 88);
             case KILN -> c = Color.rgb(124, 22, 23, 1);
