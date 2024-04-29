@@ -38,7 +38,7 @@ public class PauseMenuController extends Popup {
             guiController.tooltipText.setText(messages.getString("saveFail"));
         } else {
             // switch back to the main screen
-            Stage stage = (Stage) saveButton.getScene().getWindow();
+            Stage stage = (Stage) guiController.gameboardPane.getScene().getWindow();
             stage.close();
             stage = (Stage) saveButton.getScene().getWindow();
             stage.close();

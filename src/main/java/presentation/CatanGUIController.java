@@ -114,21 +114,16 @@ public class CatanGUIController {
         robberSpots = new Circle[]{robber0,robber1,robber2,robber3,robber4,robber5,robber6,robber7,robber8,robber9,robber10,robber11,robber12,robber13,robber14,robber15,robber16,robber17,robber18};
     }
 
-    //Initialize the game
+    /**
+     * Initialize Game Objects, this is a distinct action from setting the visibility of dynamically enabled items.
+     */
     @FXML
     private void initialize() {
         setupGUIEntityLists();  //FIRST
-        setAllRoadsVisibility(false);
 
         settlementTemplate.setVisible(false);
         cityTemplate.setVisible(false);
         roadTemplate.setVisible(false);
-
-        playKnightButton.setDisable(true);
-        playMonopolyButton.setDisable(true);
-        playRoadBuildingButton.setDisable(true);
-        playYearOfPlentyButton.setDisable(true);
-        rollButton.setDisable(true);
 
         player1name.setFill(getPlayerColor(1));
         player2name.setFill(getPlayerColor(2));
@@ -136,7 +131,6 @@ public class CatanGUIController {
         player4name.setFill(getPlayerColor(4));
 
         robber.setVisible(false);
-        setAllRobberSpotsVisibility(false);
         guiState = GUIState.IDLE;
 
         initAllImages();
@@ -205,12 +199,7 @@ public class CatanGUIController {
         this.updateVertexes();
         this.updateRoads();
         this.updateInfoPane();
-
-        if (controller.getState() == GameState.TURN_START) {
-            setAllVerticesVisibility(false);
-            rollButton.setDisable(false);
-            this.tooltipText.setText(messages.getString("rollDice"));
-        }
+        this.updateActionVisibility();
     }
 
     // -------------- Static Rendering -----------------------
@@ -236,6 +225,7 @@ public class CatanGUIController {
         }
     }
 
+    // TODO: Maybe make this dynamically change based on the turn of the player?
     private void hidePlayerStatsIfNeeded() {
         int numPlayers = GameLoader.getInstance().getNumPlayers();
         if(numPlayers < 3){
@@ -325,7 +315,7 @@ public class CatanGUIController {
         player2ore.setText(Integer.toString(tempPlayers[1].hand.getResourceCount(Resource.ORE)));
         player2vp.setText(Integer.toString(tempPlayers[1].victoryPoints));
 
-        if(tempPlayers.length>=3){
+        if(tempPlayers.length>=3) {
             player3wood.setText(Integer.toString(tempPlayers[2].hand.getResourceCount(Resource.LUMBER)));
             player3brick.setText(Integer.toString(tempPlayers[2].hand.getResourceCount(Resource.BRICK)));
             player3wool.setText(Integer.toString(tempPlayers[2].hand.getResourceCount(Resource.WOOL)));
@@ -334,13 +324,42 @@ public class CatanGUIController {
             player3vp.setText(Integer.toString(tempPlayers[2].victoryPoints));
         }
 
-        if(tempPlayers.length==4){
+        if(tempPlayers.length==4) {
             player4wood.setText(Integer.toString(tempPlayers[3].hand.getResourceCount(Resource.LUMBER)));
             player4brick.setText(Integer.toString(tempPlayers[3].hand.getResourceCount(Resource.BRICK)));
             player4wool.setText(Integer.toString(tempPlayers[3].hand.getResourceCount(Resource.WOOL)));
             player4grain.setText(Integer.toString(tempPlayers[3].hand.getResourceCount(Resource.GRAIN)));
             player4ore.setText(Integer.toString(tempPlayers[3].hand.getResourceCount(Resource.ORE)));
             player4vp.setText(Integer.toString(tempPlayers[3].victoryPoints));
+        }
+    }
+
+    private void updateActionVisibility() {
+        switch (this.controller.getState()) {
+            case FIRST_ROAD:
+                break;
+            case SECOND_ROAD:
+                break;
+            case FIRST_SETTLEMENT:
+                break;
+            case SECOND_SETTLEMENT:
+                break;
+            case BUILD_SETTLEMENT:
+                break;
+            case BUILD_ROAD:
+                break;
+            case UPGRADE_SETTLEMENT:
+                break;
+            case TURN_START:
+                break;
+            case ROAD_BUILDING_1:
+                break;
+            case ROAD_BUILDING_2:
+                break;
+            case BUILD_DISTRICT:
+                break;
+            case DEFAULT:
+                break;
         }
     }
 
@@ -463,10 +482,10 @@ public class CatanGUIController {
         gwc.setMessages(this.messages);
 
         // disable buttons to end game
-        disableActions();
+        disableAllActions();
     }
 
-    private void disableActions() {
+    private void disableAllActions() {
         rollButton.setDisable(true);
         endTurnButton.setDisable(true);
         cancelButton.setDisable(true);
@@ -1022,7 +1041,7 @@ public class CatanGUIController {
         }
     }
 
-    private void setHexBackground(Polygon location, Terrain resource){
+    private void setHexBackground(Polygon location, Terrain resource) {
         //used in initialization
         Image backgroundImage = null;
         switch (resource) {
