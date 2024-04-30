@@ -1,4 +1,0 @@
-Player: Player 1
-ResourcesBorrowed: [WOOL, WOOL, ORE]
-ResourcesDue: [WOOL, WOOL, ORE, ORE]
-TurnsUntilDue: 2

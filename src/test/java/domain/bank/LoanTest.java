@@ -16,7 +16,9 @@ public class LoanTest {
 
     @BeforeEach
     public void setupMocks() {
-        player = new Player(1);
+        player = EasyMock.partialMockBuilder(Player.class)
+                .addMockedMethod("addResources", Resource[].class)
+                .mock();
         mockBank = EasyMock.mock(Bank.class);
     }
 
@@ -61,6 +63,7 @@ public class LoanTest {
         Loan loan = new Loan(player, borrowed);
 
         EasyMock.expect(mockBank.removeResources(borrowed)).andReturn(true);
+        EasyMock.expect(player.addResources(borrowed)).andReturn(true);
 
         replayMocks();
 
@@ -69,9 +72,7 @@ public class LoanTest {
         } catch (NotEnoughResourcesException e) {
             fail();
         }
-
-        Assertions.assertEquals(1, player.hand.getResourceCount(Resource.ORE));
-
+        
         verifyMocks();
     }
 
@@ -85,7 +86,6 @@ public class LoanTest {
         replayMocks();
 
         Assertions.assertThrows(NotEnoughResourcesException.class, () -> loan.giveLoan(mockBank, player));
-        Assertions.assertEquals(0, player.hand.getResourceCount(Resource.ORE));
 
         verifyMocks();
     }

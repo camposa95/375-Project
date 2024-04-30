@@ -122,7 +122,7 @@ public class Hand implements Restorable {
         return true;
     }
 
-    public Resource[] removeExistingResources(Resource[] resources) {
+    public Resource[] removeExistingResources(final Resource[] resources) {
         ArrayList<Resource> removedResources = new ArrayList<>();
         for (Resource r : resources) {
             if (getResourceCount(r) != 0) {

@@ -1,5 +1,0 @@
-BRICK: 1
-ORE: 1
-LUMBER: 3
-GRAIN: 2
-WOOL: 2

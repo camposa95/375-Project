@@ -30,19 +30,12 @@ public class BankLoanWindowController implements Popup {
     @FXML
     private Button submitButton, cancelButton;
     private TextField[] give = null;
-    Player currentPlayer;
     CatanGUIController guiController;
     Controller domainController;
     ResourceBundle messages;
 
     @FXML
     private void initialize() {
-        lumberIcon.setFill(new ImagePattern(new Image("images/default/card_lumber.png")));
-        brickIcon.setFill(new ImagePattern(new Image("images/default/card_brick.png")));
-        woolIcon.setFill(new ImagePattern(new Image("images/default/card_wool.png")));
-        grainIcon.setFill(new ImagePattern(new Image("images/default/card_wheat.png")));
-        oreIcon.setFill(new ImagePattern(new Image("images/default/card_ore.png")));
-
         give = new TextField[]{giveLumber, giveBrick, giveWool, giveGrain, giveOre};
     }
 
@@ -61,9 +54,16 @@ public class BankLoanWindowController implements Popup {
         cancelButton.setText(messages.getString("cancelText"));
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public void setControllers(CatanGUIController guiController, Controller domainController) {
         this.guiController = guiController;
         this.domainController = domainController;
+
+        lumberIcon.setFill(new ImagePattern(guiController.getIconImage("card_lumber.png")));
+        brickIcon.setFill(new ImagePattern(guiController.getIconImage("card_brick.png")));
+        woolIcon.setFill(new ImagePattern(guiController.getIconImage("card_wool.png")));
+        grainIcon.setFill(new ImagePattern(guiController.getIconImage("card_wheat.png")));
+        oreIcon.setFill(new ImagePattern(guiController.getIconImage("card_ore.png")));
     }
 
     private Resource[] getResources(TextField[] fields) {

@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -29,10 +30,16 @@ public class ChangeGameImagesController implements Popup {
     ComboBox existingResourcesComboBox;
     @FXML
     Button selectNewFolderButton;
+    private CatanGUIController guiController;
+
 
     @FXML
     public void initialize() {
         initComboBox();
+    }
+
+    public void setControllers(CatanGUIController guiController) {
+        this.guiController = guiController;
     }
 
     @FXML
@@ -44,6 +51,7 @@ public class ChangeGameImagesController implements Popup {
         File newDir = new File(getClass().getClassLoader().getResource(IMAGE_ROOT_FOLDER).getPath(), selectedDirectory.getName());
         FileUtils.copyDirectory(selectedDirectory, newDir);
         GameLoader.getInstance().setIconFolderPath(Path.of(IMAGE_ROOT_FOLDER, selectedDirectory.getName()).toString());
+        this.guiController.initAllImages();
     }
 
     @FXML
@@ -51,6 +59,7 @@ public class ChangeGameImagesController implements Popup {
     private void handleExistingFolderClick() throws IOException {
         File selectedDir = new File(IMAGE_ROOT_FOLDER, (String) existingResourcesComboBox.getValue());
         GameLoader.getInstance().setIconFolderPath(selectedDir.getPath());
+        this.guiController.initAllImages();
     }
 
     @SuppressFBWarnings("PATH_TRAVERSAL_IN")

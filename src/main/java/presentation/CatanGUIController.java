@@ -85,7 +85,6 @@ public class CatanGUIController {
 
     HashMap<Polygon, Integer> settlementToVertexMap = new HashMap<>();
     ResourceBundle messages;
-    private String iconFolderPath = DEFAULT_ICON_FOLDER_PATH;
 
     public enum GUIState {
         BUSY, IDLE, GAME_WON
@@ -423,7 +422,6 @@ public class CatanGUIController {
         // Link the Gui Controller to the Domain Controller
         CatanGUIController guiController = fxmlLoader.getController();
         guiController.setController(controller);
-        changeIconSet(this.iconFolderPath);
 
         // initialize the game-board
         guiController.internationalize(messages);
@@ -824,7 +822,7 @@ public class CatanGUIController {
             bankLoanController.setMessages(this.messages);
             this.popupsOpen.add(bankLoanController);
 
-            this.tooltipText.setText(messages.getString("bankTrade"));
+            this.tooltipText.setText(messages.getString("bankLoanGameTooltip"));
             this.guiState = GUIState.BUSY;
         }
     }
@@ -1022,7 +1020,7 @@ public class CatanGUIController {
     }
 
     // Changing resource image code
-    private void initAllImages() {
+    void initAllImages() {
         initHexImages();
         setIconImages();
         initializePorts();
@@ -1118,11 +1116,6 @@ public class CatanGUIController {
         robber.setFill(new ImagePattern(getIconImage("robber.png")));
     }
 
-    public void changeIconSet(final String iconFolderPath) {
-        this.iconFolderPath = iconFolderPath;
-        initAllImages();
-    }
-
     /**
      * Returns a valid path to the desired icon. If the icon file does exist
      * in the given folder, returns a path to that icon. If it doesn't, instead
@@ -1130,8 +1123,8 @@ public class CatanGUIController {
      * @param iconName the name of the icon file (eg. tile_wood.png)
      * @return a valid path to that icon
      */
-    private Image getIconImage(String iconName) {
-        Path desiredPath = Path.of(iconFolderPath, iconName);
+    public Image getIconImage(String iconName) {
+        Path desiredPath = Path.of(GameLoader.getInstance().getIconFolderPath(), iconName);
         URL desiredURL = getClass().getClassLoader().getResource(desiredPath.toString());
 
         if (desiredURL != null) {

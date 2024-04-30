@@ -27,6 +27,12 @@ public class Bank implements Restorable {
         bank.put(Resource.WOOL, MAX_RESOURCES);
         bank.put(Resource.GRAIN, MAX_RESOURCES);
         bank.put(Resource.ORE, MAX_RESOURCES);
+
+        for (int i = 0; i < loans.length; i++) {
+            if (this.loans[i] == null) {
+                this.loans[i] =  new Loan();
+            }
+        }
     }
 
     public boolean removeResource(final Resource type, final int amount) {
@@ -90,7 +96,8 @@ public class Bank implements Restorable {
     }
 
     public void takeOutLoan(final Player player, final Resource[] resources) throws NotEnoughResourcesException {
-        Loan l = this.loans[getLoanIdxForPlayer(player)];
+        int idx = getLoanIdxForPlayer(player);
+        Loan l = this.loans[idx];
         if (!l.isEmptyLoan()) {
             throw new IllegalStateException("Cannot take out a new loan when one already exists for this player");
         }
@@ -101,11 +108,11 @@ public class Bank implements Restorable {
 
         l = new Loan(player, resources);
         l.giveLoan(this, player);
-        this.loans[getLoanIdxForPlayer(player)] = l;
+        this.loans[idx] = l;
     }
 
-    protected Loan[] getLoans() {
-        return this.loans;
+    protected boolean playerHasLoan(final Player player) {
+        return !this.loans[getLoanIdxForPlayer(player)].isEmptyLoan();
     }
 
     public void updateLoanDueTimes(final Player currentPlayer) {
@@ -121,13 +128,14 @@ public class Bank implements Restorable {
             if (!l.loanIsPaid()) {
                 l.payLoan(this, currentPlayer);
             } else {
-                this.loans[currentPlayer.playerNum - 1] = null;
+                this.loans[getLoanIdxForPlayer(currentPlayer)] = null;
             }
         }
     }
 
     private int getLoanIdxForPlayer(final Player player) {
-        return player.playerNum - 1;
+        int n = player.getPlayerNum();
+        return n - 1;
     }
 
 
@@ -140,8 +148,6 @@ public class Bank implements Restorable {
     public class BankMemento implements Memento {
 
         private final HashMap<Resource, Integer> bank;
-        private Loan[] loans = new Loan[MAX_NUM_LOANS];
-
         // Storage Constants
         private static final String TARGET_FILE_NAME = "bank.txt";
         private static final String LOAN_SUBFOLDER_PREFIX = "Loan";

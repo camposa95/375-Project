@@ -2,7 +2,6 @@ package domain.bank;
 
 import data.*;
 import domain.game.NotEnoughResourcesException;
-import domain.graphs.Vertex;
 import domain.player.Player;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -14,22 +13,25 @@ import java.util.Arrays;
 public class Loan implements Restorable {
     public static final int MAX_LOAN_SIZE = 3;
     private static final int TURNS_UNTIL_DUE = 5;
-    private Player player;
-    private Resource[] resourcesBorrowed;
+    private Player loanPlayer;
+    private Resource[] loanResourcesBorrowed;
     private Resource[] resourcesDue;
     private int turnsUntilDue;
 
-    protected Loan() {}
+    protected Loan() {
 
+    }
+
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public Loan(final Player player, final Resource[] resourcesBorrowed) {
-        this.player = player;
-        this.resourcesBorrowed = resourcesBorrowed;
+        this.loanPlayer = player;
+        this.loanResourcesBorrowed = resourcesBorrowed;
         this.resourcesDue = calcResourcesDue();
         this.turnsUntilDue = TURNS_UNTIL_DUE;
     }
 
     public boolean isEmptyLoan() {
-        return player == null;
+        return loanPlayer == null;
     }
 
     public static boolean loanIsValid(final Resource[] resourcesBorrowed) {
@@ -58,7 +60,7 @@ public class Loan implements Restorable {
         }
     }
 
-    protected static Resource[] getRemainingResourcesDue(Resource[] due, Resource[] removed) {
+    protected static Resource[] getRemainingResourcesDue(final Resource[] due, final Resource[] removed) {
         ArrayList<Resource> remaining = new ArrayList<>();
         boolean found = false;
         for (int i = 0; i < due.length; i++) {
@@ -79,16 +81,12 @@ public class Loan implements Restorable {
         return remaining.toArray(new Resource[remaining.size()]);
     }
 
-    public Player getPlayer() {
-        return this.player;
-    }
-
     public void giveLoan(final Bank bank, final Player player) throws NotEnoughResourcesException {
-        if (!bank.removeResources(this.resourcesBorrowed)) {
+        if (!bank.removeResources(this.loanResourcesBorrowed)) {
             throw new NotEnoughResourcesException();
         }
 
-        player.addResources(this.resourcesBorrowed);
+        player.addResources(this.loanResourcesBorrowed);
     }
 
     protected Resource[] calcResourcesDue() {
@@ -96,7 +94,7 @@ public class Loan implements Restorable {
         int minCount = 0;
         for (Resource r : Resource.values()) {
             int contains = 0;
-            for (Resource borrow : this.resourcesBorrowed) {
+            for (Resource borrow : this.loanResourcesBorrowed) {
                 if (borrow == r) {
                     contains++;
                 }
@@ -110,15 +108,15 @@ public class Loan implements Restorable {
             }
         }
 
-        Resource[] resourcesDue = new Resource[this.resourcesBorrowed.length + 1];
+        Resource[] due = new Resource[this.loanResourcesBorrowed.length + 1];
         int idx = 0;
-        for (Resource r : this.resourcesBorrowed) {
-            resourcesDue[idx] = r;
+        for (Resource r : this.loanResourcesBorrowed) {
+            due[idx] = r;
             idx++;
         }
-        resourcesDue[idx] = minResource;
+        due[idx] = minResource;
 
-        return resourcesDue;
+        return due;
     }
 
     public class LoanMemento implements Memento {
@@ -133,8 +131,8 @@ public class Loan implements Restorable {
         private static final String TURNS_UNTIL_DUE = "TurnsUntilDue";
 
         private LoanMemento() {
-            this.player = Loan.this.player;
-            this.resourcesBorrowed = Loan.this.resourcesBorrowed;
+            this.player = Loan.this.loanPlayer;
+            this.resourcesBorrowed = Loan.this.loanResourcesBorrowed;
             this.resourcesDue = Loan.this.resourcesDue;
             this.turnsUntilDue = Loan.this.turnsUntilDue;
         }
@@ -171,7 +169,7 @@ public class Loan implements Restorable {
         }
 
         @Override
-        public void save(File folder) throws IOException {
+        public void save(final File folder) throws IOException {
             // Create a MementoWriter for writing memento data
             MementoWriter writer = new MementoWriter(folder, TARGET_FILE_NAME);
 
@@ -186,8 +184,8 @@ public class Loan implements Restorable {
 
         @Override
         public void restore() {
-            Loan.this.player = this.player;
-            Loan.this.resourcesBorrowed = this.resourcesBorrowed;
+            Loan.this.loanPlayer = this.player;
+            Loan.this.loanResourcesBorrowed = this.resourcesBorrowed;
             Loan.this.resourcesDue = this.resourcesDue;
             Loan.this.turnsUntilDue = this.turnsUntilDue;
         }

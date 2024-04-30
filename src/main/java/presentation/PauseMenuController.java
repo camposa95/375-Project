@@ -80,12 +80,14 @@ public class PauseMenuController implements Popup {
         Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
         stage.show();
+
+        ChangeGameImagesController pauseMenuController = fxmlLoader.getController();
+        pauseMenuController.setControllers(this.guiController);
     }
 
     public void close() {
         this.guiController.notifyOfPopupClose(this);
         Stage stage = (Stage) saveButton.getScene().getWindow();
         stage.close();
-        this.guiController.changeIconSet(GameLoader.getInstance().getIconFolderPath());
     }
 }

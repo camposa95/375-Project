@@ -10,12 +10,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BankTest {
 
-    private Player player;
+    private Player mockPlayer;
     private Bank bank;
 
     @BeforeEach
     public void setup() {
-        player = new Player(1);
+        mockPlayer = EasyMock.niceMock(Player.class);
         bank = new Bank();
     }
 
@@ -366,9 +366,13 @@ public class BankTest {
 
         Bank bank = new Bank();
 
-        bank.takeOutLoan(player, borrow);
+        EasyMock.expect(mockPlayer.getPlayerNum()).andReturn(1).times(2);
+        EasyMock.replay(mockPlayer);
 
-        Assert.assertEquals(1, bank.getLoans().length);
+        bank.takeOutLoan(mockPlayer, borrow);
+
+        Assert.assertTrue(bank.playerHasLoan(mockPlayer));
+        EasyMock.verify(mockPlayer);
     }
 
     @Test
@@ -377,9 +381,13 @@ public class BankTest {
 
         Bank bank = new Bank();
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> bank.takeOutLoan(player, borrow));
+        EasyMock.expect(mockPlayer.getPlayerNum()).andReturn(1).times(2);
+        EasyMock.replay(mockPlayer);
 
-        Assert.assertEquals(0, bank.getLoans().length);
+        Assert.assertThrows(IllegalArgumentException.class, () -> bank.takeOutLoan(mockPlayer, borrow));
+
+        Assert.assertFalse(bank.playerHasLoan(mockPlayer));
+        EasyMock.verify(mockPlayer);
     }
 
     @Test
@@ -389,9 +397,13 @@ public class BankTest {
         Bank bank = new Bank();
         bank.removeResource(Resource.ORE, 18);
 
-        Assert.assertThrows(NotEnoughResourcesException.class, () -> bank.takeOutLoan(player, borrow));
+        EasyMock.expect(mockPlayer.getPlayerNum()).andReturn(1).times(2);
+        EasyMock.replay(mockPlayer);
 
-        Assert.assertEquals(0, bank.getLoans().length);
+        Assert.assertThrows(NotEnoughResourcesException.class, () -> bank.takeOutLoan(mockPlayer, borrow));
+
+        Assert.assertFalse(bank.playerHasLoan(mockPlayer));
+        EasyMock.verify(mockPlayer);
     }
 
     @Test
@@ -400,9 +412,14 @@ public class BankTest {
 
         Bank bank = new Bank();
 
-        bank.takeOutLoan(player, borrow);
-        Assert.assertEquals(1, bank.getLoans().length);
+        EasyMock.expect(mockPlayer.getPlayerNum()).andReturn(1).times(3);
+        EasyMock.expect(mockPlayer.addResources(borrow)).andReturn(true);
+        EasyMock.replay(mockPlayer);
 
-        Assert.assertThrows(IllegalStateException.class, () -> bank.takeOutLoan(player, borrow));
+        bank.takeOutLoan(mockPlayer, borrow);
+        Assert.assertTrue(bank.playerHasLoan(mockPlayer));
+
+        Assert.assertThrows(IllegalStateException.class, () -> bank.takeOutLoan(mockPlayer, borrow));
+        EasyMock.verify(mockPlayer);
     }
 }

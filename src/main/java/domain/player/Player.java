@@ -64,6 +64,9 @@ public class Player implements Restorable {
     public Player(final int num, final Bank resourceBank) {
         this(num, null, resourceBank);
     }
+    public Player() {
+        this(1);
+    }
 
     public boolean purchaseSettlement() {
         if (numSettlements == 0) {
@@ -114,9 +117,11 @@ public class Player implements Restorable {
         return true;
     }
 
-    public boolean addResources(Resource[] resourcesToAdd) {
+    public boolean addResources(final Resource[] resourcesToAdd) {
         boolean ret = this.hand.addResources(resourcesToAdd);
-        this.bank.payLoanIfDue(this);
+        if (this.bank != null) {
+            this.bank.payLoanIfDue(this);
+        }
         return ret;
     }
 
@@ -192,6 +197,10 @@ public class Player implements Restorable {
         bank.addResource(resourceGiven, amountToGive);
 
         return true;
+    }
+
+    protected int getResourceCount(final Resource resource) {
+        return this.hand.getResourceCount(resource);
     }
 
     public boolean canUpgradeSettlementToCity() {
