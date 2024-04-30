@@ -192,6 +192,7 @@ public class CatanGUIController {
     public void initializeGameBoard() {
         // Static initialization
         this.initializeTiles();
+        this.initializeRobber();
         this.initializePorts();
         this.hidePlayerStatsIfNeeded();
 
@@ -199,6 +200,9 @@ public class CatanGUIController {
         this.updateVertexes();
         this.updateRoads();
         this.updateInfoPane();
+
+        // Visibility
+        this.updateCircleVisibility();
         this.updateActionVisibility();
     }
 
@@ -213,6 +217,18 @@ public class CatanGUIController {
             }else{
                 numbers[i].setVisible(false);
                 numberBackgrounds[i].setVisible(false);
+            }
+        }
+    }
+
+    private void initializeRobber() {
+        Tile[] tiles = GameLoader.getInstance().getTiles();
+        for(int i = 0; i < tiles.length; i++){
+            if(tiles[i].getHasRobber()){
+                double x = robberSpots[i].getLayoutX();
+                double y = robberSpots[i].getLayoutY();
+
+                renderRobberOnHex(x, y);
             }
         }
     }
@@ -334,23 +350,26 @@ public class CatanGUIController {
         }
     }
 
-    private void updateActionVisibility() {
+    private void updateCircleVisibility() {
         switch (this.controller.getState()) {
-            case FIRST_ROAD:
-                break;
-            case SECOND_ROAD:
+            case TURN_START:
+                setAllVerticesVisibility(false);
+                setAllRoadsVisibility(false);
+                setAllRobberSpotsVisibility(false);
                 break;
             case FIRST_SETTLEMENT:
                 break;
+            case FIRST_ROAD:
+                break;
             case SECOND_SETTLEMENT:
+                break;
+            case SECOND_ROAD:
                 break;
             case BUILD_SETTLEMENT:
                 break;
             case BUILD_ROAD:
                 break;
             case UPGRADE_SETTLEMENT:
-                break;
-            case TURN_START:
                 break;
             case ROAD_BUILDING_1:
                 break;
@@ -361,6 +380,10 @@ public class CatanGUIController {
             case DEFAULT:
                 break;
         }
+    }
+
+    private void updateActionVisibility() {
+
     }
 
     // ----------------------------------------------------------------

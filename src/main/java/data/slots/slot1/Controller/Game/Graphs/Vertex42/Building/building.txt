@@ -1,2 +1,2 @@
-District: GARDEN
+District: EMPTY
 IsCity: false
