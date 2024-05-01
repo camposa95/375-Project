@@ -88,7 +88,6 @@ public class StartScreenController {
         // Link the Gui Controller to the Domain Controller
         CatanGUIController guiController = fxmlLoader.getController();
         guiController.setController(domainController);
-        guiController.changeIconSet(GameLoader.getInstance().getIconFolderPath());
 
         // initialize the game-board
         guiController.internationalize(messages);

@@ -1,5 +1,7 @@
 package presentation.popups;
 
+import data.GameLoader;
+import domain.controller.Controller;
 import domain.controller.SuccessCode;
 import domain.player.Player;
 import domain.bank.Resource;
@@ -13,10 +15,12 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.util.ResourceBundle;
+
 public class PlayerTradeWindowController extends Popup {
 
     @FXML
-    private Button otherPlayer1, otherPlayer2, otherPlayer3;
+    private Button otherPlayer1, otherPlayer2, otherPlayer3, cancelButton;
     @FXML
     private TextField giveLumber, giveBrick, giveWool, giveGrain, giveOre, receiveLumber, receiveBrick, receiveWool, receiveGrain, receiveOre;
     @FXML
@@ -30,14 +34,23 @@ public class PlayerTradeWindowController extends Popup {
 
     @FXML
     private void initialize() {
-        lumberIcon.setFill(new ImagePattern(new Image("images/default/card_lumber.png")));
-        brickIcon.setFill(new ImagePattern(new Image("images/default/card_brick.png")));
-        woolIcon.setFill(new ImagePattern(new Image("images/default/card_wool.png")));
-        grainIcon.setFill(new ImagePattern(new Image("images/default/card_wheat.png")));
-        oreIcon.setFill(new ImagePattern(new Image("images/default/card_ore.png")));
+        lumberIcon.setFill(GameLoader.getInstance().getImage("card_lumber.png"));
+        brickIcon.setFill(GameLoader.getInstance().getImage("card_brick.png"));
+        woolIcon.setFill(GameLoader.getInstance().getImage("card_wool.png"));
+        grainIcon.setFill(GameLoader.getInstance().getImage("card_wheat.png"));
+        oreIcon.setFill(GameLoader.getInstance().getImage("card_ore.png"));
 
         give = new TextField[]{giveLumber, giveBrick, giveWool, giveGrain, giveOre};
         receive = new TextField[]{receiveLumber, receiveBrick, receiveWool, receiveGrain, receiveOre};
+    }
+
+    public void internationalize() {
+        playerTradeWindowTitle.setText(messages.getString("playerTradeWindowTitle"));
+
+        youGiveText.setText(messages.getString("playerTradeYouGiveText"));
+        youReceiveText.setText(messages.getString("playerTradeYouReceiveText"));
+        tooltip.setText(messages.getString("playerTradeTooltipDefault"));
+        cancelButton.setText(messages.getString("cancelText"));
     }
 
     @Override
@@ -61,14 +74,6 @@ public class PlayerTradeWindowController extends Popup {
         }
         int player1 = currentPlayer.playerNum==1 ? 2 : 1;
         otherPlayer1.setText(messages.getString("playerTradeTooltipAcceptButtonText") + player1);
-    }
-
-    protected void internationalize() {
-        playerTradeWindowTitle.setText(messages.getString("playerTradeWindowTitle"));
-
-        youGiveText.setText(messages.getString("playerTradeYouGiveText"));
-        youReceiveText.setText(messages.getString("playerTradeYouReceiveText"));
-        tooltip.setText(messages.getString("playerTradeTooltipDefault"));
     }
 
     private Resource[] getResources(TextField[] fields) {

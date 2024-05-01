@@ -5,9 +5,14 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.apache.commons.io.FileUtils;
+import presentation.CatanGUIController;
+import presentation.popups.Popup;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -17,7 +22,9 @@ public class ChangeGameImagesController extends Popup {
     @FXML
     ComboBox existingResourcesComboBox;
     @FXML
-    Button selectNewFolderButton;
+    Button selectNewFolderButton, closeButton;
+    @FXML
+    Label existingText, orText;
 
     @FXML
     public void initialize() {
@@ -26,7 +33,10 @@ public class ChangeGameImagesController extends Popup {
 
     @Override
     protected void internationalize() {
-        // TODO: should do some internationalization here
+        existingText.setText(messages.getString("changeImagesExisting"));
+        orText.setText(messages.getString("changeImagesOr"));
+        selectNewFolderButton.setText(messages.getString("changeImagesNew"));
+        closeButton.setText(messages.getString("closeButton"));
     }
 
     @FXML
@@ -37,14 +47,16 @@ public class ChangeGameImagesController extends Popup {
         File selectedDirectory = chooser.showDialog(selectNewFolderButton.getScene().getWindow());
         File newDir = new File(getClass().getClassLoader().getResource(IMAGE_ROOT_FOLDER).getPath(), selectedDirectory.getName());
         FileUtils.copyDirectory(selectedDirectory, newDir);
-        GameLoader.getInstance().setIconFolderPath(Path.of(IMAGE_ROOT_FOLDER, selectedDirectory.getName()).toString());
+        GameLoader.getInstance().setImageFolderPath(Path.of(IMAGE_ROOT_FOLDER, selectedDirectory.getName()).toString());
+        this.guiController.initAllImages();
     }
 
     @FXML
     @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     private void handleExistingFolderClick() throws IOException {
         File selectedDir = new File(IMAGE_ROOT_FOLDER, (String) existingResourcesComboBox.getValue());
-        GameLoader.getInstance().setIconFolderPath(selectedDir.getPath());
+        GameLoader.getInstance().setImageFolderPath(selectedDir.getPath());
+        this.guiController.initAllImages();
     }
 
     @SuppressFBWarnings("PATH_TRAVERSAL_IN")

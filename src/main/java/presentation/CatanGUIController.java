@@ -1,6 +1,7 @@
 package presentation;
 
 import domain.bank.Resource;
+import domain.controller.GameState;
 import domain.devcarddeck.DevCard;
 import domain.building.DistrictType;
 import domain.gameboard.Terrain;
@@ -56,7 +57,7 @@ public class CatanGUIController {
     @FXML
     private Circle port0, port1, port2, port3, port4, port5, port6, port7, port8;
     @FXML
-    private Button rollButton, buildSettlementButton, buildRoadButton, buildCityButton, buyDevCardButton, playKnightButton, playMonopolyButton, playRoadBuildingButton, playYearOfPlentyButton, endTurnButton, cancelButton, playerTradeButton, bankTradeButton, pauseButton, undoButton, redoButton, buildDistrictButton;
+    private Button rollButton, buildSettlementButton, buildRoadButton, buildCityButton, buyDevCardButton, playKnightButton, playMonopolyButton, playRoadBuildingButton, playYearOfPlentyButton, endTurnButton, cancelButton, playerTradeButton, bankTradeButton, pauseButton, undoButton, redoButton, buildDistrictButton, bankLoanButton;
     @FXML
     private Text number0, number1, number2, number3, number4, number5, number6, number7, number8, number9, number10, number11, number12, number13, number14, number15, number16, number17, number18;
     @FXML
@@ -90,7 +91,6 @@ public class CatanGUIController {
 
     HashMap<Polygon, Integer> settlementToVertexMap = new HashMap<>();
     ResourceBundle messages;
-    private String iconFolderPath = DEFAULT_ICON_FOLDER_PATH;
     public int robberId;
 
     public enum GUIState {
@@ -105,6 +105,7 @@ public class CatanGUIController {
     public void notifyOfPopupClose(Popup popup) {
         this.popupsOpen.remove(popup);
         this.guiState = IDLE;
+        updateInfoPane();
     }
 
     private void setupGUIEntityLists(){
@@ -160,6 +161,7 @@ public class CatanGUIController {
         playYearOfPlentyButton.setText(messages.getString("playYearOfPlentyText"));
         playerTradeButton.setText(messages.getString("playerTradeText"));
         bankTradeButton.setText(messages.getString("bankTradeText"));
+        bankLoanButton.setText(messages.getString("bankLoanText"));
         endTurnButton.setText(messages.getString("endTurnText"));
         cancelButton.setText(messages.getString("cancelText"));
 
@@ -455,7 +457,6 @@ public class CatanGUIController {
         // Link the Gui Controller to the Domain Controller
         CatanGUIController guiController = fxmlLoader.getController();
         guiController.setController(controller);
-        changeIconSet(this.iconFolderPath);
 
         // initialize the game-board
         guiController.internationalize(messages);
@@ -799,6 +800,25 @@ public class CatanGUIController {
         }
     }
 
+    public void bankLoanButtonPressed() throws IOException {
+        if(this.controller.getState() == GameState.DEFAULT && this.guiState == GUIState.IDLE) {
+            FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("BankLoanWindow.fxml"));
+            Stage stage = new Stage();
+            Scene scene = new Scene(fxmlLoader.load());
+            stage.setTitle(messages.getString("bankTradeTitle"));
+            stage.setScene(scene);
+            stage.show();
+
+            BankLoanWindowController bankLoanController = fxmlLoader.getController();
+            bankLoanController.setControllers(this, this.controller);
+            bankLoanController.setMessages(this.messages);
+            this.popupsOpen.add(bankLoanController);
+
+            this.tooltipText.setText(messages.getString("bankLoanGameTooltip"));
+            this.guiState = GUIState.BUSY;
+        }
+    }
+
     public void handleSettlementClick(MouseEvent event) {
         Polygon clickedSettlement = (Polygon) event.getSource();
         int vertex = settlementToVertexMap.get(clickedSettlement);
@@ -987,7 +1007,7 @@ public class CatanGUIController {
     public void setDistrictColor(Polygon building, DistrictType type) {
         Color c = Color.BLACK;
         switch (type) {
-            case MINE -> c = Color.rgb(100, 100, 100);
+            case MINE -> c = Color.rgb(140, 140, 140);
             case GARDEN -> c = Color.rgb(223, 197, 123);
             case BARN -> c = Color.rgb(125, 218, 88);
             case KILN -> c = Color.rgb(124, 22, 23, 1);
@@ -1022,7 +1042,7 @@ public class CatanGUIController {
     }
 
     // Changing resource image code
-    private void initAllImages() {
+    public void initAllImages() {
         initHexImages();
         setIconImages();
         initializePorts();
@@ -1038,106 +1058,73 @@ public class CatanGUIController {
 
     private void setHexBackground(Polygon location, Terrain resource) {
         //used in initialization
-        Image backgroundImage = null;
+        ImagePattern backgroundImage = null;
         switch (resource) {
-            case FORREST -> backgroundImage = getIconImage("tile_lumber.png");
-            case HILLS -> backgroundImage = getIconImage("tile_brick.png");
-            case PASTURE -> backgroundImage = getIconImage("tile_wool.png");
-            case FIELDS -> backgroundImage = getIconImage("tile_wheat.png");
-            case MOUNTAINS -> backgroundImage = getIconImage("tile_ore.png");
-            case DESERT -> backgroundImage = getIconImage("tile_desert.png");
+            case FORREST -> backgroundImage = GameLoader.getInstance().getImage("tile_lumber.png");
+            case HILLS -> backgroundImage = GameLoader.getInstance().getImage("tile_brick.png");
+            case PASTURE -> backgroundImage = GameLoader.getInstance().getImage("tile_wool.png");
+            case FIELDS -> backgroundImage = GameLoader.getInstance().getImage("tile_wheat.png");
+            case MOUNTAINS -> backgroundImage = GameLoader.getInstance().getImage("tile_ore.png");
+            case DESERT -> backgroundImage = GameLoader.getInstance().getImage("tile_desert.png");
         }
         if(backgroundImage==null){
             return;
         }
-        location.setFill(new ImagePattern(backgroundImage));
+        location.setFill(backgroundImage);
     }
 
     private void setIconImages(){
-        recipes.setFill(new ImagePattern(getIconImage("recipes.PNG")));
+        recipes.setFill(GameLoader.getInstance().getImage("recipes.PNG"));
 
-        Image woodIcon = getIconImage("card_lumber.png");
-        if (!woodIcon.isError()) {
-            woodIcon1.setFill(new ImagePattern(woodIcon));
-            woodIcon2.setFill(new ImagePattern(woodIcon));
-            woodIcon3.setFill(new ImagePattern(woodIcon));
-            woodIcon4.setFill(new ImagePattern(woodIcon));
-        }
+        ImagePattern woodIcon = GameLoader.getInstance().getImage("card_lumber.png");
+        woodIcon1.setFill(woodIcon);
+        woodIcon2.setFill(woodIcon);
+        woodIcon3.setFill(woodIcon);
+        woodIcon4.setFill(woodIcon);
 
-        Image brickIcon = getIconImage("card_brick.png");
-        if (!brickIcon.isError()) {
-            brickIcon1.setFill(new ImagePattern(brickIcon));
-            brickIcon2.setFill(new ImagePattern(brickIcon));
-            brickIcon3.setFill(new ImagePattern(brickIcon));
-            brickIcon4.setFill(new ImagePattern(brickIcon));
-        }
+        ImagePattern brickIcon = GameLoader.getInstance().getImage("card_brick.png");
+        brickIcon1.setFill(brickIcon);
+        brickIcon2.setFill(brickIcon);
+        brickIcon3.setFill(brickIcon);
+        brickIcon4.setFill(brickIcon);
 
-        Image woolIcon = getIconImage("card_wool.png");
-        if (!woolIcon.isError()) {
-            woolIcon1.setFill(new ImagePattern(woolIcon));
-            woolIcon2.setFill(new ImagePattern(woolIcon));
-            woolIcon3.setFill(new ImagePattern(woolIcon));
-            woolIcon4.setFill(new ImagePattern(woolIcon));
-        }
+        ImagePattern woolIcon = GameLoader.getInstance().getImage("card_wool.png");
+        woolIcon1.setFill(woolIcon);
+        woolIcon2.setFill(woolIcon);
+        woolIcon3.setFill(woolIcon);
+        woolIcon4.setFill(woolIcon);
 
-        Image grainIcon = getIconImage("card_wheat.png");
-        if (!grainIcon.isError()) {
-            grainIcon1.setFill(new ImagePattern(grainIcon));
-            grainIcon2.setFill(new ImagePattern(grainIcon));
-            grainIcon3.setFill(new ImagePattern(grainIcon));
-            grainIcon4.setFill(new ImagePattern(grainIcon));
-        }
+        ImagePattern grainIcon = GameLoader.getInstance().getImage("card_wheat.png");
+        grainIcon1.setFill(grainIcon);
+        grainIcon2.setFill(grainIcon);
+        grainIcon3.setFill(grainIcon);
+        grainIcon4.setFill(grainIcon);
 
-        Image oreIcon = getIconImage("card_ore.png");
-        if (!oreIcon.isError()) {
-            oreIcon1.setFill(new ImagePattern(oreIcon));
-            oreIcon2.setFill(new ImagePattern(oreIcon));
-            oreIcon3.setFill(new ImagePattern(oreIcon));
-            oreIcon4.setFill(new ImagePattern(oreIcon));
-        }
+        ImagePattern oreIcon = GameLoader.getInstance().getImage("card_ore.png");
+        oreIcon1.setFill(oreIcon);
+        oreIcon2.setFill(oreIcon);
+        oreIcon3.setFill(oreIcon);
+        oreIcon4.setFill(oreIcon);
     }
 
     private void setPortTrade(Circle port, Resource tradeType){
         //Called in initialization
-        Image backgroundImage = null;
+        ImagePattern backgroundImage = null;
         switch (tradeType) {
-            case ANY -> backgroundImage = getIconImage("improved_trade.png");
-            case LUMBER -> backgroundImage = getIconImage("card_lumber.png");
-            case BRICK -> backgroundImage = getIconImage("card_brick.png");
-            case WOOL -> backgroundImage = getIconImage("card_wool.png");
-            case GRAIN -> backgroundImage = getIconImage("card_wheat.png");
-            case ORE -> backgroundImage = getIconImage("card_ore.png");
+            case ANY -> backgroundImage = GameLoader.getInstance().getImage("improved_trade.png");
+            case LUMBER -> backgroundImage = GameLoader.getInstance().getImage("card_lumber.png");
+            case BRICK -> backgroundImage = GameLoader.getInstance().getImage("card_brick.png");
+            case WOOL -> backgroundImage = GameLoader.getInstance().getImage("card_wool.png");
+            case GRAIN -> backgroundImage = GameLoader.getInstance().getImage("card_wheat.png");
+            case ORE -> backgroundImage = GameLoader.getInstance().getImage("card_ore.png");
         }
         if(backgroundImage==null){
             return;
         }
-        port.setFill(new ImagePattern(backgroundImage));
+        port.setFill(backgroundImage);
     }
 
     private void initRobberIcon() {
-        robber.setFill(new ImagePattern(getIconImage("robber.png")));
-    }
-
-    public void changeIconSet(final String iconFolderPath) {
-        this.iconFolderPath = iconFolderPath;
-        initAllImages();
-    }
-
-    /**
-     * Returns a valid path to the desired icon. If the icon file does exist
-     * in the given folder, returns a path to that icon. If it doesn't, instead
-     * return a path to the default image for that icon
-     * @param iconName the name of the icon file (eg. tile_wood.png)
-     * @return a valid path to that icon
-     */
-    private Image getIconImage(String iconName) {
-        Path desiredPath = Path.of(iconFolderPath, iconName);
-        URL desiredURL = getClass().getClassLoader().getResource(desiredPath.toString());
-
-        if (desiredURL != null) {
-            return new Image(desiredURL.toString());
-        } else {
-            return new Image(getClass().getClassLoader().getResource(Path.of(DEFAULT_ICON_FOLDER_PATH, iconName).toString()).toString());
-        }
+        robber.setFill(GameLoader.getInstance().getImage("robber.png"));
     }
 }

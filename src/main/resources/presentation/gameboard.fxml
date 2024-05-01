@@ -731,8 +731,8 @@
             <Font size="18.0" />
          </font>
       </Text>
-      <Button fx:id="playerTradeButton" layoutX="1259.0" layoutY="609.0" mnemonicParsing="false" onMouseClicked="#playerTradeButtonPressed" prefHeight="60.0" prefWidth="104.0" text="Player Trade" textAlignment="CENTER" wrapText="true" />
-      <Button fx:id="bankTradeButton" layoutX="1376.0" layoutY="609.0" mnemonicParsing="false" onMouseClicked="#bankTradeButtonPressed" prefHeight="60.0" prefWidth="104.0" text="Bank Trade" textAlignment="CENTER" wrapText="true" />
+      <Button fx:id="playerTradeButton" layoutX="1262.0" layoutY="609.0" mnemonicParsing="false" onMouseClicked="#playerTradeButtonPressed" prefHeight="60.0" prefWidth="63.0" text="Player Trade" textAlignment="CENTER" wrapText="true" />
+      <Button fx:id="bankTradeButton" layoutX="1338.0" layoutY="609.0" mnemonicParsing="false" onMouseClicked="#bankTradeButtonPressed" prefHeight="60.0" prefWidth="63.0" text="Bank Trade" textAlignment="CENTER" wrapText="true" />
       <Text fx:id="tooltipText" layoutX="1254.0" layoutY="162.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to Catan!" textAlignment="CENTER" wrappingWidth="228.15625" />
       <Button fx:id="cancelButton" layoutX="1343.0" layoutY="313.0" mnemonicParsing="false" onMouseClicked="#cancelButtonPressed" text="Cancel" />
       <Rectangle fx:id="woodIcon1" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="25.0" layoutX="20.0" layoutY="103.0" stroke="BLACK" strokeType="INSIDE" width="25.0" />
@@ -763,6 +763,7 @@
       <Button fx:id="pauseButton" layoutX="34.0" layoutY="744.0" mnemonicParsing="false" onAction="#pauseButtonPressed" prefHeight="52.0" prefWidth="104.0" text="Pause" />
       <Button fx:id="undoButton" layoutX="20.0" layoutY="810.0" mnemonicParsing="false" onAction="#undo" text="Undo" />
       <Button fx:id="redoButton" layoutX="104.0" layoutY="810.0" mnemonicParsing="false" onAction="#redo" text="Redo" />
-      <Button fx:id="buildDistrictButton" layoutX="1376.0" layoutY="260.0" mnemonicParsing="false" onMouseClicked="#buildDistrictButtonPress" prefHeight="44.0" prefWidth="104.0" text="Build District" />
+      <Button fx:id="buildDistrictButton" layoutX="1376.0" layoutY="260.0" mnemonicParsing="false" onMouseClicked="#buildDistrictButtonPress" prefHeight="44.0" prefWidth="104.0" text="Build District" wrapText="true" />
+      <Button fx:id="bankLoanButton" layoutX="1413.0" layoutY="609.0" mnemonicParsing="false" onMouseClicked="#bankLoanButtonPressed" prefHeight="60.0" prefWidth="63.0" text="Bank Loan" textAlignment="CENTER" textOverrun="CLIP" wrapText="true" />
    </children>
 </Pane>

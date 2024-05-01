@@ -83,7 +83,7 @@ public class F5Test {
         }
 
         // Based on beginner locations these are the resources each player should receive on given die roll
-        EasyMock.expect(mockedRandom.nextInt(2,13)).andReturn(10);
+        EasyMock.expect(mockedRandom.nextInt(1,7)).andReturn(5).times(2);
         EasyMock.replay(mockedRandom);
         controller.rollDice();
         EasyMock.verify(mockedRandom);
@@ -123,7 +123,7 @@ public class F5Test {
 
 
         //Based on beginner locations these are the resources each player should receive on given die roll
-        EasyMock.expect(mockedRandom.nextInt(2,13)).andReturn(10);
+        EasyMock.expect(mockedRandom.nextInt(1, 7)).andReturn(5).times(2);
         EasyMock.replay(mockedRandom);
         controller.rollDice();
         EasyMock.verify(mockedRandom);
@@ -147,7 +147,8 @@ public class F5Test {
 
         // Based on beginner locations these are the resources each player should receive on given die roll
 
-        EasyMock.expect(mockedRandom.nextInt(2, 13)).andReturn(7);
+        EasyMock.expect(mockedRandom.nextInt(1, 7)).andReturn(4);
+        EasyMock.expect(mockedRandom.nextInt(1, 7)).andReturn(3);
         EasyMock.replay(mockedRandom);
         controller.rollDice();
         EasyMock.verify(mockedRandom);

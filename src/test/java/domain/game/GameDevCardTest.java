@@ -291,7 +291,7 @@ public class GameDevCardTest {
 
         //Expect
         EasyMock.expect(mockplayer.useDevCard(DevCard.PLENTY)).andReturn(true);
-        EasyMock.expect(mockplayer.hand.addResources(resources)).andReturn(true);
+        EasyMock.expect(mockplayer.addResources(resources)).andReturn(true);
         replayMocks();
 
         try{

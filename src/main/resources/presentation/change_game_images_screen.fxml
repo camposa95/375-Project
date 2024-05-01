@@ -7,8 +7,8 @@
    <children>
       <ComboBox fx:id="existingResourcesComboBox" layoutX="101.0" layoutY="69.0" onAction="#handleExistingFolderClick" prefWidth="150.0" />
       <Button fx:id="selectNewFolderButton" layoutX="122.0" layoutY="143.0" mnemonicParsing="false" onMouseClicked="#handleNewFolderButtonClick" text="Select New Folder" />
-      <Label layoutX="167.0" layoutY="113.0" text="OR" />
-      <Label layoutX="118.0" layoutY="44.0" text="Select Existing Folder:" />
+      <Label fx:id="orText" layoutX="167.0" layoutY="113.0" text="OR" />
+      <Label fx:id="existingText" layoutX="118.0" layoutY="44.0" text="Select Existing Folder:" />
       <Button fx:id="closeButton" layoutX="292.0" layoutY="169.0" mnemonicParsing="false" onMouseClicked="#close" text="Close" />
    </children>
 </AnchorPane>

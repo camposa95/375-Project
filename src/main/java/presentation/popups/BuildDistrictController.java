@@ -22,10 +22,9 @@ public class BuildDistrictController extends Popup {
     @FXML
     private ToggleGroup types;
     @FXML
-    private Button selectButton;
+    private Button selectButton, cancelButton;
     @FXML
-    private Text buildDistrictText;
-
+    private Text buildDistrictText, tooltip;
     @FXML
     public void initialize() {
         types = new ToggleGroup();
@@ -49,6 +48,7 @@ public class BuildDistrictController extends Popup {
 
     protected void internationalize() {
         buildDistrictText.setText(messages.getString("buildDistrictPopupText"));
+        tooltip.setText(messages.getString("buildDistrictDefaultTooltip"));
 
         sawmill.setText(messages.getString("buildDistrictSawmill"));
         kiln.setText(messages.getString("buildDistrictKiln"));
@@ -57,6 +57,7 @@ public class BuildDistrictController extends Popup {
         mine.setText(messages.getString("buildDistrictMine"));
 
         selectButton.setText(messages.getString("buildDistrictSelectButton"));
+        cancelButton.setText(messages.getString("cancelText"));
     }
 
     public void submitBD() {
@@ -64,14 +65,12 @@ public class BuildDistrictController extends Popup {
 
         SuccessCode code = this.submitBuildDistrict(this.selectedVertex, type);
         if(code == SuccessCode.INSUFFICIENT_RESOURCES){
-            guiController.setTooltipText("buildDistrictInsufficientResources");
+            tooltip.setText(messages.getString("buildDistrictInsufficientResources"));
         } else if (code == SuccessCode.INVALID_PLACEMENT){
-            guiController.setTooltipText("buildDistrictInnvalidPlacement");
+            tooltip.setText(messages.getString("buildDistrictInnvalidPlacement"));
+        } else {
+            close();
         }
-
-        domainController.setState(GameState.DEFAULT);
-        guiController.guiState = CatanGUIController.GUIState.IDLE;
-        this.close();
     }
 
     private SuccessCode submitBuildDistrict(int vertexId, DistrictType type) {
@@ -98,6 +97,13 @@ public class BuildDistrictController extends Popup {
         }else{
             throw new IllegalArgumentException("No matching resource");
         }
+    }
+
+    @FXML
+    public void close() {
+        domainController.setState(GameState.DEFAULT);
+        guiController.guiState = CatanGUIController.GUIState.IDLE;
+        this.guiController.notifyOfPopupClose(this);
     }
 
     @Override
