@@ -2,27 +2,17 @@ package presentation;
 
 import data.GameLoader;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.io.FileUtils;
 import presentation.popups.Popup;
 
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.CopyOption;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ResourceBundle;
 
 public class ChangeGameImagesController implements Popup {
     private static final String IMAGE_ROOT_FOLDER = "images";
@@ -50,7 +40,7 @@ public class ChangeGameImagesController implements Popup {
         File selectedDirectory = chooser.showDialog(selectNewFolderButton.getScene().getWindow());
         File newDir = new File(getClass().getClassLoader().getResource(IMAGE_ROOT_FOLDER).getPath(), selectedDirectory.getName());
         FileUtils.copyDirectory(selectedDirectory, newDir);
-        GameLoader.getInstance().setIconFolderPath(Path.of(IMAGE_ROOT_FOLDER, selectedDirectory.getName()).toString());
+        GameLoader.getInstance().setImageFolderPath(Path.of(IMAGE_ROOT_FOLDER, selectedDirectory.getName()).toString());
         this.guiController.initAllImages();
     }
 
@@ -58,7 +48,7 @@ public class ChangeGameImagesController implements Popup {
     @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     private void handleExistingFolderClick() throws IOException {
         File selectedDir = new File(IMAGE_ROOT_FOLDER, (String) existingResourcesComboBox.getValue());
-        GameLoader.getInstance().setIconFolderPath(selectedDir.getPath());
+        GameLoader.getInstance().setImageFolderPath(selectedDir.getPath());
         this.guiController.initAllImages();
     }
 

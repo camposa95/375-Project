@@ -1036,101 +1036,73 @@ public class CatanGUIController {
 
     private void setHexBackground(Polygon location, Terrain resource){
         //used in initialization
-        Image backgroundImage = null;
+        ImagePattern backgroundImage = null;
         switch (resource) {
-            case FORREST -> backgroundImage = getIconImage("tile_lumber.png");
-            case HILLS -> backgroundImage = getIconImage("tile_brick.png");
-            case PASTURE -> backgroundImage = getIconImage("tile_wool.png");
-            case FIELDS -> backgroundImage = getIconImage("tile_wheat.png");
-            case MOUNTAINS -> backgroundImage = getIconImage("tile_ore.png");
-            case DESERT -> backgroundImage = getIconImage("tile_desert.png");
+            case FORREST -> backgroundImage = GameLoader.getInstance().getImage("tile_lumber.png");
+            case HILLS -> backgroundImage = GameLoader.getInstance().getImage("tile_brick.png");
+            case PASTURE -> backgroundImage = GameLoader.getInstance().getImage("tile_wool.png");
+            case FIELDS -> backgroundImage = GameLoader.getInstance().getImage("tile_wheat.png");
+            case MOUNTAINS -> backgroundImage = GameLoader.getInstance().getImage("tile_ore.png");
+            case DESERT -> backgroundImage = GameLoader.getInstance().getImage("tile_desert.png");
         }
         if(backgroundImage==null){
             return;
         }
-        location.setFill(new ImagePattern(backgroundImage));
+        location.setFill(backgroundImage);
     }
 
     private void setIconImages(){
-        recipes.setFill(new ImagePattern(getIconImage("recipes.PNG")));
+        recipes.setFill(GameLoader.getInstance().getImage("recipes.PNG"));
 
-        Image woodIcon = getIconImage("card_lumber.png");
-        if (!woodIcon.isError()) {
-            woodIcon1.setFill(new ImagePattern(woodIcon));
-            woodIcon2.setFill(new ImagePattern(woodIcon));
-            woodIcon3.setFill(new ImagePattern(woodIcon));
-            woodIcon4.setFill(new ImagePattern(woodIcon));
-        }
+        ImagePattern woodIcon = GameLoader.getInstance().getImage("card_lumber.png");
+        woodIcon1.setFill(woodIcon);
+        woodIcon2.setFill(woodIcon);
+        woodIcon3.setFill(woodIcon);
+        woodIcon4.setFill(woodIcon);
 
-        Image brickIcon = getIconImage("card_brick.png");
-        if (!brickIcon.isError()) {
-            brickIcon1.setFill(new ImagePattern(brickIcon));
-            brickIcon2.setFill(new ImagePattern(brickIcon));
-            brickIcon3.setFill(new ImagePattern(brickIcon));
-            brickIcon4.setFill(new ImagePattern(brickIcon));
-        }
+        ImagePattern brickIcon = GameLoader.getInstance().getImage("card_brick.png");
+        brickIcon1.setFill(brickIcon);
+        brickIcon2.setFill(brickIcon);
+        brickIcon3.setFill(brickIcon);
+        brickIcon4.setFill(brickIcon);
 
-        Image woolIcon = getIconImage("card_wool.png");
-        if (!woolIcon.isError()) {
-            woolIcon1.setFill(new ImagePattern(woolIcon));
-            woolIcon2.setFill(new ImagePattern(woolIcon));
-            woolIcon3.setFill(new ImagePattern(woolIcon));
-            woolIcon4.setFill(new ImagePattern(woolIcon));
-        }
+        ImagePattern woolIcon = GameLoader.getInstance().getImage("card_wool.png");
+        woolIcon1.setFill(woolIcon);
+        woolIcon2.setFill(woolIcon);
+        woolIcon3.setFill(woolIcon);
+        woolIcon4.setFill(woolIcon);
 
-        Image grainIcon = getIconImage("card_wheat.png");
-        if (!grainIcon.isError()) {
-            grainIcon1.setFill(new ImagePattern(grainIcon));
-            grainIcon2.setFill(new ImagePattern(grainIcon));
-            grainIcon3.setFill(new ImagePattern(grainIcon));
-            grainIcon4.setFill(new ImagePattern(grainIcon));
-        }
+        ImagePattern grainIcon = GameLoader.getInstance().getImage("card_wheat.png");
+        grainIcon1.setFill(grainIcon);
+        grainIcon2.setFill(grainIcon);
+        grainIcon3.setFill(grainIcon);
+        grainIcon4.setFill(grainIcon);
 
-        Image oreIcon = getIconImage("card_ore.png");
-        if (!oreIcon.isError()) {
-            oreIcon1.setFill(new ImagePattern(oreIcon));
-            oreIcon2.setFill(new ImagePattern(oreIcon));
-            oreIcon3.setFill(new ImagePattern(oreIcon));
-            oreIcon4.setFill(new ImagePattern(oreIcon));
-        }
+        ImagePattern oreIcon = GameLoader.getInstance().getImage("card_ore.png");
+        oreIcon1.setFill(oreIcon);
+        oreIcon2.setFill(oreIcon);
+        oreIcon3.setFill(oreIcon);
+        oreIcon4.setFill(oreIcon);
     }
 
     private void setPortTrade(Circle port, Resource tradeType){
         //Called in initialization
-        Image backgroundImage = null;
+        ImagePattern backgroundImage = null;
         switch (tradeType) {
-            case ANY -> backgroundImage = getIconImage("improved_trade.png");
-            case LUMBER -> backgroundImage = getIconImage("card_lumber.png");
-            case BRICK -> backgroundImage = getIconImage("card_brick.png");
-            case WOOL -> backgroundImage = getIconImage("card_wool.png");
-            case GRAIN -> backgroundImage = getIconImage("card_wheat.png");
-            case ORE -> backgroundImage = getIconImage("card_ore.png");
+            case ANY -> backgroundImage = GameLoader.getInstance().getImage("improved_trade.png");
+            case LUMBER -> backgroundImage = GameLoader.getInstance().getImage("card_lumber.png");
+            case BRICK -> backgroundImage = GameLoader.getInstance().getImage("card_brick.png");
+            case WOOL -> backgroundImage = GameLoader.getInstance().getImage("card_wool.png");
+            case GRAIN -> backgroundImage = GameLoader.getInstance().getImage("card_wheat.png");
+            case ORE -> backgroundImage = GameLoader.getInstance().getImage("card_ore.png");
         }
         if(backgroundImage==null){
             return;
         }
-        port.setFill(new ImagePattern(backgroundImage));
+        port.setFill(backgroundImage);
     }
 
     private void initRobberIcon() {
-        robber.setFill(new ImagePattern(getIconImage("robber.png")));
-    }
-
-    /**
-     * Returns a valid path to the desired icon. If the icon file does exist
-     * in the given folder, returns a path to that icon. If it doesn't, instead
-     * return a path to the default image for that icon
-     * @param iconName the name of the icon file (eg. tile_wood.png)
-     * @return a valid path to that icon
-     */
-    public Image getIconImage(String iconName) {
-        Path desiredPath = Path.of(GameLoader.getInstance().getIconFolderPath(), iconName);
-        URL desiredURL = getClass().getClassLoader().getResource(desiredPath.toString());
-
-        if (desiredURL != null) {
-            return new Image(desiredURL.toString());
-        } else {
-            return new Image(getClass().getClassLoader().getResource(Path.of(DEFAULT_ICON_FOLDER_PATH, iconName).toString()).toString());
-        }
+        robber.setFill(GameLoader.getInstance().getImage("robber.png"));
     }
 }

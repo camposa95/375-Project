@@ -12,11 +12,15 @@ import domain.game.GameType;
 import domain.gameboard.GameBoard;
 import domain.gameboard.Tile;
 import domain.player.Player;
+import javafx.scene.image.Image;
+import javafx.scene.paint.ImagePattern;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.*;
 
 public class GameLoader {
@@ -54,7 +58,8 @@ public class GameLoader {
     private GameType gameType;
     private Integer numPlayers;
     private String language;
-    private String iconFolderPath;
+    private String imageFolderPath;
+    private Map<String, ImagePattern> images = new HashMap<>();
 
     // Core Undo Redo stuff
     private Stack<Memento> undoStack;
@@ -141,12 +146,38 @@ public class GameLoader {
         return this.getMessageBundle();
     }
 
-    public void setIconFolderPath(final String path) throws IOException {
-        this.iconFolderPath = path;
+    public void setImageFolderPath(final String path) throws IOException {
+        this.imageFolderPath = path;
+        this.images = new HashMap<>();
     }
 
-    public String getIconFolderPath() {
-        return this.iconFolderPath;
+    /**
+     * Returns a valid path to the desired icon. If the icon file does exist
+     * in the given folder, returns a path to that icon. If it doesn't, instead
+     * return a path to the default image for that icon
+     * @param imageName the name of the icon file (eg. tile_wood.png)
+     * @return a valid path to that icon
+     */
+    private ImagePattern loadImage(String imageName) {
+        Path desiredPath = Path.of(this.imageFolderPath, imageName);
+        URL desiredURL = getClass().getClassLoader().getResource(desiredPath.toString());
+
+        if (desiredURL != null) {
+            return new ImagePattern(new Image(desiredURL.toString()));
+        } else {
+            return new ImagePattern(new Image(getClass().getClassLoader().getResource(Path.of(DEFAULT_ICON_FOLDER_PATH, imageName).toString()).toString()));
+        }
+    }
+
+    public ImagePattern getImage(final String imageName) {
+        ImagePattern pattern = this.images.get(imageName);
+
+        if (pattern == null) {
+            pattern = loadImage(imageName);
+            this.images.put(imageName, pattern);
+        }
+
+        return pattern;
     }
 
     public void setSlot(final int slot) {
@@ -202,7 +233,7 @@ public class GameLoader {
             writer.writeField(GAME_TYPE, String.valueOf(this.gameType));
             writer.writeField(NUM_PLAYERS, String.valueOf(this.numPlayers));
             writer.writeField(LANGUAGE, this.language);
-            writer.writeField(ICON_PATH, this.iconFolderPath);
+            writer.writeField(ICON_PATH, this.imageFolderPath);
 
             // Save the controllerMemento memento in the Controller folder
             File controllerFolder = writer.getSubFolder("Controller");
@@ -238,7 +269,7 @@ public class GameLoader {
         GameType restoredGameType = GameType.valueOf(reader.readField(GAME_TYPE));
         int restoredNumPlayers = Integer.parseInt(reader.readField(NUM_PLAYERS));
         this.setLanguage(reader.readField(LANGUAGE));
-        this.setIconFolderPath(reader.readField(ICON_PATH));
+        this.setImageFolderPath(reader.readField(ICON_PATH));
 
         // re-instantiate the game objects based on the basic game info
         this.instantiateGameObjects(restoredGameType, restoredNumPlayers);

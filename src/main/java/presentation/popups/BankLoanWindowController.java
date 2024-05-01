@@ -1,5 +1,6 @@
 package presentation.popups;
 
+import data.GameLoader;
 import domain.bank.Loan;
 import domain.bank.Resource;
 import domain.controller.Controller;
@@ -59,11 +60,11 @@ public class BankLoanWindowController implements Popup {
         this.guiController = guiController;
         this.domainController = domainController;
 
-        lumberIcon.setFill(new ImagePattern(guiController.getIconImage("card_lumber.png")));
-        brickIcon.setFill(new ImagePattern(guiController.getIconImage("card_brick.png")));
-        woolIcon.setFill(new ImagePattern(guiController.getIconImage("card_wool.png")));
-        grainIcon.setFill(new ImagePattern(guiController.getIconImage("card_wheat.png")));
-        oreIcon.setFill(new ImagePattern(guiController.getIconImage("card_ore.png")));
+        lumberIcon.setFill(GameLoader.getInstance().getImage("card_lumber.png"));
+        brickIcon.setFill(GameLoader.getInstance().getImage("card_brick.png"));
+        woolIcon.setFill(GameLoader.getInstance().getImage("card_wool.png"));
+        grainIcon.setFill(GameLoader.getInstance().getImage("card_wheat.png"));
+        oreIcon.setFill(GameLoader.getInstance().getImage("card_ore.png"));
     }
 
     private Resource[] getResources(TextField[] fields) {
