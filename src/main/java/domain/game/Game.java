@@ -3,9 +3,7 @@ package domain.game;
 import java.io.File;
 import java.io.IOException;
 import java.time.temporal.ValueRange;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
 
 import domain.bank.Bank;
@@ -79,6 +77,22 @@ public class Game implements Restorable {
         this.gameboardGraph.giveLongestRoadCard();
     }
 
+    public Set<Integer> getBuildableVertexes(final Player player) {
+        Set<Integer> buildableVertexes = gameboardGraph.getBuildableVertexes();
+        if (setup) {
+            return buildableVertexes;
+        }
+
+        Set<Integer> accessibleVertexes = new HashSet<>();
+        for (Integer v : buildableVertexes) {
+            if (gameboardGraph.getVertex(v).isAdjacentToFriendlyRoad(player)) {
+                accessibleVertexes.add(v);
+            }
+        }
+
+        return accessibleVertexes;
+    }
+
     /**
      * Tries to place a settlement
      * @param road the road location
@@ -108,6 +122,15 @@ public class Game implements Restorable {
 
         // tell the road to figure out who needs he card, we'll test this later
         this.gameboardGraph.giveLongestRoadCard();
+    }
+
+    public Set<Integer> getBuildableRoads(final Player player, final int lastPlacedVertex) {
+
+        if (setup) {
+            return gameboardGraph.getBuildableRoadsSetup(lastPlacedVertex);
+        } else {
+          return gameboardGraph.getBuildableRoadsRegularPlay(player);
+        }
     }
 
     /**
@@ -307,6 +330,19 @@ public class Game implements Restorable {
             }
         }
         return pList.toArray(new Player[0]);
+    }
+
+    public Set<Integer> getValidRobberSpots(final Player player) {
+        Set<Integer> robberSpots = new HashSet<>();
+        for (Tile tile : gameBoard.getTiles()) {
+            for (Integer v : tile.getVertexIDs()) {
+                if (gameboardGraph.getVertex(v).ownedByEnemyOf(player)) {
+                    robberSpots.add(tile.getTileNumber());
+                }
+            }
+        }
+
+        return robberSpots;
     }
 
     /**

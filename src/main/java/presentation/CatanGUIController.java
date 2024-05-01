@@ -9,7 +9,6 @@ import domain.graphs.*;
 import domain.player.Player;
 import data.GameLoader;
 import domain.controller.Controller;
-import domain.controller.GameState;
 import domain.controller.SuccessCode;
 import javafx.stage.StageStyle;
 import presentation.popups.*;
@@ -38,6 +37,11 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static data.GameLoader.DEFAULT_ICON_FOLDER_PATH;
+import static domain.controller.GameState.*;
+import static domain.controller.SuccessCode.GAME_WIN;
+import static domain.controller.SuccessCode.SUCCESS;
+import static presentation.CatanGUIController.GUIState.BUSY;
+import static presentation.CatanGUIController.GUIState.IDLE;
 
 public class CatanGUIController {
     // FXML Entity Imports
@@ -100,7 +104,7 @@ public class CatanGUIController {
 
     public void notifyOfPopupClose(Popup popup) {
         this.popupsOpen.remove(popup);
-        this.guiState = GUIState.IDLE;
+        this.guiState = IDLE;
     }
 
     private void setupGUIEntityLists(){
@@ -131,7 +135,7 @@ public class CatanGUIController {
         player4name.setFill(getPlayerColor(4));
 
         robber.setVisible(false);
-        guiState = GUIState.IDLE;
+        guiState = IDLE;
 
         initAllImages();
     }
@@ -300,7 +304,7 @@ public class CatanGUIController {
         //Called in various places to update player data in pane
         Player[] tempPlayers = this.controller.getPlayerArr();
         this.playerTurnText.setText(Integer.toString(this.controller.getCurrentPlayer().playerNum));
-        this.tooltipText.setText("");
+        clearTooltipText();
         Player currentPlayer = tempPlayers[this.controller.getCurrentPlayer().playerNum-1];
         if(this.controller.getDevCardsEnabled()){
             HashMap<DevCard, Integer> devCards = currentPlayer.hand.devCards;
@@ -351,34 +355,23 @@ public class CatanGUIController {
     }
 
     private void updateCircleVisibility() {
-        switch (this.controller.getState()) {
-            case TURN_START:
-                setAllVerticesVisibility(false);
-                setAllRoadsVisibility(false);
-                setAllRobberSpotsVisibility(false);
-                break;
-            case FIRST_SETTLEMENT:
-                break;
-            case FIRST_ROAD:
-                break;
-            case SECOND_SETTLEMENT:
-                break;
-            case SECOND_ROAD:
-                break;
-            case BUILD_SETTLEMENT:
-                break;
-            case BUILD_ROAD:
-                break;
-            case UPGRADE_SETTLEMENT:
-                break;
-            case ROAD_BUILDING_1:
-                break;
-            case ROAD_BUILDING_2:
-                break;
-            case BUILD_DISTRICT:
-                break;
-            case DEFAULT:
-                break;
+        switch (controller.getState()) {
+            case TURN_START, DEFAULT -> {
+                hideAllVertexes();
+                hideAllRoads();
+                hideAllRobberSpots();
+                guiState = IDLE;
+            }
+            case FIRST_SETTLEMENT, SECOND_SETTLEMENT, BUILD_SETTLEMENT -> {
+                showClickableVertexes();
+                hideAllRoads();
+                hideAllRobberSpots();
+            }
+            case FIRST_ROAD, SECOND_ROAD, BUILD_ROAD, ROAD_BUILDING_1, ROAD_BUILDING_2 -> {
+                showClickableRoads();
+                hideAllVertexes();
+                hideAllRobberSpots();
+            }
         }
     }
 
@@ -393,7 +386,7 @@ public class CatanGUIController {
     // ----------------------------------------------------------------
 
     public void pauseButtonPressed() throws IOException {
-        if (this.controller.getState() == GameState.TURN_START  && this.guiState == GUIState.IDLE) {
+        if (controller.getState() == TURN_START  && guiState == IDLE) {
             FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("PauseMenu.fxml"));
             Stage stage = new Stage();
             Scene scene = new Scene(fxmlLoader.load());
@@ -408,27 +401,24 @@ public class CatanGUIController {
             pauseMenuController.setMessages(this.messages);
             this.popupsOpen.add(pauseMenuController);
 
-            this.guiState = GUIState.BUSY;
-            this.tooltipText.setText(messages.getString("paused"));
+            this.guiState = BUSY;
+            setTooltipText("paused");
         } else {
-            this.tooltipText.setText(messages.getString("pauseNotAllowed"));
+            setTooltipText("pauseNotAllowed");
         }
     }
 
     public void endTurnButtonPressed() throws IOException {
-        // Triggered by End Turn button pressed
-        if(this.controller.getState()==GameState.DEFAULT && this.guiState == GUIState.IDLE){
-            SuccessCode success = this.controller.endTurn();
-            if(success == SuccessCode.SUCCESS){
-                this.updateInfoPane();
-                this.tooltipText.setText(messages.getString("rollDice"));
+        if (controller.getState() == DEFAULT && guiState == IDLE) {
+            switch (controller.endTurn()) {
+                case SUCCESS -> {
+                    updateInfoPane();
+                    setTooltipText("rollDice");
 
-                // beginning of turn
-                this.controller.setState(GameState.TURN_START);
-                this.guiState = GUIState.IDLE; //just in case
-                GameLoader.getInstance().notifyOfTurnStart();
-            }else if(success == SuccessCode.GAME_WIN){
-                applyGameWon();
+                    controller.setState(TURN_START);
+                    GameLoader.getInstance().notifyOfTurnStart();
+                }
+                case GAME_WIN -> applyGameWon();
             }
         }
     }
@@ -437,7 +427,7 @@ public class CatanGUIController {
         if (GameLoader.getInstance().undo()) {
             repaint();
         } else {
-            tooltipText.setText(messages.getString("undoFail"));
+            setTooltipText("undoFail");
         }
     }
 
@@ -445,7 +435,7 @@ public class CatanGUIController {
         if (GameLoader.getInstance().redo()) {
             repaint();
         } else {
-            tooltipText.setText(messages.getString("redoFail"));
+            setTooltipText("redoFail");
         }
     }
 
@@ -480,15 +470,15 @@ public class CatanGUIController {
 
     public void finishedMove() {
         updateInfoPane();
-        this.guiState = CatanGUIController.GUIState.IDLE;
-        this.tooltipText.setText("");
+        guiState = IDLE;
+        clearTooltipText();
     }
 
     //this method is called to disable everything on the board once a player has won the game
     private void applyGameWon() throws IOException {
         // update the gui state
         this.guiState = GUIState.GAME_WON;
-        this.tooltipText.setText(messages.getString("gameOver"));
+        setTooltipText("gameOver");
         //update pane so accurate victory points are shown on the left
         this.updateInfoPane();
 
@@ -531,40 +521,50 @@ public class CatanGUIController {
     //
     //-------------------------------------------------------------------
 
-    @FXML
     public void handleVertexClick(MouseEvent event) throws IOException {
-        //Triggered by clicking Vertex circle
-        int currentPlayer = this.controller.getCurrentPlayer().playerNum;
+        int currentPlayer = controller.getCurrentPlayer().playerNum;
         int vertexId = Integer.parseInt(((Circle)event.getSource()).getId().substring("vertex".length()));
-        SuccessCode success = controller.clickedVertex(vertexId);
-        if(success == SuccessCode.SUCCESS){
-            this.renderSettlementOnVertex(vertices[vertexId], getPlayerColor(currentPlayer));
 
-            if(this.controller.getState()==GameState.FIRST_ROAD || this.controller.getState()==GameState.SECOND_ROAD){
-                setAllRoadsVisibility(true);
+        switch (controller.clickedVertex(vertexId)) {
+            case SUCCESS -> {
+                renderSettlementOnVertex(vertices[vertexId], getPlayerColor(currentPlayer));
+                updateCircleVisibility();
+                updateInfoPane();
             }
+            case INSUFFICIENT_RESOURCES -> setTooltipText("notEnoughResourcesOrSettlements");
+            case INVALID_PLACEMENT -> setTooltipText("cannotBuildSettlementHere");
+            case GAME_WIN -> {
+                renderSettlementOnVertex(vertices[vertexId], getPlayerColor(currentPlayer));
+                applyGameWon();
+            }
+        }
+    }
 
-            setAllVerticesVisibility(false);
-            updateInfoPane();
-            this.guiState = GUIState.IDLE;
+    public void handleRoadClick(MouseEvent event) throws IOException {
+        int currentPlayer = controller.getCurrentPlayer().playerNum;
+        int roadId = Integer.parseInt(((Circle) event.getSource()).getId().substring("road".length()));
 
-        }else if(success == SuccessCode.INSUFFICIENT_RESOURCES){
-            this.tooltipText.setText(messages.getString("notEnoughResourcesOrSettlements"));
-        }else if(success == SuccessCode.INVALID_PLACEMENT){
-            this.tooltipText.setText(messages.getString("cannotBuildSettlementHere"));
-        }else if(success == SuccessCode.GAME_WIN){
-            this.renderSettlementOnVertex(vertices[vertexId], getPlayerColor(currentPlayer));
-            applyGameWon();
+        switch (controller.clickedRoad(roadId)) {
+            case SUCCESS -> {
+                renderRoad(roadId, currentPlayer);
+                updateInfoPane();
+                updateCircleVisibility();
+            }
+            case INSUFFICIENT_RESOURCES -> setTooltipText("notEnoughResourcesOrRoads");
+            case INVALID_PLACEMENT -> setTooltipText("cannotBuildRoadHere");
+            case GAME_WIN -> {
+                renderRoad(roadId, currentPlayer);
+                applyGameWon();
+            }
         }
     }
 
     // ROBBER METHODS
     public void handleRobberClick(MouseEvent event) throws IOException {
-        this.robberId = Integer.parseInt(((Circle) event.getSource()).getId().substring("robber".length()));
-        SuccessCode success = this.controller.moveRobber(robberId);
-        if(success == SuccessCode.SUCCESS){
+        robberId = Integer.parseInt(((Circle) event.getSource()).getId().substring("robber".length()));
+
+        if (controller.moveRobber(robberId) == SUCCESS) {
             renderRobberOnHex(((Circle) event.getSource()).getLayoutX(), ((Circle) event.getSource()).getLayoutY());
-            setAllRobberSpotsVisibility(false);
 
             FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("RobPlayer.fxml"));
             Stage stage = new Stage();
@@ -578,137 +578,85 @@ public class CatanGUIController {
             robPlayerController.setMessages(this.messages);
             this.popupsOpen.add(robPlayerController);
 
-            this.guiState = GUIState.IDLE;
+            guiState = IDLE;
+            controller.setState(DEFAULT);
+            updateCircleVisibility();
         } else {
-            this.tooltipText.setText(messages.getString("cannotMoveRobberHere"));
+            setTooltipText("cannotMoveRobberHere");
         }
     }
 
-    public void handleRoadClick(MouseEvent event) throws IOException {
-        int currentPlayer = this.controller.getCurrentPlayer().playerNum;
-        GameState currentState = this.controller.getState();
-        //Triggered by Road circle click
-        int roadId = Integer.parseInt(((Circle) event.getSource()).getId().substring("road".length()));
-        SuccessCode success = controller.clickedRoad(roadId);
-        if (success == SuccessCode.SUCCESS) {
-            //render the road just clicked
-            this.renderRoad(roadId, currentPlayer);
-
-            this.updateInfoPane();
-            if (this.controller.getState() == GameState.SECOND_SETTLEMENT || this.controller.getState() == GameState.FIRST_SETTLEMENT) { //set up road, not end of set up
-                setAllVerticesVisibility(true);
-                this.tooltipText.setText("");
-            }
-            else if(this.controller.getState() == GameState.TURN_START){ //set up road, end of set up
-                setAllRoadsVisibility(false);
-                rollButton.setDisable(false);
-                this.guiState = GUIState.IDLE;
-                this.tooltipText.setText("");
-            }
-            else if(currentState == GameState.ROAD_BUILDING_1){ //placing first road in road building
-                if(this.controller.getState() == GameState.ROAD_BUILDING_2){ //go to place second road
-                    this.tooltipText.setText(messages.getString("roadBuilding2"));
-                    setAllRoadsVisibility(true);
-                }else if(this.controller.getState() == GameState.DEFAULT){ //out of roads, back to normal gameplay
-                    setAllRoadsVisibility(false);
-                    this.tooltipText.setText(messages.getString("outOfRoads"));
-                    this.guiState = GUIState.IDLE;
-                }
-            }else if(currentState == GameState.ROAD_BUILDING_2){ //placing second road in road building
-                setAllRoadsVisibility(false);
-                this.guiState = GUIState.IDLE;
-                this.tooltipText.setText("");
-            }else if(this.controller.getState() == GameState.DEFAULT){ //normal turn play
-                setAllRoadsVisibility(false);
-                this.guiState = GUIState.IDLE;
-                this.tooltipText.setText("");
-            }
-            this.playerTurnText.setText(String.valueOf(this.controller.getCurrentPlayer().playerNum));
-        }else if(success == SuccessCode.INSUFFICIENT_RESOURCES){
-            this.tooltipText.setText(messages.getString("notEnoughResourcesOrRoads"));
-        }else if(success == SuccessCode.INVALID_PLACEMENT){
-            this.tooltipText.setText(messages.getString("cannotBuildRoadHere"));
-        }else if(success == SuccessCode.GAME_WIN){
-            this.renderRoad(roadId, currentPlayer);
-            this.applyGameWon();
+    public void buildSettlementButtonPress() {
+        if (controller.getState() == DEFAULT) {
+            guiState = BUSY;
+            controller.setState(BUILD_SETTLEMENT);
+            updateCircleVisibility();
         }
     }
 
-    public void buildSettlementButtonPress(){
-        //Triggered by Build Settlement button pressed
-        if(this.controller.getState()==GameState.DEFAULT){
-            this.guiState = GUIState.BUSY;
-            this.controller.setState(GameState.BUILD_SETTLEMENT);
-            setAllVerticesVisibility(true);
+    public void buildRoadButtonPress() {
+        if (controller.getState() == DEFAULT) {
+            guiState = BUSY;
+            controller.setState(BUILD_ROAD);
+            updateCircleVisibility();
         }
     }
 
-    public void buildRoadButtonPress(){
-        //Triggered by Build Road button pressed
-        if(this.controller.getState()==GameState.DEFAULT) {
-            this.guiState = GUIState.BUSY;
-            this.controller.setState(GameState.BUILD_ROAD);
-            setAllRoadsVisibility(true);
+    public void buildCityButtonPress() {
+        if (controller.getState() == DEFAULT) {
+            guiState = BUSY;
+            setTooltipText("selectSettlementToUpgrade");
+            controller.setState(UPGRADE_SETTLEMENT);
         }
     }
 
-    public void buildCityButtonPress(){
-        //Triggered by Buy City button pressed
-        if(this.controller.getState()==GameState.DEFAULT) {
-            this.guiState = GUIState.BUSY;
-            this.tooltipText.setText(messages.getString("selectSettlementToUpgrade"));
-            this.controller.setState(GameState.UPGRADE_SETTLEMENT);
-        }
-    }
-
-    public void buildDistrictButtonPress(){
-        //Triggered by Build Settlement button pressed
-        if(this.controller.getState()==GameState.DEFAULT){
-            this.guiState = GUIState.BUSY;
-            this.controller.setState(GameState.BUILD_DISTRICT);
+    public void buildDistrictButtonPress() {
+        if (controller.getState() == DEFAULT) {
+            guiState = BUSY;
+            controller.setState(BUILD_DISTRICT);
         }
     }
 
     public void buyDevCardButtonPress() throws IOException {
         //Triggered by Buy Development Card button pressed
-        if(this.controller.getState()==GameState.DEFAULT || this.controller.getState() == GameState.TURN_START){
+        if(this.controller.getState()== DEFAULT || this.controller.getState() == TURN_START){
             SuccessCode success = controller.clickedBuyDevCard();
-            if(success == SuccessCode.SUCCESS){
-                this.tooltipText.setText(messages.getString("purchasedDevCard"));
+            if(success == SUCCESS){
+                setTooltipText("purchasedDevCard");
                 this.updateInfoPane();
             }else if(success == SuccessCode.INSUFFICIENT_RESOURCES){
-                this.tooltipText.setText(messages.getString("notEnoughResourcesDevCard"));
+                setTooltipText("notEnoughResourcesDevCard");
             }else if(success == SuccessCode.EMPTY_DEV_CARD_DECK){
-                this.tooltipText.setText(messages.getString("devCardDeckEmpty"));
-            }else if(success == SuccessCode.GAME_WIN){
+                setTooltipText("devCardDeckEmpty");
+            }else if(success == GAME_WIN){
                 applyGameWon();
             }
         }
     }
 
     public void rollButtonPressed() throws IOException {
-        //Triggered by Roll Button pressed
-        if(this.controller.getState() == GameState.TURN_START && this.guiState == GUIState.IDLE){
-            int dieNumber = this.controller.rollDice();
-            this.updateInfoPane();
-            this.tooltipText.setText(dieNumber + " " + messages.getString("dieNumberRolled"));
-            if (dieNumber == 7) {
-                this.doRobber();
-            } else if (dieNumber == 12) {
-                Controller.WeatherEvent weatherEvent = this.controller.createWeatherEvent();
+        if (controller.getState() == TURN_START && guiState == IDLE) {
+            int dieNumber = controller.rollDice();
+            updateInfoPane();
+            tooltipText.setText(dieNumber + " " + messages.getString("dieNumberRolled"));
 
-                // Build the weather event message
-                String messagePattern = messages.getString("weatherEvent");
-                Object[] params = {messages.getString(weatherEvent.boostType().toString()),
-                        messages.getString(weatherEvent.resource().toString()),
-                        weatherEvent.forEveryone() ? messages.getString("everyone") : messages.getString("onlyPlayer")};
-                String weatherEventMessage = MessageFormat.format(messagePattern, params);
+            switch (dieNumber) {
+                case 7 -> doRobber();
+                case 12 -> {
+                    Controller.WeatherEvent weatherEvent = controller.createWeatherEvent();
 
-                // display it to the user
-                this.tooltipText.setText(weatherEventMessage);
-                this.controller.setState(GameState.DEFAULT);
-            } else {
-                this.controller.setState(GameState.DEFAULT);
+                    // Build the weather event message
+                    String messagePattern = messages.getString("weatherEvent");
+                    Object[] params = {messages.getString(weatherEvent.boostType().toString()),
+                            messages.getString(weatherEvent.resource().toString()),
+                            weatherEvent.forEveryone() ? messages.getString("everyone") : messages.getString("onlyPlayer")};
+                    String weatherEventMessage = MessageFormat.format(messagePattern, params);
+
+                    // display it to the user
+                    tooltipText.setText(weatherEventMessage);
+                    controller.setState(DEFAULT);
+                }
+                default -> controller.setState(DEFAULT);
             }
         }
     }
@@ -726,44 +674,39 @@ public class CatanGUIController {
         dropCardsController.setMessages(this.messages);
         this.popupsOpen.add(dropCardsController);
 
-        this.tooltipText.setText(messages.getString("sevenRolled"));
-        this.guiState = GUIState.BUSY;
+        setTooltipText("sevenRolled");
+        guiState = BUSY;
     }
 
-    public void cancelButtonPressed(){
-        if(this.controller.getState()==GameState.BUILD_ROAD
-            || this.controller.getState() == GameState.BUILD_SETTLEMENT
-            || this.controller.getState() == GameState.UPGRADE_SETTLEMENT
-        ){
-            this.controller.setState(GameState.DEFAULT);
-            setAllVerticesVisibility(false);
-            setAllRoadsVisibility(false);
-            updateInfoPane();
-            this.guiState = GUIState.IDLE;
-            this.tooltipText.setText("");
+    public void cancelButtonPressed() {
+        switch (controller.getState()) {
+            case BUILD_ROAD, BUILD_SETTLEMENT, UPGRADE_SETTLEMENT -> {
+                controller.setState(DEFAULT);
+                updateCircleVisibility();
+                guiState = IDLE;
+                clearTooltipText();
+            }
+            default -> setTooltipText("cannotCancel");
         }
     }
 
     public void playKnightButtonPressed() throws IOException {
-        //Triggered by Play Knight Card pressed
-        if(this.controller.getState() == GameState.DEFAULT && this.guiState == GUIState.IDLE){
-            SuccessCode success = this.controller.playKnightCard();
-            if(success == SuccessCode.SUCCESS){
-                setAllRobberSpotsVisibility(true);
-                this.tooltipText.setText(messages.getString("moveRobber"));
-                this.guiState = GUIState.BUSY;
-            }else if(success == SuccessCode.CANNOT_PLAY_CARD){
-                this.tooltipText.setText(messages.getString("cannotPlayDevCard"));
-            }else if(success == SuccessCode.GAME_WIN){
-                applyGameWon();
+        if (controller.getState() == DEFAULT && guiState == IDLE) {
+            switch (controller.playKnightCard()) {
+                case SUCCESS -> {
+                    showRobberSpots();
+                    setTooltipText("moveRobber");
+                    guiState = BUSY;
+                }
+                case CANNOT_PLAY_CARD -> setTooltipText("cannotPlayDevCard");
+                case GAME_WIN -> applyGameWon();
             }
-
         }
     }
 
     public void playMonopolyButtonPressed() throws IOException {
         //Triggered by Play Monopoly card pressed
-        if(this.controller.getState()==GameState.DEFAULT && this.guiState == GUIState.IDLE){
+        if(this.controller.getState()== DEFAULT && this.guiState == IDLE){
             FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("monopoly.fxml"));
             Stage stage = new Stage();
             Scene scene = new Scene(fxmlLoader.load());
@@ -777,28 +720,27 @@ public class CatanGUIController {
             monopolyController.setMessages(this.messages);
             this.popupsOpen.add(monopolyController);
 
-            this.guiState = GUIState.BUSY;
-            this.tooltipText.setText(messages.getString("playingMonopoly"));
+            this.guiState = BUSY;
+            setTooltipText("playingMonopoly");
         }
     }
 
-    public void playRoadBuildingButtonPressed(){
-        //Triggered by Play Road Building Card pressed
-        if(this.controller.getState() == GameState.DEFAULT && this.guiState == GUIState.IDLE){
-            SuccessCode success = controller.useRoadBuildingCard();
-            if(success == SuccessCode.SUCCESS){
-                setAllRoadsVisibility(true);
-                this.tooltipText.setText(messages.getString("playRoadBuilding"));
-                this.guiState = GUIState.BUSY;
-            }else if(success == SuccessCode.CANNOT_PLAY_CARD){
-                this.tooltipText.setText(messages.getString("cannotPlayDevCard"));
+    public void playRoadBuildingButtonPressed() {
+        if (controller.getState() == DEFAULT && guiState == IDLE) {
+            switch (controller.useRoadBuildingCard()) {
+                case SUCCESS ->  {
+                    updateCircleVisibility();
+                    setTooltipText("playRoadBuilding");
+                    guiState = BUSY;
+                }
+                case CANNOT_PLAY_CARD -> setTooltipText("cannotPlayDevCard");
             }
         }
     }
 
     public void playYearOfPlentyButtonPressed() throws IOException {
         //Triggered by Play YearOfPlenty card pressed
-        if(this.controller.getState()==GameState.DEFAULT && this.guiState==GUIState.IDLE){
+        if(this.controller.getState()== DEFAULT && this.guiState== IDLE){
             FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("year_of_plenty.fxml"));
             Stage stage = new Stage();
             Scene scene = new Scene(fxmlLoader.load());
@@ -811,14 +753,14 @@ public class CatanGUIController {
             yearOfPlentyController.setMessages(this.messages);
             this.popupsOpen.add(yearOfPlentyController);
 
-            this.tooltipText.setText(messages.getString("playingYearOfPlenty"));
-            this.guiState = GUIState.BUSY;
+            setTooltipText("playingYearOfPlenty");
+            this.guiState = BUSY;
         }
     }
 
     public void playerTradeButtonPressed() throws IOException {
         //Triggered by Player Trade button pressed
-        if (this.controller.getState() == GameState.DEFAULT && this.guiState == GUIState.IDLE) {
+        if (this.controller.getState() == DEFAULT && this.guiState == IDLE) {
             FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("PlayerTradeWindow.fxml"));
             Stage stage = new Stage();
             Scene scene = new Scene(fxmlLoader.load());
@@ -831,15 +773,15 @@ public class CatanGUIController {
             playerTradeController.setMessages(this.messages);
             this.popupsOpen.add(playerTradeController);
 
-            this.tooltipText.setText(messages.getString("playerTrade"));
+            setTooltipText("playerTrade");
 
-            this.guiState = GUIState.BUSY;
+            this.guiState = BUSY;
         }
     }
 
     public void bankTradeButtonPressed() throws IOException {
         //Triggered by Trade with Bank button pressed
-        if(this.controller.getState() == GameState.DEFAULT && this.guiState == GUIState.IDLE) {
+        if(this.controller.getState() == DEFAULT && this.guiState == IDLE) {
             FXMLLoader fxmlLoader = new FXMLLoader(Catan.class.getResource("BankTradeWindow.fxml"));
             Stage stage = new Stage();
             Scene scene = new Scene(fxmlLoader.load());
@@ -852,46 +794,50 @@ public class CatanGUIController {
             bankTradeController.setMessages(this.messages);
             this.popupsOpen.add(bankTradeController);
 
-            this.tooltipText.setText(messages.getString("bankTrade"));
-            this.guiState = GUIState.BUSY;
+            setTooltipText("bankTrade");
+            this.guiState = BUSY;
         }
     }
 
     public void handleSettlementClick(MouseEvent event) {
         Polygon clickedSettlement = (Polygon) event.getSource();
         int vertex = settlementToVertexMap.get(clickedSettlement);
-        if(this.controller.getState()==GameState.UPGRADE_SETTLEMENT) {
-            handleUpgradeSettlement(clickedSettlement, vertex);
-        } else if(this.controller.getState()==GameState.BUILD_DISTRICT) {
-            try {
-                handleBuildDistrict(vertex, clickedSettlement);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+
+        switch (controller.getState()) {
+            case UPGRADE_SETTLEMENT -> {
+                try {
+                    handleUpgradeSettlement(clickedSettlement, vertex);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            case BUILD_DISTRICT -> {
+                try {
+                    handleBuildDistrict(vertex, clickedSettlement);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
 
-    private void handleUpgradeSettlement(Polygon clickedSettlement, int vertex) {
-        SuccessCode success = this.controller.clickedVertex(vertex);
-        if(success==SuccessCode.SUCCESS){
-            settlementToVertexMap.remove(clickedSettlement);
-            gameboardPane.getChildren().remove(clickedSettlement);
-            renderCityOnVertex(clickedSettlement.getLayoutX(), clickedSettlement.getLayoutY(), vertex);
-            updateInfoPane();
-            this.tooltipText.setText(messages.getString("builtCity"));
-            this.guiState = GUIState.IDLE;
-        }else if(success == SuccessCode.INVALID_PLACEMENT){
-            this.tooltipText.setText(messages.getString("cannotPlaceCity"));
-        }else if(success==SuccessCode.INSUFFICIENT_RESOURCES){
-            this.tooltipText.setText(messages.getString("notEnoughResourcesCity"));
-        }else if(success == SuccessCode.GAME_WIN){
-            settlementToVertexMap.remove(clickedSettlement);
-            gameboardPane.getChildren().remove(clickedSettlement);
-            renderCityOnVertex(clickedSettlement.getLayoutX(), clickedSettlement.getLayoutY(), vertex);
-            try {
+    private void handleUpgradeSettlement(Polygon clickedSettlement, int vertex) throws IOException {
+        switch (controller.clickedVertex(vertex)) {
+            case SUCCESS -> {
+                settlementToVertexMap.remove(clickedSettlement);
+                gameboardPane.getChildren().remove(clickedSettlement);
+                renderCityOnVertex(clickedSettlement.getLayoutX(), clickedSettlement.getLayoutY(), vertex);
+                updateInfoPane();
+                setTooltipText("builtCity");
+                guiState = IDLE;
+            }
+            case INVALID_PLACEMENT -> setTooltipText("cannotPlaceCity");
+            case INSUFFICIENT_RESOURCES -> setTooltipText("notEnoughResourcesCity");
+            case GAME_WIN -> {
+                settlementToVertexMap.remove(clickedSettlement);
+                gameboardPane.getChildren().remove(clickedSettlement);
+                renderCityOnVertex(clickedSettlement.getLayoutX(), clickedSettlement.getLayoutY(), vertex);
                 applyGameWon();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
         }
     }
@@ -912,12 +858,16 @@ public class CatanGUIController {
         buildDistrictController.setSelectedBuilding(building);
         this.popupsOpen.add(buildDistrictController);
 
-        this.guiState = GUIState.BUSY;
-        this.tooltipText.setText(messages.getString("buildingDistrict"));
+        this.guiState = BUSY;
+        setTooltipText("buildingDistrict");
     }
 
-    public void setTooltipText(String text) {
-        this.tooltipText.setText(text);
+    public void setTooltipText(String in18Key) {
+        this.tooltipText.setText(messages.getString(in18Key));
+    }
+
+    public void clearTooltipText() {
+        this.tooltipText.setText("");
     }
 
     // -----------------------------------------------------------------------
@@ -961,11 +911,11 @@ public class CatanGUIController {
         roadMarkers[index] = null;
     }
 
-    private void setAllRoadsVisibility(boolean visibility){
+    private void hideAllRoads() {
         //Called in various places in handleRoadClick and handleVertexClick
-        for(Circle road: roadMarkers){
-            if(road != null){
-                road.setVisible(visibility);
+        for (Circle road: roadMarkers) {
+            if (road != null) {
+                road.setVisible(false);
             }
         }
     }
@@ -984,11 +934,19 @@ public class CatanGUIController {
         gameboardPane.getChildren().add(newCity);
     }
 
-    public void setAllRobberSpotsVisibility(boolean visibility){
-        for(Circle robberSpot: robberSpots){
-            if(robberSpot!=null){
-                robberSpot.setVisible(visibility);
+    private void hideAllRobberSpots() {
+        for (Circle robberSpot: robberSpots) {
+            if (robberSpot != null) {
+                robberSpot.setVisible(false);
             }
+        }
+    }
+
+    public void showRobberSpots() {
+        hideAllRobberSpots();
+        for (Integer i : controller.getValidRobberSpots()) {
+            System.out.println(i);
+            robberSpots[i].setVisible(true);
         }
     }
 
@@ -1004,8 +962,8 @@ public class CatanGUIController {
         int vertexId = Integer.parseInt(vertex.getId().substring("vertex".length()));
 
         // Construct new settlement
-        Polygon newSettlement = this.createSettlement(x, y, color);
-        this.setDistrictColor(newSettlement, controller.getDistrictTypeForVertex(vertexId));
+        Polygon newSettlement = createSettlement(x, y, color);
+        setDistrictColor(newSettlement, controller.getDistrictTypeForVertex(vertexId));
 
         // add to board
         gameboardPane.getChildren().add(newSettlement);
@@ -1040,12 +998,26 @@ public class CatanGUIController {
         building.setStrokeWidth(2);
     }
 
-    private void setAllVerticesVisibility(boolean visibility){
-        //called in various places in handleVertexClick and handleRoadClick
-        for(Circle vertex: vertices){
-            if(vertex!=null){
-                vertex.setVisible(visibility);
+    private void hideAllVertexes() {
+        // called in various places in handleVertexClick and handleRoadClick
+        for (Circle vertex: vertices) {
+            if (vertex != null) {
+                vertex.setVisible(false);
             }
+        }
+    }
+
+    private void showClickableVertexes() {
+        hideAllVertexes();
+        for (Integer i : controller.getBuildableVertexes()) {
+            vertices[i].setVisible(true);
+        }
+    }
+
+    private void showClickableRoads() {
+        hideAllRoads();
+        for (Integer i : controller.getBuildableRoads()) {
+            roadMarkers[i].setVisible(true);
         }
     }
 

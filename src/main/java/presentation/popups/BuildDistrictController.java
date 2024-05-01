@@ -64,9 +64,9 @@ public class BuildDistrictController extends Popup {
 
         SuccessCode code = this.submitBuildDistrict(this.selectedVertex, type);
         if(code == SuccessCode.INSUFFICIENT_RESOURCES){
-            guiController.setTooltipText(messages.getString("buildDistrictInsufficientResources"));
+            guiController.setTooltipText("buildDistrictInsufficientResources");
         } else if (code == SuccessCode.INVALID_PLACEMENT){
-            guiController.setTooltipText(messages.getString("buildDistrictInnvalidPlacement"));
+            guiController.setTooltipText("buildDistrictInnvalidPlacement");
         }
 
         domainController.setState(GameState.DEFAULT);
