@@ -53,8 +53,8 @@ public class Controller implements Restorable {
     private static final int PLAYER_4_NUM = 4;
     private static final Integer MIN_KNIGHTS_FOR_LARGEST_ARMY = 3;
     private static final int POINTS_FOR_WIN = 10;
-    private static final int MIN_DIE = 2;
-    private static final int MAX_DIE = 13;
+    private static final int MIN_DIE = 1;
+    private static final int MAX_DIE = 7;
     static {
 
         // Map the locations to the players
@@ -543,7 +543,9 @@ public class Controller implements Restorable {
      * Sets the current die value to a random number between 2-12 (two 6 sided die)
      */
     public int rollDice() {
-        int die = random.nextInt(MIN_DIE, MAX_DIE);
+        int die1 = random.nextInt(MIN_DIE, MAX_DIE);
+        int die2 = random.nextInt(MIN_DIE, MAX_DIE);
+        int die = die1 + die2;
         for (Player player: this.playerArr) {
             this.game.distributeResources(player, die);
         }

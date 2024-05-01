@@ -236,7 +236,7 @@ public class Game implements Restorable {
         try {
             vertex.buildDistrict(player, type);
         } catch (InvalidPlacementException e) {
-            player.addResources(type.districtCost);
+            player.addResources(type.getDistrictCost());
             throw new InvalidPlacementException();
         }
     }

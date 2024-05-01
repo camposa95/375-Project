@@ -1,6 +1,7 @@
 package presentation;
 
 import domain.bank.Resource;
+import domain.controller.GameState;
 import domain.devcarddeck.DevCard;
 import domain.building.DistrictType;
 import domain.gameboard.Terrain;
@@ -1041,7 +1042,7 @@ public class CatanGUIController {
     }
 
     // Changing resource image code
-    void initAllImages() {
+    public void initAllImages() {
         initHexImages();
         setIconImages();
         initializePorts();

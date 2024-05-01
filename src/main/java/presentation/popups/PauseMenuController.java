@@ -31,6 +31,7 @@ public class PauseMenuController extends Popup {
         closeButton.setText(messages.getString("closeButton"));
         title.setText(messages.getString("pauseMenuTitle"));
         selectorHeader.setText(messages.getString("languageSelectorHeader"));
+        changeGameImagesButton.setText(messages.getString("changeImageButton"));
     }
 
     public void saveButtonPressed() throws IOException {
@@ -67,8 +68,9 @@ public class PauseMenuController extends Popup {
         stage.setScene(scene);
         stage.show();
 
-        ChangeGameImagesController pauseMenuController = fxmlLoader.getController();
-        pauseMenuController.setControllers(this.guiController);
+        ChangeGameImagesController changeGameImagesController = fxmlLoader.getController();
+        changeGameImagesController.setControllers(this.guiController, this.domainController);
+        changeGameImagesController.setMessages(this.messages);
     }
 
     protected void closeStage() {

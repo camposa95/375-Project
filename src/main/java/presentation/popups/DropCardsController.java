@@ -1,5 +1,6 @@
 package presentation.popups;
 
+import data.GameLoader;
 import domain.player.Player;
 import domain.bank.Resource;
 import javafx.fxml.FXML;
@@ -36,12 +37,6 @@ public class DropCardsController extends Popup {
 
     @FXML
     public void initialize() {
-        lumberIcon.setFill(new ImagePattern(new Image("images/default/card_lumber.png")));
-        brickIcon.setFill(new ImagePattern(new Image("images/default/card_brick.png")));
-        woolIcon.setFill(new ImagePattern(new Image("images/default/card_wool.png")));
-        grainIcon.setFill(new ImagePattern(new Image("images/default/card_wheat.png")));
-        oreIcon.setFill(new ImagePattern(new Image("images/default/card_ore.png")));
-
         player1 = new TextField[]{player1lumber, player1brick, player1wool, player1grain, player1ore};
         player2 = new TextField[]{player2lumber, player2brick, player2wool, player2grain, player2ore};
         player3 = new TextField[]{player3lumber, player3brick, player3wool, player3grain, player3ore};
@@ -50,6 +45,12 @@ public class DropCardsController extends Popup {
 
     @Override
     protected void setupStateData() {
+        lumberIcon.setFill(GameLoader.getInstance().getImage("card_lumber.png"));
+        brickIcon.setFill(GameLoader.getInstance().getImage("card_brick.png"));
+        woolIcon.setFill(GameLoader.getInstance().getImage("card_wool.png"));
+        grainIcon.setFill(GameLoader.getInstance().getImage("card_wheat.png"));
+        oreIcon.setFill(GameLoader.getInstance().getImage("card_ore.png"));
+
         players = domainController.getPlayerArr();
         int numPlayers = players.length;
         this.playerResources2d = new TextField[numPlayers][];

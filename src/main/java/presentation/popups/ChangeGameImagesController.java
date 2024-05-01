@@ -5,9 +5,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.apache.commons.io.FileUtils;
+import presentation.CatanGUIController;
 import presentation.popups.Popup;
 
 import java.io.File;
@@ -19,23 +22,21 @@ public class ChangeGameImagesController extends Popup {
     @FXML
     ComboBox existingResourcesComboBox;
     @FXML
-    Button selectNewFolderButton;
-    private CatanGUIController guiController;
-
+    Button selectNewFolderButton, closeButton;
+    @FXML
+    Label existingText, orText;
 
     @FXML
     public void initialize() {
         initComboBox();
     }
 
-    @SuppressFBWarnings("EI_EXPOSE_REP2")
-    public void setControllers(CatanGUIController guiController) {
-        this.guiController = guiController;
-    }
-
     @Override
     protected void internationalize() {
-        // TODO: should do some internationalization here
+        existingText.setText(messages.getString("changeImagesExisting"));
+        orText.setText(messages.getString("changeImagesOr"));
+        selectNewFolderButton.setText(messages.getString("changeImagesNew"));
+        closeButton.setText(messages.getString("closeButton"));
     }
 
     @FXML

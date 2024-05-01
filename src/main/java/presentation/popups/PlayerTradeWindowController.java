@@ -15,6 +15,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.util.ResourceBundle;
+
 public class PlayerTradeWindowController extends Popup {
 
     @FXML
@@ -42,21 +44,13 @@ public class PlayerTradeWindowController extends Popup {
         receive = new TextField[]{receiveLumber, receiveBrick, receiveWool, receiveGrain, receiveOre};
     }
 
-    private void internationalize() {
+    public void internationalize() {
         playerTradeWindowTitle.setText(messages.getString("playerTradeWindowTitle"));
 
         youGiveText.setText(messages.getString("playerTradeYouGiveText"));
         youReceiveText.setText(messages.getString("playerTradeYouReceiveText"));
         tooltip.setText(messages.getString("playerTradeTooltipDefault"));
         cancelButton.setText(messages.getString("cancelText"));
-    }
-
-    public void setPlayersData(Player currentPlayer, Player[] players, ResourceBundle messages) {
-        this.currentPlayer = currentPlayer;
-        this.players = players;
-        this.messages = messages;
-
-        internationalize();
     }
 
     @Override
@@ -80,14 +74,6 @@ public class PlayerTradeWindowController extends Popup {
         }
         int player1 = currentPlayer.playerNum==1 ? 2 : 1;
         otherPlayer1.setText(messages.getString("playerTradeTooltipAcceptButtonText") + player1);
-    }
-
-    protected void internationalize() {
-        playerTradeWindowTitle.setText(messages.getString("playerTradeWindowTitle"));
-
-        youGiveText.setText(messages.getString("playerTradeYouGiveText"));
-        youReceiveText.setText(messages.getString("playerTradeYouReceiveText"));
-        tooltip.setText(messages.getString("playerTradeTooltipDefault"));
     }
 
     private Resource[] getResources(TextField[] fields) {

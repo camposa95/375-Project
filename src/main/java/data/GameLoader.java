@@ -58,7 +58,7 @@ public class GameLoader {
     private GameType gameType;
     private Integer numPlayers;
     private String language;
-    private String imageFolderPath;
+    private String imageFolderPath = DEFAULT_ICON_FOLDER_PATH;
     private Map<String, ImagePattern> images = new HashMap<>();
 
     // Core Undo Redo stuff

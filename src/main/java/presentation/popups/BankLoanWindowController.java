@@ -21,7 +21,7 @@ import presentation.CatanGUIController;
 
 import java.util.ResourceBundle;
 
-public class BankLoanWindowController implements Popup {
+public class BankLoanWindowController extends Popup {
     @FXML
     private TextField giveLumber, giveBrick, giveWool, giveGrain, giveOre, receiveLumber, receiveBrick, receiveWool, receiveGrain, receiveOre;
     @FXML
@@ -31,9 +31,6 @@ public class BankLoanWindowController implements Popup {
     @FXML
     private Button submitButton, cancelButton;
     private TextField[] give = null;
-    CatanGUIController guiController;
-    Controller domainController;
-    ResourceBundle messages;
 
     @FXML
     private void initialize() {
@@ -46,7 +43,7 @@ public class BankLoanWindowController implements Popup {
         internationalize();
     }
 
-    private void internationalize() {
+    public void internationalize() {
         title.setText(messages.getString("bankLoanTitle"));
         loanText.setText(messages.getString("bankLoanResourcesPrompt"));
         tooltip.setText(messages.getString("bankLoanTooltipDefault"));
@@ -55,11 +52,8 @@ public class BankLoanWindowController implements Popup {
         cancelButton.setText(messages.getString("cancelText"));
     }
 
-    @SuppressFBWarnings("EI_EXPOSE_REP2")
-    public void setControllers(CatanGUIController guiController, Controller domainController) {
-        this.guiController = guiController;
-        this.domainController = domainController;
-
+    @Override
+    protected void setupStateData() {
         lumberIcon.setFill(GameLoader.getInstance().getImage("card_lumber.png"));
         brickIcon.setFill(GameLoader.getInstance().getImage("card_brick.png"));
         woolIcon.setFill(GameLoader.getInstance().getImage("card_wool.png"));
@@ -115,7 +109,7 @@ public class BankLoanWindowController implements Popup {
         }
     }
 
-    public void close() {
+    public void closeStage() {
         this.guiController.notifyOfPopupClose(this);
         Stage stage = (Stage) lumberIcon.getScene().getWindow();
         stage.close();
