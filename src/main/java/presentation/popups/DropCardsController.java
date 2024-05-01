@@ -118,18 +118,15 @@ public class DropCardsController extends Popup {
                 return;
             }
         }
-        this.dropResources(resources);
-        this.close();
+        dropResources(resources);
+        close();
     }
 
     private void dropResources(HashMap<Integer, Resource[]> resourcesToDrop) {
-        //Called from DropCardsController.java
-        if(resourcesToDrop!=null){ //if null, no dropping occurred
-            this.domainController.dropResources(resourcesToDrop);
-            this.guiController.finishedMove();
+        if (resourcesToDrop != null) { // if null, no dropping occurred
+            domainController.dropResources(resourcesToDrop);
+            guiController.finishedMove();
         }
-
-        guiController.setAllRobberSpotsVisibility(true);
     }
 
     private Resource[] getPlayerResources(TextField[] playerResources) {
@@ -166,6 +163,7 @@ public class DropCardsController extends Popup {
     }
 
     protected void closeStage() {
+        guiController.showRobberSpots();
         Stage stage = (Stage) lumberIcon.getScene().getWindow();
         stage.close();
     }

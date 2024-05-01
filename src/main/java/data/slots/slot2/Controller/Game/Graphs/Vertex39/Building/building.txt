@@ -1,2 +1,0 @@
-District: EMPTY
-IsCity: false
