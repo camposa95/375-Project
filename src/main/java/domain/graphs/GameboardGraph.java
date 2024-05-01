@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.*;
 
 import data.*;
+import domain.game.InvalidPlacementException;
+import domain.game.NotEnoughResourcesException;
 import domain.player.Player;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import domain.game.GameType;
@@ -334,6 +336,39 @@ public class GameboardGraph implements Restorable {
         }
 
         return players;
+    }
+
+    public Set<Integer> getBuildableVertexes() {
+        Set<Integer> buildableVertexes = new HashSet<>();
+        for (Vertex v : vertexes) {
+            if (v.isBuildable()) {
+                buildableVertexes.add(v.getLocationId());
+            }
+        }
+
+        return buildableVertexes;
+    }
+
+    public Set<Integer> getBuildableRoadsSetup(final int lastPlacedVertex) {
+        Set<Integer> buildableRoads = new HashSet<>();
+        for (Road r : roads) {
+            if (r.isBuildable() && r.isAdjacentTo(getVertex(lastPlacedVertex))) {
+                buildableRoads.add(r.getLocationId());
+            }
+        }
+
+        return buildableRoads;
+    }
+
+    public Set<Integer> getBuildableRoadsRegularPlay(final Player player) {
+        Set<Integer> buildableRoads = new HashSet<>();
+        for (Road r : roads) {
+            if (r.isBuildableBy(player)) {
+                buildableRoads.add(r.getLocationId());
+            }
+        }
+
+        return buildableRoads;
     }
 
     // -----------------------------------

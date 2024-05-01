@@ -5,7 +5,6 @@ import domain.controller.Controller;
 import domain.controller.SuccessCode;
 import domain.player.Player;
 import domain.bank.Resource;
-import presentation.CatanGUIController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -16,9 +15,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.util.ResourceBundle;
-
-public class PlayerTradeWindowController implements Popup {
+public class PlayerTradeWindowController extends Popup {
 
     @FXML
     private Button otherPlayer1, otherPlayer2, otherPlayer3, cancelButton;
@@ -32,9 +29,6 @@ public class PlayerTradeWindowController implements Popup {
     private TextField[] receive = null;
     Player currentPlayer;
     Player[] players;
-    CatanGUIController guiController;
-    Controller domainController;
-    ResourceBundle messages;
 
     @FXML
     private void initialize() {
@@ -63,18 +57,24 @@ public class PlayerTradeWindowController implements Popup {
         this.messages = messages;
 
         internationalize();
+    }
+
+    @Override
+    protected void setupStateData() {
+        this.currentPlayer = domainController.getCurrentPlayer();
+        this.players = domainController.getPlayerArr();
 
         int numPlayers = this.players.length;
 
-        if(numPlayers<4){
+        if (numPlayers < 4) {
             otherPlayer3.setVisible(false);
-        }else{
+        } else {
             int player3 = currentPlayer.playerNum<4 ? 4 : 3;
             otherPlayer3.setText(messages.getString("playerTradeTooltipAcceptButtonText") + player3);
         }
-        if(numPlayers<3){
+        if (numPlayers < 3) {
             otherPlayer2.setVisible(false);
-        }else{
+        } else {
             int player2 = currentPlayer.playerNum<3 ? 3 : 2;
             otherPlayer2.setText(messages.getString("playerTradeTooltipAcceptButtonText") + player2);
         }
@@ -82,9 +82,12 @@ public class PlayerTradeWindowController implements Popup {
         otherPlayer1.setText(messages.getString("playerTradeTooltipAcceptButtonText") + player1);
     }
 
-    public void setControllers(CatanGUIController guiController, Controller domainController) {
-        this.guiController = guiController;
-        this.domainController = domainController;
+    protected void internationalize() {
+        playerTradeWindowTitle.setText(messages.getString("playerTradeWindowTitle"));
+
+        youGiveText.setText(messages.getString("playerTradeYouGiveText"));
+        youReceiveText.setText(messages.getString("playerTradeYouReceiveText"));
+        tooltip.setText(messages.getString("playerTradeTooltipDefault"));
     }
 
     private Resource[] getResources(TextField[] fields) {
@@ -145,7 +148,7 @@ public class PlayerTradeWindowController implements Popup {
     }
 
     private SuccessCode executeTrade(Player otherPlayer, Resource[] giving, Resource[] receiving) {
-        //Called from  PlayerTradeController.java
+        // Called from  PlayerTradeController.java
         SuccessCode code = domainController.tradeWithPlayer(otherPlayer, giving, receiving);
         if(code==SuccessCode.SUCCESS){
             guiController.finishedMove();
@@ -153,8 +156,7 @@ public class PlayerTradeWindowController implements Popup {
         return code;
     }
 
-    public void close() {
-        this.guiController.notifyOfPopupClose(this);
+    protected void closeStage() {
         Stage stage = (Stage) lumberIcon.getScene().getWindow();
         stage.close();
     }

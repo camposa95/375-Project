@@ -1,4 +1,0 @@
-gameType: Beginner
-numPlayers: 4
-language: English
-iconPath: images\realistic-tiles

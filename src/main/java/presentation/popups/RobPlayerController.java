@@ -13,23 +13,51 @@ import javafx.stage.Stage;
 
 import java.util.ResourceBundle;
 
-public class RobPlayerController implements Popup {
+public class RobPlayerController extends Popup {
 
     @FXML
     private Button otherPlayer1, otherPlayer2, otherPlayer3;
-    private Player[] players;
-    private Player currentPlayer;
-    private CatanGUIController guiController;
-    private Controller domainController;
-    private int robberId = 0;
     private Button[] buttons;
     @FXML
     private Text robPlayerTitleText;
-    ResourceBundle messages;
 
     @FXML
     public void initialize(){
-        this.buttons = new Button[]{otherPlayer1, otherPlayer2, otherPlayer3};
+        this.buttons = new Button[] {otherPlayer1, otherPlayer2, otherPlayer3};
+    }
+
+    @Override
+    protected void setupStateData() {
+        // make sure Players is the list of players on the hex being robbed
+        Player currentPlayer = domainController.getCurrentPlayer();
+        Player[] playersOnHex = domainController.getPlayersOnTile(guiController.robberId);
+
+        int numPlayers = playersOnHex.length;
+        for(int i = 0; i < numPlayers; i++){
+            if(playersOnHex[i].playerNum != currentPlayer.playerNum){
+                this.buttons[i].setText(messages.getString("robPlayerPlayerButton") + playersOnHex[i].playerNum);
+            }
+        }
+
+        int count = 0;
+        int total = 0;
+        String basis = messages.getString("robPlayerPlayerButton") + "X";
+        for (Button button: buttons) {
+            total++;
+            if (button.getText().length() != basis.length()) {
+                count++;
+                button.setVisible(false);
+            }
+        }
+        if (count == total) {
+            this.rob(-1);
+            this.close();
+        }
+    }
+
+    protected void internationalize() {
+        robPlayerTitleText.setText(messages.getString("robPlayerTitleText"));
+        otherPlayer1.setText(messages.getString("robPlayerPlayerButton") + " ");
     }
 
     private int getSelectedPlayer(MouseEvent event){
@@ -63,48 +91,8 @@ public class RobPlayerController implements Popup {
         return code;
     }
 
-    private void internationalize(){
-        robPlayerTitleText.setText(messages.getString("robPlayerTitleText"));
-        otherPlayer1.setText(messages.getString("robPlayerPlayerButton") + " ");
-    }
-
-    //make sure Players is the list of players on the hex being robbed
-    public void setPlayerData(Player currentPlayer, Player[] playersOnHex, CatanGUIController guiController, ResourceBundle messages, Controller domainController) {
-        this.currentPlayer = currentPlayer;
-        this.guiController = guiController;
-        this.domainController = domainController;
-        this.players=playersOnHex;
-        this.messages=messages;
-
-        internationalize();
-
-        int numPlayers = this.players.length;
-        for(int i = 0; i < numPlayers; i++){
-            if(playersOnHex[i].playerNum != currentPlayer.playerNum){
-                this.buttons[i].setText(messages.getString("robPlayerPlayerButton") + playersOnHex[i].playerNum);
-            }
-        }
-
-        int count = 0;
-        int total = 0;
-        String basis = messages.getString("robPlayerPlayerButton") + "X";
-        System.out.println(basis);
-        for(Button button: buttons){
-            total++;
-            if(button.getText().length() != basis.length()){
-                count++;
-                button.setVisible(false);
-            }
-        }
-        if(count==total){
-            this.rob(-1);
-            this.close();
-        }
-
-    }
-
-    public void close() {
-        this.guiController.notifyOfPopupClose(this);
+    @Override
+    protected void closeStage() {
         Stage stage = (Stage) otherPlayer1.getScene().getWindow();
         stage.close();
     }

@@ -1,9 +1,7 @@
 package presentation.popups;
 
-import domain.controller.Controller;
 import domain.controller.SuccessCode;
 import domain.bank.Resource;
-import presentation.CatanGUIController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
@@ -11,9 +9,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.util.ResourceBundle;
-
-public class BankTradeWindowController implements Popup {
+public class BankTradeWindowController extends Popup {
 
     @FXML
     private RadioButton giveLumber, giveBrick, giveWool, giveGrain, giveOre, receiveLumber, receiveBrick, receiveWool, receiveGrain, receiveOre;
@@ -22,12 +18,9 @@ public class BankTradeWindowController implements Popup {
     @FXML
     private Text tooltip, bankTradeWindowTitleText, resourceGiveText, resourceReceiveText;
     private ToggleGroup giveGroup, receiveGroup;
-    private CatanGUIController guiController;
-    private Controller domainController;
-    private ResourceBundle messages;
 
     @FXML
-    private void initialize(){
+    private void initialize() {
         giveGroup = new ToggleGroup();
         receiveGroup = new ToggleGroup();
         giveLumber.setToggleGroup(giveGroup);
@@ -46,14 +39,7 @@ public class BankTradeWindowController implements Popup {
         receiveLumber.setSelected(true);
     }
 
-    public void setControllers(CatanGUIController guiController, Controller domainController) {
-        this.guiController = guiController;
-        this.domainController = domainController;
-    }
-
-    public void setMessages(ResourceBundle messages){
-        this.messages=messages;
-
+    protected void internationalize() {
         bankTradeWindowTitleText.setText(messages.getString("bankTradeWindowTitleText"));
         tradeButton.setText(messages.getString("bankTradeWindowSubmitTradeButton"));
         cancelButton.setText(messages.getString("bankTradeWindowCancelTradeButton"));
@@ -74,10 +60,26 @@ public class BankTradeWindowController implements Popup {
         receiveOre.setText(messages.getString("bankTradeWindowOre"));
     }
 
-    public Resource stringToResource(String resource){
-        if(resource.equals(messages.getString("bankTradeWindowLumber"))){
+    public void tradeButtonPressed() {
+        Resource giveSelected = stringToResource(((RadioButton) giveGroup.getSelectedToggle()).getText());
+        Resource receiveSelected = stringToResource(((RadioButton) receiveGroup.getSelectedToggle()).getText());
+
+        if (giveSelected.equals(receiveSelected)) {
+            tooltip.setText(messages.getString("bankTradeWindowTooltipSameGiveReceive"));
+        } else {
+            SuccessCode success = this.executeBankTrade(giveSelected, receiveSelected);
+            if (success == SuccessCode.SUCCESS) {
+                close();
+            } else if (success == SuccessCode.INSUFFICIENT_RESOURCES) {
+                tooltip.setText(messages.getString("bankTradeWindowTooltipTradeFailed"));
+            }
+        }
+    }
+
+    private Resource stringToResource(String resource) {
+        if (resource.equals(messages.getString("bankTradeWindowLumber"))){
             return Resource.LUMBER;
-        }else if(resource.equals(messages.getString("bankTradeWindowBrick"))){
+        } else if(resource.equals(messages.getString("bankTradeWindowBrick"))){
             return Resource.BRICK;
         }else if(resource.equals(messages.getString("bankTradeWindowWool"))){
             return Resource.WOOL;
@@ -90,22 +92,6 @@ public class BankTradeWindowController implements Popup {
         }
     }
 
-    public void tradeButtonPressed(){
-        Resource giveSelected = stringToResource(((RadioButton) giveGroup.getSelectedToggle()).getText());
-        Resource receiveSelected = stringToResource(((RadioButton) receiveGroup.getSelectedToggle()).getText());
-
-        if(giveSelected.equals(receiveSelected)){
-            tooltip.setText(messages.getString("bankTradeWindowTooltipSameGiveReceive"));
-        }else{
-            SuccessCode success = this.executeBankTrade(giveSelected, receiveSelected);
-            if(success == SuccessCode.SUCCESS){
-                close();
-            }else if(success == SuccessCode.INSUFFICIENT_RESOURCES){
-                tooltip.setText(messages.getString("bankTradeWindowTooltipTradeFailed"));
-            }
-        }
-    }
-
     private SuccessCode executeBankTrade(Resource giving, Resource receiving) {
         // Called from BankTradeWindowController.java
         SuccessCode success = domainController.tradeWithBank(giving, receiving);
@@ -115,8 +101,7 @@ public class BankTradeWindowController implements Popup {
         return success;
     }
 
-    public void close() {
-        this.guiController.notifyOfPopupClose(this);
+    protected void closeStage() {
         Stage stage = (Stage) giveLumber.getScene().getWindow();
         stage.close();
     }

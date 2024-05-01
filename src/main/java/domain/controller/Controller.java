@@ -6,16 +6,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.Set;
 
 import domain.bank.Resource;
+import domain.building.DistrictType;
 import domain.devcarddeck.DevCard;
 import domain.devcarddeck.EmptyDevCardDeckException;
 import domain.game.*;
-import domain.graphs.Vertex;
 import domain.player.BoostType;
 import domain.player.Player;
 import data.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import static domain.controller.GamePhase.SETUP;
+import static domain.controller.GameState.*;
+import static domain.controller.SuccessCode.UNDEFINED;
 
 public class Controller implements Restorable {
     private final Game game;
@@ -88,8 +93,8 @@ public class Controller implements Restorable {
         this.currentPlayerNum = 0;
         this.currentPlayer = players[0];
 
-        this.gamePhase = GamePhase.SETUP;
-        this.gameState = GameState.FIRST_SETTLEMENT;
+        this.gamePhase = SETUP;
+        this.gameState = FIRST_SETTLEMENT;
         this.devCardsEnabled = true;
 
         if (gameType == GameType.Beginner) {
@@ -108,11 +113,11 @@ public class Controller implements Restorable {
         while (gamePhase != GamePhase.REGULAR_PLAY) { // stop if the action fails or we finish
             Integer[] locations = PLAYER_NUM_TO_STARTER_LOCATIONS.get(currentPlayer.getPlayerNum());
 
-            if (gameState == GameState.FIRST_SETTLEMENT) {
+            if (gameState == FIRST_SETTLEMENT) {
                 this.clickedVertex(locations[FIRST_SETTLEMENT_INDEX]);
             } else if (gameState == GameState.FIRST_ROAD) {
                 this.clickedRoad(locations[FIRST_ROAD_INDEX]);
-            } else if (gameState == GameState.SECOND_SETTLEMENT) {
+            } else if (gameState == SECOND_SETTLEMENT) {
                 this.clickedVertex(locations[SECOND_SETTLEMENT_INDEX]);
             } else {
                 this.clickedRoad(locations[SECOND_ROAD_INDEX]);
@@ -140,16 +145,14 @@ public class Controller implements Restorable {
      * purpose.
      */
     public SuccessCode clickedVertex(final int vertexId) {
-        Player player = this.getCurrentPlayer();
         SuccessCode result;
-
-        if (gamePhase == GamePhase.SETUP) {
-            result = this.clickedVertexSetup(vertexId, player);
+        if (gamePhase == SETUP) {
+            result = clickedVertexSetup(vertexId, currentPlayer);
         } else {
-            result = this.clickedVertexRegularPlay(vertexId, player);
+            result = clickedVertexRegularPlay(vertexId, currentPlayer);
         }
 
-        if (player.getVictoryPoints() >= POINTS_FOR_WIN) {
+        if (currentPlayer.getVictoryPoints() >= POINTS_FOR_WIN) {
             result = SuccessCode.GAME_WIN;
         }
 
@@ -160,15 +163,13 @@ public class Controller implements Restorable {
 
         return switch (gameState) {
             // normal cases
-            case BUILD_SETTLEMENT -> this.clickedPlaceSettlement(vertexId, player);
-            case UPGRADE_SETTLEMENT -> this.clickedUpgradeSettlement(vertexId, player);
+            case BUILD_SETTLEMENT -> clickedPlaceSettlement(vertexId, player);
+            case UPGRADE_SETTLEMENT -> clickedUpgradeSettlement(vertexId, player);
             // bad cases
             case FIRST_ROAD, SECOND_ROAD, FIRST_SETTLEMENT, SECOND_SETTLEMENT ->
                     throw new IllegalStateException("Setup state appeared during regular play");
 
-
-            // undefined cases
-            default -> SuccessCode.UNDEFINED;
+            default -> UNDEFINED;
         };
     }
 
@@ -202,12 +203,12 @@ public class Controller implements Restorable {
      * state of the game, assuming the game is currently in the setup phase.
      */
     private SuccessCode clickedVertexSetup(final int vertexId, final Player player) {
-        if (gameState == GameState.FIRST_SETTLEMENT) {
+        if (gameState == FIRST_SETTLEMENT) {
             try {
                 game.placeSettlement(vertexId, player);
 
-                setState(GameState.FIRST_ROAD);
-                this.lastPlacedVertex = vertexId;
+                setState(FIRST_ROAD);
+                lastPlacedVertex = vertexId;
 
                 return SuccessCode.SUCCESS;
             } catch (InvalidPlacementException e) {
@@ -217,13 +218,13 @@ public class Controller implements Restorable {
             }
         }
 
-        if (gameState == GameState.SECOND_SETTLEMENT) {
+        if (gameState == SECOND_SETTLEMENT) {
             try {
                 game.placeSettlement(vertexId, player);
                 game.distributeResources(player, vertexId);
 
-                setState(GameState.SECOND_ROAD);
-                this.lastPlacedVertex = vertexId;
+                setState(SECOND_ROAD);
+                lastPlacedVertex = vertexId;
                 return SuccessCode.SUCCESS;
             } catch (InvalidPlacementException e) {
                 return SuccessCode.INVALID_PLACEMENT;
@@ -232,7 +233,11 @@ public class Controller implements Restorable {
             }
         }
 
-        return SuccessCode.UNDEFINED;
+        return UNDEFINED;
+    }
+
+    public Set<Integer> getBuildableVertexes() {
+        return game.getBuildableVertexes(currentPlayer);
     }
 
     // -------------------------------------------------------------------------------
@@ -249,7 +254,7 @@ public class Controller implements Restorable {
         Player player = this.getCurrentPlayer();
 
         SuccessCode result;
-        if (gamePhase == GamePhase.SETUP) {
+        if (gamePhase == SETUP) {
             result = this.clickedRoadSetup(roadId, player);
         } else {
             result = this.clickedRoadRegularPlay(roadId, player);
@@ -268,17 +273,21 @@ public class Controller implements Restorable {
      * phase.
      */
     private SuccessCode clickedRoadRegularPlay(final int roadId, final Player player) {
-        if (gameState == GameState.BUILD_ROAD) {
-            return clickedPlaceRoad(roadId, player);
-        } else if (gameState == GameState.ROAD_BUILDING_1) {
-            return clickedRoadFirstRoadBuilding(roadId, player);
-        } else if (gameState == GameState.ROAD_BUILDING_2) {
-            return clickedRoadSecondRoadBuilding(roadId, player);
-        } else if (gameState == GameState.FIRST_ROAD || gameState == GameState.SECOND_ROAD || gameState == GameState.FIRST_SETTLEMENT || gameState == GameState.SECOND_SETTLEMENT) {
-            throw new IllegalStateException("Setup state appeared during regular play");
+        switch (gameState) {
+            case BUILD_ROAD -> {
+                return clickedPlaceRoad(roadId, player);
+            }
+            case ROAD_BUILDING_1 -> {
+                return clickedRoadFirstRoadBuilding(roadId, player);
+            }
+            case ROAD_BUILDING_2 -> {
+                return clickedRoadSecondRoadBuilding(roadId, player);
+            }
+            case FIRST_ROAD, SECOND_ROAD, FIRST_SETTLEMENT, SECOND_SETTLEMENT -> throw new IllegalStateException("Setup state appeared during regular play");
+            default -> {
+                return UNDEFINED;
+            }
         }
-
-        return SuccessCode.UNDEFINED;
     }
 
     private SuccessCode clickedRoadSecondRoadBuilding(final int roadId, final Player player) {
@@ -313,7 +322,7 @@ public class Controller implements Restorable {
 
 
             game.placeRoad(roadId, this.lastPlacedVertex, player);
-            this.setState(GameState.ROAD_BUILDING_2);
+            setState(GameState.ROAD_BUILDING_2);
             return SuccessCode.SUCCESS;
         } catch (InvalidPlacementException e) {
             // remove the resources on failure so they player doesn't accidentally get new resources
@@ -330,7 +339,7 @@ public class Controller implements Restorable {
     private SuccessCode clickedPlaceRoad(final int roadId, final Player player) {
         try {
             game.placeRoad(roadId, this.lastPlacedVertex, player);
-            this.setState(GameState.DEFAULT);
+            setState(GameState.DEFAULT);
             return SuccessCode.SUCCESS;
         } catch (InvalidPlacementException e) {
             return SuccessCode.INVALID_PLACEMENT;
@@ -347,10 +356,10 @@ public class Controller implements Restorable {
         if (gameState == GameState.FIRST_ROAD) {
             try {
                 game.placeRoad(roadId, this.lastPlacedVertex, player);
-                setState(GameState.SECOND_SETTLEMENT); // default to moving us to next round and don't change player
-                if (this.playerArr[this.playerArr.length - 1] != player) { // if we are not the last player
-                    this.currentPlayer = playerArr[++this.currentPlayerNum];
-                    setState(GameState.FIRST_SETTLEMENT);
+                setState(SECOND_SETTLEMENT);
+                if (playerArr[playerArr.length - 1] != player) { // if we are not the last player
+                    currentPlayer = playerArr[++currentPlayerNum];
+                    setState(FIRST_SETTLEMENT);
                 }
                 return SuccessCode.SUCCESS;
             } catch (InvalidPlacementException e) {
@@ -359,12 +368,12 @@ public class Controller implements Restorable {
                 throw new IllegalStateException("Controller and Game states not synchronized");
             }
         }
-        if (gameState == GameState.SECOND_ROAD) {
+        if (gameState == SECOND_ROAD) {
             try {
-                game.placeRoad(roadId, this.lastPlacedVertex, player);
-                if (this.playerArr[0] != player) { // not the first player
-                    this.currentPlayer = playerArr[--this.currentPlayerNum];
-                    setState(GameState.SECOND_SETTLEMENT);
+                game.placeRoad(roadId, lastPlacedVertex, player);
+                if (playerArr[0] != player) { // not the first player
+                    currentPlayer = playerArr[--currentPlayerNum];
+                    setState(SECOND_SETTLEMENT);
                 } else { // first player so we are at the end of setup
                     setState(GameState.TURN_START);
                     setPhase(GamePhase.REGULAR_PLAY);
@@ -377,7 +386,11 @@ public class Controller implements Restorable {
                 throw new IllegalStateException("Controller and Game states not synchronized");
             }
         }
-        return SuccessCode.UNDEFINED;
+        return UNDEFINED;
+    }
+
+    public Set<Integer> getBuildableRoads() {
+        return game.getBuildableRoads(currentPlayer, lastPlacedVertex);
     }
 
     // -------------------------------------------------------------------------------
@@ -522,7 +535,7 @@ public class Controller implements Restorable {
 
             return SuccessCode.SUCCESS;
         } else {
-            return SuccessCode.UNDEFINED;
+            return UNDEFINED;
         }
     }
 
@@ -662,7 +675,7 @@ public class Controller implements Restorable {
         if (this.currentPlayer.tradeResources(tradePartner, giving, receiving)) {
             return SuccessCode.SUCCESS;
         }
-        return SuccessCode.UNDEFINED;
+        return UNDEFINED;
     }
 
     /**
@@ -696,7 +709,7 @@ public class Controller implements Restorable {
      */
     public SuccessCode clickedBuyDevCard() {
 
-        if (this.gamePhase == GamePhase.SETUP) {
+        if (this.gamePhase == SETUP) {
             throw new IllegalStateException("Clicked buy dev card during setup");
         }
         try {
@@ -834,22 +847,23 @@ public class Controller implements Restorable {
         return SuccessCode.SUCCESS;
     }
 
+    public Set<Integer> getValidRobberSpots() {
+        return game.getValidRobberSpots(currentPlayer);
+    }
+
     /**
      * Method that plays the road building card.
      * Warning, this simply sets up the controller for the subsequent clicks
      * and removes the card from the player if they have it
      */
     public SuccessCode useRoadBuildingCard() {
-        if (!devCardsEnabled) {
-            return SuccessCode.CANNOT_PLAY_CARD;
-        }
-
-        if (!currentPlayer.useDevCard(DevCard.ROAD)) {
+        if (!devCardsEnabled || !currentPlayer.useDevCard(DevCard.ROAD)) {
             return SuccessCode.CANNOT_PLAY_CARD;
         }
 
         setDevCardsEnabled(false);
-        this.setState(GameState.ROAD_BUILDING_1);
+        setState(GameState.ROAD_BUILDING_1);
+
         return SuccessCode.SUCCESS;
     }
 

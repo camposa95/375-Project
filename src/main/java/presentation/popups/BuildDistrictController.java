@@ -1,9 +1,8 @@
 package presentation.popups;
 
-import domain.controller.Controller;
 import domain.controller.GameState;
 import domain.controller.SuccessCode;
-import domain.game.DistrictType;
+import domain.building.DistrictType;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -14,11 +13,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import presentation.CatanGUIController;
 
-import java.util.ResourceBundle;
-
-public class BuildDistrictController implements Popup {
-    private CatanGUIController guiController;
-    private Controller domainController;
+public class BuildDistrictController extends Popup {
     private int selectedVertex;
     private Polygon selectedBuilding;
 
@@ -26,7 +21,6 @@ public class BuildDistrictController implements Popup {
     private RadioButton sawmill, kiln, barn, garden, mine;
     @FXML
     private ToggleGroup types;
-    ResourceBundle messages;
     @FXML
     private Button selectButton, cancelButton;
     @FXML
@@ -43,27 +37,16 @@ public class BuildDistrictController implements Popup {
     }
 
     @SuppressFBWarnings("EI_EXPOSE_REP2")
-    public void setControllers(CatanGUIController guiController, Controller domainController) {
-        this.guiController = guiController;
-        this.domainController = domainController;
-    }
-
-    @SuppressFBWarnings("EI_EXPOSE_REP2")
-    public void setMessages(ResourceBundle messages) {
-        this.messages=messages;
-        internationalize();
-    }
-
-    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public void setSelectedVertex(int id) {
         this.selectedVertex = id;
     }
+
     @SuppressFBWarnings("EI_EXPOSE_REP2")
     public void setSelectedBuilding(Polygon building) {
         this.selectedBuilding = building;
     }
 
-    private void internationalize() {
+    protected void internationalize() {
         buildDistrictText.setText(messages.getString("buildDistrictPopupText"));
         tooltip.setText(messages.getString("buildDistrictDefaultTooltip"));
 
@@ -121,6 +104,10 @@ public class BuildDistrictController implements Popup {
         domainController.setState(GameState.DEFAULT);
         guiController.guiState = CatanGUIController.GUIState.IDLE;
         this.guiController.notifyOfPopupClose(this);
+    }
+
+    @Override
+    protected void closeStage() {
         Stage stage = (Stage) sawmill.getScene().getWindow();
         stage.close();
     }

@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="236.0" prefWidth="328.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="presentation.PauseMenuController">
+<AnchorPane prefHeight="236.0" prefWidth="328.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="presentation.popups.PauseMenuController">
    <children>
       <Button fx:id="saveButton" layoutX="208.0" layoutY="181.0" mnemonicParsing="false" onAction="#saveButtonPressed" prefHeight="26.0" prefWidth="96.0" text="Save &amp; Exit" />
       <Button fx:id="closeButton" layoutX="24.0" layoutY="182.0" mnemonicParsing="false" onAction="#close" text="Close" />
