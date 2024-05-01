@@ -28,6 +28,7 @@ public class ChangeGameImagesController implements Popup {
         initComboBox();
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public void setControllers(CatanGUIController guiController) {
         this.guiController = guiController;
     }

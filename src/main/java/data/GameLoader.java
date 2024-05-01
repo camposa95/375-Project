@@ -158,7 +158,7 @@ public class GameLoader {
      * @param imageName the name of the icon file (eg. tile_wood.png)
      * @return a valid path to that icon
      */
-    private ImagePattern loadImage(String imageName) {
+    private ImagePattern loadImage(final String imageName) {
         Path desiredPath = Path.of(this.imageFolderPath, imageName);
         URL desiredURL = getClass().getClassLoader().getResource(desiredPath.toString());
 
