@@ -545,7 +545,8 @@ public class Controller implements Restorable {
     public int rollDice() {
         int die1 = random.nextInt(MIN_DIE, MAX_DIE);
         int die2 = random.nextInt(MIN_DIE, MAX_DIE);
-        int die = die1 + die2;
+        //int die = die1 + die2;
+        int die = 7;
         for (Player player: this.playerArr) {
             this.game.distributeResources(player, die);
         }

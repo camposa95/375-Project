@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.shape.Rectangle?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="635.0" prefWidth="876.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="presentation.popups.DropCardsController">
+<AnchorPane prefHeight="635.0" prefWidth="876.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="presentation.popups.DropCardsController">
    <children>
       <Text fx:id="dropHalfTitle" layoutX="392.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Drop Half!">
          <font>
@@ -45,5 +43,9 @@
       <TextField fx:id="player4grain" layoutX="412.0" layoutY="495.0" prefHeight="25.0" prefWidth="54.0" text="0" />
       <TextField fx:id="player4ore" layoutX="509.0" layoutY="495.0" prefHeight="25.0" prefWidth="54.0" text="0" />
       <Button fx:id="submit" layoutX="416.0" layoutY="576.0" mnemonicParsing="false" onMouseClicked="#submitDropResource" text="Submit" />
+      <Text fx:id="dropText1" layoutX="583.0" layoutY="245.0" strokeType="OUTSIDE" strokeWidth="0.0" text="You must drop 3 resources" />
+      <Text fx:id="dropText2" layoutX="583.0" layoutY="332.0" strokeType="OUTSIDE" strokeWidth="0.0" text="You must drop 3 resources" />
+      <Text fx:id="dropText3" layoutX="583.0" layoutY="420.0" strokeType="OUTSIDE" strokeWidth="0.0" text="You must drop 3 resources" />
+      <Text fx:id="dropText4" layoutX="583.0" layoutY="512.0" strokeType="OUTSIDE" strokeWidth="0.0" text="You must drop 3 resources" />
    </children>
 </AnchorPane>

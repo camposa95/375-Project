@@ -18,7 +18,7 @@ import java.util.HashMap;
 public class DropCardsController extends Popup {
 
     @FXML
-    private Text player1name, player2name, player3name, player4name, dropHalfTitle, tooltip;
+    private Text player1name, player2name, player3name, player4name, dropHalfTitle, tooltip, dropText1, dropText2, dropText3, dropText4;
     @FXML
     private TextField player1lumber, player1brick, player1wool, player1grain, player1ore,
             player2lumber, player2brick, player2wool, player2grain, player2ore,
@@ -29,6 +29,7 @@ public class DropCardsController extends Popup {
 
     private TextField[] player1, player2, player3, player4;
     private TextField[][] playerResources2d;
+    private int[] dropAmounts;
 
     @FXML
     private Button submit;
@@ -54,11 +55,13 @@ public class DropCardsController extends Popup {
         players = domainController.getPlayerArr();
         int numPlayers = players.length;
         this.playerResources2d = new TextField[numPlayers][];
+        this.dropAmounts = new int[4];
         playerResources2d[0] = player1;
         playerResources2d[1] = player2;
 
         if (numPlayers < 4) {
             player4name.setVisible(false);
+            dropText4.setVisible(false);
             for (TextField textField : player4) {
                 textField.setVisible(false);
             }
@@ -67,6 +70,7 @@ public class DropCardsController extends Popup {
         }
         if (numPlayers < 3) {
             player3name.setVisible(false);
+            dropText3.setVisible(false);
             for (TextField textField : player3) {
                 textField.setVisible(false);
             }
@@ -90,6 +94,11 @@ public class DropCardsController extends Popup {
         player4name.setText(messages.getString("dropHalfPlayer4"));
 
         submit.setText(messages.getString("dropHalfSubmitButton"));
+
+        dropText1.setText(messages.getString("dropNumberMessage").formatted(dropAmounts[0]));
+        dropText2.setText(messages.getString("dropNumberMessage").formatted(dropAmounts[1]));
+        dropText3.setText(messages.getString("dropNumberMessage").formatted(dropAmounts[2]));
+        dropText4.setText(messages.getString("dropNumberMessage").formatted(dropAmounts[3]));
     }
 
     private boolean doesAnyoneNeedToDrop() {
@@ -101,6 +110,7 @@ public class DropCardsController extends Popup {
                 }
             }else{
                 playersThatNeedToDrop.add(i);
+                dropAmounts[i] = players[i].hand.getResourceCount()/2;
             }
         }
         return playersThatNeedToDrop.size() != 0;
