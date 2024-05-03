@@ -26,8 +26,10 @@ public class RobPlayerController extends Popup {
         this.buttons = new Button[] {otherPlayer1, otherPlayer2, otherPlayer3};
     }
 
-    @Override
-    protected void setupStateData() {
+    protected void internationalize() {
+        robPlayerTitleText.setText(messages.getString("robPlayerTitleText"));
+        otherPlayer1.setText(messages.getString("robPlayerPlayerButton") + " ");
+
         // make sure Players is the list of players on the hex being robbed
         Player currentPlayer = domainController.getCurrentPlayer();
         Player[] playersOnHex = domainController.getPlayersOnTile(guiController.robberId);
@@ -53,11 +55,6 @@ public class RobPlayerController extends Popup {
             this.rob(-1);
             this.close();
         }
-    }
-
-    protected void internationalize() {
-        robPlayerTitleText.setText(messages.getString("robPlayerTitleText"));
-        otherPlayer1.setText(messages.getString("robPlayerPlayerButton") + " ");
     }
 
     private int getSelectedPlayer(MouseEvent event){

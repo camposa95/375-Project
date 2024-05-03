@@ -51,12 +51,6 @@ public class PlayerTradeWindowController extends Popup {
         youReceiveText.setText(messages.getString("playerTradeYouReceiveText"));
         tooltip.setText(messages.getString("playerTradeTooltipDefault"));
         cancelButton.setText(messages.getString("cancelText"));
-    }
-
-    @Override
-    protected void setupStateData() {
-        this.currentPlayer = domainController.getCurrentPlayer();
-        this.players = domainController.getPlayerArr();
 
         int numPlayers = this.players.length;
 
@@ -74,6 +68,12 @@ public class PlayerTradeWindowController extends Popup {
         }
         int player1 = currentPlayer.playerNum==1 ? 2 : 1;
         otherPlayer1.setText(messages.getString("playerTradeTooltipAcceptButtonText") + player1);
+    }
+
+    @Override
+    protected void setupStateData() {
+        this.currentPlayer = domainController.getCurrentPlayer();
+        this.players = domainController.getPlayerArr();
     }
 
     private Resource[] getResources(TextField[] fields) {
@@ -140,6 +140,11 @@ public class PlayerTradeWindowController extends Popup {
             guiController.finishedMove();
         }
         return code;
+    }
+
+    @FXML
+    public void close() {
+        closeStage();
     }
 
     protected void closeStage() {

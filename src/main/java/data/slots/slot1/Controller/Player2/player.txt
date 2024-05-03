@@ -1,9 +1,9 @@
-VictoryPoints: 2
+VictoryPoints: 3
 HasPlayedDevCard: false
 NumKnightsPlayed: 0
-NumSettlements: 3
-NumRoads: 13
-NumCities: 4
+NumSettlements: 4
+NumRoads: 11
+NumCities: 3
 NumTradeBoosts: 0
 HasLongestRoadCard: false
 HasLargestArmy: false

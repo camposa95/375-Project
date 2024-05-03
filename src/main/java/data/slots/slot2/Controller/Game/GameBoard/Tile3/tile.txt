@@ -1,0 +1,3 @@
+TerrainType: HILLS
+DieNumber: 6
+HasRobber: false
