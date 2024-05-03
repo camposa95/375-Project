@@ -81,7 +81,6 @@ package presentation {
         +setTooltipText(String text): void
 
         +setAllRobberSpotsVisibility(boolean visibility): void
-        +changeIconSet(iconFolderPath: String): void
     }
 
     +enum GUIState {
@@ -113,6 +112,15 @@ package presentation {
 
             +close(): void
             #{abstract} closeStage(): void
+        }
+
+        +class BankLoanWindowController {
+            +initialize(): void
+            #internationalize(): void
+
+            +handleSubmitButtonPressed(): void
+
+            #closeStage(): void
         }
 
         +class BankTradeWindowController {
@@ -274,6 +282,7 @@ package domain {
             +dropResources(playerIdToResourceMap: Map<Integer, Resource>): void
             +moveRobber(): SuccessCode
             +robPlayer(playerId: int): SuccessCode
+            +takeOutLoan(resources: Resource[]): void
             +tradeWithPlayer(tradePartner: Player, giving: Resource[], receiving: Resource[]): SuccessCode
             +tradeWithBank(giving: Resource[], receiving: Resource[]): SuccessCode
             +clickedBuyDevCard(): SuccessCode
@@ -484,6 +493,7 @@ package domain {
                 +upgradeSettlement(player: Player, vertexId: int): void, throws InvalidPlacementException, NotEnoughResourcesException
                 +buildDistrictOnVertex(player: Player, vertexId: int, type: DistrictType): void, throws NotEnoughResourcesException, InvalidPlacementException
                 +buyDevCard(Player: player): throws NotEnoughResourcesException, EmptyDevCardDeckException
+                +takeOutLoan(player: Player, resources: Resource[]): void
 
                 +endSetup(): void
 
@@ -538,11 +548,15 @@ package domain {
         package bank {
             +class Bank {
                 -bank: Map<Resource, Integer>
+                -loans: Loan[]
                 +Bank()
 
                 +removeResource(type: Resource, amount: int): boolean
                 +addResource(type: Resource, amount: int): boolean
                 +getResourceAmount(type: Resource): int
+                +takeOutLoan(player: Player, resources: Resource[]): void
+                +updateLoanDueTimes(player: Player): void
+                +payLoanIfDue(player: Player): void
 
                 +createMemento(): Memento
             }
@@ -564,8 +578,34 @@ package domain {
                 ANY
             }
 
+            +class Loan {
+                -player: Player
+                -resourcesBorrowed: Resource[]
+                -resourcesDue: Resource[]
+                -turnsUntilDue: int
+
+                +{static} loanIsValid(resources: Resource[]): boolean
+                +decrementLoanTime(): void
+                +loanIsDue(): boolean
+                +loanIsPaid(): boolean
+                +payLoan(bank: Bank, player: Player): void
+                +giveLoan(bank: Bank, player: Player): void
+            }
+
+            +class LoanMemento {
+                -LoanMemento()
+                +LoanMemento(folder: File)
+                +save(folder: File): void
+                +restore(): void
+            }
+
             Bank ->"*" Resource
+            Bank -->"4" Loan
             BankMemento ->"*" Resource
+
+            Loan ..> Bank
+            Loan ..> Player
+            Loan +..>"inner" LoanMemento
 
             Bank +..>"inner" BankMemento
         }
@@ -918,6 +958,9 @@ package data {
         +getInstance(): GameLoader
 
         +setLanguage(language: String): ResourceBundle
+
+        +setImageFolderPath(path: String): void
+        +getImage(imageName: String): ImagePattern
 
         +setSlot(slot: int): void
         +isSlotEmpty(slot: int): boolean
