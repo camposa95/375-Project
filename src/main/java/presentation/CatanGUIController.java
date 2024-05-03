@@ -302,14 +302,9 @@ public class CatanGUIController {
         }
     }
 
-    private void updateInfoPane() {
-        //Called in various places to update player data in pane
-        Player[] tempPlayers = this.controller.getPlayerArr();
-        this.playerTurnText.setText(Integer.toString(this.controller.getCurrentPlayer().playerNum));
-        clearTooltipText();
-        Player currentPlayer = tempPlayers[this.controller.getCurrentPlayer().playerNum-1];
+    private void updateDevCardButtonVisibility() {
         if(this.controller.getDevCardsEnabled()){
-            HashMap<DevCard, Integer> devCards = currentPlayer.hand.devCards;
+            HashMap<DevCard, Integer> devCards = this.controller.getCurrentPlayer().hand.devCards;
             playKnightButton.setDisable(devCards.get(DevCard.KNIGHT) <= 0);
             playMonopolyButton.setDisable(devCards.get(DevCard.MONOPOLY) <= 0);
             playYearOfPlentyButton.setDisable(devCards.get(DevCard.PLENTY) <= 0);
@@ -320,6 +315,15 @@ public class CatanGUIController {
             playYearOfPlentyButton.setDisable(true);
             playRoadBuildingButton.setDisable(true);
         }
+    }
+
+    private void updateInfoPane() {
+        //Called in various places to update player data in pane
+        Player[] tempPlayers = this.controller.getPlayerArr();
+        this.playerTurnText.setText(Integer.toString(this.controller.getCurrentPlayer().playerNum));
+        clearTooltipText();
+        Player currentPlayer = tempPlayers[this.controller.getCurrentPlayer().playerNum-1];
+        updateDevCardButtonVisibility();
 
         numVictoryPointsText.setText(Integer.toString(currentPlayer.hand.devCards.get(DevCard.VICTORY)));
 
@@ -382,6 +386,10 @@ public class CatanGUIController {
             case TURN_START -> {
                 handleStartOfTurnButtonVisibility();
             }
+            case FIRST_ROAD, SECOND_ROAD, BUILD_ROAD, ROAD_BUILDING_1, ROAD_BUILDING_2,
+                    FIRST_SETTLEMENT, SECOND_SETTLEMENT, BUILD_SETTLEMENT -> {
+                handleSetupButtonVisibility();
+            }
             default -> {
                 handleInTurnButtonVisibility();
             }
@@ -430,10 +438,7 @@ public class CatanGUIController {
 
         // Dev Card Buttons
         buyDevCardButton.setDisable(false);
-        playKnightButton.setDisable(false);
-        playYearOfPlentyButton.setDisable(false);
-        playMonopolyButton.setDisable(false);
-        playRoadBuildingButton.setDisable(false);
+        updateDevCardButtonVisibility();
 
         // Trade Buttons
         playerTradeButton.setDisable(false);
@@ -442,6 +447,36 @@ public class CatanGUIController {
 
         // End Turn Button
         endTurnButton.setDisable(false);
+
+        // Pause Button
+        pauseButton.setDisable(true);
+    }
+
+    private void handleSetupButtonVisibility() {
+        // Roll Button
+        rollButton.setDisable(false);
+
+        // Build Buttons
+        buildSettlementButton.setDisable(true);
+        buildRoadButton.setDisable(true);
+        buildCityButton.setDisable(true);
+        buildDistrictButton.setDisable(true);
+        cancelButton.setDisable(true);
+
+        // Dev Card Buttons
+        buyDevCardButton.setDisable(true);
+        playKnightButton.setDisable(true);
+        playYearOfPlentyButton.setDisable(true);
+        playMonopolyButton.setDisable(true);
+        playRoadBuildingButton.setDisable(true);
+
+        // Trade Buttons
+        playerTradeButton.setDisable(true);
+        bankTradeButton.setDisable(true);
+        bankLoanButton.setDisable(true);
+
+        // End Turn Button
+        endTurnButton.setDisable(true);
 
         // Pause Button
         pauseButton.setDisable(true);
@@ -684,6 +719,7 @@ public class CatanGUIController {
     public void buildDistrictButtonPress() {
         if (controller.getState() == DEFAULT) {
             guiState = BUSY;
+            setTooltipText("selectSettlementToUpgrade");
             controller.setState(BUILD_DISTRICT);
         }
     }
@@ -753,7 +789,7 @@ public class CatanGUIController {
 
     public void cancelButtonPressed() {
         switch (controller.getState()) {
-            case BUILD_ROAD, BUILD_SETTLEMENT, UPGRADE_SETTLEMENT -> {
+            case BUILD_ROAD, BUILD_SETTLEMENT, UPGRADE_SETTLEMENT, BUILD_DISTRICT -> {
                 controller.setState(DEFAULT);
                 updateCircleVisibility();
                 guiState = IDLE;

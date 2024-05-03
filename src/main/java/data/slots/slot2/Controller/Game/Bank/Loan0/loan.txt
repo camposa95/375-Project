@@ -1,0 +1,4 @@
+Player: Player 1
+ResourcesBorrowed: [LUMBER, LUMBER, LUMBER]
+ResourcesDue: [LUMBER, LUMBER]
+TurnsUntilDue: 0

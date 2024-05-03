@@ -1,0 +1,4 @@
+gameType: Advanced
+numPlayers: 2
+language: English
+iconPath: images\realistic-tiles

@@ -95,10 +95,27 @@ public class DropCardsController extends Popup {
 
         submit.setText(messages.getString("dropHalfSubmitButton"));
 
-        dropText1.setText(messages.getString("dropNumberMessage").formatted(dropAmounts[0]));
-        dropText2.setText(messages.getString("dropNumberMessage").formatted(dropAmounts[1]));
-        dropText3.setText(messages.getString("dropNumberMessage").formatted(dropAmounts[2]));
-        dropText4.setText(messages.getString("dropNumberMessage").formatted(dropAmounts[3]));
+        dropText1.setVisible(false);
+        dropText2.setVisible(false);
+        dropText3.setVisible(false);
+        dropText4.setVisible(false);
+
+        if (dropAmounts[0] != 0) {
+            dropText1.setText(messages.getString("dropNumberMessage").formatted(dropAmounts[0]));
+            dropText1.setVisible(true);
+        }
+        if (dropAmounts[1] != 0) {
+            dropText2.setText(messages.getString("dropNumberMessage").formatted(dropAmounts[1]));
+            dropText2.setVisible(true);
+        }
+        if (dropAmounts[2] != 0) {
+            dropText3.setText(messages.getString("dropNumberMessage").formatted(dropAmounts[2]));
+            dropText3.setVisible(true);
+        }
+        if (dropAmounts[3] != 0) {
+            dropText4.setText(messages.getString("dropNumberMessage").formatted(dropAmounts[3]));
+            dropText4.setVisible(true);
+        }
     }
 
     private boolean doesAnyoneNeedToDrop() {

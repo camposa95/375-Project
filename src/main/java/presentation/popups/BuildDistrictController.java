@@ -101,13 +101,14 @@ public class BuildDistrictController extends Popup {
 
     @FXML
     public void close() {
-        domainController.setState(GameState.DEFAULT);
-        guiController.guiState = CatanGUIController.GUIState.IDLE;
-        this.guiController.notifyOfPopupClose(this);
+        closeStage();
     }
 
     @Override
     protected void closeStage() {
+        domainController.setState(GameState.DEFAULT);
+        guiController.guiState = CatanGUIController.GUIState.IDLE;
+        this.guiController.notifyOfPopupClose(this);
         Stage stage = (Stage) sawmill.getScene().getWindow();
         stage.close();
     }

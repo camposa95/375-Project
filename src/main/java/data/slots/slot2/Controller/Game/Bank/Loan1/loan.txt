@@ -1,0 +1,4 @@
+Player: Player 2
+ResourcesBorrowed: [LUMBER, BRICK, BRICK]
+ResourcesDue: [BRICK, BRICK]
+TurnsUntilDue: 0
