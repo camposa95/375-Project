@@ -228,7 +228,10 @@ package presentation {
         PlayerTradeWindowController --up--|> Popup
         RobPlayerController --up--|> Popup
         YearOfPlentyController --up--|> Popup
+        BankLoanWindowController --up--|> Popup
     }
+
+    Popup --up> CatanGuiController
 
     CatanGuiController --down>"*" Popup
     CatanGuiController ..down> PauseMenuController
@@ -241,14 +244,6 @@ package presentation {
     CatanGuiController ..down...> RobPlayerController
     CatanGuiController ..down...> YearOfPlentyController
 
-    BankTradeWindowController --up> CatanGuiController
-    BuildDistrictController --up> CatanGuiController
-    DropCardsController --up> CatanGuiController
-    MonopolyController --up> CatanGuiController
-    PauseMenuController --up> CatanGuiController
-    PlayerTradeWindowController --up> CatanGuiController
-    RobPlayerController --up> CatanGuiController
-    YearOfPlentyController --up> CatanGuiController
 
     PauseMenuController ..down> ChangeGameImagesController
     PauseMenuController ..up> StartScreenController
@@ -1056,6 +1051,7 @@ HarvestBoosterMemento ..up|> Memento
 HandMemento ..up|> Memento
 
 GameLoader --down>"1" Controller
+Popup --down>"1" Controller
 
 
 
@@ -1077,6 +1073,7 @@ MonopolyController ..down> Controller
 PlayerTradeWindowController ..down> Controller
 RobPlayerController ..down> Controller
 YearOfPlentyController ..down> Controller
+BankLoanWindowController ..down> Controller
 
 
 CatanGuiController --down--> Controller
